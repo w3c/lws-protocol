@@ -2,23 +2,37 @@
 <html lang="en">
   <head>
     <meta charset="utf-8">
-    <title>Spec proposal</title>
+    <title>LWS Protocol</title>
     <script src="https://www.w3.org/Tools/respec/respec-w3c" class="remove"></script>
+    <link rel="stylesheet" href="local.css"/>
     <script class='remove'>
-      // See https://github.com/w3c/respec/wiki/ for how to configure ReSpec
+      // See https://respec.org/docs/ for how to configure ReSpec
       var respecConfig = {
-        specStatus: "CG-DRAFT",
+        specStatus: "ED",
         shortName: "lws-protocol",
         editors: [{
           name: "Pierre-Antoine Champin"
-        }]
+        }, {
+          name: "ericP"
+        }],
+        github: "w3c/lws-protocol",
+        shortName: "@@",
+        xref: ["web-platform"],
+        group: "lws",
       };
     </script>
   </head>
   <body>
     <section id="abstract">
       <p>
-        This specification does neat stuff.
+        [@@ from <a href="https://www.w3.org/2024/09/linked-web-storage-wg-charter#lws-protocol">charter</a>]
+      </p>
+      <p>
+        The Linked Web Storage Protocol specification aims to provide applications with secure and permissioned access to externally stored data in an interoperable way.
+      </p>
+
+      <p>
+        The Linked Web Storage Protocol <span class="TODO">does/does not</span> include protocol details for integration with identity layers and mechanisms; access management and data integrity; notifications about resource changes; and authorization mechanisms.
       </p>
     </section>
     <section id="sotd">
@@ -27,12 +41,105 @@
       </p>
     </section>
 
+    <section id="editors-notes" class="informative">
+      <h2>For Editor</h2>
+      <p>
+        List of <span class="TODO">TODO</span>s and ideas in flux to enable editors to communicate asynchronously.
+      </p>
+
+      <section id="editors-resz">
+        <h3>Resources</h3>
+        <ul>
+          <li><a href="https://respec.org/docs/">respec docs</a></li>
+          <li><a href="https://solidproject.org/TR/protocol">CG report - 2024-05-12</a></li>
+          <li><a href="https://solidproject.org/ED/protocol">Editor's draft - 2025-04-12</a></li>
+          <li>CG-to-ED delta: <ul>
+              <li class="del"><del>- Previous editors: Justin-Bingham (ED), Dmitri-Zagidulin (ED)</del></li>
+              <li class="ins"><ins>+ HTTP Server MUST generate a Last-Modified header field in response to GET and HEAD requests.</ins></li>
+              <li><del>- The PATCH ?insertions formulae MUST NOT contain blank nodes.</del></li>
+              <li><ins>+ IANA Reg Security Considerations: Servers are strongly encouraged to implement additional security measures…</ins></li>
+              <li><ins>+ IANA Reg Privacy Considerations: Servers are encouraged to respond with the 451 status code…</ins></li>
+          </ul></li>
+        </ul>
+      </section>
+
+      <section id="editors-tactics">
+        <h3>Tactics</h3>
+        <ul>
+          <li>Reference <a href="https://w3c.github.io/lws-ucs/spec/#glossary">UCS Glossary</a> for now to keep them in sync.</li>
+          <li>Include REST examples but keep spec abstract to 1. provide intuitive names for states, operations, and responses, 2. enable alternate bindings.</li>
+          <li></li>
+          <li></li>
+        </ul>
+      </section>
+    </section>
+
+    <section id="conventions" class="informative">
+      <h2>Document Conventions</h2>
+      <dl>
+        <dt></dt><dd><dd/>
+      </dl>
+    </section>
+
     <section id="introduction">
       <h2>Introduction</h2>
       <p>
-        See <a href="https://github.com/w3c/respec/wiki/User's-Guide">ReSpec's user guide</a>
-        for how toget started!
+      </p>
+      
+      <section id="resource-access">
+        <h2>Resource Access</h2>
+        <p>
+          The LWS Protocol defines standard interactions by which a some party can make some resources available to some agents.
+        </p>
+
+        <ul>
+          <li><dfn>served resource</dfn> - (<span class="TOOD">available resource? published resource?</span>) (<span class="TOOD"><a href="https://github.com/w3c/lws-ucs/issues/160">not defined in UCS</a></span>) A network-accessible entity exposed by a service for interaction, retrieval, or manipulation using the protocol defined in this document.</li>
+          <li><dfn>requesting agent</dfn> - (<span class="TOOD"><a href="https://w3c.github.io/lws-ucs/spec/#dfn-entity">entity</a> in UCS</span>) An entity (e.g., client, user, or process) that initiates a request to interact with a servable resource.</li>
+        </ul>
+
+        <p>
+        </p>
+      </section>
+      
+      <section id="security-privacy">
+        <h2>Security and Privacy</h2>
+
+        <ul>
+          <li><dfn>Authentication</dfn> - the process of verifying the identity of an agent executing a request.</li>
+          <li><dfn>Authorization</dfn> - the process of determining if an authenticated agent has permission to access a specific resource or perform an action.</li>
+        </ul>
+      </section>
+
+      <section id="conformance">
+        <!-- Respec automagically adds the heading. -->
+        <p>
+          A <dfn>LWS REST Server</dfn> is an HTTP server [[!rfc9112]] that complies with all of the relevant "MUST" statements in this specification. Specifically, the relevant normative "MUST" statements in Sections <span class="TODO">999</span> <a href="#rest-binding">REST Binding</a> of this document MUST be respected.
+        </p>
+
+        <p>
+          A <dfn>LWS REST Client</dfn> is an HTTP client [[!rfc9112]] that complies with all of the relevant "MUST" statements in this specification. Specifically, the relevant normative "MUST" statements in Sections <span class="TODO">999</span> <a href="#rest-binding">REST Binding</a> of this document MUST be respected.
+        </p>
+      </section>
+    </section>
+    
+    <section id="authentication">
+      <h2>Authentication</h2>
+      <p>
       </p>
     </section>
+    
+    <section id="authorization">
+      <h2>Authorization</h2>
+      <p>
+      </p>
+    </section>
+
+    <section id="rest-binding">
+      <h2>REST Binding</h2>
+      <p>
+        This <span class="TODO">strawman</span> mapping of the operations and responses defined above allows <a>LWS REST Servers</a> and <a>LWS REST Clients</a> to communicate over HTTP using REST conventions.
+      </p>
+    </section>
+
   </body>
 </html>
