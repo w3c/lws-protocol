@@ -41,8 +41,8 @@
       </p>
     </section>
 
-    <section id="editors-notes" class="informative">
-      <h2>For Editor</h2>
+    <section id="editors-notes" class="informative notoc">
+      <h2>For Editors</h2>
       <p>
         List of <span class="TODO">TODO</span>s and ideas in flux to enable editors to communicate asynchronously.
       </p>
@@ -67,8 +67,12 @@
         <h3>Tactics</h3>
         <ul>
           <li>Reference <a href="https://w3c.github.io/lws-ucs/spec/#glossary">UCS Glossary</a> for now to keep them in sync.</li>
-          <li>Include REST examples but keep spec abstract to 1. provide intuitive names for states, operations, and responses, 2. enable alternate bindings.</li>
-          <li></li>
+          <li>Include REST examples but keep spec abstract to:<ul>
+              <li>provide intuitive names for states, operations, and responses</li>
+              <li>factor states, operations and responses so e.g. <a>update resource</a> responses are the same from HTTP PATCH or from HTTP PUT</li>
+              <li>enable alternate bindings.</li>
+          </ul></li>
+          <li>I like to have a marker (e.g. left-border) to highlight informative regions, but it's pretty ugly.</li>
           <li></li>
         </ul>
       </section>
@@ -103,11 +107,18 @@
       
       <section id="security-privacy">
         <h2>Security and Privacy</h2>
+        <p>
+          A <a>resource manager</a> may keep a <a>served resource</a> private, may make it publicly available to anyone, or may limited its visibility to a constrained set of <a>requesting agents</a>.
+        </p>
 
         <ul>
-          <li><dfn>Authentication</dfn> - the process of verifying the identity of an agent executing a request.</li>
-          <li><dfn>Authorization</dfn> - the process of determining if an authenticated agent has permission to access a specific resource or perform an action.</li>
+          <li><dfn>authentication</dfn> - the process of verifying the identity of an agent executing a request.</li>
+          <li><dfn>authorization</dfn> - the process of determining if an authenticated agent has permission to access a specific resource or perform one of a set of <a>operations</a>.</li>
+          <li><dfn>resource manager</dfn> - (<a href="https://w3c.github.io/lws-ucs/spec/#dfn-controller">controller</a> in UCS) An agent that has permission to control access to a <a>served resource</a>.</li>
         </ul>
+
+        <p>
+        </p>
       </section>
 
       <section id="conformance">
@@ -121,17 +132,140 @@
         </p>
       </section>
     </section>
-    
+
+    <section id="terminology">
+      <h2>Terminology</h2>
+      <p>
+        This specification defines <a>operations</a> on <a>served resources</a>, the resulting change of state, and a <a>response</a> indended to give the <a>requesting agent</a> requested infomation or inform them of the outcome of the <a>operation</a>.
+        An <dfn>operation</dfn> is any of the following actions that can be performed on a <a>served resource</a>:
+      </p>
+      <ul>
+        <li><dfn data-lt="creation">create resource</dfn> - </li>
+        <li><dfn data-lt="retrieval">read resource</dfn> - </li>
+        <li><dfn>update resource</dfn> - </li>
+        <li><dfn data-lt="deletion">delete resource</dfn> - </li>
+      </ul>
+
+      <p>
+        The folowing section will describe the semantics and <dfn>responses</dfn> of these operations but the following <dfn>core responses</dfn> apply to any operation:
+      </p>
+      <ul>
+        <li><dfn>success</dfn> - the operation is believe to have completed. This may be accompanied by a <dfn>resource representation</dfn> conveying the contents of a <a>served resource</a>. A <a>success</a> response is not defined for the <a>create resource</a> operation. See instead <a>created</a>.</li>
+        <li><dfn>not permitted</dfn></li>
+        <li><dfn>unknown requester</dfn></li>
+        <li><dfn>unknown error</dfn> - reserved for error conditions that arrise that are not anticipated by the specification</li>
+      </ul>
+    </section>
+
     <section id="authentication">
       <h2>Authentication</h2>
       <p>
+        For any access control that requires establishing the identity of a <a>requesting agent</a>, that identiy is established using <span class="TODO">strawman-authn</span>:
       </p>
+    <pre highlight="jsonld" class="example">
+        {
+          "@context": [""],
+          "client_id": "https://app.example/id",
+          "client_name": "Solid Application Name",
+          "redirect_uris": ["https://app.example/callback"],
+          "post_logout_redirect_uris": ["https://app.example/logout"],
+          "client_uri": "https://app.example/",
+          "logo_uri" : "https://app.example/logo.png",
+          "tos_uri" : "https://app.example/tos.html",
+          "scope" : "openid profile offline_access webid",
+          "grant_types" : ["refresh_token","authorization_code"],
+          "response_types" : ["code"],
+          "default_max_age" : 3600,
+          "require_auth_time" : true
+        }
+    </pre>
+
     </section>
     
     <section id="authorization">
       <h2>Authorization</h2>
       <p>
+        A <a>resource manager</a> dicates the <a>requesting agents</a>, eiher directly, by listing them in a <span class="TODO">strawman-ACLs</span> document:
       </p>
+      <pre id="example-authorization-graph" class="example example-authorization-graph">
+[]
+  a straw:AccessControlResource ;
+  straw:resource ex:myServedResource ;
+  straw:accessControl [
+    a straw:AccessControl ;
+    straw:apply [
+      a straw:Policy ;
+      straw:allow acl:Read ;
+      straw:anyOf [
+        a straw:Matcher ;
+        straw:agent ex:RequestingAgent1, ex:RequestingAgent2 ;
+      ]
+    ]
+  ] .
+</pre>
+
+      <p>
+        Or by deferring to a trusted authorization server as in this <span class="TODO">strawman-ACLs</span> document:
+      </p>
+      <pre id="example-authorization-graph" class="example example-authorization-graph">
+[]
+  a straw:AccessControlResource ;
+  straw:resource ex:myServedResource ;
+  straw:accessControl [
+    a straw:AccessControl ;
+    straw:apply [
+      a straw:Policy ;
+      straw:allow acl:Read ;
+      straw:anyOf [
+        a straw:Matcher ;
+        straw:authorizer ex:AutorServer3 ;
+      ]
+    ]
+  ] .
+</pre>
+
+    </section>
+
+    <section id="operations">
+      <h2>Operations</h2>
+
+      <section id="create-resource">
+        <h2>create resource</h2>
+        <p>
+          <a>Create resource</a>
+        </p>
+
+        <p>
+          In addition to the <a>core responses</a>, a create operation may produce any of:
+        </p>
+        <ul>
+          <li><dfn>created</dfn> - .</li>
+          <li class="TODO">more? worthy of a list?</li>
+        </ul>
+      </section>
+
+      <section id="read-resource">
+        <h2>read resource</h2>
+        <p>
+          The <a>read resource</a> operation requests a <a>resource representation</a>.
+          <span class="TODO">Draw from <a href="https://solidproject.org/ED/protocol#reading-resources">Solid Protocol - Reading Resources</a>.
+        </p>
+      </section>
+
+      <section id="update-resource">
+        <h2>update resource</h2>
+        <p>
+          The <a>update resource</a> modifies the contents of a <a>served resource</a>.
+          <span class="TODO">Draw from <a href="https://solidproject.org/ED/protocol#writing-resources">Solid Protocol - Reading Resources</a>.
+        </p>
+      </section>
+
+      <section id="delete-resource">
+        <h2>delete resource</h2>
+        <p>
+          <a>Delete resource</a>
+        </p>
+      </section>
     </section>
 
     <section id="rest-binding">
@@ -139,7 +273,24 @@
       <p>
         This <span class="TODO">strawman</span> mapping of the operations and responses defined above allows <a>LWS REST Servers</a> and <a>LWS REST Clients</a> to communicate over HTTP using REST conventions.
       </p>
-    </section>
 
+      <p>
+        The following table maps LWS <a>response</a> to an HTTP status code and payload:
+      </p>
+
+      <table>
+        <thead>
+          <tr><th>LWS response</th><th>HTTP status code</th><th>HTTP payload</th></tr>
+        </thead>
+        <tbody>
+          <tr><td><a>success</a></td><td>200</td><td><a>resource representation</a></tr>
+          <tr><td><a>not permitted</a></td><td>...</td></tr>
+          <tr><td><a>unknown requester</a></td><td>...</td></tr>
+          <tr><td><a>unknown error</a></td><td>...</td></tr>
+
+          <tr><td><a>created</a></td><td>201</td></tr>
+        </tbody>
+      </table>
+    </section>
   </body>
 </html>
