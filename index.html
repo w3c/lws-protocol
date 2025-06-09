@@ -19,6 +19,19 @@
         }, {
           name: "Erich Bremer"
         }],
+        formerEditors: [{
+          name: "Sarven Capadisli",
+        }, {
+          name: "Justin Bingham",
+        }, {
+          name: "Dmitri Zagidulin",
+        }, {
+          name: "Ruben Verborgh",
+        }, {
+          name: "Tim Berners-Lee",
+        }, {
+          name: "Kjetil Kjernsmo",
+        }],
         github: "w3c/lws-protocol",
         shortName: "@@",
         xref: ["web-platform"],
@@ -61,7 +74,7 @@
           <li><a href="https://solidproject.org/TR/protocol">CG report - 2024-05-12</a></li>
           <li><a href="https://solidproject.org/ED/protocol">Editor's draft - 2025-04-12</a></li>
           <li>CG-to-ED delta: <ul>
-              <li class="del"><del>- Previous editors: Justin-Bingham (ED), Dmitri-Zagidulin (ED)</del></li>
+              <li class="ins"><ins>+ Previous editors: Added formal past editors section recognizing Justin Bingham, Dmitri Zagidulin, Sarven Capadisli, Tim Berners-Lee and Ruben Verborgh</ins></li>
               <li class="ins"><ins>+ HTTP Server MUST generate a Last-Modified header field in response to GET and HEAD requests.</ins></li>
               <li><del>- The PATCH ?insertions formulae MUST NOT contain blank nodes.</del></li>
               <li><ins>+ IANA Reg Security Considerations: Servers are strongly encouraged to implement additional security measures…</ins></li>
@@ -289,6 +302,38 @@
       </p>
     </section>
 
+    <section id="rest-binding">
+      <h2>REST Binding</h2>
+      <p>
+        This <span class="TODO">strawman</span> mapping of the operations and responses defined above allows <a>LWS REST Servers</a> and <a>LWS REST Clients</a> to communicate over HTTP using REST conventions.
+      </p>
+
+      <p>
+        The following table maps LWS <a>response</a> to an HTTP status code and payload:
+      </p>
+
+      <table>
+        <thead>
+          <tr><th>LWS response</th><th>HTTP status code</th><th>HTTP payload</th></tr>
+        </thead>
+        <tbody>
+          <tr><td><a>success</a></td><td>200</td><td><a>resource representation</a></tr>
+          <tr><td><a>not permitted</a></td><td>...</td></tr>
+          <tr><td><a>unknown requester</a></td><td>...</td></tr>
+          <tr><td><a>unknown error</a></td><td>...</td></tr>
+
+          <tr><td><a>created</a></td><td>201</td></tr>
+        </tbody>
+      </table>
+    </section>
+
+    <section id="resource-identification">
+      <h2>Resource Identification</h2>
+      <p>
+        <span class="TODO">Define how resources are identified and addressed within the LWS Protocol, including URI schemes, resource naming conventions, and resolution mechanisms. This section may be moved within another section; e.g. Resource Access</span>
+      </p>
+    </section>
+
     <section id="unstable-features" data-feature-status="unstable">
       <h2>Unstable Features</h2>
       <div class="advisement">
@@ -323,13 +368,6 @@
       </section>
     </section>
 
-    <section id="resource-identification">
-      <h2>Resource Identification</h2>
-      <p>
-        <span class="TODO">Define how resources are identified and addressed within the LWS Protocol, including URI schemes, resource naming conventions, and resolution mechanisms. This section may be moved within another section; e.g. Resource Access</span>
-      </p>
-    </section>
-
     <section id="portability-considerations">
       <h2>Portability Considerations</h2>
       <p>
@@ -349,31 +387,6 @@
       <p>
         <span class="TODO">Privacy implications of the LWS Protocol, including data minimization, user consent, and privacy-preserving implementation patterns.</span>
       </p>
-    </section>
-
-    <section id="rest-binding">
-      <h2>REST Binding</h2>
-      <p>
-        This <span class="TODO">strawman</span> mapping of the operations and responses defined above allows <a>LWS REST Servers</a> and <a>LWS REST Clients</a> to communicate over HTTP using REST conventions.
-      </p>
-
-      <p>
-        The following table maps LWS <a>response</a> to an HTTP status code and payload:
-      </p>
-
-      <table>
-        <thead>
-          <tr><th>LWS response</th><th>HTTP status code</th><th>HTTP payload</th></tr>
-        </thead>
-        <tbody>
-          <tr><td><a>success</a></td><td>200</td><td><a>resource representation</a></tr>
-          <tr><td><a>not permitted</a></td><td>...</td></tr>
-          <tr><td><a>unknown requester</a></td><td>...</td></tr>
-          <tr><td><a>unknown error</a></td><td>...</td></tr>
-
-          <tr><td><a>created</a></td><td>201</td></tr>
-        </tbody>
-      </table>
     </section>
   </body>
 </html>
