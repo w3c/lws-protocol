@@ -39,6 +39,9 @@
       <p>
         This is an unofficial proposal.
       </p>
+      <p class="note">
+        To get a template together we are committing to main until Monday 9th; after which date we will move to using PRs.
+      </p>
     </section>
 
     <section id="editors-notes" class="informative notoc">
@@ -226,6 +229,13 @@
 
     </section>
 
+    <section id="discovery">
+      <h2>Discovery</h2>
+      <p>
+        <span class="TODO">Define how requesting agents discover served resources and their capabilities.</span>
+      </p>
+    </section>
+
     <section id="operations">
       <h2>Operations</h2>
 
@@ -264,6 +274,40 @@
         <h2>delete resource</h2>
         <p>
           <a>Delete resource</a>
+        </p>
+      </section>
+    </section>
+
+    <section id="unstable-features" data-feature-status="unstable">
+      <h2>Unstable Features</h2>
+      <div class="advisement">
+        <p>
+          The features described in this section are being drafted to ground discussions and may be removed if there is:
+        </p>
+        <ul>
+          <li>Lack of consensus to include them, or</li>
+          <li>Lack of implementation of those features</li>
+        </ul>
+      </div>
+
+      <section id="profile-negotiation">
+        <h3>Profile Negotiation on Resources</h3>
+        <p>
+          <span class="TODO">Define mechanisms for content negotiation based on profiles, allowing clients to request specific representations or views of resources (e.g., JSON-LD contexts, different RDF serializations, or application-specific profiles).</span>
+        </p>
+      </section>
+
+      <section id="notifications">
+        <h3>Notifications</h3>
+        <p>
+          <span class="TODO">Define notification mechanisms that allow clients to be informed of changes to resources, including subscription models, event formats, and delivery mechanisms.</span>
+        </p>
+      </section>
+
+      <section id="inbox-semantics">
+        <h3>Inbox</h3>
+        <p>
+          <span class="TODO">Define inbox resources with specific semantics within LWS, including message posting, retrieval, and management capabilities for asynchronous communication patterns.</span>
         </p>
       </section>
     </section>
