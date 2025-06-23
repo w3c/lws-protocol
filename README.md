@@ -12,4 +12,6 @@ The following etiquette is followed for managing PRs submitted to this repositor
 | 1     | 1                   | 0 buisness days      | No                              |
 | 2     | 2                   | 3 buisness days      | No                              |
 | 3     | 2                   | 5 buisness days      | Yes - formal vote not required  |
-| 4     | 2                   | 5 buisness days      | Yes - formal vote required     |   
+| 4     | 2                   | 5 buisness days      | Yes - formal vote required*     |   
+
+* Vote will be a resolution of the group made during the meeting. The vote will be announced in the agenda.
