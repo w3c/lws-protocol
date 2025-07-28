@@ -4,7 +4,7 @@
 
 #### Member list
 
-* [WAC `acl:agentGroup`](https://solidproject.org/TR/wac#acl-agentgroup) relies on `vcard:Group` to list all members. It has limited applicability to situations where those listings are publicly readable.
+* [WAC `acl:agentGroup`](https://solidproject.org/TR/wac#acl-agentgroup) relies on `vcard:hasMember` to list all members. It has limited applicability to situations where those listings are publicly readable.
   * [Members of private group can't access it CSS#1442](https://github.com/CommunitySolidServer/CommunitySolidServer/issues/1442)
 * ACP could have reusable matchers that act as group listings (local to the ACP server).
 * SAI has a proposal for roles/teams, in which group listings are also local to the security domain. 
