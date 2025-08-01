@@ -2,6 +2,15 @@
 
 This is the repository for lws-protocol. You're welcome to contribute! Let's make the Web rock our socks
 off!
+To see the most recent HTML rendered version of the specification from this repository can be found at the following:
+ * [LWS Protocol](https://w3c.github.io/lws-protocol/spec/)
+
+
+## (1.0) Specs:
+
+- [core](lws10-core/)
+- [authn-openid](lws10-authn-openid/)
+
 
 ## Contribution Guidelines:
 
