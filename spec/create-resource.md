@@ -6,7 +6,7 @@ The *create resource* operation requests the creation of a new resource on the s
 
 * **Resource content:** The content to store in the resource (binary or text). This is optional to allow creation of an empty container or an empty resource.
 
-* **Suggested name:** An optional hint for naming (if the server will assign the identifier). For example, the client may propose a filename or resource name, which the server may use or adjust.
+* **Suggested name:** An optional hint for naming (when the server will assign the identifier). For example, the client may propose a filename or resource name, which the server may use or adjust.
 
 * **Media type:** The MIME media type or format of the content (e.g., `text/plain`, `application/json`). This helps the server understand how to store and serve the content. It may be mandatory for some protocols when content is provided (and may be omitted if creating an empty container with no content).
 
