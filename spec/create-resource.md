@@ -4,7 +4,7 @@ The *create resource* operation requests the creation of a new resource on the s
 
 * **Target location:** Either a *target container identifier* (when the client wants the server to assign a name within that container) **or** a *full target resource identifier* (when the client specifies the exact desired identifier for the new resource).
 
-* **Resource content:** The content to store in the resource (binary or text). This is optional if creating an empty container or an empty resource.
+* **Resource content:** The content to store in the resource (binary or text). This is optional to allow creation of an empty container or an empty resource.
 
 * **Suggested name:** An optional hint for naming (if the server will assign the identifier). For example, the client may propose a filename or resource name, which the server may use or adjust.
 
