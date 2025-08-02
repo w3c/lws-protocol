@@ -1,5 +1,5 @@
 **Summary of HTTP status mappings:**  
-The table below summarizes how the generic LWS [responses](https://w3c.github.io/lws-protocol/spec/#dfn-responses) ( from Section 7 ) map to HTTP status codes and typical payloads in this REST binding. This is for reference and to ensure consistency:
+This table maps generic LWS [responses](https://w3c.github.io/lws-protocol/spec/#dfn-responses) ( from Section 7 ) to HTTP status codes and payloads for consistency:
 
 | LWS response | HTTP status code | HTTP payload |
 | ----- | ----- | ----- |

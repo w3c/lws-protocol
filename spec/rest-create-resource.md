@@ -3,7 +3,7 @@
 New resources can be created on the storage server using either a POST (for letting the server assign a URI within a container) or PUT (for creating an agent-specified URI).
 
 **POST (to a container URI)** – *Create with server-assigned name:*  
-Use POST when the client wants to add a new resource inside an existing container and is willing to let the server decide or modify the final resource name (the client may provide a suggestion). The client sends an HTTP POST request to the URI of the container in which the resource should be created. The request must include a `Content-Type` header appropriate to the data being uploaded (unless the resource has no content, e.g., creating an empty container). The body of the request is the content of the new resource (binary or text data). If the client wants to suggest a name for the new resource (as a hint to the server), it can include the `Slug` header with the suggested name. The server is not required to use this name, but it often will if it does not conflict or violate any naming rules.
+Use POST to add a new resource inside an existing container, letting the server assign or modify the final name (optionally suggested via the Slug header). Send the request to the container's URI with a Content-Type header matching the uploaded data (omit for empty resources like containers) and the new content in the body. The server may honor the Slug if it doesn't conflict with naming rules.
 
 **Example (POST to create a new resource):**
 
@@ -20,12 +20,12 @@ In this example, the client is posting to the container `/alice/notes/`. It prov
 HTTP/1.1 201 CreatedLocation: /alice/notes/shoppinglist.txtContent-Type: text/plain; charset=UTF-8ETag: "def789012"Content-Length: 0
 ```
 
-On success, the server returns `201 Created`. The `Location` header provides the URI of the newly created resource. In this case, the server honored the suggested name. The response body may be empty (as shown) or could include a minimal representation of the created resource (for example, some servers might return a short confirmation in JSON or other format). The server also includes any relevant headers, such as an `ETag` for the new resource’s content (here `"def789012"`). The `Content-Type` in the response indicates the media type of the resource that was created (in this case text/plain, matching what was sent). A `Content-Length: 0` indicates no body is returned.
+On success, return 201 Created with the new URI in the Location header. The body may be empty or a minimal representation (e.g., JSON confirmation). Include relevant headers like ETag (e.g., "def789012") and Content-Type matching the created resource; Content-Length: 0 indicates no body.
 
 If the target container `/alice/notes/` does not exist, the server MUST return an error (HTTP 404 Not Found) because the location to create the resource is invalid. If the client is not authorized to write to that container, the server returns 403 Forbidden. If the request violated any server constraints (like size or type restrictions), the server would return 400 Bad Request (often with a description of the issue in the body).
 
 **PUT (to a specific resource URI)** – *Create or replace at client-specified URI:*  
- Use PUT when the client wants to create a resource at a known URI, or replace an existing resource entirely at that URI. The client chooses the exact target URI and sends the request to that address. According to HTTP semantics \[[RFC 7231](https://datatracker.ietf.org/doc/html/rfc7231)\], PUT is defined to be **idempotent** – meaning if you repeat the same PUT request (with the same content to the same URI), the result should be the same and should not create duplicates. PUT thus can serve for both creating a new resource (if none existed at that URI) and updating/replacing an existing resource (if one already exists at that URI), in an idempotent way.
+Use PUT to create at a client-specified URI or replace an existing resource there (idempotent per \[RFC 7231\](https://datatracker.ietf.org/doc/html/rfc7231), so repeats yield the same result without duplicates).
 
 **Example (PUT to create or replace a resource):**
 
@@ -46,7 +46,7 @@ This is a possible response indicating that the resource was created (since it d
 
 **Additional notes on Create (HTTP binding):**
 
-* When using POST, the operation is **not idempotent**. If a client repeats the same POST (without some unique identifier to avoid duplication), it may end up creating multiple distinct resources (for example, two shopping lists). Clients should avoid unintentionally retrying POST requests, or use safeguards like unique content or an explicit check, to prevent duplicate creations.
+* POST is not idempotent. Repeating it may create duplicates; avoid unintentional retries or use unique identifiers/checks to prevent this.
 
 * When using PUT, the operation is **idempotent**. Repeating a PUT with the same content to the same URI should result in the same state as a single execution. This makes PUT suitable for scenarios where clients might retry due to uncertainty of the outcome (e.g., network failures), as it won’t multiply resources.
 
