@@ -27,7 +27,19 @@ eggs
 The server returned the text content (34 bytes in total, as indicated by `Content-Length`). The content is exactly the stored data in the file. The `ETag: "abc123456"` is a version identifier for caching or concurrency purposes. If no `Accept` header were given, the server would have returned the content in its default format (which in this case is also text/plain). If the client had asked for, say, `Accept: application/json`, the server likely would have returned `406 Not Acceptable` unless it had a way to convert this text to JSON. Range requests: The server supports HTTP byte ranges \[[RFC 7233](https://datatracker.ietf.org/doc/html/rfc7233)\], so if the client included a `Range` header (e.g., `Range: bytes=0-99` to get the first 100 bytes), the server would return a `206 Partial Content` with just that portion of the data and appropriate `Content-Range` headers. This is useful for large resources or resuming interrupted transfers.
 
 **GET (container resource)** – *List a container’s contents:*  
-When the target URI corresponds to a container (for example, a URI ending in `/` or one known to be a collection), a GET request will return a listing of the container’s members rather than a file’s raw content. By default, in the absence of a specific format requested, the server **SHOULD** return an HTML page that lists the names (with links) of the resources in the container (this is similar to how a web server might show a directory index). This allows a human to view the contents in a browser easily. For programmatic access, the client can send an `Accept` header for a machine-readable format. For instance, `Accept: application/ld+json` might yield a JSON-LD or JSON listing, `Accept: application/json` could yield a simple JSON array of items, or `Accept: text/turtle` could return an RDF Turtle representation of the container and its members (if the server supports Linked Data semantics). The specification doesn’t mandate a specific default format for container listings, but HTML is a common default for user agents, and a JSON or RDF-based format should be available for clients that need structured data. If the server cannot provide the listing in a requested format, it will return `406 Not Acceptable`.
+When the target URI corresponds to a container (for example, a URI ending in `/` or one known to be a collection), a GET request will return a listing of the container’s members rather than a file’s raw content. By default, in the absence of a specific format requested, the server **SHOULD** return an HTML page that lists the names (with links) of the resources in the container (this is similar to how a web server might show a directory index). This allows a human to view the contents in a browser easily. For programmatic access, the client can send an `Accept` header for a machine-readable format. For instance, `Accept: application/ld+json` might yield a JSON-LD or JSON listing, `Accept: application/json` could yield a simple JSON array of items, or `Accept: text/turtle` could return an RDF Turtle representation of the container and its members (if the server supports Linked Data semantics). The specification doesn’t mandate a specific default format for container listings, but HTML is a common default for user agents, and a JSON and RDF-based format should be available for clients that need structured data - including `application/json+ld` with a `https://www.w3.org/ns/lws` profile. If the server cannot provide the listing in a requested format, it will return `406 Not Acceptable`.
+
+
+```bash
+HTTP/1.1 200 OK Content-Type: application/json+ld; profile: https://www.w3.org/ns/lws
+
+{
+   "@context": "https://www.w3.org/ns/lws",
+   "contains": [
+      "1.txt",
+      "2.txt' 
+   ]
+}
 
 For example, suppose `/alice/notes/` is a container. A `GET /alice/notes/` might return an HTML page with a list of links to each item (`shoppinglist.txt`, etc.). If the client specifically requests JSON, the response might look like an array or object enumerating the children.
 
