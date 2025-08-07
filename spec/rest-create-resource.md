@@ -28,7 +28,8 @@ In this example, the client is posting to the container `/alice/notes/`. It prov
 **Example (Response to POST):**
 
 ```
-HTTP/1.1 201 CreatedLocation: /alice/notes/shoppinglist.txt
+HTTP/1.1 201 Created
+Location: /alice/notes/shoppinglist.txt
 Content-Type: text/plain; charset=UTF-8
 ETag: "def789012"
 Content-Length: 0
