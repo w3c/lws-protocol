@@ -6,6 +6,8 @@ The [delete resource](https://w3c.github.io/lws-protocol/spec/#dfn-deletion) ope
 
 * **Optional recursive flag:** Applicable if the target is a container. By default, containers must be empty (no members) to be deleted. If the client explicitly indicates a *recursive delete* (where supported), it signals that the server should delete the container and all of its contents including any sub-containers (akin to `rm -r` on Unix-like OS). This flag must be used with care to avoid accidental mass deletion.
 
+## Results
+
 * If the target is a **non-container resource** (a single item), the server will remove that resource from storage. This includes deleting its content and any associated metadata or auxiliary resources. For example, if there are separate metadata files (like access control lists or index entries related to that resource), those should also be cleaned up as appropriate. After a successful deletion, any subsequent read or update of that resource by clients should be treated as if the resource has never existed (since it no longer does).
 
 * If the target is a **container resource** (collection), the server will by default only delete it if it has no members (no child resources). This is to prevent accidental deletion of large sets of data. If the container is not empty (the client attempted to delete a non-empty container without explicitly saying it’s okay to also delete everything inside), the server will typically refuse the operation, signaling a conflict. The client then has the responsibility to either start by deleting the members or use an explicit recursive delete (similar to `rm -r`), if the protocol allows.
