@@ -1,12 +1,12 @@
-
-**9.4 Delete Resource (HTTP DELETE)**
+### Delete Resource ( HTTP DELETE )
 
 [**DELETE (resource)**](https://w3c.github.io/lws-protocol/spec/#dfn-deletion) \- Removing a resource or container is accomplished with the HTTP **DELETE** method. The client sends a DELETE request to the URI of the resource or container it wants removed. The behavior differs slightly for deleting a single resource vs a container.
 
 **DELETE (non-container resource)** – If the requested URI points to a regular resource (not a container), the server will delete that resource. On success, the server responds with `204 No Content` (the standard success code for **DELETE** indicating the resource is gone and there’s no further data to return). After this, any **GET** or **HEAD** to that URI should return 404 (absent) unless a new resource is later created at the same URI. The server should also delete any auxiliary files or metadata associated with that resource. For example, some servers store access control rules or metadata in sidecar files (like `resource.acl`); those should be cleaned up. If the resource did not exist to begin with, the server returns `404 Not Found` for the **DELETE** (because you’re asking to delete something that isn’t there). If the client is not authorized to delete the resource, the server returns `403 Forbidden` (if the client’s identity is known but they lack permission) or possibly `401 Unauthorized` (if no valid auth was provided, prompting for credentials). In some cases, as discussed, a server might also return 404 for unauthorized requests to avoid hinting that the resource exists.
 
 ```
-DELETE /alice/notes/shoppinglist.txt HTTP/1.1Authorization: Bearer <token>
+DELETE /alice/notes/shoppinglist.txt HTTP/1.1
+Authorization: Bearer <token>
 ```
 
 Assume /alice/notes/ contains resources (like shoppinglist.txt and others). The server will refuse to delete since it’s not empty:

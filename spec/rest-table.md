@@ -1,4 +1,4 @@
-**Summary of HTTP status mappings:**  
+### Summary of HTTP status mappings
 This table maps generic LWS [responses](https://w3c.github.io/lws-protocol/spec/#dfn-responses) ( from Section 7 ) to HTTP status codes and payloads for consistency:
 
 | LWS response | HTTP status code | HTTP payload |
