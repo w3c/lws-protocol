@@ -1,4 +1,4 @@
-The *create resource* operation requests the creation of a new resource on the server.   The resource can be a non-container (data) resource or a container (collection) resource.  The operation can either let the server assign a new identifier within a target container (like creating a new file in a folder), or use a client-specified identifier (creating or overwrite at a specific path).
+The *create resource* operation requests the creation of a new resource on the server.   The resource can be a non-container (data) resource or a container (collection) resource.  The operation can either let the server assign a new identifier within a target container (like creating a new file in a folder), or use a client-specified identifier (creating or overwriting at a specific path).
 
 **Inputs:**
 
