@@ -10,7 +10,14 @@ The [update resource](https://w3c.github.io/lws-protocol/spec/#dfn-update-resour
 PUT /alice/personalinfo.json HTTP/1.1
 Authorization: Bearer <token>
 Content-Type: application/json
-If-Match: "abc123456"{ "name": "Alice", "age": 30, "city": "New London", "state": "Connecticut" }
+If-Match: "abc123456"
+
+{
+	"name": "Alice",
+	"age": 30,
+	"city": "New London",
+	"state": "Connecticut"
+}
 ```
 
 In this example, the client is updating an existing JSON resource at /alice/personalinfo.json. It includes an If-Match header with the ETag "abc123456" that it presumably got from an earlier GET or HEAD on this resource. The server will compare that to the current ETag; if they match, it proceeds to replace the content with the JSON provided. If they don’t match, the server rejects the update (because the resource was changed by someone else in the meantime).
