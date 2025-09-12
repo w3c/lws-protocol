@@ -1,6 +1,8 @@
 ### Create Resource ( HTTP POST / PUT )
 
-New resources can be created on the storage server using either a POST (for letting the server assign a URI within a container) or PUT (for creating an agent-specified URI).
+New resources are created using either POST (for server-assigned names) or PUT (for client-specified URIs).  Clients MAY provide initial metadata for the new resource by including one or more Link headers in the POST or PUT request, following the syntax of [RFC 8288].
+
+On success, return 201 Created with the new URI in the Location header. The server SHOULD also include Link headers for server-managed metadata, such as a link to the parent container (rel="up") and a link to its dedicated linkset resource (rel="linkset"). The body MAY be empty.
 
 **POST (to a container URI)** – *Create with server-assigned name:*  
 Use POST to add a new resource inside an existing container, letting the server assign or modify the final name (optionally suggested via the Slug header). Send the request to the container's URI with a Content-Type header matching the uploaded data (omit for empty resources like containers) and the new content in the body. The server may honor the Slug if it doesn't conflict with naming rules.
@@ -28,10 +30,12 @@ In this example, the client is posting to the container `/alice/notes/`. It prov
 **Example (Response to POST):**
 
 ```
-HTTP/1.1 201 Created
-Location: /alice/notes/shoppinglist.txt
+HTTP/1.1 201 Created
+Location: /alice/notes/shoppinglist.txt
 Content-Type: text/plain; charset=UTF-8
-ETag: "def789012"
+ETag: "def789012"
+Link: <.meta>; rel="linkset"; type="application/linkset+json"
+Link: </alice/notes/>; rel="up"
 Content-Length: 0
 ```
 
@@ -72,6 +76,74 @@ Content-Type: text/plain; charset=UTF-8
 ```
 
 This is a possible response indicating that the resource was created (since it did not exist before). The `201 Created` status and `Location` confirm that the URI is now valid. If the resource already existed and was simply replaced, the server might instead return `200 OK` or `204 No Content` to indicate a successful update, rather than 201\. In either case, the server should include an updated `ETag` (or other version indicator) because the content at that URI has changed. As with POST, if any constraints are violated or the content type is unacceptable, a `400 Bad Request` is appropriate. If the client doesn’t have write access, `403 Forbidden` is returned. And if the parent container path (`/alice/notes/`) doesn’t exist (and the server doesn’t allow implicit creation of intermediate containers with PUT), the server would likely return `404 Not Found`.
+
+##Retrieving Metadata
+
+Metadata associated with a resource is returned in Link headers in the response to a GET or HEAD request. As described in Section [Resource Metadata], clients can use the Prefer header not only to request the inclusion of metadata but also to specify which link attributes (fields) they wish to receive.
+
+Example (GET a resource with specific metadata fields):
+The client requests only the relation type (rel) and media type (type) for each associated link.
+
+```
+GET /alice/notes/shoppinglist.txt HTTP/1.1
+Host: example.com
+Authorization: Bearer <token>
+Prefer: include="http://www.w3.org/ns/lws#metadata"; fields="rel,type"
+```
+
+Example (Response with reduced Link headers):
+The Link header's target URI is always present. The fields parameter controls which of the other key=value attributes are included.
+```
+HTTP/1.1 200 OK
+ETag: "abc123456"
+Link: <.meta>; rel="linkset"; type="application/linkset+json"
+Link: <.acl>; rel="acl"
+Link: </alice/notes/>; rel="up"
+Preference-Applied: include="http://www.w3.org/ns/lws#metadata"; fields="rel,type"
+
+... (response body) ...
+```
+
+Example (GET a linkset resource with specific fields):
+If the client then requests the linkset resource itself, it can apply the same preference to shape the JSON response.
+
+```
+GET /alice/notes/shoppinglist.txt.meta HTTP/1.1
+Host: example.com
+Authorization: Bearer <token>
+Accept: application/linkset+json
+Prefer: include="http://www.w3.org/ns/lws#metadata"; fields="href,rel,type"
+```
+
+Example (Response with reduced linkset representation):
+The server returns a JSON document where each link object in the linkset array contains only the requested keys.
+
+```
+HTTP/1.1 200 OK
+Content-Type: application/linkset+json
+ETag: "meta-etag-111"
+Preference-Applied: include="http://www.w3.org/ns/lws#metadata"; fields="href,rel,type"
+
+{
+  "linkset": [
+    {
+      "href": "/alice/notes/shoppinglist.txt.acl",
+      "rel": "acl"
+    },
+    {
+      "href": "/alice/notes/",
+      "rel": "up",
+      "type": "text/turtle"
+    },
+    {
+      "href": "/descriptions/groceries.txt",
+      "rel": "describedby",
+      "type": "text/plain"
+    }
+  ]
+}
+```
+In this response, the link for rel="acl" does not include a type attribute because it was not present on the server for that link, while the other links include type because it was requested and available. This allows clients to reduce bandwidth and processing load by fetching only the metadata attributes they require.
 
 **Additional notes on Create (HTTP binding):**
 

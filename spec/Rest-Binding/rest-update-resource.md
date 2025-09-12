@@ -2,6 +2,8 @@
 
 The [update resource](https://w3c.github.io/lws-protocol/spec/#dfn-update-resource) modifies the contents of an existing [served resource](https://w3c.github.io/lws-protocol/spec/#dfn-served-resource)  by a **PUT** request (to replace the entire resource) or a **PATCH** request (to apply a partial modification). The client must have write access to the resource’s URL to perform these operations.
 
+Note: This section describes updating a resource's primary content. To update its metadata, see Section 9.3.2.
+
 **PUT (replace full resource)** – Send PUT to the resource URI with new full content in the body and matching Content-Type (generally consistent with existing type). PUT is idempotent for existing resources. For safety, include If-Match with current ETag (per Section 7.3 concurrency); mismatch yields 412 Precondition Failed or 409 Conflict. Without checks, updates are unconditional but risk overwriting concurrent changes.
 
 **Example (PUT to update a resource):**
@@ -34,3 +36,11 @@ This tells the client the update went through and provides the new `ETag`. If th
 * **Error responses:** If the `If-Match` did not match (concurrent modification), the server could return `412 Precondition Failed` (meaning the precondition header failed) or `409 Conflict` – our earlier abstract description used Conflict for concurrency issues, and 409 is a natural mapping for that scenario. If the resource did not exist, a PUT meant as an update will result in `404 Not Found` (unless the intent was to create, but typically clients use PUT for create only when they are sure of what they’re doing, or they use it as upsert without If-Match). If the client is not authorized, `403 Forbidden` (or 401 Unauthorized if no valid credentials were provided). If the request payload is not valid (e.g., the JSON is malformed), `400 Bad Request`.
 
 **PATCH (partial update)** – The HTTP PATCH method [[RFC 5789](https://www.rfc-editor.org/rfc/rfc5789.html)] allows a client to specify partial modifications to a resource, rather than sending the whole new content. This is useful for large resources where sending the entire content would be inefficient if only a small part changed, or for concurrent editing where you want to apply specific changes. LWS server **MUST** minimally support a binary patch (like an offset and data replacement).
+
+##Update Resource Metadata (HTTP PUT / PATCH on Linkset)
+
+A resource's metadata is updated by modifying its corresponding linkset resource, discovered via the Link header with rel="linkset".
+
+Full Replacement (PUT): A PUT request to the linkset URI with a complete linkset document in the body replaces all metadata for the resource.
+
+Partial Update (PATCH): A PATCH request to the linkset URI (e.g., with application/merge-patch+json) adds, removes, or modifies specific links.
