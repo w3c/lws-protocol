@@ -25,8 +25,8 @@ milk
 cheese
 bread
 guacamole
-Pepsi
-Milka bars
+soda
+chocolate bars
 hash
 eggs
 ```
