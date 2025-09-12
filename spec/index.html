@@ -325,10 +325,11 @@
     </section>
 
     <section id="resource-identification">
-      <h2>Resource Identification</h2>
-      <p>
-        <span class="TODO">Define how resources are identified and addressed within the LWS Protocol, including URI schemes, resource naming conventions, and resolution mechanisms. This section may be moved within another section; e.g. Resource Access</span>
-      </p>
+		<h2>Resource Identification</h2>
+		<p>
+			<span class="TODO">Define how resources are identified and addressed within the LWS Protocol, including URI schemes, resource naming conventions, and resolution mechanisms. This section may be moved within another section; e.g. Resource Access</span>
+		</p>
+		<div data-include="Resource-Identification.md" data-include-format="markdown" data-include-replace="true"></div>
     </section>
 
     <section id="unstable-features" data-feature-status="unstable">
@@ -342,12 +343,15 @@
           <li>Lack of implementation of those features</li>
         </ul>
       </div>
+	  
+	  <div data-include="Unstable-Features.md" data-include-format="markdown" data-include-replace="true"></div>
 
       <section id="profile-negotiation">
         <h3>Profile Negotiation on Resources</h3>
         <p>
           <span class="TODO">Define mechanisms for content negotiation based on profiles, allowing clients to request specific representations or views of resources (e.g., JSON-LD contexts, different RDF serializations, or application-specific profiles).</span>
         </p>
+		<div data-include="Unstable-Features/Profile-Negotiation-on-Resources.md" data-include-format="markdown" data-include-replace="true"></div>
       </section>
 
       <section id="notifications">
@@ -355,6 +359,7 @@
         <p>
           <span class="TODO">Define notification mechanisms that allow clients to be informed of changes to resources, including subscription models, event formats, and delivery mechanisms.</span>
         </p>
+		<div data-include="Unstable-Features/Notifications.md" data-include-format="markdown" data-include-replace="true"></div>
       </section>
 
       <section id="inbox-semantics">
@@ -362,6 +367,7 @@
         <p>
           <span class="TODO">Define inbox resources with specific semantics within LWS, including message posting, retrieval, and management capabilities for asynchronous communication patterns.</span>
         </p>
+		<div data-include="Unstable-Features/Inbox.md" data-include-format="markdown" data-include-replace="true"></div>
       </section>
     </section>
 
@@ -370,6 +376,7 @@
       <p>
         <span class="TODO">Describe considerations for ensuring LWS implementations can work across different platforms, environments, and storage backends while maintaining interoperability - and provide affordances to enable change in storage providers</span>
       </p>
+	  <div data-include="Portability-Considerations.md" data-include-format="markdown" data-include-replace="true"></div>
     </section>
 
     <section id="security-considerations">
@@ -377,6 +384,7 @@
       <p>
         <span class="TODO">Formal security considerations section covering threat models, security requirements, and implementation guidance for secure LWS deployments.</span>
       </p>
+	  <div data-include="Security-Considerations.md" data-include-format="markdown" data-include-replace="true"></div>
     </section>
 
     <section id="privacy-considerations">
@@ -384,6 +392,7 @@
       <p>
         <span class="TODO">Privacy implications of the LWS Protocol, including data minimization, user consent, and privacy-preserving implementation patterns.</span>
       </p>
+	  <div data-include="Privacy-Considerations.md" data-include-format="markdown" data-include-replace="true"></div>
     </section>
   </body>
 </html>
