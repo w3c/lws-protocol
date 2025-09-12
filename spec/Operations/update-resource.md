@@ -1,4 +1,4 @@
-The [update resource](https://w3c.github.io/lws-protocol/spec/#dfn-update-resource) operation modifies the contents or state of an existing [served resource](https://w3c.github.io/lws-protocol/spec/#dfn-served-resource).  This is typically used to replace the content of a file, patch a document, or update metadata associated with a resource. The update can be done in two ways: by providing a full new content (replace the entire resource) or by providing a partial change (apply a patch to the current content).
+The [*update resource*](https://w3c.github.io/lws-protocol/spec/#dfn-update-resource) operation modifies the contents or state of an existing [served resource](https://w3c.github.io/lws-protocol/spec/#dfn-served-resource).  This is typically used to replace the content of a file, patch a document, or update metadata associated with a resource. The update can be done in two ways: by providing a full new content (replace the entire resource) or by providing a partial change (apply a patch to the current content).
 
 **Inputs**:
 

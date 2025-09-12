@@ -4,7 +4,7 @@ The [update resource](https://w3c.github.io/lws-protocol/spec/#dfn-update-resour
 
 Note: This section describes updating a resource's primary content. To update its metadata, see Section 9.3.2.
 
-**PUT (replace full resource)** – Send PUT to the resource URI with new full content in the body and matching Content-Type (generally consistent with existing type). PUT is idempotent for existing resources. For safety, include If-Match with current ETag (per Section 7.3 concurrency); mismatch yields 412 Precondition Failed or 409 Conflict. Without checks, updates are unconditional but risk overwriting concurrent changes.
+**PUT (replace full resource)** – Send PUT to the resource URI with new full content in the body and matching Content-Type (generally consistent with existing type). PUT is idempotent for existing resources. For safety, include If-Match with current ETag (per Section 7.3 concurrency); mismatch yields 412 Precondition Failed or 409 Conflict. Without checks, updates are unconditional but risk overwriting concurrent changes.  If a server supports `Etags` for a resource, it SHOULD reject unconditional PUT requests that lack an If-Match header with a 428 Precondition Required response.
 
 **Example (PUT to update a resource):**
 
@@ -24,7 +24,7 @@ Content-Type: application/json
 
 In this example, the client is updating an existing JSON resource at /alice/personalinfo.json. It includes an If-Match header with the ETag "abc123456" that it presumably got from an earlier GET or HEAD on this resource. The server will compare that to the current ETag; if they match, it proceeds to replace the content with the JSON provided. If they don’t match, the server rejects the update (because the resource was changed by someone else in the meantime).
 
-Successful response: If the update succeeds, the server can respond with 200 OK and possibly include the updated representation or some confirmation (like the new content or a part of it). Alternatively, the server may respond with 204 No Content to indicate success with no body (especially common if no further info needs to be conveyed). In either case, the server will likely include a new ETag (e.g., "def789012") to signify the new version, and maybe a Content-Type if a body is returned. For example:
+Successful response: If the update succeeds, the server can respond with 200 OK and possibly include the updated representation or some confirmation (like the new content or a part of it). Alternatively, the server may respond with 204 No Content to indicate success with no body (especially common if no further info needs to be conveyed). In either case, the server SHOULD include a new ETag (e.g., "def789012") to signify the new version, and maybe a Content-Type if a body is returned. For example:
 
 ```
 HTTP/1.1 204 No Content  
@@ -37,10 +37,74 @@ This tells the client the update went through and provides the new `ETag`. If th
 
 **PATCH (partial update)** – The HTTP PATCH method [[RFC 5789](https://www.rfc-editor.org/rfc/rfc5789.html)] allows a client to specify partial modifications to a resource, rather than sending the whole new content. This is useful for large resources where sending the entire content would be inefficient if only a small part changed, or for concurrent editing where you want to apply specific changes. LWS server **MUST** minimally support a binary patch (like an offset and data replacement).
 
-##Update Resource Metadata (HTTP PUT / PATCH on Linkset)
+**Update Resource Metadata (HTTP PUT / PATCH on Linkset)**
 
 A resource's metadata is updated by modifying its corresponding linkset resource, discovered via the Link header with rel="linkset".
 
 Full Replacement (PUT): A PUT request to the linkset URI with a complete linkset document in the body replaces all metadata for the resource.
 
 Partial Update (PATCH): A PATCH request to the linkset URI (e.g., with application/merge-patch+json) adds, removes, or modifies specific links.
+
+**Concurrency Control for Metadata**
+
+Because a resource's metadata can be modified by multiple actors, preventing concurrent overwrites is critical. To ensure data integrity, LWS servers and clients MUST implement optimistic concurrency control using conditional requests [[RFC 7232](https://datatracker.ietf.org/doc/html/rfc7232)] for all PUT and PATCH operations on a linkset resource.
+
+Server Responsibilities:
+
+A server MUST include an Etag header in its responses to GET and HEAD requests for a linkset resource.
+
+Upon a successful PUT or PATCH on the linkset, the server MUST generate a new, unique Etag value for the modified linkset and return it in the Etag header of the response.
+
+Client Responsibilities:
+
+When modifying a linkset resource, a client MUST include an If-Match header containing the most recent Etag it received for that resource.
+
+Processing Rules:
+
+If the If-Match header value does not match the linkset's current Etag, the server MUST reject the request with a 412 Precondition Failed status code.
+
+If the If-Match header is missing from a PUT or PATCH request to a linkset URI, the server MUST reject the request with a 428 Precondition Required status code (RFC 6585).
+
+Example (PUT to replace a linkset):
+
+A client first fetches the linkset and receives its ETag.
+```
+GET /alice/personalinfo.json;rel=linkset HTTP/1.1
+Authorization: Bearer <token>
+Accept: application/linkset+json
+
+HTTP/1.1 200 OK
+Content-Type: application/linkset+json
+ETag: "meta-v1"
+
+{
+  "linkset": [
+    {
+      "anchor": "/alice/personalinfo.json",
+      "describedby": [ { "href": "/schemas/personal-info.json" } ]
+    }
+  ]
+}
+```
+The client now wants to add a license. It constructs a new, complete linkset document and sends a PUT request with the If-Match header.
+```
+PUT /alice/personalinfo.json;rel=linkset HTTP/1.1
+Authorization: Bearer <token>
+Content-Type: application/linkset+json
+If-Match: "meta-v1"
+
+{
+  "linkset": [
+    {
+      "anchor": "/alice/personalinfo.json",
+      "describedby": [ { "href": "/schemas/personal-info.json" } ],
+      "license": [ { "href": "https://creativecommons.org/licenses/by/4.0/" } ]
+    }
+  ]
+}
+```
+If successful, the server responds with success and the new ETag.
+```
+HTTP/1.1 204 No Content
+ETag: "meta-v2"
+```

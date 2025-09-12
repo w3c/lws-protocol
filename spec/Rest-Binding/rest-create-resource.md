@@ -77,7 +77,7 @@ Content-Type: text/plain; charset=UTF-8
 
 This is a possible response indicating that the resource was created (since it did not exist before). The `201 Created` status and `Location` confirm that the URI is now valid. If the resource already existed and was simply replaced, the server might instead return `200 OK` or `204 No Content` to indicate a successful update, rather than 201\. In either case, the server should include an updated `ETag` (or other version indicator) because the content at that URI has changed. As with POST, if any constraints are violated or the content type is unacceptable, a `400 Bad Request` is appropriate. If the client doesn’t have write access, `403 Forbidden` is returned. And if the parent container path (`/alice/notes/`) doesn’t exist (and the server doesn’t allow implicit creation of intermediate containers with PUT), the server would likely return `404 Not Found`.
 
-##Retrieving Metadata
+**Retrieving Metadata**
 
 Metadata associated with a resource is returned in Link headers in the response to a GET or HEAD request. As described in Section [Resource Metadata], clients can use the Prefer header not only to request the inclusion of metadata but also to specify which link attributes (fields) they wish to receive.
 
