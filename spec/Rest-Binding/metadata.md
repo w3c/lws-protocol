@@ -57,8 +57,8 @@ Core Metadata
 | up | [Link Relations](https://www.iana.org/assignments/link-relations/link-relations.xhtml) |
 | item | [Link Relations](https://www.iana.org/assignments/link-relations/link-relations.xhtml) |
 | type | [Link Relations](https://www.iana.org/assignments/link-relations/link-relations.xhtml) |
-| http://purl.org/dc/elements/1.1/title | [DCELEMENTS](http://purl.org/dc/elements/1.1/) |
-| http://purl.org/dc/elements/1.1/creator | [DCELEMENTS](http://purl.org/dc/elements/1.1/) |
+| http://purl.org/dc/elements/1.1/title | [dcelements](http://purl.org/dc/elements/1.1/) |
+| http://purl.org/dc/elements/1.1/creator | [dcelements](http://purl.org/dc/elements/1.1/) |
 
 **Modifiability Considerations**
 
