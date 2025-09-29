@@ -37,10 +37,10 @@ System-Managed - System-managed metadata is maintained by a LWS server and is re
 |------------|------------|
 | acl |   [Link Relations](https://www.iana.org/assignments/link-relations/link-relations.xhtml) |
 | linkset | [Link Relations](https://www.iana.org/assignments/link-relations/link-relations.xhtml) |
-| http://www.w3.org/ns/posix/stat/size | (stat)[http://www.w3.org/ns/posix/stat] |
-| http://www.w3.org/ns/posix/stat/mtime | (stat)[http://www.w3.org/ns/posix/stat] |
-| http://purl.org/dc/terms/modified | (dcterms)[http://purl.org/dc/terms/] |
-| http://purl.org/dc/terms/publisher | (dcterms)[http://purl.org/dc/terms/] |
+| http://www.w3.org/ns/posix/stat/size | [stat](http://www.w3.org/ns/posix/stat) |
+| http://www.w3.org/ns/posix/stat/mtime | [stat](http://www.w3.org/ns/posix/stat) |
+| http://purl.org/dc/terms/modified | [dcterms](http://purl.org/dc/terms/) |
+| http://purl.org/dc/terms/publisher | [dcterms](http://purl.org/dc/terms/) |
 
 Core Metadata
 
@@ -49,8 +49,8 @@ Core Metadata
 | up | [Link Relations](https://www.iana.org/assignments/link-relations/link-relations.xhtml) |
 | item | [Link Relations](https://www.iana.org/assignments/link-relations/link-relations.xhtml) |
 | type | [Link Relations](https://www.iana.org/assignments/link-relations/link-relations.xhtml) |
-| http://purl.org/dc/elements/1.1/title |   [DCELEMENTS](http://purl.org/dc/elements/1.1/) |
-| http://purl.org/dc/elements/1.1/creator |   [DCELEMENTS](http://purl.org/dc/elements/1.1/) |
+| http://purl.org/dc/elements/1.1/title | [DCELEMENTS](http://purl.org/dc/elements/1.1/) |
+| http://purl.org/dc/elements/1.1/creator | [DCELEMENTS](http://purl.org/dc/elements/1.1/) |
 
 User Defined
 
