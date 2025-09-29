@@ -23,7 +23,7 @@ Clients discover a resource's metadata primarily through Link headers returned i
 
 To manage response verbosity, servers SHOULD support the Prefer header [RFC 7240](https://www.rfc-editor.org/rfc/rfc7240.html). A client can request the inclusion of descriptive metadata links by sending a Prefer header with the include preference. For LWS, the following preference token is defined: https://www.w3.org/ns/lws#linkfilter.
 
-To provide finer-grained control over the response payload, the include preference MAY be parameterized with a fields parameter. The value of this parameter is a comma-separated, case-insensitive string of the link attribute names that the client wishes to receive (e.g., href, rel, type).
+To provide finer-grained control over the response payload, the include preference MAY be parameterized with a fields parameter. The value of this parameter is a comma-separated, case-insensitive string of the link attribute names that the client wishes to receive (e.g., title, rel, type).
 
 A client MAY supply multiple include preferences in a single Prefer header by separating them with a comma. This allows for the retrieval of metadata from multiple vocabularies in a single request. Each include preference is processed independently by the server. Any parameters, such as fields, are scoped locally to the specific include preference they are attached to.
 

@@ -11,17 +11,17 @@ Use POST to add a new resource inside an existing container, letting the server 
 
 ```
 POST /alice/notes/ HTTP/1.1
-Host: example.com
-Authorization: Bearer <token>
-Content-Type: text/plain
+Host: example.com
+Authorization: Bearer <token>
+Content-Type: text/plain
 Content-Length: 47
-Slug: shoppinglist.txt
+Slug: shoppinglist.txt
 
-milk
+milk
 eggs
-bread
-butter
-apples
+bread
+butter
+apples
 orange juice
 ```
 
@@ -50,17 +50,17 @@ Use PUT to create at a client-specified URI or replace an existing resource ther
 
 ```
 PUT /alice/notes/shoppinglist.txt HTTP/1.1
-Host: example.com
-Authorization: Bearer <token>
+Host: example.com
+Authorization: Bearer <token>
 Content-Type: text/plain
-Content-Length: 47
+Content-Length: 47
 
-milk
+milk
 eggs
-bread
-butter
-apples
-orange juice
+bread
+butter
+apples
+orange juice
 ```
 
 Here, the client directly PUTs to `/alice/notes/shoppinglist.txt`, specifying the content. If there was no resource at that URI before, the server will create it. If a resource *did* exist there, the server will (by default) replace its content entirely with the new content provided (assuming the client has permission). The outcome for the client is that after the PUT, the resource at that URI contains the given data.
@@ -68,11 +68,11 @@ Here, the client directly PUTs to `/alice/notes/shoppinglist.txt`, specifying th
 **Example (Response to PUT):**
 
 ```
-HTTP/1.1 201 Created
-Location: /alice/notes/shoppinglist.txt
+HTTP/1.1 201 Created
+Location: /alice/notes/shoppinglist.txt
 Content-Type: text/plain; charset=UTF-8
-ETag: "def789012"
-Content-Length: 0
+ETag: "def789012"
+Content-Length: 0
 ```
 
 This is a possible response indicating that the resource was created (since it did not exist before). The `201 Created` status and `Location` confirm that the URI is now valid. If the resource already existed and was simply replaced, the server might instead return `200 OK` or `204 No Content` to indicate a successful update, rather than 201\. In either case, the server should include an updated `ETag` (or other version indicator) because the content at that URI has changed. As with POST, if any constraints are violated or the content type is unacceptable, a `400 Bad Request` is appropriate. If the client doesn’t have write access, `403 Forbidden` is returned. And if the parent container path (`/alice/notes/`) doesn’t exist (and the server doesn’t allow implicit creation of intermediate containers with PUT), the server would likely return `404 Not Found`.
@@ -82,24 +82,24 @@ This is a possible response indicating that the resource was created (since it d
 Metadata associated with a resource is returned in Link headers in the response to a GET or HEAD request. As described in Section [Resource Metadata], clients can use the Prefer header not only to request the inclusion of metadata but also to specify which link attributes (fields) they wish to receive.
 
 Example (GET a resource with specific metadata fields):
-The client requests only the relation type (rel) and media type (type) for each associated link.
+The client requests only the linkset, acl, rel for each associated link.
 
 ```
 GET /alice/notes/shoppinglist.txt HTTP/1.1
 Host: example.com
 Authorization: Bearer <token>
-Prefer: include="http://www.w3.org/ns/lws#metadata"; fields="rel,type"
+Prefer: include="http://www.w3.org/ns/lws#linkfilter"; prop="linkset acl rel"
 ```
 
 Example (Response with reduced Link headers):
-The Link header's target URI is always present. The fields parameter controls which of the other key=value attributes are included.
+The Link header's target URI is always present. The "prop" parameter controls which of the other key=value attributes are included.  If the linkfilter is used, ONLY the specified links are returned in the linkset.
 ```
 HTTP/1.1 200 OK
 ETag: "abc123456"
 Link: <.meta>; rel="linkset"; type="application/linkset+json"
 Link: <.acl>; rel="acl"
 Link: </alice/notes/>; rel="up"
-Preference-Applied: include="http://www.w3.org/ns/lws#metadata"; fields="rel,type"
+Preference-Applied: include="http://www.w3.org/ns/lws#linkfilter"; prop="linkset acl rel"
 
 ... (response body) ...
 ```
@@ -112,7 +112,7 @@ GET /alice/notes/shoppinglist.txt.meta HTTP/1.1
 Host: example.com
 Authorization: Bearer <token>
 Accept: application/linkset+json
-Prefer: include="http://www.w3.org/ns/lws#metadata"; fields="href,rel,type"
+Prefer: include="http://www.w3.org/ns/lws#linkfilter"; prop="linkset acl rel"
 ```
 
 Example (Response with reduced linkset representation):
@@ -122,7 +122,7 @@ The server returns a JSON document where each link object in the linkset array c
 HTTP/1.1 200 OK
 Content-Type: application/linkset+json
 ETag: "meta-etag-111"
-Preference-Applied: include="http://www.w3.org/ns/lws#metadata"; fields="href,rel,type"
+Preference-Applied: include="http://www.w3.org/ns/lws#linkfilter"; rel="linkset acl rel"
 
 {
   "linkset": [
