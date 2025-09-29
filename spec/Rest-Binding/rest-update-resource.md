@@ -108,3 +108,11 @@ If successful, the server responds with success and the new ETag.
 HTTP/1.1 204 No Content
 ETag: "meta-v2"
 ```
+
+**Summary of Update Rules**
+
+If you want to change only the content of a resource → PUT/PATCH the resource itself.
+
+If you want to change only the links (metadata) of a resource → PUT/PATCH the resource’s associated linkset resource.
+
+If you want to change both content and links → PUT/PATCH the resource itself, including the appropriate Link headers AND Prefer: set-linkset.
