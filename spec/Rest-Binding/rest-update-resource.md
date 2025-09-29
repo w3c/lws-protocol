@@ -4,15 +4,17 @@ The [update resource](https://w3c.github.io/lws-protocol/spec/#dfn-update-resour
 
 Note: This section describes updating a resource's primary content. To update its metadata, see Section 9.3.2.
 
-**PUT (replace full resource)** – Send PUT to the resource URI with new full content in the body and matching Content-Type (generally consistent with existing type). PUT is idempotent for existing resources. For safety, include If-Match with current ETag (per Section 7.3 concurrency); mismatch yields 412 Precondition Failed or 409 Conflict. Without checks, updates are unconditional but risk overwriting concurrent changes.  If a server supports `Etags` for a resource, it SHOULD reject unconditional PUT requests that lack an If-Match header with a 428 Precondition Required response.
+LWS servers MUST handle PUT and PATCH requests on resource URIs as modifications to the resource content only, with no default impact on the associated linkset. To optionally update both content and metadata in a single atomic operation, clients MAY include Link headers in the PUT/PATCH request to the resource URI and specify the preference 'Prefer: set-linkset' (as defined in RFC 7240). In this case, the server MUST interpret the provided Link headers as a replacement (for PUT) or partial update (for PATCH) to the linkset, in addition to applying the content changes. This behavior is OPTIONAL for servers but, if supported, MUST be invoked explicitly via the Prefer header to prevent unintentional metadata overwrites. Servers that do not support combined updates MUST ignore the preference or respond with 501 Not Implemented.
+
+**PUT (replace full resource)** – Send PUT to the resource URI with new full content in the body and matching Content-Type (generally consistent with existing type). PUT is idempotent for existing resources. For safety, include If-Match with current ETag (per Section 7.3 concurrency); mismatch yields 412 Precondition Failed or 409 Conflict. Without checks, updates are unconditional but risk overwriting concurrent changes.  If a server supports `Etags` for a resource, it **MUST** reject unconditional PUT requests that lack an If-Match header with a 428 Precondition Required response.
 
 **Example (PUT to update a resource):**
 
 ```
 PUT /alice/personalinfo.json HTTP/1.1
-Authorization: Bearer <token>
+Authorization: Bearer <token>
 Content-Type: application/json
-If-Match: "abc123456"
+If-Match: "abc123456"
 
 {
 	"name": "Alice",
@@ -24,7 +26,7 @@ Content-Type: application/json
 
 In this example, the client is updating an existing JSON resource at /alice/personalinfo.json. It includes an If-Match header with the ETag "abc123456" that it presumably got from an earlier GET or HEAD on this resource. The server will compare that to the current ETag; if they match, it proceeds to replace the content with the JSON provided. If they don’t match, the server rejects the update (because the resource was changed by someone else in the meantime).
 
-Successful response: If the update succeeds, the server can respond with 200 OK and possibly include the updated representation or some confirmation (like the new content or a part of it). Alternatively, the server may respond with 204 No Content to indicate success with no body (especially common if no further info needs to be conveyed). In either case, the server SHOULD include a new ETag (e.g., "def789012") to signify the new version, and maybe a Content-Type if a body is returned. For example:
+Successful response: If the update succeeds, the server can respond with 200 OK and possibly include the updated representation or some confirmation (like the new content or a part of it). Alternatively, the server may respond with 204 No Content to indicate success with no body (especially common if no further info needs to be conveyed). In either case, the server **SHOULD** include a new ETag (e.g., "def789012") to signify the new version, and maybe a Content-Type if a body is returned. For example:
 
 ```
 HTTP/1.1 204 No Content  
@@ -51,7 +53,7 @@ Because a resource's metadata can be modified by multiple actors, preventing con
 
 Server Responsibilities:
 
-A server MUST include an Etag header in its responses to GET and HEAD requests for a linkset resource.
+A server **MUST** include an Etag header in its responses to GET and HEAD requests for a linkset resource.
 
 Upon a successful PUT or PATCH on the linkset, the server MUST generate a new, unique Etag value for the modified linkset and return it in the Etag header of the response.
 
@@ -115,4 +117,4 @@ If you want to change only the content of a resource → PUT/PATCH the resource 
 
 If you want to change only the links (metadata) of a resource → PUT/PATCH the resource’s associated linkset resource.
 
-If you want to change both content and links → PUT/PATCH the resource itself, including the appropriate Link headers AND Prefer: set-linkset.
+If you want to change both content and links → PUT/PATCH the resource itself, including the appropriate Link headers AND 'Prefer: set-linkset'.  Setting both is off by default.
