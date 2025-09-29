@@ -120,7 +120,7 @@ Preference-Applied: include="http://www.w3.org/ns/lws#linkfilter"; attrs="rel ty
 ... (response body) ...
 ```
 
-Example (GET a linkset resource with specific fields):
+Example (GET a linkset resource with specific attributes):
 If the client then requests the linkset resource itself, it can apply a similar preference (using the linksetfilter directive) to shape the JSON response, for instance by specifying attributes.
 ```
 GET /alice/notes/shoppinglist.txt.meta HTTP/1.1
