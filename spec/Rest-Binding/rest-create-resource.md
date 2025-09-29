@@ -79,51 +79,62 @@ This is a possible response indicating that the resource was created (since it d
 
 **Retrieving Metadata**
 
-Metadata associated with a resource is returned in Link headers in the response to a GET or HEAD request. As described in Section [Resource Metadata], clients can use the Prefer header not only to request the inclusion of metadata but also to specify which link attributes (fields) they wish to receive.
+Metadata associated with a resource is returned in Link headers in the response to a GET or HEAD request. As described in Section [Resource Metadata], clients can use the Prefer header not only to request the inclusion of metadata but also to specify which links they wish to receive (via relation types) and which attributes of those links they require (via attribute names).
 
-Example (GET a resource with specific metadata fields):
-The client requests only the linkset, acl, rel for each associated link.
-
+Example (GET a resource with specific metadata relations):
+The client requests only the linkset, acl, and up relations, with all available attributes for those links.
 ```
 GET /alice/notes/shoppinglist.txt HTTP/1.1
 Host: example.com
 Authorization: Bearer <token>
-Prefer: include="http://www.w3.org/ns/lws#linkfilter"; prop="linkset acl rel"
+Prefer: include="http://www.w3.org/ns/lws#linkfilter"; rels="linkset acl up"
 ```
-
-Example (Response with reduced Link headers):
-The Link header's target URI is always present. The "prop" parameter controls which of the other key=value attributes are included.  If the linkfilter is used, ONLY the specified links are returned in the linkset.
+Expected response (showing only the specified relations, with all available attributes such as "href", "rel", and "type"):
 ```
 HTTP/1.1 200 OK
 ETag: "abc123456"
 Link: <.meta>; rel="linkset"; type="application/linkset+json"
 Link: <.acl>; rel="acl"
 Link: </alice/notes/>; rel="up"
-Preference-Applied: include="http://www.w3.org/ns/lws#linkfilter"; prop="linkset acl rel"
+Preference-Applied: include="http://www.w3.org/ns/lws#linkfilter"; rels="linkset acl up"
+... (response body) ...
+```
 
+Example (GET a resource with specific attributes across all links):
+The client requests all links but only the "rel" and "type" attributes for them.
+```
+GET /alice/notes/shoppinglist.txt HTTP/1.1
+Host: example.com
+Authorization: Bearer <token>
+Prefer: include="http://www.w3.org/ns/lws#linkfilter"; attrs="rel type"
+```
+Expected response (all links included, but only with the specified "rel" and "type" attributes, plus the mandatory "href"):
+```
+HTTP/1.1 200 OK
+ETag: "abc123456"
+Link: <.meta>; rel="linkset"; type="application/linkset+json"
+Link: <.acl>; rel="acl"
+Link: </alice/notes/>; rel="up"
+Link: </descriptions/groceries.txt>; rel="describedby"; type="text/plain"
+Preference-Applied: include="http://www.w3.org/ns/lws#linkfilter"; attrs="rel type"
 ... (response body) ...
 ```
 
 Example (GET a linkset resource with specific fields):
-If the client then requests the linkset resource itself, it can apply the same preference to shape the JSON response.
-
+If the client then requests the linkset resource itself, it can apply a similar preference (using the linksetfilter directive) to shape the JSON response, for instance by specifying attributes.
 ```
 GET /alice/notes/shoppinglist.txt.meta HTTP/1.1
 Host: example.com
 Authorization: Bearer <token>
 Accept: application/linkset+json
-Prefer: include="http://www.w3.org/ns/lws#linkfilter"; prop="linkset acl rel"
+Prefer: include="http://www.w3.org/ns/lws#linksetfilter"; attrs="rel type"
 ```
-
-Example (Response with reduced linkset representation):
-The server returns a JSON document where each link object in the linkset array contains only the requested keys.
-
+Expected response (all links included, but only with the specified "rel" and "type" attributes, plus the mandatory "href"):
 ```
 HTTP/1.1 200 OK
 Content-Type: application/linkset+json
 ETag: "meta-etag-111"
-Preference-Applied: include="http://www.w3.org/ns/lws#linkfilter"; rel="linkset acl rel"
-
+Preference-Applied: include="http://www.w3.org/ns/lws#linksetfilter"; attrs="rel type"
 {
   "linkset": [
     {
@@ -143,7 +154,7 @@ Preference-Applied: include="http://www.w3.org/ns/lws#linkfilter"; rel="linkset 
   ]
 }
 ```
-In this response, the link for rel="acl" does not include a type attribute because it was not present on the server for that link, while the other links include type because it was requested and available. This allows clients to reduce bandwidth and processing load by fetching only the metadata attributes they require.
+In this response, the link for rel="acl" does not include a type attribute because it was not present on the server for that link, while the other links include type because it was requested and available. This allows clients to reduce bandwidth and processing load by fetching only the metadata relations and attributes they require. Clients MAY combine "rels" and "attrs" in a single Prefer header for more targeted filtering, such as rels="acl up" attrs="rel type", in which case the server applies the relation filter first and then restricts attributes on the resulting links.
 
 **Additional notes on Create (HTTP binding):**
 
