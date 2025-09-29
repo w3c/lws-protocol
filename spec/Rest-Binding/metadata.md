@@ -64,7 +64,7 @@ Core Metadata
 
 Core metadata, such as 'up', 'item', 'type', 'title', and 'creator', MAY be modified by clients via PUT or PATCH operations on the associated linkset resource. However, servers MAY impose restrictions on certain core links to maintain system integrity. For instance, modifying the 'up' link to 'move' a resource (e.g., altering its containment hierarchy) is OPTIONAL for server implementations, as it may involve complex operations like updating slash-based semantics or decoupling containment meanings (e.g., logical vs. physical hierarchy). Clients SHOULD NOT assume universal support for such changes and MUST handle server rejections (e.g., 501 Not Implemented or 403 Forbidden). Servers that do not support modifications to 'up' MUST document this in their conformance statements.
 
-User Defined
+User-Defined Metadata
 
 Users MAY create or add additional metadata using existing or custom vocabularies.
 
