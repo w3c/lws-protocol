@@ -27,7 +27,7 @@ To provide finer-grained control over the response payload, the include preferen
 
 A client MAY supply multiple include preferences in a single Prefer header by separating them with a comma. This allows for the retrieval of metadata from multiple vocabularies in a single request. Each include preference is processed independently by the server. Any parameters, such as fields, are scoped locally to the specific include preference they are attached to.
 
-** Metadata Types
+**Metadata Types**
 
 LWS defines three classes of metadata - system, core, and user.  The terms listed in this section are defined at .
 
