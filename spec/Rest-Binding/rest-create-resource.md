@@ -162,4 +162,4 @@ In this response, the link for rel="acl" does not include a type attribute becau
 
 * When using PUT, the operation is **idempotent**. Repeating a PUT with the same content to the same URI should result in the same state as a single execution. This makes PUT suitable for scenarios where clients might retry due to uncertainty of the outcome (e.g., network failures), as it won’t multiply resources.
 
-* Creating Containers: To create a new container (folder) via the REST API, a client can also use POST or PUT.   For container creation the client **MUST** end a target URI with a trailing slash to indicate a container.
+* Creating Containers: To create a new container (folder) via the REST API, a client can also use POST or PUT.
