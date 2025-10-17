@@ -1,0 +1,104 @@
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#>.
+@prefix owl: <http://www.w3.org/2002/07/owl#>.
+@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>.
+@prefix dcterms: <http://purl.org/dc/terms/>.
+@prefix vs: <http://www.w3.org/2003/06/sw-vocab-status/ns#> .
+@prefix vann: <http://purl.org/vocab/vann/> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#>.
+@prefix : <https://www.w3.org/ns/lws#>.
+
+:	a owl:Ontology
+    dcterms:description "Vocabulary URIs defined by the Linked Web Storage (LWS) namespace.";
+    dcterms:title "The W3C Linked Web Storage (LWS) Vocabulary";
+    rdfs:label "W3C Linked Web Storage (LWS)";
+    rdfs:comment "This ontology describes the concepts and terms defined by the LWS specification.";
+    dcterms:created "2025-10-16"^^xsd:date;
+    vann:preferredNamespaceUri "https://www.w3.org/ns/lws#";
+    vann:preferredNamespacePrefix "lws";
+    rdfs:seeAlso <https://www.w3.org/TR/lws>;
+
+:DataResource
+    a rdfs:Class;
+    rdfs:comment "A data-bearing resource, managed by a LWS Server";
+    vs:term_status "testing";
+    rdfs:isDefinedBy :;
+    rdfs:label "DataResource".
+
+:Container
+    a rdfs:Class;
+    rdfs:comment "A resource, managed by an LWS server, that contains other resources";
+    vs:term_status "testing";
+    rdfs:isDefinedBy :;
+    rdfs:label "Container".
+
+:Metadata
+    a rdfs:Class;
+    rdfs:comment "A resource that provides descriptive metadata about another resource, managed by an LWS server.";
+    vs:term_status "testing";
+    rdfs:isDefinedBy :;
+    rdfs:label "Metadata".
+
+:ContainerPage
+    a rdfs:Class;
+    rdfs:comment "A distinct subset of items from a container.";
+    vs:term_status "testing";
+    rdfs:isDefinedBy :;
+    rdfs:label "ContainerPage".
+
+:TypeIndex
+    a rdfs:Class;
+    rdfs:comment "A query service for discovering resources in a storage.";
+    vs:term_status "testing";
+    rdfs:isDefinedBy :;
+    rdfs:label "TypeIndex".
+
+:AccessGrantService
+    a rdfs:Class;
+    rdfs:comment "A service for requesting and granting access to resources in a storage.";
+    vs:term_status "testing";
+    rdfs:isDefinedBy :;
+    rdfs:label "AccessGrantService".
+
+:NotificationService
+    a rdfs:Class;
+    rdfs:comment "A service for requesting and granting access to resources in a storage.";
+    vs:term_status "testing";
+    rdfs:isDefinedBy :;
+    rdfs:label "AccessGrantService".
+
+:OpenIdConnect
+    a rdfs:Class;
+    rdfs:comment "A trusted OpenId Connect provider for authenticating a user.";
+    vs:term_status "testing";
+    rdfs:isDefinedBy :;
+    rdfs:label "OpenIdConnect".
+
+:OAuthTokenExchange
+    a rdfs:Class;
+    rdfs:comment "A trusted OAuth 2.0 Token Exchange server that is capable of exchanging credentials.";
+    vs:term_status "testing";
+    rdfs:isDefinedBy :;
+    rdfs:label "OAuthTokenExchange".
+
+:AccessRequest
+    a rdfs:Class;
+    rdfs:comment "An access request that conforms to the authorization requirements of an LWS server";
+    vs:term_status "testing";
+    rdfs:isDefinedBy :;
+    rdfs:label "AccessRequest".
+
+:storageDescription
+    a rdf:Property;
+    rdfs:comment "Links a resource to the metadata describing a storage.";
+    vs:term_status "testing";
+    rdfs:isDefinedBy :;
+    rdfs:label "storageDescription".
+
+:contains
+    a rdf:Property;
+    rdfs:comment "Links a collection of resources to a container.";
+    rdfs:domain: :Container;
+    vs:term_status "testing";
+    rdfs:isDefinedBy :;
+    rdfs:label "contains".
+

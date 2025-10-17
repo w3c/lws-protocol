@@ -1,0 +1,36 @@
+{
+    "linkset": [{
+            "anchor": "https://storage.example/resource",
+            "type": [{
+                "href": "https://www.w3.org/ns/lws#DataResource" }],
+            "tag": [{
+                "href": "https://type.example/VacationPhoto" }],
+            "acl": [{
+                "href": "https://acl.example/f81d4fae",
+                "type": "text/turtle" }],
+            "collection": [{
+                "href": "https://storage.example/",
+                "type": "application/ld+json" }],
+            "describedby": [{
+                "href": "https//storage.example/resource/description",
+                "type": "text/turtle" }],
+            "http://www.w3.org/ns/pim/space#storage": [{
+                "href": "https://storage.example/",
+                "type": "application/ld+json" }],
+            "https://www.w3.org/ns/lws#storageDescription": [{
+                "href": "https://storage.example/configuration",
+                "type": "application/ld+json" }]
+    }, {
+        "anchor": "https://acl.example/f81d4fae",
+        "type": [{
+            "href": "http://www.w3.org/ns/solid/acp#AccessControlResource" }]
+    }, {
+        "anchor": "https://storage.example/",
+        "type": [{
+            "href": "http://www.w3.org/ns/pim/space#Storage" }]
+    }, {
+        "anchor": "https//storage.example/resource/description",
+        "type": [{
+            "href": "https://www.w3.org/ns/lws#Metadata" }]
+    }]
+}

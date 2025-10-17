@@ -1,0 +1,16 @@
+{
+    "issuer": "https://openid.example",
+    "scopes_supported": ["openid offline_access"],
+    "response_types_supported": ["code"],
+    "grant_types_supported": ["authorization_code", "refresh_token"],
+    "end_session_endpoint": "https://openid.example/endsession",
+    "authorization_endpoint": "https://openid.example/authorization",
+    "token_endpoint": "https://openid.example/token",
+    "claims_supported": ["sub", "iss", "azp", "aud"],
+    "code_challenge_methods_supported": ["plain", "S256"],
+    "jwks_uri": "https://openid.example/jwks",
+    "id_token_signing_alg_values_supported": ["RS256", "ES256"],
+    "dpop_signing_alg_values_supported": ["RS256", "ES256"],
+    "authorization_response_iss_parameter_supported": true,
+    "client_id_metadata_document_supported": true
+}
