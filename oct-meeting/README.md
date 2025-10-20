@@ -1,10 +1,10 @@
 # October 2025 Face-to-face meeting
 
-This directory contains resources that relate to topics discussed at the October 2025 meeting of the LWS Working Group.
+This directory contains resources that relate to topics discussed at the October 2025 Face-to-Face (F2F) meeting of the LWS Working Group.
 
-These resources have been created as concrete suggestions based on the consensus positions of the group. As such,
-the suggestions do not represent a consensus position of the working group, rather they are a starting point for
-helping the working group advancing the conversations to achieve consensus.
+These resources have been created as concrete suggestions based on the consensus positions of the F2F group. These
+suggestions do not represent a consensus position of the Working Group; rather, they are a starting point for
+helping the Working Group advance the conversation to achieve broader consensus.
 
 ## LWS Entities
 
@@ -54,9 +54,9 @@ When no authorization credential is provided, an RS would reply with an HTTP 401
 a WWW-Authenticate header](auth-challenge.txt). This response will inform an RP where to find the associated AS.
 
 During the authentication portion of this flow, an [agent profile](agent.json) is represented as a
-[Controlled Identifier Document (CID)](https://www.w3.org/TR/cid-1.0/). The RP, in this case could use either
-an OpenID Connect (browser-based) authentication flow (e.g. `sub != iss != azp`) or, if the RP is capable of managing
-its own secrets, it can produce its own tokens with a private key (e.g. `sub == iss == azp`). The associated CID makes
+[Controlled Identifier Document (CID)](https://www.w3.org/TR/cid-1.0/). In this case, the RP could use either
+an OpenID Connect (browser-based) authentication flow (e.g., `sub != iss != azp`) or, if the RP is capable of managing
+its own secrets, its own tokens, produced with a private key (e.g., `sub == iss == azp`). The associated CID makes
 it possible for the AS to validate the identity of the agent.
 
 For delegated authentication, the `azp` claim (authorized party or RP) will be a URI validated by the issuer using a mechanism such as
@@ -72,7 +72,7 @@ When using OAuth 2.0 for authorization, a `.well-known/oauth-authorization-serve
 
 ## Associated Vocabularies
 
-The examples provided here make assumptions about the existence of a [LWS vocabulary](lws.ttl) and/or
-a [LWS JSON-LD Context](context-v1.jsonld). The structure and content of these two artifacts is speculative
+The examples provided here make assumptions about the existence of an [LWS vocabulary](lws.ttl) and/or
+an [LWS JSON-LD Context](context-v1.jsonld). The structure and content of these two artifacts is speculative
 at present. Any changes in the examples above will lead to significant changes in any vocabulary document.
 
