@@ -1,0 +1,48 @@
+<p>
+  This section defines a mechanism for identifying agents and end users that interact
+  with a linked web storage server. This specification does not mandate a particular
+  format for end-user credentials, though it does describe how existing identity systems
+  can be used in conjunction with the linked web storage authorization framework.
+</p>
+
+<section id="authentication-data-model">
+  <h3>End-User Credential Data Model</h3>
+
+  <p>
+    The data model described in this section outlines the requirements for any
+    concrete serialization of an end-user credential.
+  </p>
+
+  <p>
+    An end-user credential MUST include tamper evident claims about a subject, including:
+  </p>
+
+  <ul>
+    <li><dfn>subject</dfn> <strong>REQUIRED</strong> - an identifier for an end user. This MUST be an absolute URI.</li>
+    <li><dfn>issuer</dfn> <strong>REQUIRED</strong> - an identifier for the entity that issued the end-user credential. This MUST be an absolute URI.</li>
+    <li><dfn>client</dfn> <strong>REQUIRED</strong> - an identifier for a client application. This SHOULD be an absolute URI.</li>
+    <li><dfn>audience restriction</dfn> <strong>RECOMMENDED</strong> - a list of values that SHOULD include an authorization server identifier.</li>
+  </ul>
+</section>
+
+<section id="authentication-validation">
+  <h3>End-User Credential Validation</h3>
+  <p>
+    Validation of an end-user credential requires a trust relationship between the
+    verifier and issuer of the credential. This trust relationship MAY be established
+    through an out-of-band mechanism. Any additional mechanisms for establishing trust
+    between a verifier and an issuer are outlined in specific authentication suites.
+  </p>
+
+  <p>
+    An end-user credential MUST be signed. It is RECOMMENDED that the signature uses asymmetric cryptography.
+  </p>
+</section>
+
+<section id="authentication-type-identifier">
+  <h3>End-User Credential Type Identifiers</h3>
+  <p>
+    Each authentication suite MUST be associated with a token type URI. An authentication suite SHOULD use a URI defined in the IANA "OAuth URI" registry.
+  </p>
+</section>
+

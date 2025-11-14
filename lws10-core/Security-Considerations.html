@@ -1,3 +1,19 @@
+<section id="security-authentication">
+    <h3>Authenticaiton Security</h3>
+
+    <p>
+    All communications related to requesting, retrieving and presenting end-user credentials between clients and servers must use TLS-protected connections.
+    </p>
+
+    <p>
+End-user credentials are vulnerable to theft and replay. Tokens should have a reasonably short lifetime, such as 3600 seconds (1 hour).
+    </p>
+
+    <p>
+Clients that persist end-user credentials must take great care to store these tokens securely. Tokens should never be stored unencrypted in a browser's localStorage, in URLs or in logs.
+    </p>
+</section>
+
 <section id="security-authorization">
   <h3>Authorization Security</h3>
 
@@ -47,3 +63,4 @@
     </p>
   </section>
 </section>
+
