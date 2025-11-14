@@ -12,6 +12,7 @@ To see the most recent HTML rendered version of the specification from this repo
 - [authn-openid](lws10-authn-openid/): OpenID Connect Authentication Suite
 - [authn-saml](lws10-authn-saml/): SAML 2.0 Authentication Suite
 - [authn-ssi-cid](lws10-authn-ssi-cid): Self-signed Controlled Identifier Authentication Suite
+- [authn-ssi-did-key](lws10-authn-ssi-did-key): Self-signed `did:key` Authentication Suite
 
 
 ## Contribution Guidelines:

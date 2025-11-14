@@ -9,7 +9,7 @@
       // See https://respec.org/docs/ for how to configure ReSpec
       var respecConfig = {
         specStatus: "ED",
-        shortName: "lws-authn-ssi-cid",
+        shortName: "lws-authn-ssi-did-key",
         editors: [{
           name: "Jesse Wright"
         }, {
@@ -36,11 +36,13 @@
     <section id="introduction">
       <h2>Introduction</h2>
       <p>
-        Self-issued identity is important for cases where applications act on their own behalf. This includes autonomous bots as well as server-side scripts, among others.
+        Self-issued identity is important for cases where applications act on their own behalf.
+        This includes autonomous bots as well as server-side scripts, among others.
         In these cases, the agent is able to securely manage the private portion of a keypair, which it uses to generate signed JSON Web Tokens (JWT).
-        This specification describes how this class of agents can generate end-user credentials that can be used with a Linked Web Storage.
+        This specification describes how this class of agents can generate end-user credentials that can be used with a Linked Web Storage while using agent identifers with the `did:key:` method.
       </p>
     </section>
+
     <section id="conformance"></section>
 
     <section id="terminology">
@@ -48,10 +50,6 @@
 
       <p>
         The terms "authorization server" and "client" are defined by The OAuth 2.0 Authorization Framework [[!RFC6749]].
-      </p>
-
-      <p>
-        The terms "controlled identifier document" and "verification method" are defined by W3C Controlled Identifiers 1.0 [[!CID-1.0]].
       </p>
 
       <p>
@@ -75,7 +73,7 @@
       </p>
 
       <p>
-        The JWT MUST use the <code>sub</code> (subject) claim for the LWS subject identifier.
+        The JWT MUST use the <code>sub</code> (subject) claim for the LWS subject identifier. The subject identifier MUST use a <code>did:key:</code> URI.
       </p>
 
       <p>
@@ -108,7 +106,6 @@
 
       <pre id="example-end-user-token" class="example">
 {
-  "kid": "c1f52577",
   "kty": "EC",
   "alg": "ES256",
   "typ": "JWT",
@@ -116,9 +113,9 @@
 }
 .
 {
-  "sub": "https://id.example/agent",
-  "iss": "https://id.example/agent",
-  "client_id": "https://id.example/agent",
+  "sub": "did:key:zDnaerx9CtbPJ1q36T5Ln5wYt3MQYeGRG5ehnPAmxcf5mDZpv",
+  "iss": "did:key:zDnaerx9CtbPJ1q36T5Ln5wYt3MQYeGRG5ehnPAmxcf5mDZpv",
+  "client_id": "did:key:zDnaerx9CtbPJ1q36T5Ln5wYt3MQYeGRG5ehnPAmxcf5mDZpv",
   "aud": ["https://as.example"],
   "iat": 1761313600,
   "exp": 1761313900
@@ -132,16 +129,7 @@ signature
       <h2>End-User Credential Validation</h2>
 
       <p>
-        In order to validate a JWT as an LWS end-user credential, there must be a trust relationship between the verifier and the issuing party.
-      </p>
-
-      <p>
-        In the absence of a pre-existing trust relation, the verifier MUST dereference the <code>sub</code> (subject) claim in the end-user credential.
-        The resulting resource MUST be formatted as a valid controlled identifier document [[!CID-1.0]] with an <code>id</code> value equal to the subject identifier.
-      </p>
-
-      <p>
-        A verifier MUST reject any tokens using an <code>alg</code> header parameter that equals "none".
+        For subject identifiers that use the <code>did:key</code> method, a verifier will extract a public key from the identifier itself, as described in Section 3.1.3 of "The did:key Method" [[did-key]]. Using this public key, the signature of the JWT MUST be validated as described in [[!RFC7515]], Section 5.2.
       </p>
 
       <p>
@@ -149,39 +137,8 @@ signature
       </p>
 
       <p>
-        The verifier MUST use the <code>kid</code> (key id) value from the signed JWT header to identify a verification method from the subject's controlled identifier document.
-        This process is described in [[!CID-1.0]] Section 3.3.
-        Using the selected verification method from the controlled identifier document, the signature of the JWT MUST be validated as described in [[!RFC7515]], Section 5.2.
-      </p>
-
-      <p>
         A verifier MUST ensure that the current time is before the time represented by the <code>exp</code> claim. Implementers MAY provide for some small leeway to account for clock skew.
       </p>
-
-      <p>
-        An example Controlled Identifier Document is included below.
-      </p>
-
-      <pre id="example-cid" class="example">
-{
-    "@context": [
-        "https://www.w3.org/ns/cid/v1" ],
-    "id": "https://id.example/agent",
-    "authentication": [{
-        "id": "https://id.example/agent#c1f52577",
-        "type": "JsonWebKey",
-        "controller": "https://id.example/agent",
-        "publicKeyJwk": {
-            "kid": "c1f52577",
-            "kty": "EC",
-            "crv": "P-256",
-            "alg": "ES256",
-            "x": "f83OJ3D2xF1Bg8vub9tLe1gHMzV76e8Tus9uPHvRVEU",
-            "y": "x_FEzRu9m36HLN_tue659LNpXW6pCyStikYjKIWI5a0"
-        }
-    }]
-}
-      </pre>
     </section>
 
     <section id="token-type">
@@ -190,7 +147,6 @@ signature
       <p>
         A self-issued JSON Web Token used as an end-user credential MUST use the <code>urn:ietf:params:oauth:token-type:jwt</code> URI when interacting with an authorization server.
       </p>
-
     </section>
 
     <section id="security-considerations" class="informative">
