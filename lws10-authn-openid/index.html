@@ -1,0 +1,52 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <title>LWS Protocol</title>
+    <script src="https://www.w3.org/Tools/respec/respec-w3c" class="remove"></script>
+    <link rel="stylesheet" href="local.css"/>
+    <script class='remove'>
+      // See https://respec.org/docs/ for how to configure ReSpec
+      var respecConfig = {
+        specStatus: "ED",
+        shortName: "lws-protocol",
+        editors: [{
+          name: "Pierre-Antoine Champin"
+        }, {
+          name: "ericP"
+        }, {
+          name: "Jesse Wright"
+        }, {
+          name: "Erich Bremer"
+        }],
+        github: "w3c/lws-protocol",
+        shortName: "authn-openid",
+        xref: ["web-platform"],
+        group: "lws",
+      };
+    </script>
+  </head>
+  <body>
+    <section id="abstract">
+      <p>
+        This document defines how to identify and validate end-user agents, enabling authorization claims to be enforced by Linked Web Storage Authorisation Servers.
+      </p>
+    </section>
+    <section id="sotd">
+      <p>
+        This is an unofficial proposal.
+      </p>
+    </section>
+
+    <section id="introduction">
+      <h2>Introduction</h2>
+      <p>
+        This document defines a mechanism for identifying agents and end users that plan to interact with a linked web storage server.
+        This specification does not mandate a particular format for end-user credentials, though it does describe how existing identity systems can be used in conjunction with the linked web storage authorization framework.
+      </p>
+
+      <p>
+        This document also covers a variety of security, privacy, internationalization, and accessibility considerations for ecosystems that use the technologies described in this specification.
+      </p>
+  </body>
+</html>

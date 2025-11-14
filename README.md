@@ -5,6 +5,13 @@ off!
 To see the most recent HTML rendered version of the specification from this repository can be found at the following:
  * [LWS Protocol](https://w3c.github.io/lws-protocol/spec/)
 
+
+## (1.0) Specs:
+
+- [core](lws10-core/)
+- [authn-openid](lws10-authn-openid/)
+
+
 ## Contribution Guidelines:
 
 The following etiquette is followed for managing PRs submitted to this repository. In the below table we refer to the official [W3C Correction Classes](https://www.w3.org/policies/process/#correction-classes).
