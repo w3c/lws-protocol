@@ -1,0 +1,24 @@
+HTTP/2 200 OK
+Content-Type: image/jpeg
+Link: <https://www.w3.org/ns/lws#DataResource>; rel="type"
+Link: <https://type.example/VacationPhoto>; rel="tag"
+Link: <https://acl.example/f81d4fae>; rel="acl"; type="text/turtle"
+Link: <https://storage.example/resource/linkset>; rel="linkset";
+                type="application/linkset+json"
+Link: <https://storage.example/>; rel="collection"; type="application/ld+json"
+Link: <https://storage.example/resource/description>; rel="describedby";
+                type="text/turtle"
+Link: <https://storage.example/>;
+                rel="http://www.w3.org/ns/pim/space#storage"
+                type="application/ld+json"
+Link: <https://storage.example/configuration>;
+                rel="https://www.w3.org/ns/lws#storageDescription";
+                type="application/ld+json"
+Link: <http://www.w3.org/ns/solid/acp#AccessControlResource>; rel="type";
+                anchor="https://acl.example/f81d4fae"
+Link: <http://www.w3.org/ns/pim/space#Storage>; rel="type";
+                anchor="https://storage.example/"
+Link: <https://www.w3.org/ns/lws#Metadata>; rel="type";
+                anchor="https//storage.example/resource/description"
+
+{ ... content ... }
