@@ -190,7 +190,7 @@ grant_type=urn%3Aietf%3Aparams%3Aoauth%3Agrant-type%3Atoken-exchange
         <li>
           <code>aud</code> (audience) — <strong>REQUIRED</strong>. This claim MUST include the absolute URI supplied by the client
           in the resource parameter. This value will be used to restrict the entities for which the access token is valid. This will
-          be the same value provided by a storage server in the <code>realm</code> parameter of a <code>WWW-Authenticate</code> challenge.
+          be the same value as provided by a storage server in the <code>realm</code> parameter of a <code>WWW-Authenticate</code> challenge.
         </li>
         <li>
           <code>exp</code> (expiration) — <strong>REQUIRED</strong>. Authorization servers SHOULD issue tokens with short lifetimes
