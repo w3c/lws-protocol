@@ -42,13 +42,13 @@
 
     <ul>
       <li>
-        <strong>as_uri REQUIRED</strong> - The value of this parameter is an absolute URI identifying the authorization server
-        where a client can retrieve an access token. The value of this parameter will be the same as the iss claim of a valid access token.
+        <strong><code>as_uri</code> REQUIRED</strong> — The value of this parameter is an absolute URI identifying the authorization server
+        where a client can retrieve an access token. The value of this parameter will be the same as the <code>iss</code> claim of a valid access token.
       </li>
       <li>
-        <strong>realm REQUIRED</strong> - The value of this parameter is an absolute URI indicating the scope of protection.
+        <strong><code>realm</code> REQUIRED</strong> — The value of this parameter is an absolute URI indicating the scope of protection.
         This value will be included in the audience (<code>aud</code>) claim of an access token. A client MUST verify that
-        the URI of the originating request is logically contained within the realm presented in this response.
+        the URI of the originating request is logically contained within the <code>realm</code> presented in this response.
       </li>
     </ul>
 
@@ -128,21 +128,25 @@ WWW-Authenticate: Bearer as_uri="https://authorization.example",
       </p>
 
       <p>
-        When performing the token exchange grant type, the following additional requirements apply. The <code>resource</code>
-        parameter is REQUIRED. The value of this parameter MUST be an absolute URI and will be used to populate the
+        When performing the token exchange grant type, the following additional requirements apply:
+      </p>
+
+      <ul> 
+        <li>The <code>resource</code> parameter is REQUIRED. The value of this parameter MUST be an absolute URI and will be used to populate the
         <code>aud</code> (audience) claim in the resulting access token. The supplied value will be the same as the
         <code>realm</code> parameter response in a <code>WWW-Authenticate</code> challenge. The authorization server
         MUST reject any request in which the resource parameter identifies an unknown or untrusted storage.
-      </p>
+        </li>
 
-      <p>
-        The <code>subject_token</code> parameter is REQUIRED. The value of this parameter MUST include a valid subject token,
+        <li>
+          The <code>subject_token</code> parameter is REQUIRED. The value of this parameter MUST include a valid subject token,
         such as an end-user credential.
-      </p>
+        </li>
 
-      <p>
+        <li>
         Before returning an access token to the client, the authorization server MUST successfully validate all presented tokens.
-      </p>
+        </li>
+      </ul>
 
       <p>
         Non-normative example of a token request (the <code>subject_token</code> parameter has been truncated).
@@ -175,27 +179,27 @@ grant_type=urn%3Aietf%3Aparams%3Aoauth%3Agrant-type%3Atoken-exchange
 
       <ul>
         <li>
-          <code>sub</code> (subject) - <strong>REQUIRED</strong>. This claim MUST be an absolute URI identifying the agent performing the operation
+          <code>sub</code> (subject) — <strong>REQUIRED</strong>. This claim MUST be an absolute URI identifying the agent performing the operation
         </li>
         <li>
-          <code>iss</code> (issuer) - <strong>REQUIRED</strong>. This claim MUST be the absolute URI of the authorization server
+          <code>iss</code> (issuer) — <strong>REQUIRED</strong>. This claim MUST be the absolute URI of the authorization server
         </li>
         <li>
-          <code>client_id</code> (client id) - <strong>REQUIRED</strong>. This claim MUST be an absolute URI identifying the client.
+          <code>client_id</code> (client id) — <strong>REQUIRED</strong>. This claim MUST be an absolute URI identifying the client.
         </li>
         <li>
-          <code>aud</code> (audience) - <strong>REQUIRED</strong>. This claim MUST include the absolute URI supplied by the client
+          <code>aud</code> (audience) — <strong>REQUIRED</strong>. This claim MUST include the absolute URI supplied by the client
           in the resource parameter. This value will be used to restrict the entities for which the access token is valid.
         </li>
         <li>
-          <code>exp</code> (expiration) - <strong>REQUIRED</strong>. Authorization servers SHOULD issue tokens with short lifetimes
+          <code>exp</code> (expiration) — <strong>REQUIRED</strong>. Authorization servers SHOULD issue tokens with short lifetimes
           (RECOMMENDED: 300 seconds or less) to limit exposure from token theft.
         </li>
         <li>
-          <code>iat</code> (issued at) - <strong>REQUIRED</strong>.
+          <code>iat</code> (issued at) — <strong>REQUIRED</strong>.
         </li>
         <li>
-          <code>jti</code> (JWT ID) - <strong>REQUIRED</strong>.
+          <code>jti</code> (JWT ID) — <strong>REQUIRED</strong>.
         </li>
       </ul>
 
