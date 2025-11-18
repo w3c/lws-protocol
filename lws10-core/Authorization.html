@@ -131,7 +131,7 @@ WWW-Authenticate: Bearer as_uri="https://authorization.example",
         When performing the token exchange grant type, the following additional requirements apply:
       </p>
 
-      <ul> 
+      <ul>
         <li>The <code>resource</code> parameter is REQUIRED. The value of this parameter MUST be an absolute URI and will be used to populate the
         <code>aud</code> (audience) claim in the resulting access token. The supplied value will be the same as the
         <code>realm</code> parameter response in a <code>WWW-Authenticate</code> challenge. The authorization server
@@ -189,7 +189,8 @@ grant_type=urn%3Aietf%3Aparams%3Aoauth%3Agrant-type%3Atoken-exchange
         </li>
         <li>
           <code>aud</code> (audience) — <strong>REQUIRED</strong>. This claim MUST include the absolute URI supplied by the client
-          in the resource parameter. This value will be used to restrict the entities for which the access token is valid.
+          in the resource parameter. This value will be used to restrict the entities for which the access token is valid. This will
+          be the same value provided by a storage server in the <code>realm</code> parameter of a <code>WWW-Authenticate</code> challenge.
         </li>
         <li>
           <code>exp</code> (expiration) — <strong>REQUIRED</strong>. Authorization servers SHOULD issue tokens with short lifetimes
