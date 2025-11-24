@@ -82,27 +82,29 @@
         the following additional requirements apply.
       </p>
 
-      <p>
-        The ID Token MUST NOT use "none" as the signing algorithm.
-      </p>
+      <ul>
+        <li>
+          The ID Token MUST NOT use "none" as the signing algorithm.
+        </li>
 
-      <p>
-        The ID Token MUST use the <code>sub</code> (subject) claim for the LWS subject identifier.
-      </p>
+        <li>
+          The ID Token MUST use the <code>sub</code> (subject) claim for the LWS subject identifier.
+        </li>
 
-      <p>
-        The ID Token MUST use the <code>iss</code> (issuer) claim for the LWS issuer identifier.
-      </p>
+        <li>
+          The ID Token MUST use the <code>iss</code> (issuer) claim for the LWS issuer identifier.
+        </li>
 
-      <p>
-        The ID Token MUST use the <code>azp</code> (authorized party) claim for the LWS client identifier.
-      </p>
+        <li>
+          The ID Token MUST use the <code>azp</code> (authorized party) claim for the LWS client identifier.
+        </li>
 
-      <p>
-        Any audience restriction in the ID Token MUST use the <code>aud</code> (audience) claim.
-        The <code>aud</code> claim SHOULD include the client identifier and any additional target
-        audience such as an authorization server.
-      </p>
+        <li>
+          Any audience restriction in the ID Token MUST use the <code>aud</code> (audience) claim.
+          The <code>aud</code> claim SHOULD include the client identifier and any additional target
+          audience such as an authorization server.
+        </li>
+      </ul>
 
       <p>
         An example ID Token that is also an LWS end-user credential is included below.
@@ -134,19 +136,20 @@ signature
       <h2>End-User Credential Validation</h2>
 
       <p>
-        In order to validate an ID Token as an LWS end-user credential,
+        For an ID Token to validate as an LWS end-user credential,
         there must be a trust relationship between the verifier and the issuing party.
       </p>
 
       <p>
-        In the absence of a pre-existing trust relation, the validator MUST dereference the <code>sub</code> (subject) claim in the end-user credential.
+        In the absence of a pre-existing trust relationship, the validator MUST dereference the <code>sub</code> (subject) claim in the end-user credential.
         The resulting resource MUST be formatted as a valid controlled identifier document [[!CID-1.0]] with an <code>id</code> value equal to the subject identifier.
       </p>
 
       <p>
         The verifier MUST use the subject's controlled identifier document to locate a service object whose <code>serviceEndpoint</code> value
-        equals the iss claim from the end-user credential and whose <code>type</code> value equals <code>https://www.w3.org/ns/lws#OpenIdProvider</code>.
-        The verifier MUST perform OpenID Connect Discovery to locate the public portion of the JSON Web Key (JWK) used to sign the end-user credential. The JWT MUST be validated as described by OpenID Connect Core Section 3.1.3.7 [[!OPENID-CONNECT-CORE]].
+        is equal to the value of the <code>iss</code> claim from the end-user credential, and whose <code>type</code> value is equal to <code>https://www.w3.org/ns/lws#OpenIdProvider</code>.
+        The verifier MUST perform OpenID Connect Discovery to locate the public portion of the JSON Web Key (JWK) used to sign the end-user credential.
+        The JWT MUST be validated as described by OpenID Connect Core Section 3.1.3.7 [[!OPENID-CONNECT-CORE]].
       </p>
 
       <p>
