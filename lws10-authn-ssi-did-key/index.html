@@ -68,37 +68,39 @@
         A self-issued end-user credential is serialized as a signed JSON Web Token (JWT). In order to use a JWT as an LWS end-user credential, the following additional requirements apply.
       </p>
 
-      <p>
-        The JWT MUST NOT use "none" as the signing algorithm.
-      </p>
+      <ul>
+        <li>
+          The JWT MUST NOT use "none" as the signing algorithm.
+        </li>
 
-      <p>
-        The JWT MUST use the <code>sub</code> (subject) claim for the LWS subject identifier. The subject identifier MUST use a <code>did:key:</code> URI.
-      </p>
+        <li>
+          The JWT MUST use the <code>sub</code> (subject) claim for the LWS subject identifier. The subject identifier MUST use a <code>did:key:</code> URI.
+        </li>
 
-      <p>
-        The JWT MUST use the <code>iss</code> (issuer) claim for the LWS issuer identifier.
-      </p>
+        <li>
+          The JWT MUST use the <code>iss</code> (issuer) claim for the LWS issuer identifier.
+        </li>
 
-      <p>
-        The JWT MUST use the <code>client_id</code> (client ID) claim for the LWS client identifier.
-      </p>
+        <li>
+          The JWT MUST use the <code>client_id</code> (client ID) claim for the LWS client identifier.
+        </li>
 
-      <p>
-        The claims <code>sub</code>, <code>iss</code>, and <code>client_id</code> MUST all use the same URI value.
-      </p>
+        <li>
+          The claims <code>sub</code>, <code>iss</code>, and <code>client_id</code> MUST all use the same URI value.
+        </li>
 
-      <p>
-        Any audience restriction in the ID Token MUST use the <code>aud</code> (audience) claim. The <code>aud</code> claim MUST include the target authorization server.
-      </p>
+        <li>
+          Any audience restriction in the ID Token MUST use the <code>aud</code> (audience) claim. The <code>aud</code> claim MUST include the target authorization server.
+        </li>
 
-      <p>
-        The JWT MUST include an <code>exp</code> (expiration) claim, indicating the time the token expires.
-      </p>
+        <li>
+          The JWT MUST include an <code>exp</code> (expiration) claim, indicating the time the token expires.
+        </li>
 
-      <p>
-        The JWT MUST include an <code>iat</code> (issued at) claim, indicating the time the token was issued.
-      </p>
+        <li>
+          The JWT MUST include an <code>iat</code> (issued at) claim, indicating the time the token was issued.
+        </li>
+      </ul>
 
       <p>
         An example JWT that is also an LWS end-user credential is included below.
