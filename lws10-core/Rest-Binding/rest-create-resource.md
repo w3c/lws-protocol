@@ -1,6 +1,6 @@
 ### Create Resource (HTTP POST)
 
-New resources are created using POST to a target container URI, with the server assigning the final identifier. Clients MAY suggest a name via the Slug header, but servers MUST have authority over naming to ensure uniqueness and compliance with policies. PUT is reserved for updates to existing resources and MUST NOT be used for creation in this version of the specification, to prioritize server-managed identifiers and simplify client-server interactions. Clients MAY provide initial user-managed metadata for the new resource by including one or more Link headers in the POST request, following the syntax of [RFC 8288]. Server-managed metadata (e.g., acl, linkset, up, type, media-type) MUST be generated automatically by the server upon creation and MUST NOT be overridden by client-provided links.
+New resources are created using POST to a target container URI, with the server assigning the final identifier. Clients MAY suggest a name via the Slug header, but servers MUST have authority over naming to ensure uniqueness and compliance with policies. PUT is reserved for updates to existing resources and MUST NOT be used for creation in this version of the specification, to prioritize server-managed identifiers and simplify client-server interactions. Clients MAY provide initial user-managed metadata for the new resource by including one or more Link headers in the POST request, following the syntax of [RFC 8288]. Server-managed metadata MUST be generated automatically by the server upon creation and MUST NOT be overridden by client-provided links.
 
 On success, return 201 Created with the new URI in the Location header. The server MUST include Link headers for key server-managed metadata, such as a link to the parent container (rel="up"), a link to the ACL resource (rel="acl"), and a link to its dedicated linkset resource (rel="linkset"; type="application/linkset+json"). Additional links SHOULD include rel="type" (indicating Container or DataResource) and rel="media-type" if applicable. The body MAY be empty or include a minimal representation of the resource. All metadata creation and linking MUST be atomic with the resource creation to maintain consistency.
 
@@ -23,7 +23,7 @@ butter
 apples
 orange juice
 ```
-In this example, the client is posting to the container `/alice/notes/`. It provides `text/plain` content (a grocery list) and suggests the name `shoppinglist.txt` for the new resource. If `/alice/notes/` exists and the client is authorized, the server will create a new resource (e.g., at `/alice/notes/shoppinglist.txt`), generate associated metadata, and link it via the linkset.
+In this example, the client is posting to the container `/alice/notes/`. It provides `text/plain` content (a grocery list) and suggests the name `shoppinglist.txt` for the new resource. If `/alice/notes/` exists and the client is authorized, the server will create a new resource, generate associated metadata, and link it via the linkset.
 
 **Example (Response to POST):**
 ```
@@ -38,11 +38,11 @@ Link: <https://www.w3.org/ns/lws#DataResource>; rel="type"
 Preference-Applied: ...
 Content-Length: 0
 ```
-On success, return 201 Created with the new URI in the Location header. The body may be empty or a minimal representation (e.g., JSON confirmation). Include relevant headers like ETag (e.g., "def789012") for concurrency control and Content-Type matching the created resource; Content-Length: 0 indicates no body. Servers MUST support concurrency via ETags in subsequent operations.
+On success, return 201 Created with the new URI in the Location header. The body may be empty or a minimal representation. Include relevant headers like ETag for concurrency control and Content-Type matching the created resource; Content-Length: 0 indicates no body. Servers MUST support concurrency via ETags in subsequent operations.
 
-If the target container `/alice/notes/` does not exist, the server MUST return an error (HTTP 404 Not Found) because the location to create the resource is invalid. If the client is not authorized to write to that container, the server returns 403 Forbidden. If the request violates any server constraints (e.g., size limits, media type restrictions, or quota exceeded), the server SHOULD return 400 Bad Request or 507 Insufficient Storage, with a description of the issue in the body if appropriate.
+If the target container `/alice/notes/` does not exist, the server MUST return an error (HTTP 404 Not Found) because the location to create the resource is invalid. If the client is not authorized to write to that container, the server returns 403 Forbidden. If the request violates any server constraints, the server SHOULD return 400 Bad Request or 507 Insufficient Storage, with a description of the issue in the body if appropriate.
 
-**Creating Containers:** To create a new container via the REST API, a client uses POST to an existing parent container, typically with no body or a Content-Type indicating an empty resource (e.g., application/ld+json for JSON-LD framing). The server MUST support creation of empty containers. For example:
+**Creating Containers:** To create a new container via the REST API, a client uses POST to an existing parent container, typically with no body or a Content-Type indicating an empty resource. The server MUST support creation of empty containers. For example:
 
 ```
 POST /alice/ HTTP/1.1
@@ -54,8 +54,8 @@ This would create a new container at `/alice/notes/`, with server-generated meta
 
 **Additional notes on Create (HTTP binding):**
 * POST is not idempotent. Repeating it may create duplicates; clients SHOULD avoid unintentional retries or use unique identifiers/checks to prevent this.
-* Servers MUST distinguish between DataResource and Container types in metadata upon creation, based on the request (e.g., presence of body or specific headers).
-* Metadata updates are atomic; servers MUST ensure the linkset resource is created and populated with mandatory server-managed fields (e.g., acl, parent, type, media-type) before returning success.
+* Servers MUST distinguish between DataResource and Container types in metadata upon creation, based on the request.
+* Metadata updates are atomic; servers MUST ensure the linkset resource is created and populated with mandatory server-managed fields before returning success.
 * Clients MAY request content negotiation via Accept headers, but for creation responses, servers SHOULD default to minimal or no body unless specified.
 * For discoverability, servers SHOULD include WWW-Authenticate headers on 401 responses with parameters like storageDescription to guide clients without hardcoded URIs.
 
