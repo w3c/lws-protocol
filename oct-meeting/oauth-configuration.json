@@ -1,0 +1,12 @@
+{
+    "issuer": "https://oauth.example",
+    "grant_types_supported":
+           ["urn:ietf:params:oauth:grant-type:token-exchange"],
+    "token_endpoint": "https://oauth.example/token",
+    "claims_supported": ["sub", "iss", "azp", "aud", "authorization_details"],
+    "jwks_uri": "https://oauth.example/jwks",
+    "dpop_signing_alg_values_supported": ["RS256", "ES256"],
+    "authorization_details_types_supported": [
+        "https://www.w3.org/ns/lws#AccessRequest"
+    ]
+}

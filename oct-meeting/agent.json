@@ -1,0 +1,27 @@
+{
+    "@context": [
+        "https://www.w3.org/ns/cid/v1",
+        "https://www.w3.org/ns/lws/v1" ],
+    "id": "https://id.example/agent",
+    "verificationMethod": [{
+        "id": "https://id.example/agent#key-1",
+        "type": "JsonWebKey",
+        "controller": "https://id.example/agent",
+        "publicKeyJwk": {
+            "kid": "key-1",
+            "kty": "EC",
+            "crv": "P-256",
+            "alg": "ES256",
+            "x": "f83OJ3D2xF1Bg8vub9tLe1gHMzV76e8Tus9uPHvRVEU",
+            "y": "x_FEzRu9m36HLN_tue659LNpXW6pCyStikYjKIWI5a0"
+        }
+    }],
+    "authentication": ["#key-1"],
+    "service": [{
+        "type": "OpenIdConnect",
+        "serviceEndpoint": "https://openid.example"
+    }, {
+        "type": "OAuthTokenExchange",
+        "serviceEndpoint": "https://oauth.example"
+    }]
+}

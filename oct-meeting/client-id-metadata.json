@@ -1,0 +1,8 @@
+{
+    "client_id": "https://app.example/id",
+    "redirect_uris": ["https://app.example/callback"],
+    "client_name": "Sample Application",
+    "client_uri": "https://app.example",
+    "logo_uri": "https://app.example/logo.png",
+    "post_logout_redirect_uris": ["https://app.example"]
+}

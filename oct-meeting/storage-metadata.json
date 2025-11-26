@@ -1,0 +1,34 @@
+{
+    "@context": [
+        "https://www.w3.org/ns/cid/v1",
+        "https://www.w3.org/ns/lws/v1" ],
+    "id": "https://storage.example/configuration",
+    "controller": "https://storage.example/",
+    "verificationMethod": [{
+        "id": "https://storage.example/configuration#key-2",
+        "type": "JsonWebKey",
+        "controller": "https://storage.example/",
+        "publicKeyJwk": {
+            "kid": "key-2",
+            "kty": "EC",
+            "crv": "P-256",
+            "alg": "ES256",
+            "x": "baDit8o7rHWuRNCk4lip6GKpVsw6oIdLPVZaVSLDfAo",
+            "y": "DPC4mu21zkXuIhDyLN46AyLV47P3WR9J9GTdyIApU54"
+        }
+    }],
+    "authentication": ["#key-2"],
+    "service": [{
+        "type": "TypeIndex",
+        "serviceEndpoint": "https://storage.example/types"
+    }, {
+        "type": "AccessGrantService",
+        "serviceEndpoint": "https://storage.example/accessgrants"
+    }, {
+        "type": "NotificationService",
+        "serviceEndpoint": "https://storage.example/notifications"
+    }, {
+        "type": "https://vocab.example/custom#ViewService",
+        "serviceEndpoint": "https://storage.example/views"
+    }]
+}
