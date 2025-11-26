@@ -1,0 +1,16 @@
+{
+    "sub": "{agent}",
+    "azp": "{application}",
+    "aud": ["{application}", "{storage}"],
+    "iss": "{authorization server}",
+    "authorization_details": [{
+        "type": "https://www.w3.org/ns/lws#AccessRequest",
+        "locations": ["{resource URI}"],
+        "actions": ["Read", "Update"],
+        "datatypes": ["{resource type}"],
+        "purposes": ["{purpose}"]
+    }],
+    "exp": "{expiration date}",
+    "iat": "{issued date}",
+    "txn": "{transaction}"
+}

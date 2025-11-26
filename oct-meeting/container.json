@@ -1,0 +1,28 @@
+{
+    "@context": "https://www.w3.org/ns/lws/v1",
+    "id": "https://storage.example/",
+    "type": "Container",
+    "totalItems": 1000,
+    "first": {
+        "type": "ContainerPage",
+        "id": "https://storage.example/?page=1",
+        "partOf": "https://storage.example/",
+        "next": "https://storage.example/?page=2",
+        "last": "https://storage.example/?page=100",
+        "contains": [
+            {
+                "type": "DataResource",
+                "id": "https://storage.example/foo",
+                "mediaType": "image/jpeg",
+                "size": "248392",
+                 "tag": ["https://type.example/VacationPhoto"]
+            }, {
+                "type": "Container",
+                "id": "https://storage.example/album",
+                "updated": "2025-10-16T12:15:07Z",
+                "mediaType": "application/ld+json",
+                "tag": ["https://type.example/PhotoAlbum"]
+            }
+        ]
+    }
+}

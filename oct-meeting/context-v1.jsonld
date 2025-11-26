@@ -1,0 +1,48 @@
+{
+    "@context": {
+        "@version": 1.1,
+        "@protected": true,
+        "as": "https://www.w3.org/ns/activitystreams#",
+        "schema": "https://schema.org/",
+        "lws": "https://www.w3.org/ns/lws#",
+        "xs": "http://www.w3.org/2001/XMLSchema#",
+        "id": "@id",
+        "type": "@type",
+
+        "mediaType": "as:mediaType",
+        "tag": "as:tag",
+        "updated": {
+            "@id": "as:updated",
+            "@type": "xs:dateTime"
+        },
+        "size": {
+            "@id": "schema:size",
+            "@type": "xs:long"
+        },
+
+        "DataResource": "lws:DataResource",
+        "Metadata": "lws:Metadata",
+        "TypeIndex": "lws:TypeIndex",
+        "NotificationService": "lws:NotificationService",
+        "AccessGrantService": "lws:AccessGrantService",
+        "ContainerPage": "lws:ContainerPage",
+        "OpenIdConnect": "lws:OpenIdConnect",
+        "OAuthTokenExchange": "lws:OAuthTokenExchange",
+        "AccessRequest": "lws:AccessRequest",
+
+        "storageDescription": "lws:storageDescription",
+
+        "Container": {
+            "@id": "lws:Container",
+            "@context": {
+                "contains": "lws:contains"
+                "totalItems": "as:totalItems",
+                "first": "as:first",
+                "next": "as:next",
+                "last": "as:last",
+                "prev": "as:prev",
+                "partOf": "as:partOf"
+            }
+        }
+    }
+}
