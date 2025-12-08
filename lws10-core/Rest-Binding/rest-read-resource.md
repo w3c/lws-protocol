@@ -17,7 +17,7 @@ ETag: "abc123456"
 Link: </alice/notes/shoppinglist.txt.meta>; rel="linkset"; type="application/linkset+json"
 Link: </alice/notes/>; rel="partOf"
 Link: </alice/notes/shoppinglist.txt.acl>; rel="acl"
-Link: <https://www.w3.org/ns/lws/v1#DataResource>; rel="type"
+Link: <https://www.w3.org/ns/lws#DataResource>; rel="type"
 milk
 cheese
 bread
@@ -45,7 +45,7 @@ ETag: "container-etag-789"
 Link: </alice/notes/.meta>; rel="linkset"; type="application/linkset+json"
 Link: </alice/>; rel="partOf"
 Link: </alice/notes/.acl>; rel="acl"
-Link: <https://www.w3.org/ns/lws/v1#Container>; rel="type"
+Link: <https://www.w3.org/ns/lws#Container>; rel="type"
 {
   "@context": "https://www.w3.org/ns/lws/context/v1.jsonld",
   "@id": "/alice/notes/",

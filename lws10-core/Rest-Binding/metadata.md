@@ -37,7 +37,7 @@ System-Managed - System-managed metadata is maintained by a LWS server and is re
 | linkset | [Link Relations](https://www.iana.org/assignments/link-relations/link-relations.xhtml) |
 | type | [Link Relations](https://www.iana.org/assignments/link-relations/link-relations.xhtml) |
 | mediaType | [Link Relations](https://www.iana.org/assignments/link-relations/link-relations.xhtml) |
-| https://www.w3.org/ns/lws/v1#sizeInBytes | [lws](https://www.w3.org/ns/lws/v1#) |
+| https://www.w3.org/ns/lws#sizeInBytes | [lws](https://www.w3.org/ns/lws#) |
 | http://purl.org/dc/terms/modified | [dcterms](http://purl.org/dc/terms/) |
 | http://purl.org/dc/terms/publisher | [dcterms](http://purl.org/dc/terms/) |
 
@@ -48,8 +48,8 @@ To mitigate risks associated with server-managed links, clients MUST handle case
 Core Metadata - Core metadata MAY include optional fields such as label, schema, and storage.
 | item | defined by |
 |------------|------------|
-| partOf | [lws](https://www.w3.org/ns/lws/v1#) |
-| contains | [lws](https://www.w3.org/ns/lws/v1#) |
+| partOf | [lws](https://www.w3.org/ns/lws#) |
+| contains | [lws](https://www.w3.org/ns/lws#) |
 | type | [Link Relations](https://www.iana.org/assignments/link-relations/link-relations.xhtml) |
 | http://purl.org/dc/elements/1.1/title | [dcelements](http://purl.org/dc/elements/1.1/) |
 | http://purl.org/dc/elements/1.1/creator | [dcelements](http://purl.org/dc/elements/1.1/) |
