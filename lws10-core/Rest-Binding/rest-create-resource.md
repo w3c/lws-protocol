@@ -1,13 +1,8 @@
 ### Create Resource (HTTP POST)
-
-New resources are created using POST to a target container URI, with the server assigning the final identifier. Clients MAY suggest a name via the Slug header, but servers MUST have authority over naming to ensure uniqueness and compliance with policies. PUT is reserved for updates to existing resources and MUST NOT be used for creation in this version of the specification, to prioritize server-managed identifiers and simplify client-server interactions. Clients MAY provide initial user-managed metadata for the new resource by including one or more Link headers in the POST request, following the syntax of [RFC 8288]. Server-managed metadata MUST be generated automatically by the server upon creation and MUST NOT be overridden by client-provided links.
-
-On success, return 201 Created with the new URI in the Location header. The server MUST include Link headers for key server-managed metadata, such as a link to the parent container (rel="up"), a link to the ACL resource (rel="acl"), and a link to its dedicated linkset resource (rel="linkset"; type="application/linkset+json"). Additional links SHOULD include rel="type" (indicating Container or DataResource) and rel="media-type" if applicable. The body MAY be empty or include a minimal representation of the resource. All metadata creation and linking MUST be atomic with the resource creation to maintain consistency.
-
+New resources are created using POST to a target container URI, with the server assigning the final identifier. Clients MAY suggest a name via the Slug header, but servers MUST have authority over naming to ensure uniqueness and compliance with policies. PUT is reserved for updates to existing resources and MUST NOT be used for creation in this version of the specification, to prioritize server-managed identifiers and simplify client-server interactions. Clients MAY provide initial user-managed metadata for the new resource by including one or more Link headers in the POST request, following the syntax of [Web Linking - RFC 8288](https://datatracker.ietf.org/doc/html/rfc8288). Server-managed metadata MUST be generated automatically by the server upon creation and MUST NOT be overridden by client-provided links.
+On success, return 201 Created with the new URI in the Location header. The server MUST include Link headers for key server-managed metadata, such as a link to the parent container (rel="partOf"), a link to the ACL resource (rel="acl"), and a link to its dedicated linkset resource (rel="linkset"; type="application/linkset+json"). Additional links SHOULD include rel="type" (indicating Container or DataResource) and rel="mediaType" if applicable. The body MAY be empty or include a minimal representation of the resource. All metadata creation and linking MUST be atomic with the resource creation to maintain consistency.
 **POST (to a container URI)** – *Create with server-assigned name:*
-
 Use POST to add a new resource inside an existing container, letting the server assign or modify the final name (optionally suggested via the Slug header). Send the request to the container's URI with a Content-Type header matching the uploaded data (omit for empty resources like containers) and the new content in the body. The server MAY honor the Slug if it does not conflict with naming rules or existing resources.
-
 **Example (POST to create a new data resource):**
 ```
 POST /alice/notes/ HTTP/1.1
@@ -24,7 +19,6 @@ apples
 orange juice
 ```
 In this example, the client is posting to the container `/alice/notes/`. It provides `text/plain` content (a grocery list) and suggests the name `shoppinglist.txt` for the new resource. If `/alice/notes/` exists and the client is authorized, the server will create a new resource, generate associated metadata, and link it via the linkset.
-
 **Example (Response to POST):**
 ```
 HTTP/1.1 201 Created
@@ -32,18 +26,15 @@ Location: /alice/notes/shoppinglist.txt
 Content-Type: text/plain; charset=UTF-8
 ETag: "def789012"
 Link: </alice/notes/shoppinglist.txt.meta>; rel="linkset"; type="application/linkset+json"
-Link: </alice/notes/>; rel="up"
+Link: </alice/notes/>; rel="partOf"
 Link: </alice/notes/shoppinglist.txt.acl>; rel="acl"
 Link: <https://www.w3.org/ns/lws#DataResource>; rel="type"
 Preference-Applied: ...
 Content-Length: 0
 ```
 On success, return 201 Created with the new URI in the Location header. The body may be empty or a minimal representation. Include relevant headers like ETag for concurrency control and Content-Type matching the created resource; Content-Length: 0 indicates no body. Servers MUST support concurrency via ETags in subsequent operations.
-
 If the target container `/alice/notes/` does not exist, the server MUST return an error (HTTP 404 Not Found) because the location to create the resource is invalid. If the client is not authorized to write to that container, the server returns 403 Forbidden. If the request violates any server constraints, the server SHOULD return 400 Bad Request or 507 Insufficient Storage, with a description of the issue in the body if appropriate.
-
 **Creating Containers:** To create a new container via the REST API, a client uses POST to an existing parent container, typically with no body or a Content-Type indicating an empty resource. The server MUST support creation of empty containers. For example:
-
 ```
 POST /alice/ HTTP/1.1
 Host: example.com
@@ -51,24 +42,21 @@ Authorization: Bearer <token>
 Slug: notes
 ```
 This would create a new container at `/alice/notes/`, with server-generated metadata including rel="type" as https://www.w3.org/ns/lws#Container.
-
 **Additional notes on Create (HTTP binding):**
 * POST is not idempotent. Repeating it may create duplicates; clients SHOULD avoid unintentional retries or use unique identifiers/checks to prevent this.
 * Servers MUST distinguish between DataResource and Container types in metadata upon creation, based on the request.
 * Metadata updates are atomic; servers MUST ensure the linkset resource is created and populated with mandatory server-managed fields before returning success.
 * Clients MAY request content negotiation via Accept headers, but for creation responses, servers SHOULD default to minimal or no body unless specified.
 * For discoverability, servers SHOULD include WWW-Authenticate headers on 401 responses with parameters like storageDescription to guide clients without hardcoded URIs.
-
 **Managing and Retrieving Metadata (Related to Creation):**
 While metadata is primarily retrieved via read operations (Section 9.3), it is generated during creation. Clients can immediately retrieve it post-creation using GET or HEAD on the new resource URI. As described in Section 9.1, clients can use the Prefer header to request inclusion of specific metadata links (via relation types) and attributes.
-
 Example (GET a newly created resource with specific metadata relations):
-The client requests only the linkset, acl, and parent relations, with all available attributes.
+The client requests only the linkset, acl, and partOf relations, with all available attributes.
 ```
 GET /alice/notes/shoppinglist.txt HTTP/1.1
 Host: example.com
 Authorization: Bearer <token>
-Prefer: include="http://www.w3.org/ns/lws#linkfilter"; rels="linkset acl parent"
+Prefer: include="http://www.w3.org/ns/lws#linkfilter"; rels="linkset acl partOf"
 ```
 Expected response (showing only the specified relations, with all available attributes such as "href", "rel", "type", and mandatory fields):
 ```
@@ -76,8 +64,8 @@ HTTP/1.1 200 OK
 ETag: "abc123456"
 Link: </alice/notes/shoppinglist.txt.meta>; rel="linkset"; type="application/linkset+json"
 Link: </alice/notes/shoppinglist.txt.acl>; rel="acl"
-Link: </alice/notes/>; rel="up"
-Preference-Applied: include="http://www.w3.org/ns/lws#linkfilter"; rels="linkset acl parent"
+Link: </alice/notes/>; rel="partOf"
+Preference-Applied: include="http://www.w3.org/ns/lws#linkfilter"; rels="linkset acl partOf"
 ... (response body) ...
 ```
 Example (GET a resource with specific attributes across all links):
@@ -94,7 +82,7 @@ HTTP/1.1 200 OK
 ETag: "abc123456"
 Link: </alice/notes/shoppinglist.txt.meta>; rel="linkset"; type="application/linkset+json"
 Link: </alice/notes/shoppinglist.txt.acl>; rel="acl"
-Link: </alice/notes/>; rel="parent"
+Link: </alice/notes/>; rel="partOf"
 Link: <https://www.w3.org/ns/lws#DataResource>; rel="type"
 Preference-Applied: include="http://www.w3.org/ns/lws#linkfilter"; attrs="rel type"
 ... (response body) ...
@@ -122,7 +110,7 @@ Preference-Applied: include="http://www.w3.org/ns/lws#linksetfilter"; attrs="rel
     },
     {
       "href": "/alice/notes/",
-      "rel": "parent",
+      "rel": "partOf",
       "type": "application/ld+json"
     },
     {
@@ -132,4 +120,4 @@ Preference-Applied: include="http://www.w3.org/ns/lws#linksetfilter"; attrs="rel
   ]
 }
 ```
-In this response, the link for rel="acl" does not include a type attribute because it was not present on the server for that link, while the other links include type because it was requested and available. This allows clients to reduce bandwidth and processing load by fetching only the metadata relations and attributes they require. Clients MAY combine "rels" and "attrs" in a single Prefer header for more targeted filtering, such as rels="acl parent" attrs="rel type", in which case the server applies the relation filter first and then restricts attributes on the resulting links. For privacy, unauthorized metadata fields MUST not disclose resource existence.
+In this response, the link for rel="acl" does not include a type attribute because it was not present on the server for that link, while the other links include type because it was requested and available. This allows clients to reduce bandwidth and processing load by fetching only the metadata relations and attributes they require. Clients MAY combine "rels" and "attrs" in a single Prefer header for more targeted filtering, such as rels="acl partOf" attrs="rel type", in which case the server applies the relation filter first and then restricts attributes on the resulting links. For privacy, unauthorized metadata fields MUST not disclose resource existence.
