@@ -306,7 +306,7 @@ Authorization: Bearer eyJhbGciOiJFUzI1NiIsInR5cCI6IkpXVCJ9...
           Issuer Validation: Verify the <code>iss</code> claim matches the expected authorization server identifier.
         </li>
         <li>
-          Audience Validation: Verify the <code>aud</code> claim contains exactly one value and this value is an absolute URI which logically contains the target resource.
+          Audience Validation: Verify the <code>aud</code> claim contains exactly one value and this value is an absolute URI identifying the storage server which logically contains the target resource.
         </li>
         <li>
           Temporal Validation, subject to an allowable clock skew between systems.
