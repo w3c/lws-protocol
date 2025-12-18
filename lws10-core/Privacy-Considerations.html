@@ -1,0 +1,20 @@
+<section id="privacy-authorization">
+  <h3>Authorization Privacy</h3>
+
+  <p>
+    Minimal Disclosure: Authorization servers SHOULD issue tokens containing only information necessary for
+    authorization. Avoid including sensitive subject attributes unless required.
+  </p>
+
+  <p>
+    Logging: Implementations SHOULD NOT log full token contents. If logging is necessary, tokens should be truncated or hashed.
+  </p>
+
+  <p>
+    When using pseudonymous identifiers in JWTs, client applications SHOULD request a batch issuance of JWTs and each JWT SHOULD be used only one
+    time against the storage server. This makes it harder for a storage server to use pseudonymous identifiers to correlate requests.
+    This does not prevent the storage server from using other information such as similarities in JWT content or originating IP address
+    to correlate requests. When using pseudonymous identifiers, the authorization server SHOULD NOT issue the same pseudonymous identifier
+    more than once.
+  </p>
+</section>
