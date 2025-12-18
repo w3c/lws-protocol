@@ -1,66 +1,33 @@
-<section id="security-authentication">
-    <h3>Authentication Security</h3>
+<p>
+  The recommendations described in Best Current Practice for OAuth 2.0 Security [[RFC9700]] apply to this specification.
+</p>
 
-    <p>
-    All communications related to requesting, retrieving and presenting end-user credentials between clients and servers must use TLS-protected connections.
-    </p>
-
-    <p>
-End-user credentials are vulnerable to theft and replay. Tokens should have a reasonably short lifetime, such as 3600 seconds (1 hour).
-    </p>
-
-    <p>
-Clients that persist end-user credentials must take great care to store these tokens securely. Tokens should never be stored unencrypted in a browser's localStorage, in URLs or in logs.
-    </p>
-</section>
-
-<section id="security-authorization">
-  <h3>Authorization Security</h3>
+<section id="security-transport-security" class="informative">
+  <h4>Transport Security</h4>
 
   <p>
-    The recommendations described in Best Current Practice for OAuth 2.0 Security [[!RFC9700]] apply to this specification.
+    Transport Layer Security (TLS) is an important mechanism to prevent against tampering, spoofing, and information disclosure. TLS-protected communication can be verified according to [[RFC6125]].
+    Implementation security considerations can be found in "Recommendations for Secure Use of Transport Layer Security (TLS) and Datagram Transport Layer Security (DTLS)" [[BCP195]].
+  </p>
+</section>
+
+<section id="security-token-security" class="informative">
+  <h4>Token Security</h4>
+
+  <p>
+    Bearer tokens and digital credentials are vulnerable to theft and replay. Mitigations include using a reasonably short lifetime, binding tokens to a particular audience, and storing tokens securely.
   </p>
 
-  <section id="security-transport-security">
-    <h4>Transport Security</h4>
-
-    <p>
-      An Authorization Server implementation MUST support TLS. When using TLS, the client MUST perform a TLS/SSL server certificate check, per RFC 6125 [[!RFC6125]].
-      Implementation security considerations can be found in "Recommendations for Secure Use of Transport Layer Security (TLS) and Datagram Transport Layer Security (DTLS)" [[!BCP195]].
-    </p>
-  </section>
-
-  <section id="security-token-security">
-    <h4>Token Security</h4>
-
-    <p>
-      Bearer tokens are vulnerable to theft and replay. Required mitigations include:
-    </p>
-
-    <ul>
-      <li>
-        Short Lifetimes: Tokens SHOULD have lifetimes of 300 seconds (5 minutes) or less
-      </li>
-      <li>
-        Audience Binding: Tokens MUST be bound to a specific storage server via the <code>aud</code> claim
-      </li>
-      <li>
-        Secure Storage: Clients MUST store tokens securely in memory when possible, never in localStorage, URLs, or logs
-      </li>
-    </ul>
-  </section>
-
-  <section id="security-credential-protection">
-    <h4>End-User Credential Protection</h4>
-
-    <p>
-      End-user credentials with unrestricted audiences MUST NOT be provided to untrusted authorization servers.
-    </p>
-
-    <p>
-      If an end-user credential issuer is unable to restrict the audience of a token, clients SHOULD use a mechanism
-      such as OAuth 2.0 Token Exchange [[!RFC8693]] to create audience-restricted credentials before interacting with authorization servers.
-    </p>
-  </section>
+  <ul>
+    <li>
+      Short Lifetimes: authorization servers that assign lifetimes of 300 seconds (5 minutes) or less to access tokens can limit the potential exposure of an exfiltrated credential.
+    </li>
+    <li>
+      Audience Binding: access tokens that are bound to a specific destination server, such as via the <code>aud</code> claim, can rely on that binding to protect against token replay. Applications that handle credentials with an unrestricted audience need to be careful when sending these credentials to other entities, especially untrusted authorization servers. If a credential issuer is unable to restrict the audience of a token, clients can use a mechanism such as OAuth 2.0 Token Exchange [[RFC8693]] to create audience-constrained credentials before interacting with an authorization server in a different security domain.
+    </li>
+    <li>
+      Secure Storage: applications that persist credentials need to ensure that these objects are stored safely. Any time an unencrypted token is stored in a browser's <code>localStorage</code>, in URLs, or in logs, that token is more susceptible to an exfiltration attack.
+    </li>
+  </ul>
 </section>
 
