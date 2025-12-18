@@ -3,13 +3,16 @@
 This is the repository for lws-protocol. You're welcome to contribute! Let's make the Web rock our socks
 off!
 To see the most recent HTML rendered version of the specification from this repository can be found at the following:
- * [LWS Protocol](https://w3c.github.io/lws-protocol/spec/)
+ * [LWS Protocol](https://w3c.github.io/lws-protocol/lws10-core/)
 
 
 ## (1.0) Specs:
 
-- [core](lws10-core/)
-- [authn-openid](lws10-authn-openid/)
+- [`core`](lws10-core/): Core protocol
+- [`authn-openid`](lws10-authn-openid/): OpenID Connect Authentication Suite
+- [`authn-saml`](lws10-authn-saml/): SAML 2.0 Authentication Suite
+- [`authn-ssi-cid`](lws10-authn-ssi-cid): Self-signed Controlled Identifier Authentication Suite
+- [`authn-ssi-did-key`](lws10-authn-ssi-did-key): Self-signed `did:key` Authentication Suite
 
 
 ## Contribution Guidelines:

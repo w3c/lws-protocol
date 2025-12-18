@@ -1,0 +1,204 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <title>LWS Authentication Suite: OpenID Connect</title>
+    <script src="https://www.w3.org/Tools/respec/respec-w3c" class="remove"></script>
+    <link rel="stylesheet" href="local.css"/>
+    <script class='remove'>
+      // See https://respec.org/docs/ for how to configure ReSpec
+      var respecConfig = {
+        specStatus: "ED",
+        shortName: "lws-authn-ssi-cid",
+        editors: [{
+          name: "Jesse Wright"
+        }, {
+          name: "Aaron Coburn"
+        }],
+        github: "w3c/lws-protocol",
+        xref: ["web-platform"],
+        group: "lws",
+      };
+    </script>
+  </head>
+  <body>
+    <section id="abstract">
+      <p>
+        This document defines an authentication suite for the Linked Web Storage (LWS) protocol, enabling clients that are able to sign their own identity tokens to integrate with LWS.
+      </p>
+    </section>
+    <section id="sotd">
+      <p>
+        This is an unofficial proposal.
+      </p>
+    </section>
+
+    <section id="introduction">
+      <h2>Introduction</h2>
+      <p>
+        Self-issued identity is important for cases where applications act on their own behalf. This includes autonomous bots as well as server-side scripts, among others.
+        In these cases, the agent is able to securely manage the private portion of a keypair, which it uses to generate signed JSON Web Tokens (JWT).
+        This specification describes how this class of agents can generate end-user credentials that can be used with a Linked Web Storage.
+      </p>
+    </section>
+    <section id="conformance"></section>
+
+    <section id="terminology">
+      <h2>Terminology</h2>
+
+      <p>
+        The terms "authorization server" and "client" are defined by The OAuth 2.0 Authorization Framework [[!RFC6749]].
+      </p>
+
+      <p>
+        The terms "controlled identifier document" and "verification method" are defined by W3C Controlled Identifiers 1.0 [[!CID-1.0]].
+      </p>
+
+      <p>
+        The terms "JSON Web Token (JWT)" and "claim" are defined by JSON Web Token [[!RFC7519]].
+      </p>
+
+      <p>
+        The terms "end-user credential" and "authentication suite" are defined by Linked Web Storage Protocol [[!LWS-PROTOCOL]]
+      </p>
+    </section>
+
+    <section id="serialization">
+      <h2>End-User Credential Serialization</h2>
+
+      <p>
+        A self-issued end-user credential is serialized as a signed JSON Web Token (JWT). In order to use a JWT as an LWS end-user credential, the following additional requirements apply.
+      </p>
+
+      <p>
+        The JWT MUST NOT use "none" as the signing algorithm.
+      </p>
+
+      <p>
+        The JWT MUST use the <code>sub</code> (subject) claim for the LWS subject identifier.
+      </p>
+
+      <p>
+        The JWT MUST use the <code>iss</code> (issuer) claim for the LWS issuer identifier.
+      </p>
+
+      <p>
+        The JWT MUST use the <code>client_id</code> (client ID) claim for the LWS client identifier.
+      </p>
+
+      <p>
+        The claims <code>sub</code>, <code>iss</code>, and <code>client_id</code> MUST all use the same URI value.
+      </p>
+
+      <p>
+        Any audience restriction in the ID Token MUST use the <code>aud</code> (audience) claim. The <code>aud</code> claim MUST include the target authorization server.
+      </p>
+
+      <p>
+        The JWT MUST include an <code>exp</code> (expiration) claim, indicating the time the token expires.
+      </p>
+
+      <p>
+        The JWT MUST include an <code>iat</code> (issued at) claim, indicating the time the token was issued.
+      </p>
+
+      <p>
+        An example JWT that is also an LWS end-user credential is included below.
+      </p>
+
+      <pre id="example-end-user-token" class="example">
+{
+  "kid": "c1f52577",
+  "kty": "EC",
+  "alg": "ES256",
+  "typ": "JWT",
+  "crv": "P-256"
+}
+.
+{
+  "sub": "https://id.example/agent",
+  "iss": "https://id.example/agent",
+  "client_id": "https://id.example/agent",
+  "aud": ["https://as.example"],
+  "iat": 1761313600,
+  "exp": 1761313900
+}
+.
+signature
+      </pre>
+    </section>
+
+    <section id="validation">
+      <h2>End-User Credential Validation</h2>
+
+      <p>
+        In order to validate a JWT as an LWS end-user credential, there must be a trust relationship between the verifier and the issuing party.
+      </p>
+
+      <p>
+        In the absence of a pre-existing trust relationship, the verifier MUST dereference the <code>sub</code> (subject) claim in the end-user credential.
+        The resulting resource MUST be formatted as a valid controlled identifier document [[!CID-1.0]] with an <code>id</code> value equal to the subject identifier.
+      </p>
+
+      <p>
+        A verifier MUST reject any tokens using an <code>alg</code> header parameter that equals "none".
+      </p>
+
+      <p>
+        A verifier MUST validate all claims described by the end-user credential data model.
+      </p>
+
+      <p>
+        The verifier MUST use the <code>kid</code> (key id) value from the signed JWT header to identify a verification method from the subject's controlled identifier document.
+        This process is described in [[!CID-1.0]] Section 3.3.
+        Using the selected verification method from the controlled identifier document, the signature of the JWT MUST be validated as described in [[!RFC7515]], Section 5.2.
+      </p>
+
+      <p>
+        A verifier MUST ensure that the current time is before the time represented by the <code>exp</code> claim. Implementers MAY provide for some small leeway to account for clock skew.
+      </p>
+
+      <p>
+        An example Controlled Identifier Document is included below.
+      </p>
+
+      <pre id="example-cid" class="example">
+{
+    "@context": [
+        "https://www.w3.org/ns/cid/v1" ],
+    "id": "https://id.example/agent",
+    "authentication": [{
+        "id": "https://id.example/agent#c1f52577",
+        "type": "JsonWebKey",
+        "controller": "https://id.example/agent",
+        "publicKeyJwk": {
+            "kid": "c1f52577",
+            "kty": "EC",
+            "crv": "P-256",
+            "alg": "ES256",
+            "x": "f83OJ3D2xF1Bg8vub9tLe1gHMzV76e8Tus9uPHvRVEU",
+            "y": "x_FEzRu9m36HLN_tue659LNpXW6pCyStikYjKIWI5a0"
+        }
+    }]
+}
+      </pre>
+    </section>
+
+    <section id="token-type">
+      <h2>Token Type Identifier</h2>
+
+      <p>
+        A self-issued JSON Web Token used as an end-user credential MUST use the <code>urn:ietf:params:oauth:token-type:jwt</code> URI when interacting with an authorization server.
+      </p>
+
+    </section>
+
+    <section id="security-considerations" class="informative">
+      <h2>Security Considerations</h2>
+
+      <p>
+        All security considerations described in "Best Current Practice for OAuth 2.0 Security" [[RFC9700]] and "OpenID Connect Core 1.0" Section 16 [[OPENID-CONNECT-CORE]] apply to this specification.
+      </p>
+    </section>
+  </body>
+</html>

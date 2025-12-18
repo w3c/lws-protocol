@@ -153,6 +153,21 @@
     <section id="terminology">
       <h2>Terminology</h2>
       <p>
+        The terms "authorization server" and "client" are defined by the OAuth 2.0 Authorization Framework [[!RFC6749]].
+      <p>
+      <p>
+        The terms "end-user" and "issuer" are defined by OpenID Connect Core 1.0 [[!OPENID-CONNECT-CORE]].
+      </p>
+
+      <p>
+        This specificaiton defines the following terms:
+      </p>
+      <ul>
+        <li><dfn>end-user credential</dfn> &mdash; a security token that asserts claims about an end-user. This token is secured with a cryptographic proof.</li>
+        <li><dfn>authentication suite</dfn> &mdash; a defined validation mechanism for a concrete serialization of an end-user credential.</li>
+      </ul>
+
+      <p>
         This specification defines <a>operations</a> on <a>served resources</a>, the resulting change of state, and a <a>response</a> indended to give the <a>requesting agent</a> requested infomation or inform them of the outcome of the <a>operation</a>.
         An <dfn>operation</dfn> is any of the following actions that can be performed on a <a>served resource</a>:
       </p>
@@ -176,27 +191,7 @@
 
     <section id="authentication">
       <h2>Authentication</h2>
-      <p>
-        For any access control that requires establishing the identity of a <a>requesting agent</a>, that identiy is established using <span class="TODO">strawman-authn</span>:
-      </p>
-    <pre highlight="jsonld" class="example">
-        {
-          "@context": ["https://strawman-authn"],
-          "client_id": "https://app.example/id",
-          "client_name": "Solid Application Name",
-          "redirect_uris": ["https://app.example/callback"],
-          "post_logout_redirect_uris": ["https://app.example/logout"],
-          "client_uri": "https://app.example/",
-          "logo_uri" : "https://app.example/logo.png",
-          "tos_uri" : "https://app.example/tos.html",
-          "scope" : "openid profile offline_access webid",
-          "grant_types" : ["refresh_token","authorization_code"],
-          "response_types" : ["code"],
-          "default_max_age" : 3600,
-          "require_auth_time" : true
-        }
-    </pre>
-
+      <div data-include="Authentication.html" data-include-replace="true"></div>
     </section>
 
     <section id="authorization">
@@ -353,7 +348,7 @@
       <p>
         <span class="TODO">Privacy implications of the LWS Protocol, including data minimization, user consent, and privacy-preserving implementation patterns.</span>
       </p>
-	  <div data-include="Privacy-Considerations.html" data-include-replace="true"></div>
+	    <div data-include="Privacy-Considerations.html" data-include-replace="true"></div>
     </section>
 
     <section id="iana-considerations" class="informative">
