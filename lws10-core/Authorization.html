@@ -46,11 +46,11 @@ client (called in this specification <dfn data-cite="RFC6749#section-1.1">author
 
     <ul>
       <li>
-        <strong><code>as_uri</code> REQUIRED</strong> — The value of this parameter is an absolute URI identifying the authorization server
+        <strong><code>as_uri</code> REQUIRED</strong> — The value of this parameter is a URI identifying the authorization server
         where a client can retrieve an access token. The value of this parameter will be the same as the <code>iss</code> claim of a valid access token.
       </li>
       <li>
-        <strong><code>realm</code> REQUIRED</strong> — The value of this parameter is an absolute URI indicating the scope of protection.
+        <strong><code>realm</code> REQUIRED</strong> — The value of this parameter is a URI indicating the scope of protection.
         This value will be included in the audience (<code>aud</code>) claim of an access token. A client MUST verify that
         the URI of the originating request is logically contained within the <code>realm</code> presented in this response.
       </li>
@@ -136,7 +136,7 @@ WWW-Authenticate: Bearer as_uri="https://authorization.example",
       </p>
 
       <ul>
-        <li>The <code>resource</code> parameter is REQUIRED. The value of this parameter MUST be an absolute URI and will be used to populate the
+        <li>The <code>resource</code> parameter is REQUIRED. The value of this parameter MUST be a URI and will be used to populate the
         <code>aud</code> (audience) claim in the resulting access token. The supplied value will be the same as the
         <code>realm</code> parameter response in a <code>WWW-Authenticate</code> challenge. The authorization server
         MUST reject any request in which the resource parameter identifies an unknown or untrusted storage.
@@ -183,16 +183,16 @@ grant_type=urn%3Aietf%3Aparams%3Aoauth%3Agrant-type%3Atoken-exchange
 
       <ul>
         <li>
-          <code>sub</code> (subject) — <strong>REQUIRED</strong>. This claim MUST be an absolute URI identifying the agent performing the operation
+          <code>sub</code> (subject) — <strong>REQUIRED</strong>. This claim MUST be a URI identifying the agent performing the operation
         </li>
         <li>
-          <code>iss</code> (issuer) — <strong>REQUIRED</strong>. This claim MUST be the absolute URI of the authorization server
+          <code>iss</code> (issuer) — <strong>REQUIRED</strong>. This claim MUST be the URI of the authorization server
         </li>
         <li>
-          <code>client_id</code> (client id) — <strong>REQUIRED</strong>. This claim MUST be an absolute URI identifying the client.
+          <code>client_id</code> (client id) — <strong>REQUIRED</strong>. This claim MUST be a URI identifying the client.
         </li>
         <li>
-          <code>aud</code> (audience) — <strong>REQUIRED</strong>. This claim MUST include the absolute URI supplied by the client
+          <code>aud</code> (audience) — <strong>REQUIRED</strong>. This claim MUST include the URI supplied by the client
           in the resource parameter. This value will be used to restrict the entities for which the access token is valid. This will
           be the same value as provided by a storage server in the <code>realm</code> parameter of a <code>WWW-Authenticate</code> challenge.
         </li>
@@ -306,7 +306,7 @@ Authorization: Bearer eyJhbGciOiJFUzI1NiIsInR5cCI6IkpXVCJ9...
           Issuer Validation: Verify the <code>iss</code> claim matches the expected authorization server identifier.
         </li>
         <li>
-          Audience Validation: Verify the <code>aud</code> claim contains exactly one value and this value is an absolute URI identifying the storage server which logically contains the target resource.
+          Audience Validation: Verify the <code>aud</code> claim contains exactly one value and this value is a URI identifying the storage server which logically contains the target resource.
         </li>
         <li>
           Temporal Validation, subject to an allowable clock skew between systems.
