@@ -1,37 +1,22 @@
-<section id="privacy-authentication">
-  <h3>Authentication Privacy</h3>
+<p>
+  Credentials carry information about users and agents. While digital signatures can protect against tampering,
+  it is possible for clients or third parties to read the values inside an unencrypted credential.
+</p>
 
-  <p>
-    End-user credentials carry information about users. While digital signatures can protect end-user credentials against tampering, it is possible for clients or other third parties to read the values inside an unencrypted credential.
-  </p>
+<p>
+  As a result, credential issuers are encouraged to create tokens that contain only the information necessary for
+  authentication or authorization. Avoid including sensitive attributes unless required.
+</p>
 
-  <p>
-    As a result, issuers should create end-user credentials that contain only the information necessary for authentication. Avoid including sensitive attributes unless required.
-  </p>
+<p>
+  In general, it is an anti-pattern to write unencrypted credential data to a log. In cases where this is necessary,
+  implementations can truncate or hash a credential to preserve the privacy of the credential subject.
+</p>
 
-  <p>
-    Implementations should not log the full contents of an end-user credential. If logging is necessary, tokens should be truncated or hashed.
-  </p>
-</section>
-
-<section id="privacy-authorization">
-  <h3>Authorization Privacy</h3>
-
-  <p>
-    Minimal Disclosure: Authorization servers should issue tokens containing only information necessary for
-    authorization. Avoid including sensitive subject attributes unless required.
-  </p>
-
-  <p>
-    Logging: Implementations should not log full token contents. If logging is necessary, tokens should be truncated or hashed.
-  </p>
-
-  <p>
-    When using pseudonymous identifiers in JWTs, client applications should request a batch issuance of JWTs and each JWT should be used only one
-    time against the storage server. This makes it harder for a storage server to use pseudonymous identifiers to correlate requests.
-    This does not prevent the storage server from using other information such as similarities in JWT content or originating IP address
-    to correlate requests. When using pseudonymous identifiers, the authorization server should not issue the same pseudonymous identifier
-    more than once.
-  </p>
-</section>
+<p>
+  When using pseudonymous identifiers in JWTs, a storage server may still be able to correlate requests from the same agent over time.
+  In order to preserve user privacy in this case, a client applications can request a batch issuance of JWTs where each JWT is used only one time.
+  This does not prevent the storage server from using other information such as similarities in JWT content or originating IP address
+  to correlate requests. When using pseudonymous identifiers, the authorization server will need to be careful not to issue the same identifier more than once.
+</p>
 
