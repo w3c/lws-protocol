@@ -19,7 +19,7 @@ The 'linkset' link MUST point to a server-managed resource with a fixed media ty
 **Discovering Metadata**
 Clients discover a resource's metadata primarily through Link headers returned in response to GET or HEAD requests on the resource's URI. To enhance discoverability, servers MUST support a Link header with rel="storageDescription" on relevant responses, such as 401 Unauthorized, and include a WWW-Authenticate header with parameters directing to the storage metadata. This aligns with self-descriptive principles and avoids hardcoded URI locations.
 
-To manage response verbosity, servers SHOULD support the Prefer header [RFC 7240](https://www.rfc-editor.org/rfc/rfc7240.html). A client can request the inclusion of descriptive metadata links by sending a Prefer header with the include preference. For LWS, the following preference tokens are defined:
+A client can supply an HTTP Prefer header [[RFC7240]] as a hint to a server to form the most suitable response. This specification defines the following URIs for clients to use with the `include` or `omit` parameter as defined by [[LDP]]:
 - https://www.w3.org/ns/lws#linkfilter - limits properties that are returned as a link header only. If no linkfilter is specified, all properties are returned as link headers.
 - https://www.w3.org/ns/lws#linksetfilter - limits properties that are returned in the linkset only. If no linksetfilter is specified, all properties are returned in the linkset document.
 
