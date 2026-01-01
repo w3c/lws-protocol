@@ -1,5 +1,5 @@
 ### Read Resource Operation
-The [*read resource*](https://w3c.github.io/lws-protocol/spec/#dfn-retrieval) operation retrieves a [resource representation](https://w3c.github.io/lws-protocol/spec/#dfn-resource-representation) of an existing resource or the contents of a container. In other words, it is used to **fetch or access data** stored in the system. This operation covers both reading non-container resources and listing the members of container resources (folders/collections). All reads MUST interact with associated metadata resources as defined in Section 9.1, ensuring atomicity and inclusion of Link Sets (RFC 9264) for descriptions.
+The [*read resource*](https://w3c.github.io/lws-protocol/spec/#dfn-retrieval) operation retrieves a [resource representation](https://w3c.github.io/lws-protocol/spec/#dfn-resource-representation) of an existing resource or the contents of a container. In other words, it is used to **fetch or access data** stored in the system. This operation covers both reading non-container resources and listing the members of container resources. All reads MUST interact with associated metadata resources as defined in Section 9.1, ensuring atomicity and inclusion of Link Sets [[RFC 9264]] for descriptions.
 
 **Inputs:**
 * **Target identifier:** The unique identifier of the resource or container to read.
