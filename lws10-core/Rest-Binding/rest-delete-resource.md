@@ -31,4 +31,4 @@ DELETE /alice/notes/ HTTP/1.1
 Authorization: Bearer <token>
 Depth: infinity
 ```
-If the server honors `Depth: infinity` to mean recursive deletion (and the user has rights to everything under `/alice/notes/`), it would proceed to delete all items in `notes/` and then the container itself, including all associated metadata. A success would be `204 No Content` indicating everything is gone. If, say, one file in `notes/` was not deletable (maybe a permission issue on that file), the server might abort and return an error (perhaps 403 or 500 with an explanation).
+If the server honors `Depth: infinity` to mean recursive deletion and the user has sufficient access to all resources contained by `/alice/notes/`, it would proceed to delete all items in `notes/` and then the container itself, including all associated metadata. A success would be `204 No Content` indicating everything is gone. If at least one file in `notes/` was not deletable, the server will abort and return a suitable error.
