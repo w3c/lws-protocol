@@ -5,7 +5,7 @@ The *create resource* operation requests the creation of a new resource on the s
 * **Target container identifier:** The identifier of an existing container where the new resource will be created as a member.
 * **Resource content:** The content to store in the resource (binary or text). This is optional to allow creation of an empty container or an empty resource.
 * **Suggested name:** An optional hint for naming. The server MAY incorporate this if it does not conflict with naming rules or existing resources.
-* **Media type:** The MIME media type or format of the content. This helps the server understand how to store and serve the content. It MUST be provided when content is included and MAY be omitted for empty containers.
+* **Media type:** The media type or format of the content. This helps the server understand how to store and serve the content. It MUST be provided when content is included and MAY be omitted for empty containers.
 
 **Behavior:**
 * The server MUST create a new resource as a member of the specified target container, assigning the identifier (potentially incorporating the suggested name). The new resource is then added to the specified container’s member list via metadata updates.
