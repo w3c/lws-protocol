@@ -68,4 +68,4 @@ Metadata is managed by modifying a resource's associated linkset resource using 
 
 Replacing Metadata (PUT): A client can replace the entire set of metadata links by sending a PUT request to the linkset URI with a complete linkset document in the body.
 
-Partially Updating Metadata (PATCH): A client can add, remove, or modify individual links by sending a PATCH request to the linkset URI. LWS servers SHOULD support a standard patch format, such as JSON Merge Patch [RFC 7396](https://www.rfc-editor.org/rfc/rfc7396.html) (application/merge-patch+json). Servers MAY support SPARQL Update for RDF-based partial updates to enhance flexibility for complex modifications.
+Partially Updating Metadata (PATCH): A client can add, remove, or modify individual links by sending a PATCH request to the linkset URI. LWS servers MUST support JSON Merge Patch operations on linkset resources, where the request body uses the media type `application/merge-patch+json` as defined in [[RFC 7396]]. A server MUST advertise the media types it supports for PATCH operations in the `Accept-Patch` header.
