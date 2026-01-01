@@ -10,7 +10,7 @@ All metadata in LWS is expressed as a set of typed links originating from a reso
 Metadata distinguishes between resources and their representations, allowing for multiple media types where applicable. For containers, metadata includes membership details and supports pagination to handle large sets efficiently. For DataResources, metadata includes representations, each with mediaType and optional sizeInBytes.
 
 **The Linkset Resource**
-For resources with extensive metadata, an LWS server MUST expose the complete set of links in a separate linkset resource, as defined in [RFC 9264](https://www.rfc-editor.org/rfc/rfc9264.html). A resource's linkset is discovered via a Link header with the relation type linkset. A server MUST have one and only one linkset. The linkset resource itself contains a serialized representation of all links.
+For each resource in a storage, a server MUST make metadata links available as a standalone resource according to [[RFC9264]]. A resource's linkset resource is discoverable via a Link header with the relation type linkset.
 
 A linkset resource MUST be available with the `application/linkset+json` media type as defined in [[RFC9264]]. Other serializations MAY be supported via content negotiation.
 
