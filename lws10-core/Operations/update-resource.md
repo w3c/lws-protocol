@@ -4,7 +4,7 @@ The [*update resource*](https://w3c.github.io/lws-protocol/spec/#dfn-update-reso
 **Inputs**:
 * **Target identifier:** The identifier of the resource to update. The target must already exist for an update operation to succeed.
 * **New content:** The data to be written to the resource. For a full replacement update, this would be the entire new content. For a partial update, this would be some form of patch description containing the changes. The content could be binary or text, depending on the resource type.
-* **Optional concurrency check:** An optional condition to avoid conflicting updates. This could be an expected version tag or token (for example, a last-known version number or ETag that the client has). The idea is to prevent **lost updates** – if the resource has been changed by someone else since the client last fetched it, the update operation can detect the mismatch and fail rather than blindly overwriting the other change. In protocols, this might be implemented with mechanisms like “If-Match” headers (HTTP) or other versioning schemes.
+* **Optional concurrency check:** An optional condition to avoid conflicting updates. This could be an expected version tag or token.
 
 **Behavior:**
 * The server will attempt to apply the provided update to the target resource **atomically**. For a full content replacement, this means the old content is entirely replaced with the new content in one step. For a patch, the changes are applied to the current content. In either case, partial updates should be handled such that if the patch cannot be applied, the operation fails cleanly without altering the resource. Partial updates are optional; if supported, they MUST use standards like JSON Merge Patch or SPARQL Update for RDF resources.
