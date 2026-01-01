@@ -24,7 +24,7 @@ Content-Type: text/plain
 Cannot delete container /alice/notes/ - container is not empty.
 ```
 Here a 409 Conflict is returned, possibly with a simple text message. The client then knows it must delete the contents first or try a recursive delete.
-LWS implementations MAY support a way to request recursive deletion of a container and all its descendants in one go, using a request header `Depth: infinity` on the **DELETE** request (as in WebDAV [[RFC 4918](https://datatracker.ietf.org/doc/html/rfc4918)]). In LWS, this is OPTIONAL, and the default is non-recursive unless specified. Servers that support recursion MUST verify permissions for all affected resources and SHOULD abort on failures, potentially returning 403 Forbidden or 500 Internal Server Error with details. Advanced implementations MAY return a 207 Multi-Status (WebDAV style) listing what succeeded and failed, but LWS does not require that level of detail in this core spec. If recursion is not supported, servers MUST reject such requests with 501 Not Implemented.
+LWS implementations MAY support the ability to recursively delete a container and its descendants in a single request, using the `Depth` request header with the **DELETE** method as defined by [[RFC4918]]. Servers that support delete recursion MUST verify permissions for all affected resources.
 **Example (DELETE a container with recursion, if supported):**
 ```
 DELETE /alice/notes/ HTTP/1.1
