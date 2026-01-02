@@ -37,7 +37,7 @@ System-Managed - System-managed metadata is maintained by a LWS server and is re
 
 Clients SHOULD NOT attempt to modify, add, or delete server-managed links, such as those with relation types 'acl' or 'linkset', as these are read-only and maintained exclusively by the server. Servers MUST reject such attempts with a 403 Forbidden response, potentially including an explanatory message in the body. While servers MAY implement additional handling in limited scenarios, this specification does not define those semantics, and clients MUST NOT rely on them for interoperability.
 
-To mitigate risks associated with server-managed links, clients MUST handle cases where links become inaccessible or inconsistent gracefully, such as by falling back to default behaviors or retrying discovery. For example, altering the 'linkset' link could lead to dangling references, media-type mismatches, or access control discrepancies. Similarly, modifications to the 'acl' link could compromise security if not strictly prohibited.
+To mitigate risks associated with server-managed links, clients MUST implement graceful handling for cases where such links become inaccessible or inconsistent. This includes strategies such as falling back to default behaviors, retrying link discovery after a delay, or notifying the user of the issue without crashing the application.
 
 Core Metadata - Core metadata MAY include optional fields such as label, schema, and storage.
 | item | defined by |
