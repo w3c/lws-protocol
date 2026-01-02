@@ -13,7 +13,7 @@ The [*delete resource*](https://w3c.github.io/lws-protocol/spec/#dfn-deletion) o
 * Authorization checks: The server must verify that the client has permission to delete the resource and, if recursive, each contained resource.
 
 **Possible Responses:**
-* **Deleted:** The resource (or container) was successfully deleted. In a concrete protocol this is usually indicated with a confirmation and no content (for example, HTTP 204 No Content). After this response, the client should consider the identifier no longer valid for use unless it’s recreated. Servers MAY indicate permanent removal.
+* **Deleted:** The resource (or container) was successfully deleted.
 * **Not Found:** The resource does not exist (or is already deleted). The server could not perform any deletion because there was nothing to delete. (Again, for unauthorized requests, the server might also use this response to avoid revealing that the resource existed at all.)
 * **Not Permitted:** The client is not allowed to delete the resource. The server refused to perform the deletion. In an HTTP scenario this could be a 403 Forbidden.
 * **Conflict:** The target is a container that is not empty, and the client did not request (or the server does not allow) recursive deletion. The server leaves the container and its contents intact, and returns an error indicating that the container has members and cannot be removed as requested. The client would need to handle this by emptying the container or explicitly requesting a recursive delete if supported.
