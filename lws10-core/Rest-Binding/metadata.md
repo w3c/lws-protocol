@@ -24,18 +24,18 @@ A client can supply an HTTP Prefer header [[RFC7240]] as a hint to a server to f
 **Metadata Types**
 LWS defines three classes of metadata - system, core, and user. The terms listed in this section are defined at relevant vocabularies.
 
-System-Managed - System-managed metadata is maintained by a LWS server and is read-only. A server MUST NOT allow users to manipulate this data. Mandatory fields include acl, linkset, partOf, type, and mediaType. Optional fields include sizeInBytes, modified, and publisher.
+System-Managed - System-managed metadata is maintained by a LWS server and is read-only. A server MUST NOT allow users to manipulate this data.
 | item | defined by |
 |------------|------------|
-| acl | [Link Relations](https://www.iana.org/assignments/link-relations/link-relations.xhtml) |
-| linkset | [Link Relations](https://www.iana.org/assignments/link-relations/link-relations.xhtml) |
-| type | [Link Relations](https://www.iana.org/assignments/link-relations/link-relations.xhtml) |
-| mediaType | [Link Relations](https://www.iana.org/assignments/link-relations/link-relations.xhtml) |
+| acl ||
+| linkset ||
+| type ||
+| representation ||
 | https://www.w3.org/ns/lws#sizeInBytes | [lws](https://www.w3.org/ns/lws#) |
 | http://purl.org/dc/terms/modified | [dcterms](http://purl.org/dc/terms/) |
 | http://purl.org/dc/terms/publisher | [dcterms](http://purl.org/dc/terms/) |
 
-Clients SHOULD NOT attempt to modify, add, or delete server-managed links, such as those with relation types 'acl' or 'linkset', as these are read-only and maintained exclusively by the server. Attempts to do so may result in errors or undefined behavior. Servers MAY choose to support such operations in limited scenarios, but this specification does not define their semantics or outcomes; clients MUST NOT rely on such support for interoperability.
+Clients SHOULD NOT attempt to modify, add, or delete server-managed links, such as those with relation types 'acl' or 'linkset', as these are read-only and maintained exclusively by the server. Servers MUST reject such attempts with a 403 Forbidden response, potentially including an explanatory message in the body. While servers MAY implement additional handling in limited scenarios, this specification does not define those semantics, and clients MUST NOT rely on them for interoperability.
 
 To mitigate risks associated with server-managed links, clients MUST handle cases where links become inaccessible or inconsistent gracefully, such as by falling back to default behaviors or retrying discovery. For example, altering the 'linkset' link could lead to dangling references, media-type mismatches, or access control discrepancies. Similarly, modifications to the 'acl' link could compromise security if not strictly prohibited.
 
