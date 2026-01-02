@@ -14,7 +14,7 @@ For each resource in a storage, a server MUST make metadata links available as a
 
 A linkset resource MUST be available with the `application/linkset+json` media type as defined in [[RFC9264]]. Other serializations MAY be supported via content negotiation.
 
-The 'linkset' link MUST point to a server-managed resource with a fixed media type (application/linkset+json or application/linkset), and servers MUST ensure its integrity upon operations like deletions or ACL changes on related resources. For example, if a client attempts to redirect 'linkset' to an arbitrary resource, the server MUST reject this to avoid risks such as dangling links or authorization discrepancies. Clients SHOULD NOT attempt such redirections, as this specification does not define their behavior, and support is OPTIONAL at the server's discretion. Updates to the linkset MUST be atomic with associated resource operations to maintain consistency.
+The 'linkset' link MUST point to a server-managed resource with a fixed media type (application/linkset+json or application/linkset), and servers MUST ensure its integrity upon operations like deletions or ACL changes on related resources.  Updates to the linkset MUST be atomic with associated resource operations to maintain consistency.
 
 **Discovering Metadata**
 Clients discover a resource's metadata primarily through Link headers returned in response to GET or HEAD requests on the resource's URI. To enhance discoverability, servers MUST support a Link header with rel="storageDescription" on relevant responses, such as 401 Unauthorized, and include a WWW-Authenticate header with parameters directing to the storage metadata. This aligns with self-descriptive principles and avoids hardcoded URI locations.
