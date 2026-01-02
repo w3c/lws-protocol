@@ -13,7 +13,7 @@ The [*update resource*](https://w3c.github.io/lws-protocol/lws10-core/#dfn-updat
 * The server **MAY** enforce additional constraints on updates, such as size limits, quota checks, or restrictions on allowed media types. If any such constraint is violated, the server will reject the operation with an appropriate error.
 
 **Possible Responses:**
-* **Success:** The resource was successfully updated. The response includes the updated resource’s identifier and possibly a minimal representation or metadata.
+* **Success:** The resource was successfully updated.
 * **Not Found:** The specified resource does not exist, so no update can be performed. (If the client is not authorized, this could also be the response to avoid giving away existence; see “Not Permitted.”)
 * **Not Permitted:** The client is not authorized to modify this resource. The server refuses the update. (In HTTP this might be 403 Forbidden, or 404 Not Found if we don’t want to reveal that the resource exists to an unauthenticated requester.)
 * **Conflict:** The update could not be applied because of a concurrency conflict or an invalid state. For example, if an “edit token” or version check was provided and did not match the current resource version, the server will respond with a conflict indication (the client’s view of the resource is out-of-date). Another example is if a patch document cannot be applied, the server treats it as a conflict or bad request.
