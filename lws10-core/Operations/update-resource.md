@@ -15,7 +15,7 @@ The [*update resource*](https://w3c.github.io/lws-protocol/lws10-core/#dfn-updat
 **Possible Responses:**
 * **Success:** The resource was successfully updated.
 * **Not Found:** The specified resource does not exist, so no update can be performed. (If the client is not authorized, this could also be the response to avoid giving away existence; see “Not Permitted.”)
-* **Not Permitted:** The client is not authorized to modify this resource. The server refuses the update. (In HTTP this might be 403 Forbidden, or 404 Not Found if we don’t want to reveal that the resource exists to an unauthenticated requester.)
+* **Not Permitted:** The client is not authorized to modify this resource. The server refuses the update.
 * **Conflict:** The update could not be applied because of a concurrency conflict or an invalid state. For example, if an “edit token” or version check was provided and did not match the current resource version, the server will respond with a conflict indication (the client’s view of the resource is out-of-date). Another example is if a patch document cannot be applied, the server treats it as a conflict or bad request.
 * **Precondition Failed:** A concurrency mismatch occurred. The server rejects the update without changes.
 * **Bad Request:** The update request was malformed or unacceptable. For instance, the patch syntax could be invalid, or the new content might not conform to expected format constraints, or violate quotas. The server did not attempt any update.
