@@ -8,7 +8,7 @@ The *create resource* operation requests the creation of a new resource on the s
 * **Media type:** The media type or format of the content. This helps the server understand how to store and serve the content. It MUST be provided when content is included and MAY be omitted for empty containers.
 
 **Behavior:**
-* The server MUST create a new resource as a member of the specified target container, assigning the identifier (potentially incorporating the suggested name). The new resource is then added to the specified container’s member list via metadata updates.
+* The server MUST create a new resource as a member of the specified target container, assigning the identifier (potentially incorporating the suggested name). The new resource is then added to the specified container’s member list.
 * Upon creation, servers MUST generate a metadata resource linked via Link Sets (RFC 9264), including mandatory server-managed fields such as type (https://www.w3.org/ns/lws#Container or https://www.w3.org/ns/lws#DataResource), mediaType (if applicable), ACL reference, and partOf (linking to the target container). User-managed metadata MAY be provided by the client, but server-managed fields MUST NOT be overridden.
 * The server **MAY** enforce additional constraints on creation, such as size limits, quota checks, or restrictions on allowed media types. If any such constraint is violated, the server will reject the operation with an appropriate error.
 * The creation MUST be atomic, including metadata generation and container membership updates—if any step fails, no new resource or metadata is created. The identifier of the newly created resource **MUST** be returned to the client (so the client knows how to refer to it).
