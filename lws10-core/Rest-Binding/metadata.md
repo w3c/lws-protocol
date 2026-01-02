@@ -39,17 +39,13 @@ Clients SHOULD NOT attempt to modify, add, or delete server-managed links, such 
 
 To mitigate risks associated with server-managed links, clients MUST implement graceful handling for cases where such links become inaccessible or inconsistent. This includes strategies such as falling back to default behaviors, retrying link discovery after a delay, or notifying the user of the issue without crashing the application.
 
-Core Metadata - Core metadata MAY include optional fields such as label, schema, and storage.
+Core Metadata - Core metadata MAY include optional fields such as title, creator, or other elements from DC Terms.
 | item | defined by |
 |------------|------------|
 | partOf | [lws](https://www.w3.org/ns/lws#) |
 | contains | [lws](https://www.w3.org/ns/lws#) |
-| type | [Link Relations](https://www.iana.org/assignments/link-relations/link-relations.xhtml) |
-| http://purl.org/dc/elements/1.1/title | [dcelements](http://purl.org/dc/elements/1.1/) |
-| http://purl.org/dc/elements/1.1/creator | [dcelements](http://purl.org/dc/elements/1.1/) |
-| label | [Link Relations](https://www.iana.org/assignments/link-relations/link-relations.xhtml) |
-| schema | [Link Relations](https://www.iana.org/assignments/link-relations/link-relations.xhtml) |
-| storage | [Link Relations](https://www.iana.org/assignments/link-relations/link-relations.xhtml) |
+| http://purl.org/dc/terms/title | [dcterms](http://purl.org/dc/terms/) |
+| http://purl.org/dc/terms/creator | [dcterms](http://purl.org/dc/terms/) |
 
 **Modifiability Considerations**
 Core metadata, such as 'partOf', 'contains', 'type', 'title', and 'creator', MAY be modified by clients via PUT or PATCH operations on the associated linkset resource. However, servers MAY impose restrictions on certain core links to maintain system integrity. For instance, modifying the 'partOf' or 'contains' link to 'move' a resource is OPTIONAL for server implementations, as it may involve complex operations like updating slash-based semantics or decoupling containment meanings. Clients SHOULD NOT assume universal support for such changes and MUST handle server rejections. Servers that do not support modifications to 'partOf' MUST document this in their conformance statements. Metadata lifecycles are tied to the described resource, with automatic deletion upon resource removal.
