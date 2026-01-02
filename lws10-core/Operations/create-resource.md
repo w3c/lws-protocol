@@ -13,7 +13,7 @@ The *create resource* operation requests the creation of a new resource on the s
 * The server **MAY** enforce additional constraints on creation, such as size limits, quota checks, or restrictions on allowed media types. If any such constraint is violated, the server will reject the operation with an appropriate error.
 * The creation MUST be atomic, including metadata generation and container membership updates—if any step fails, no new resource or metadata is created. The identifier of the newly created resource **MUST** be returned to the client (so the client knows how to refer to it).
 
-**Possible Responses:** *(on the abstract operation level, not tied to a specific protocol)*
+**Possible Responses:** *(on the abstract operation level, not tied to a specific protocol, not an exhaustive list)*
 * **Created:** The operation succeeded in creating a new resource. The response includes the new resource’s identifier and possibly a minimal representation or metadata.
 * **Bad Request:** The request was malformed or violated constraints. The resource was not created.
 * **Not Permitted:** The client is not authorized to create a resource in the target location.
