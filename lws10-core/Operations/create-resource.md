@@ -1,5 +1,5 @@
 ### Create Resource Operation
-The *create resource* operation requests the creation of a new resource on the server. The resource can be a non-container (data) resource or a container (collection) resource. The operation mandates that the server assigns a new identifier within a target container (like creating a new file in a folder); client-specified full identifiers are not supported for creation in this version to ensure server authority over naming and to simplify interactions.
+The *create resource* operation requests the creation of a new resource on the server. The resource can be a non-container (data) resource or a container (collection) resource. The operation mandates that the server assigns a new identifier within a target container.
 
 **Inputs:**
 * **Target container identifier:** The identifier of an existing container where the new resource will be created as a member.
