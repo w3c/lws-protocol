@@ -29,7 +29,6 @@ Link: </alice/notes/shoppinglist.txt.meta>; rel="linkset"; type="application/lin
 Link: </alice/notes/>; rel="partOf"
 Link: </alice/notes/shoppinglist.txt.acl>; rel="acl"
 Link: <https://www.w3.org/ns/lws#DataResource>; rel="type"
-Preference-Applied: ...
 Content-Length: 0
 ```
 On success, return 201 Created with the new URI in the Location header. The body may be empty or a minimal representation. Include relevant headers like ETag for concurrency control and Content-Type matching the created resource; Content-Length: 0 indicates no body. Servers MUST support concurrency via ETags in subsequent operations.
