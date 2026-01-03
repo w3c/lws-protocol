@@ -32,7 +32,7 @@ Link: <https://www.w3.org/ns/lws#DataResource>; rel="type"
 Content-Length: 0
 ```
 On success, return 201 Created with the new URI in the Location header. The body may be empty or a minimal representation. Include relevant headers such as Content-Type matching the created resource; Content-Length: 0 indicates no body. Server responses MUST use entity tags for responses that contain resource representations or successful responses to HEAD requests, enabling concurrency control in subsequent operations.
-If the target container `/alice/notes/` does not exist, the server MUST return an error (HTTP 404 Not Found) because the location to create the resource is invalid. If the client is not authorized to write to that container, the server returns 403 Forbidden. If the request violates any server constraints, the server SHOULD return 400 Bad Request or 507 Insufficient Storage, with a description of the issue in the body if appropriate.
+If the target container `/alice/notes/` does not exist, the server MUST return a 404 error status unless another status code is more appropriate.
 **Creating Containers:** To create a new container via the REST API, a client uses POST to an existing parent container, typically with no body or a Content-Type indicating an empty resource. The server MUST support creation of empty containers. For example:
 ```
 POST /alice/ HTTP/1.1
