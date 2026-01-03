@@ -1,6 +1,16 @@
 ### Delete Resource (HTTP DELETE)
-The [delete resource](https://w3c.github.io/lws-protocol/spec/#dfn-deletion) operation removes an existing resource (or, in some cases, an entire container) from the storage. This operation is akin to deleting a file or folder in a file system. Once completed, the target resource is no longer available for read or update, and its identifier becomes invalid (attempts to access it later should report it as not found, unless it is recreated). Servers MUST ensure that deletions are atomic, including the removal of associated metadata resources and updates to containing container memberships. Metadata lifecycles are tied to the primary resource; deleting a resource MUST automatically delete its associated linkset and any server-managed metadata, without allowing independent deletion of metadata.
-**DELETE (non-container resource)** – If the requested URI points to a regular resource (not a container), the server will delete that resource and any associated metadata, such as its linkset. On success, the server responds with `204 No Content` (the standard success code for **DELETE** indicating the resource is gone and there’s no further data to return). After this, any **GET** or **HEAD** to that URI should return 404 Not Found (or optionally 410 Gone to indicate permanent removal) unless a new resource is later created at the same URI. The server MUST also delete any auxiliary files or metadata associated with that resource and update the containing container's membership atomically. For example, some servers store access control rules or metadata in sidecar files (like `resource.acl`); those MUST be cleaned up. If the resource did not exist to begin with, the server returns `404 Not Found` for the **DELETE** (because you’re asking to delete something that isn’t there). If the client is not authorized to delete the resource, the server returns `403 Forbidden` (if the client’s identity is known but they lack permission) or possibly `401 Unauthorized` (if no valid auth was provided, prompting for credentials). In some cases, as discussed, a server might also return 404 for unauthorized requests to avoid hinting that the resource exists. Servers SHOULD support concurrency checks via If-Match with ETags for deletes; mismatches yield 412 Precondition Failed.
+The delete resource operation is implemented using the HTTP DELETE method, as defined in the abstract operation above. This section specifies the HTTP bindings for inputs, behaviors, and responses.
+
+The DELETE request targets the URI of the resource or container to remove. Clients MAY include an If-Match header with an ETag for concurrency checks, as described in the abstract operation.
+
+For non-container resources, the server processes the deletion as specified in the abstract behavior.
+
+For container resources, the server defaults to non-recursive deletion. If recursion is desired and supported, clients MUST use the Depth: infinity header, as defined in [[RFC4918]]. Servers that do not support recursion MUST reject such requests with 501 Not Implemented.
+
+On success, the server MUST respond with 204 No Content. Servers SHOULD support concurrency checks via If-Match with ETags; mismatches MUST yield 412 Precondition Failed.
+
+If the client lacks authorization, the server MUST return 403 Forbidden (if the client's identity is known but permissions are insufficient) or 401 Unauthorized (if no valid authentication is provided). In cases where revealing resource existence poses a security risk, the server MAY return 404 Not Found instead.
+
 **Example (DELETE a non-container resource):**
 ```
 DELETE /alice/notes/shoppinglist.txt HTTP/1.1
@@ -11,24 +21,27 @@ Assuming the ETag matches and the client is authorized, the server deletes the r
 ```
 HTTP/1.1 204 No Content
 ```
-**DELETE (container resource)** – Deleting a container is more restricted. By default, an LWS server requires that a container be empty (no child resources) in order to delete it; non-recursive deletion is the default behavior. This means if a client issues a DELETE on a container that still has members, the server MUST respond with `409 Conflict`. The response MAY include a message indicating the reason. This behavior protects against accidental deletion of large sets of data with a simple request. The client should then either delete the contained resources individually or (if it really intends to remove everything) use an explicit recursive delete mechanism if the server supports one. Upon deletion, the server MUST remove the container's metadata and update any containing container's membership atomically.
+
 **Example (DELETE a non-empty container without recursion):**
 ```
 DELETE /alice/notes/ HTTP/1.1
 Authorization: Bearer <token>
 ```
-Assume `/alice/notes/` contains resources (like shoppinglist.txt and others). The server will refuse to delete since it’s not empty:
+Assuming `/alice/notes/` contains resources, the server refuses the deletion:
 ```
 HTTP/1.1 409 Conflict
 Content-Type: text/plain
+
 Cannot delete container /alice/notes/ - container is not empty.
 ```
-Here a 409 Conflict is returned, possibly with a simple text message. The client then knows it must delete the contents first or try a recursive delete.
-LWS implementations MAY support the ability to recursively delete a container and its descendants in a single request, using the `Depth` request header with the **DELETE** method as defined by [[RFC4918]]. Servers that support delete recursion MUST verify permissions for all affected resources.
+
 **Example (DELETE a container with recursion, if supported):**
 ```
 DELETE /alice/notes/ HTTP/1.1
 Authorization: Bearer <token>
 Depth: infinity
 ```
-If the server honors `Depth: infinity` to mean recursive deletion and the user has sufficient access to all resources contained by `/alice/notes/`, it would proceed to delete all items in `notes/` and then the container itself, including all associated metadata. A success would be `204 No Content` indicating everything is gone. If at least one file in `notes/` was not deletable, the server will abort and return a suitable error.
+Assuming the server supports recursion and the client has permissions for all contents, the server deletes the container and its descendants atomically:
+```
+HTTP/1.1 204 No Content
+```
