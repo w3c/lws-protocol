@@ -82,7 +82,7 @@ Link: <https://www.w3.org/ns/lws#Container>; rel="type"
 }
 ```
 In this example, `/alice/notes/` is a container. The response uses JSON-LD with a normative context, listing members with required metadata. For large containers, the response might include a "next" property and use 206 Partial Content.
-In all cases, the server MUST include relevant metadata in the response headers, such as ETag (representing the listing version, which changes on membership modifications) and rel="type" indicating it is a container. Servers SHOULD use Prefer headers for finer control over included metadata, as defined in Section 9.1.
+In all cases, the server MUST include the following metadata in the response headers: an ETag (representing the listing version, which changes on membership modifications), and Link headers with rel="type" indicating it is a container, rel="linkset", rel="partOf", and rel="acl".
 **HEAD (any resource or container)** – *Headers/metadata only:*
 The LWS server MUST support [HEAD](https://datatracker.ietf.org/doc/html/rfc9110#name-head) for both containers and non-containers, returning the same headers as GET (including ETag, Content-Type, Link for metadata) but without a body. This enables metadata retrieval without transferring content.
 **Caching and Conditional Requests:** LWS leverages HTTP caching semantics. Servers MUST support conditional requests via If-None-Match (with ETags) or If-Modified-Since headers. If the resource or container listing has not changed, respond with 304 Not Modified to avoid redundant transfers. ETags MUST be provided in all GET/HEAD responses for concurrency and caching support.
