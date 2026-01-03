@@ -47,7 +47,6 @@ This would create a new container at `/alice/notes/`, with server-generated meta
 * POST is not idempotent. Repeating it may create duplicates; clients SHOULD avoid unintentional retries or use unique identifiers/checks to prevent this.
 * Servers MUST distinguish between DataResource and Container types in metadata upon creation, based on the Content-Type header in the request.
 * Metadata updates are atomic; servers MUST ensure the linkset resource is created and populated with mandatory server-managed fields before returning success.
-* Clients MAY request content negotiation via Accept headers, but for creation responses, servers SHOULD default to minimal or no body unless specified.
 * For discoverability, servers SHOULD include WWW-Authenticate headers on 401 responses with parameters like storageDescription to guide clients without hardcoded URIs.
 **Managing and Retrieving Metadata (Related to Creation):**
 While metadata is primarily retrieved via read operations (Section 9.3), it is generated during creation. Clients can immediately retrieve it post-creation using GET or HEAD on the new resource URI. As described in Section 9.1, clients can use the Prefer header to request inclusion of specific metadata links (via relation types) and attributes.
