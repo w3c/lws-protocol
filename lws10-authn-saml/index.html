@@ -1,0 +1,168 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <title>LWS Authentication Suite: SAML 2.0</title>
+    <script src="https://www.w3.org/Tools/respec/respec-w3c" class="remove"></script>
+    <link rel="stylesheet" href="local.css"/>
+    <script class='remove'>
+      // See https://respec.org/docs/ for how to configure ReSpec
+      var respecConfig = {
+        specStatus: "ED",
+        shortName: "lws-authn-saml",
+        editors: [{
+          name: "Jesse Wright"
+        }, {
+          name: "Aaron Coburn"
+        }],
+        github: "w3c/lws-protocol",
+        xref: ["web-platform"],
+        group: "lws",
+      };
+    </script>
+  </head>
+  <body>
+    <section id="abstract">
+      <p>
+        This document defines a SAML-based authentication suite for the Linked Web Storage (LWS) protocol, enabling LWS applications to integrate with SAML 2.0 identity providers.
+      </p>
+    </section>
+    <section id="sotd">
+      <p>
+        This is an unofficial proposal.
+      </p>
+    </section>
+
+    <section id="introduction">
+      <h2>Introduction</h2>
+      <p>
+        The Security Assertion Markup Language (SAML) is an open standard for exchanging authentication and authorization assertions between parties,
+        typically between web-based service providers (i.e., an application) and identity providers. These assertions are encoded in an XML format
+        containing a digital signature. This specification describes how SAML-based identity tokens can be used to authenticate end users in a Linked Web Storage environment.
+      </p>
+    </section>
+    <section id="conformance"></section>
+
+    <section id="terminology">
+      <h2>Terminology</h2>
+
+      <p>
+        The terms "authorization server" and "client" are defined by The OAuth 2.0 Authorization Framework [[!RFC6749]].
+      </p>
+
+      <p>
+        The terms "identity provider" and "assertion" are defined by The Security Assertion Markup Language (SAML) 2.0 [[!SAML2-CORE]].
+      </p>
+
+      <p>
+        The terms "end-user credential" and "authentication suite" are defined by Linked Web Storage Protocol [[!LWS-PROTOCOL]]
+      </p>
+    </section>
+
+    <section id="serialization">
+      <h2>End-User Credential Serialization</h2>
+
+      <p>
+        SAML tokens used as end-user credentials MUST be signed. In addition, a valid SAML token MUST include the following assertions:
+      </p>
+
+      <p>
+        The SAML token MUST use the <code>saml:NameID</code> assertion for the LWS subject identifier.
+      </p>
+
+      <p>
+        The SAML token MUST use the <code>saml:Issuer</code> assertion for the LWS issuer identifier.
+      </p>
+
+      <p>
+        The SAML token MUST use the <code>Recipient</code> parameter within a <code>saml:SubjectConfirmationData</code> assertion for the LWS client identifier.
+      </p>
+
+      <p>
+        Any audience restriction in the SAML token MUST use the <code>saml:Audience</code> assertion. The <code>saml:Audience</code> assertion SHOULD include a client identifier and any additional target audience such as an authorization server.
+      </p>
+
+      <p>
+        An example SAML End-User Credential is included below.
+      </p>
+
+<pre id="example-saml-token" class="example">
+&lt;samlp:Response
+    xmlns:samlp="urn:oasis:names:tc:SAML:2.0:protocol"
+    xmlns:saml="urn:oasis:names:tc:SAML:2.0:assertion"
+    xmlns:ds="http://www.w3.org/2000/09/xmldsig#"
+    Version="2.0"
+    IssueInstant="2025-10-25T01:01:16Z"&gt;
+
+  &lt;saml:Issuer&gt;https://idp.example</saml:Issuer>
+
+  &lt;ds:Signature&gt;
+    &lt;ds:SignedInfo&gt;
+      ...
+    &lt;ds:SignedInfo&gt;
+  &lt;ds:SignedInfo&gt;
+
+  &lt;samlp:Status&gt;
+    &lt;samlp:StatusCode Value="urn:oasis:names:tc:SAML:2.0:status:Success"/&gt;
+  &lt;samlp:Status&gt;
+
+  &lt;saml:Assertion Version="2.0" IssueInstant="2025-10-25T01:01:16Z"&gt;
+    &lt;saml:Issuer&gt;https://idp.example&lt;/saml:Issuer&gt;
+    &lt;saml:Subject&gt;
+      &lt;saml:NameID Format="urn:oasis:names:tc:SAML:2.0:nameid-format:persistent"&gt;
+          https://id.example/end-user
+      &lt;saml:NameID&gt;
+      &lt;saml:SubjectConfirmation Method="urn:oasis:names:tc:SAML:2.0:cm:bearer"&gt;
+        &lt;saml:SubjectConfirmationData NotOnOrAfter="2025-10-25T02:01:16Z"
+                                      Recipient="https://app.example/SAML"/&gt;
+      &lt;saml:SubjectConfirmation&gt;
+    &lt;saml:Subject&gt;
+    &lt;saml:Conditions NotBefore="2025-10-25T01:01:16Z"
+                     NotOnOrAfter="2025-10-25T02:01:16Z"&gt;
+      &lt;saml:AudienceRestriction&gt;
+        &lt;saml:Audience&gt;https://app.example/SAML</saml:Audience>
+        &lt;saml:Audience&gt;https://as.example</saml:Audience>
+      &lt;saml:AudienceRestriction&gt;
+    &lt;saml:Conditions&gt;
+  &lt;saml:Assertion&gt;
+&lt;samlp:Response&gt;
+      </pre>
+    </section>
+
+    <section id="validation">
+      <h2>End-User Credential Validation</h2>
+
+      <p>
+        In order to validate a SAML end-user credential, there must be a trust relationship with the issuing identity provider.
+        This specification does not define how a validating entity establishes a trust relationship with an identity provider,
+        expecting these relationships to be established out-of-band.
+      </p>
+
+      <p>
+        Using a trust relationship with an issuer, the signature of the credential MUST be validated as described in SAML Core, section 5 [[!SAML2-CORE]].
+      </p>
+    </section>
+
+    <section id="token-type">
+      <h2>Token Type Identifier</h2>
+
+      <p>
+        A SAML 2.0 assertion used as an end-user credential MUST use the <code>urn:ietf:params:oauth:token-type:saml2</code> URI when interacting with an authorization server.
+      </p>
+    </section>
+
+    <section id="security-considerations" class="informative">
+      <h2>Security Considerations</h2>
+
+      <p>
+        All security considerations described in "Security and Privacy Considerations for the OASIS Security Assertion Markup Language (SAML) V2.0" apply to this specification.
+      </p>
+
+      <p>
+        A SAML identity provider should support a mechanism to restrict the audience of an end-user credential to a limited set of entities,
+        including an authorization server. A client in possession of an end-user credential with no audience restrictions
+        should exchange this token for an equivalent audience-restricted token by using, for example, OAuth 2.0 Token Exchange [[RFC8693]].
+      </p>
+    </section>
+  </body>
+</html>

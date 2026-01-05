@@ -1,0 +1,66 @@
+<section id="security-authentication">
+    <h3>Authentication Security</h3>
+
+    <p>
+    All communications related to requesting, retrieving and presenting end-user credentials between clients and servers must use TLS-protected connections.
+    </p>
+
+    <p>
+End-user credentials are vulnerable to theft and replay. Tokens should have a reasonably short lifetime, such as 3600 seconds (1 hour).
+    </p>
+
+    <p>
+Clients that persist end-user credentials must take great care to store these tokens securely. Tokens should never be stored unencrypted in a browser's localStorage, in URLs or in logs.
+    </p>
+</section>
+
+<section id="security-authorization">
+  <h3>Authorization Security</h3>
+
+  <p>
+    The recommendations described in Best Current Practice for OAuth 2.0 Security [[!RFC9700]] apply to this specification.
+  </p>
+
+  <section id="security-transport-security">
+    <h4>Transport Security</h4>
+
+    <p>
+      An Authorization Server implementation MUST support TLS. When using TLS, the client MUST perform a TLS/SSL server certificate check, per RFC 6125 [[!RFC6125]].
+      Implementation security considerations can be found in "Recommendations for Secure Use of Transport Layer Security (TLS) and Datagram Transport Layer Security (DTLS)" [[!BCP195]].
+    </p>
+  </section>
+
+  <section id="security-token-security">
+    <h4>Token Security</h4>
+
+    <p>
+      Bearer tokens are vulnerable to theft and replay. Required mitigations include:
+    </p>
+
+    <ul>
+      <li>
+        Short Lifetimes: Tokens SHOULD have lifetimes of 300 seconds (5 minutes) or less
+      </li>
+      <li>
+        Audience Binding: Tokens MUST be bound to a specific storage server via the <code>aud</code> claim
+      </li>
+      <li>
+        Secure Storage: Clients MUST store tokens securely in memory when possible, never in localStorage, URLs, or logs
+      </li>
+    </ul>
+  </section>
+
+  <section id="security-credential-protection">
+    <h4>End-User Credential Protection</h4>
+
+    <p>
+      End-user credentials with unrestricted audiences MUST NOT be provided to untrusted authorization servers.
+    </p>
+
+    <p>
+      If an end-user credential issuer is unable to restrict the audience of a token, clients SHOULD use a mechanism
+      such as OAuth 2.0 Token Exchange [[!RFC8693]] to create audience-restricted credentials before interacting with authorization servers.
+    </p>
+  </section>
+</section>
+
