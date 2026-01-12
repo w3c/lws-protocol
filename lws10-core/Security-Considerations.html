@@ -20,13 +20,13 @@
 
   <ul>
     <li>
-      Short Lifetimes: authorization servers that assign lifetimes of 300 seconds (5 minutes) or less to access tokens can limit the potential exposure of an exfiltrated credential.
+      Short Lifetimes: Authorization servers that assign lifetimes of 300 seconds (5 minutes) or less to access tokens can limit the potential exposure of an exfiltrated credential.
     </li>
     <li>
-      Audience Binding: access tokens that are bound to a specific destination server, such as via the <code>aud</code> claim, can rely on that binding to protect against token replay. Applications that handle credentials with an unrestricted audience need to be careful when sending these credentials to other entities, especially untrusted authorization servers. If a credential issuer is unable to restrict the audience of a token, clients can use a mechanism such as OAuth 2.0 Token Exchange [[RFC8693]] to create audience-constrained credentials before interacting with an authorization server in a different security domain.
+      Audience Binding: Access tokens that are bound to a specific destination server, by means such as the <code>aud</code> claim, can rely on that binding to protect against token replay. Applications that handle credentials with an unrestricted audience need to be careful when sending these credentials to other entities, especially untrusted authorization servers. If a credential issuer is unable to restrict the audience of a token, clients can use a mechanism such as OAuth 2.0 Token Exchange [[RFC8693]] to create audience-constrained credentials before interacting with an authorization server in a different security domain.
     </li>
     <li>
-      Secure Storage: applications that persist credentials need to ensure that these objects are stored safely. Any time an unencrypted token is stored in a browser's <code>localStorage</code>, in URLs, or in logs, that token is more susceptible to an exfiltration attack.
+      Secure Storage: Applications that persist credentials need to ensure that these objects are stored safely. Any time an unencrypted token is stored in a browser's <code>localStorage</code>, in URLs, or in logs, that token is more susceptible to an exfiltration attack.
     </li>
   </ul>
 </section>
