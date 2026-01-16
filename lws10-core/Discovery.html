@@ -1,0 +1,134 @@
+<section id="storage-description">
+  <h3>Storage Description Resource</h3>
+
+  <p>
+    A storage description resource provides information a client can use
+    when interacting with a storage, including descriptions of capabilities and
+    service endpoints.
+  </p>
+
+  <section id="storage-description-data-model">
+    <h4>Data Model</h4>
+
+    <ul>
+      <li>
+        <dfn>id</dfn> - the <code>id</code> property is REQUIRED. Its value MUST be a URI that identifies the storage.
+      </li>
+      <li>
+        <dfn>type</dfn> - the <code>type</code> property is REQUIRED. Its value MUST be a string that equals
+        <code>Storage</code> or a set of strings that contains an item equal to <code>Storage</code> (case-sensitive).
+      </li>
+      <li>
+        <dfn>capability</dfn> - the <code>capability</code> property is OPTIONAL. Its value MUST be a set of
+        capabilities, where each capability is described by a map containing the following properties.
+        Additional properties MAY be present.
+        <ul>
+          <li><dfn>id</dfn> - the <code>id</code> property is OPTIONAL. If present, its value MUST be a URI.</li>
+          <li><dfn>type</dfn> - the <code>type</code> property is REQUIRED. Its value MUST be a string or a set of strings.</li>
+        </ul>
+      </li>
+      <li>
+        <dfn>service</dfn> - the <code>service</code> property is OPTIONAL. Its value MUST be a set of services,
+        where each service is described by a map containing the following properties. Additional properties MAY be present.
+        <ul>
+          <li><dfn>id</dfn> - the <code>id</code> property is OPTIONAL. If present, its value MUST be a URI.</li>
+          <li><dfn>type</dfn> - the <code>type</code> property is REQUIRED. Its value MUST be a string or a set of strings.</li>
+          <li><dfn>serviceEndpoint</dfn> - the <code>serviceEndpoint</code> property is REQUIRED. Its value MUST be a URI.</li>
+        </ul>
+      </li>
+    </ul>
+
+    <pre id="example-storage-description-minimal" class="example" title="Minimum storage description resource">
+{
+  "@context": "https://www.w3.org/ns/lws/v1",
+  "id": "https://storage.example/root/",
+  "type": "Storage",
+  "service": [{
+    "type": "StorageDescription",
+    "serviceEndpoint": "https://storage.example/root/description"
+  }]
+}
+    </pre>
+  </section>
+
+  <section id="storage-description-binding">
+    <h4>Discovery and Binding</h4>
+
+    <p>
+      All responses to <code>GET</code> and <code>HEAD</code> requests targeting storage resources MUST include a
+      <code>Link</code> header whose target is the URI of the storage description resource, including a relation
+      (<code>rel</code>) parameter whose value equals <code>https://www.w3.org/ns/lws#storageDescription</code>.
+    </p>
+
+    <p>
+      When dereferenced, the storage description MUST contain an <code>id</code> property that identifies the
+      storage. In addition, the storage property MUST contain a service description whose type equals
+      <code>StorageDescription</code> and whose <code>serviceEndpoint</code> equals the URL of the
+      storage description.
+    </p>
+  </section>
+
+  <section id="storage-description-capabilities">
+    <h4>Storage Capabilities</h4>
+
+    <p>
+      A storage description may contain descriptions of additional capabilities supported by the storage.
+    </p>
+  </section>
+
+  <section id="storage-description-services">
+    <h4>Storage Services</h4>
+
+    <p>
+      In addition to a <code>StorageDescription</code> service, a storage description resource may contain links
+      to other services connected to a storage. The API definition of these services are outside the scope of
+      this specification.
+    </p>
+  </section>
+
+  <section id="storage-description-representation">
+    <h4>Storage Description Representation</h4>
+
+    <p>
+      A storage description resource MUST be serializable with the media type <code>application/lws+json</code>.
+      Other representations MAY be available via content negotiation.
+    </p>
+
+    <pre id="example-storage-description-resource" class="example" title="Storage description resource">
+{
+  "@context": "https://w3.org/ns/lws/v1.jsonld",
+  "id": "https://storage.example/root/",
+  "type": "Storage",
+  "capability": [{
+    "type": "https://feature.example/PatchSupport",
+    "mediaType": {
+      "text/turtle": ["application/sparql-update"],
+      "application/n-triples": ["application/sparql-update"],
+      "application/linkset+json": ["application/merge-patch+json", "application/json-patch+json"]
+    }
+  }, {
+    "type": "https://feature.example/ResumableUploads"
+  }, {
+    "type": "https://feature.example/ContentNegotiation",
+    "source": "application/ld+json",
+    "target": ["text/turtle", "application/n-triples"]
+  }, {
+    "type": "https://feature.example/ContentNegotiation",
+    "source": "image/jpeg",
+    "target": ["image/png"]
+  ],
+  "service": [{
+    "type": "NotificationService",
+    "serviceEndpoint": "https://storage.example/notification/api"
+  }, {
+    "type": "TypeIndexService",
+    "serviceEndpoint": "https://storage.example/types/api"
+  }, {
+    "type": "DataSharingService",
+    "serviceEndpoint": "https://storage.example/sharing/api"
+  }]
+}
+    </pre>
+  </section>
+</section>
+
