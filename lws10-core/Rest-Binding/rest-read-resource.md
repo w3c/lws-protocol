@@ -2,7 +2,7 @@
 The read resource operation requests a resource representation with HTTP GET requests (and HEAD for header-only requests). The behavior differs depending on whether the target URL is a container or a non-container resource (DataResource). Servers MUST distinguish resource types via metadata. All responses MUST integrate with metadata as defined in Section 9.1, including Link headers for key relations such as rel="linkset", rel="acl", rel="partOf", and rel="type". Servers MUST ensure atomicity between the resource state and its metadata during reads.
 
 **GET (non-container resource)** – *Retrieve a resource’s content:*
-Send GET to the resource URI for full content (if authorized). Respond with 200 OK, body containing the data, and Content-Type matching the stored media type. Servers MUST support range requests per [RFC 7233](https://datatracker.ietf.org/doc/html/rfc7233) for partial retrieval. Responses MUST include an ETag header for concurrency control and caching.
+Send GET to the resource URI for full content (if authorized). Respond with 200 OK, body containing the data, and Content-Type matching the stored media type. Servers MUST support range requests per [[!RFC7233]] for partial retrieval. Responses MUST include an ETag header for concurrency control and caching.
 
 **Example (GET a file):**
 ```
@@ -89,7 +89,7 @@ In this example, `/alice/notes/` is a container. The response uses JSON-LD with 
 In all cases, the server MUST include the following metadata in the response headers: an ETag (representing the listing version, which changes on membership modifications), and Link headers with rel="type" indicating it is a container, rel="linkset", rel="partOf", and rel="acl".
 
 **HEAD (any resource or container)** – *Headers/metadata only:*
-The LWS server MUST support [HEAD](https://datatracker.ietf.org/doc/html/rfc9110#name-head) for both containers and non-containers, returning the same headers as GET (including ETag, Content-Type, Link for metadata) but without a body. This enables metadata retrieval without transferring content.
+The LWS server MUST support HEAD [[RFC9110]] for both containers and non-containers, returning the same headers as GET (including ETag, Content-Type, Link for metadata) but without a body. This enables metadata retrieval without transferring content.
 
 **Caching and Conditional Requests:** LWS leverages HTTP caching semantics. Servers MUST support conditional requests via If-None-Match (with ETags) or If-Modified-Since headers. If the resource or container listing has not changed, respond with 304 Not Modified to avoid redundant transfers. ETags MUST be provided in all GET/HEAD responses for concurrency and caching support.
 
