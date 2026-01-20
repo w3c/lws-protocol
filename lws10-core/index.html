@@ -206,78 +206,45 @@
       </p>
     </section>
 
+    <section id="logical-resource-organization">
+      <h2>Logical Resource Organization</h2>
+	  <div data-include="logicalresourceorganization.md" data-include-format="markdown" data-include-replace="true"></div>
+    </section>
+
     <section id="operations">
       <h2>Operations</h2>
+	  <div data-include="operations.md" data-include-format="markdown" data-include-replace="true"></div>
 
       <section id="create-resource">
         <h2>create resource</h2>
-        <p>
-          <a>Create resource</a>
-        </p>
-
-        <p>
-          In addition to the <a>core responses</a>, a create operation may produce any of:
-        </p>
-        <ul>
-          <li><dfn>created</dfn> - .</li>
-          <li class="TODO">more? worthy of a list?</li>
-        </ul>
+		<div data-include="Operations/create-resource.md" data-include-format="markdown" data-include-replace="true"></div>		
       </section>
 
       <section id="read-resource">
         <h2>read resource</h2>
-        <p>
-          The <a>read resource</a> operation requests a <a>resource representation</a>.
-          <span class="TODO">Draw from <a href="https://solidproject.org/ED/protocol#reading-resources">Solid Protocol - Reading Resources</a>.
-        </p>
+		<div data-include="Operations/read-resource.md" data-include-format="markdown" data-include-replace="true"></div>
       </section>
 
       <section id="update-resource">
         <h2>update resource</h2>
-        <p>
-          The <a>update resource</a> modifies the contents of a <a>served resource</a>.
-          <span class="TODO">Draw from <a href="https://solidproject.org/ED/protocol#writing-resources">Solid Protocol - Reading Resources</a>.
-        </p>
+		<div data-include="Operations/update-resource.md" data-include-format="markdown" data-include-replace="true"></div>
       </section>
 
       <section id="delete-resource">
         <h2>delete resource</h2>
-        <p>
-          <a>Delete resource</a>
-        </p>
+		<div data-include="Operations/delete-resource.md" data-include-format="markdown" data-include-replace="true"></div>
       </section>
-    </section>
-
-    <section id="logical-resource-organization">
-      <h2>Logical Resource Organization</h2>
-      <p>
-        <span class="TODO">Define the data model for logical resource organization within LWS, including how containers are structured, hierarchical relationships between resources, container semantics, containment rules, and the mechanisms for organizing and navigating collections of related resources. This should cover container creation, membership management, and the relationship between containers and the resources they contain.</span>
-      </p>
     </section>
 
     <section id="rest-binding">
       <h2>REST Binding</h2>
-      <p>
-        This <span class="TODO">strawman</span> mapping of the operations and responses defined above allows <a>LWS REST Servers</a> and <a>LWS REST Clients</a> to communicate over HTTP using REST conventions.
-      </p>
-
-      <p>
-        The following table maps LWS <a>response</a> to an HTTP status code and payload:
-      </p>
-
-      <table>
-        <thead>
-          <tr><th>LWS response</th><th>HTTP status code</th><th>HTTP payload</th></tr>
-        </thead>
-        <tbody>
-          <tr><td><a>success</a></td><td>200</td><td><a>resource representation</a></tr>
-          <tr><td><a>not permitted</a></td><td>...</td></tr>
-          <tr><td><a>unknown requester</a></td><td>...</td></tr>
-          <tr><td><a>unknown error</a></td><td>...</td></tr>
-
-          <tr><td><a>created</a></td><td>201</td></tr>
-        </tbody>
-      </table>
+	  <div data-include="Rest-Binding/restbinding.md" data-include-format="markdown" data-include-replace="true"></div>
+	  <div data-include="Rest-Binding/metadata.md" data-include-format="markdown" data-include-replace="true"></div>
+	  <div data-include="Rest-Binding/rest-create-resource.md" data-include-format="markdown" data-include-replace="true"></div>
+	  <div data-include="Rest-Binding/rest-read-resource.md" data-include-format="markdown" data-include-replace="true"></div>
+	  <div data-include="Rest-Binding/rest-update-resource.md" data-include-format="markdown" data-include-replace="true"></div>
+	  <div data-include="Rest-Binding/rest-delete-resource.md" data-include-format="markdown" data-include-replace="true"></div>
+	  <div data-include="Rest-Binding/rest-table.md" data-include-format="markdown" data-include-replace="true"></div>
     </section>
 
     <section id="resource-identification">
