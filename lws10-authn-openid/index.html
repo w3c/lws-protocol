@@ -69,16 +69,16 @@
       </p>
 
       <p>
-        The terms "end-user credential" and "authentication suite" are defined by Linked Web Storage Protocol [[!LWS-PROTOCOL]]
+        The terms "authentication credential" and "authentication suite" are defined by Linked Web Storage Protocol [[!LWS-PROTOCOL]]
       </p>
     </section>
 
     <section id="serialization">
-      <h2>End-User Credential Serialization</h2>
+      <h2>Authentication Credential Serialization</h2>
 
       <p>
         OpenID Connect defines a protocol for producing signed ID Tokens, which are used to describe an end-user.
-        An ID Token is serialized as a signed JSON Web Token (JWT). In order to use an ID Token as an LWS end-user credential,
+        An ID Token is serialized as a signed JSON Web Token (JWT). In order to use an ID Token as an LWS authentication credential,
         the following additional requirements apply.
       </p>
 
@@ -107,7 +107,7 @@
       </ul>
 
       <p>
-        An example ID Token that is also an LWS end-user credential is included below.
+        An example ID Token that is also an LWS authentication credential is included below.
       </p>
 
       <pre id="example-id-token" class="example">
@@ -133,22 +133,22 @@ signature
     </section>
 
     <section id="validation">
-      <h2>End-User Credential Validation</h2>
+      <h2>Authentication Credential Validation</h2>
 
       <p>
-        For an ID Token to validate as an LWS end-user credential,
+        For an ID Token to validate as an LWS authentication credential,
         there must be a trust relationship between the verifier and the issuing party.
       </p>
 
       <p>
-        In the absence of a pre-existing trust relationship, the validator MUST dereference the <code>sub</code> (subject) claim in the end-user credential.
+        In the absence of a pre-existing trust relationship, the validator MUST dereference the <code>sub</code> (subject) claim in the authentication credential.
         The resulting resource MUST be formatted as a valid controlled identifier document [[!CID-1.0]] with an <code>id</code> value equal to the subject identifier.
       </p>
 
       <p>
         The verifier MUST use the subject's controlled identifier document to locate a service object whose <code>serviceEndpoint</code> value
-        is equal to the value of the <code>iss</code> claim from the end-user credential, and whose <code>type</code> value is equal to <code>https://www.w3.org/ns/lws#OpenIdProvider</code>.
-        The verifier MUST perform OpenID Connect Discovery to locate the public portion of the JSON Web Key (JWK) used to sign the end-user credential.
+        is equal to the value of the <code>iss</code> claim from the authentication credential, and whose <code>type</code> value is equal to <code>https://www.w3.org/ns/lws#OpenIdProvider</code>.
+        The verifier MUST perform OpenID Connect Discovery to locate the public portion of the JSON Web Key (JWK) used to sign the authentication credential.
         The JWT MUST be validated as described by OpenID Connect Core Section 3.1.3.7 [[!OPENID-CONNECT-CORE]].
       </p>
 
@@ -174,7 +174,7 @@ signature
       <h2>Token Type Identifier</h2>
 
       <p>
-        An ID Token used as an end-user credential MUST use the <code>urn:ietf:params:oauth:token-type:id_token</code> URI when interacting with an authorization server.
+        An ID Token used as an authentication credential MUST use the <code>urn:ietf:params:oauth:token-type:id_token</code> URI when interacting with an authorization server.
       </p>
 
     </section>
@@ -187,9 +187,9 @@ signature
       </p>
 
       <p>
-        An OpenID provider should support a mechanism to restrict the audience of an end-user credential to a limited set of entities, including an authorization server.
+        An OpenID provider should support a mechanism to restrict the audience of an authentication credential to a limited set of entities, including an authorization server.
         One mechanism for achieving this is to use Resource Indicators for OAuth 2.0 [[RFC8707]].
-        A client in possession of an end-user credential with no audience restrictions should exchange this token for an equivalent audience-restricted token by using, for example, OAuth 2.0 Token Exchange [[RFC8693]].
+        A client in possession of an authentication credential with no audience restrictions should exchange this token for an equivalent audience-restricted token by using, for example, OAuth 2.0 Token Exchange [[RFC8693]].
       </p>
 
       <p>
@@ -201,7 +201,7 @@ signature
       </p>
 
       <p>
-        The issuer of an end-user credential is responsible for validating the client identifier.
+        The issuer of an authentication credential is responsible for validating the client identifier.
         The issuer may use mechanisms such as OAuth Client Metadata Document, OAuth 2.0 Client Id Prefix, or OpenID Federation.
       </p>
 

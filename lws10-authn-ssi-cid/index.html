@@ -38,7 +38,7 @@
       <p>
         Self-issued identity is important for cases where applications act on their own behalf. This includes autonomous bots as well as server-side scripts, among others.
         In these cases, the agent is able to securely manage the private portion of a keypair, which it uses to generate signed JSON Web Tokens (JWT).
-        This specification describes how this class of agents can generate end-user credentials that can be used with a Linked Web Storage.
+        This specification describes how this class of agents can generate authentication credentials that can be used with a Linked Web Storage.
       </p>
     </section>
     <section id="conformance"></section>
@@ -59,15 +59,15 @@
       </p>
 
       <p>
-        The terms "end-user credential" and "authentication suite" are defined by Linked Web Storage Protocol [[!LWS-PROTOCOL]]
+        The terms "authentication credential" and "authentication suite" are defined by Linked Web Storage Protocol [[!LWS-PROTOCOL]]
       </p>
     </section>
 
     <section id="serialization">
-      <h2>End-User Credential Serialization</h2>
+      <h2>Authentication Credential Serialization</h2>
 
       <p>
-        A self-issued end-user credential is serialized as a signed JSON Web Token (JWT). In order to use a JWT as an LWS end-user credential, the following additional requirements apply.
+        A self-issued authentication credential is serialized as a signed JSON Web Token (JWT). In order to use a JWT as an LWS authentication credential, the following additional requirements apply.
       </p>
 
       <p>
@@ -103,10 +103,10 @@
       </p>
 
       <p>
-        An example JWT that is also an LWS end-user credential is included below.
+        An example JWT that is also an LWS authentication credential is included below.
       </p>
 
-      <pre id="example-end-user-token" class="example">
+      <pre id="example-authentication-token" class="example">
 {
   "kid": "c1f52577",
   "kty": "EC",
@@ -129,14 +129,14 @@ signature
     </section>
 
     <section id="validation">
-      <h2>End-User Credential Validation</h2>
+      <h2>Authentication Credential Validation</h2>
 
       <p>
-        In order to validate a JWT as an LWS end-user credential, there must be a trust relationship between the verifier and the issuing party.
+        In order to validate a JWT as an LWS authentication credential, there must be a trust relationship between the verifier and the issuing party.
       </p>
 
       <p>
-        In the absence of a pre-existing trust relationship, the verifier MUST dereference the <code>sub</code> (subject) claim in the end-user credential.
+        In the absence of a pre-existing trust relationship, the verifier MUST dereference the <code>sub</code> (subject) claim in the authentication credential.
         The resulting resource MUST be formatted as a valid controlled identifier document [[!CID-1.0]] with an <code>id</code> value equal to the subject identifier.
       </p>
 
@@ -145,7 +145,7 @@ signature
       </p>
 
       <p>
-        A verifier MUST validate all claims described by the end-user credential data model.
+        A verifier MUST validate all claims described by the authentication credential data model.
       </p>
 
       <p>
@@ -188,7 +188,7 @@ signature
       <h2>Token Type Identifier</h2>
 
       <p>
-        A self-issued JSON Web Token used as an end-user credential MUST use the <code>urn:ietf:params:oauth:token-type:jwt</code> URI when interacting with an authorization server.
+        A self-issued JSON Web Token used as an authentication credential MUST use the <code>urn:ietf:params:oauth:token-type:jwt</code> URI when interacting with an authorization server.
       </p>
 
     </section>

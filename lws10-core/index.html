@@ -163,8 +163,11 @@
         This specificaiton defines the following terms:
       </p>
       <ul>
-        <li><dfn>end-user credential</dfn> &mdash; a security token that asserts claims about an end-user. This token is secured with a cryptographic proof.</li>
-        <li><dfn>authentication suite</dfn> &mdash; a defined validation mechanism for a concrete serialization of an end-user credential.</li>
+        <li><dfn>authentication credential</dfn> &mdash; a security token that asserts claims about an agent or end-user. This token is secured with a cryptographic proof.
+          Examples of an authentication credentials include assertions of identity such as OpenID Connect ID Tokens and SAML-based assertions as well as assertions of
+          capability such as a ZCAP.
+        </li>
+        <li><dfn>authentication suite</dfn> &mdash; a defined validation mechanism for a concrete serialization of an authentication credential.</li>
       </ul>
 
       <p>

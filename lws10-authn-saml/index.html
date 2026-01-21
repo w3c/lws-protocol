@@ -55,15 +55,15 @@
       </p>
 
       <p>
-        The terms "end-user credential" and "authentication suite" are defined by Linked Web Storage Protocol [[!LWS-PROTOCOL]]
+        The terms "authentication credential" and "authentication suite" are defined by Linked Web Storage Protocol [[!LWS-PROTOCOL]]
       </p>
     </section>
 
     <section id="serialization">
-      <h2>End-User Credential Serialization</h2>
+      <h2>Authentication Credential Serialization</h2>
 
       <p>
-        SAML tokens used as end-user credentials MUST be signed. In addition, a valid SAML token MUST include the following assertions:
+        SAML tokens used as authentication credentials MUST be signed. In addition, a valid SAML token MUST include the following assertions:
       </p>
 
       <p>
@@ -83,7 +83,7 @@
       </p>
 
       <p>
-        An example SAML End-User Credential is included below.
+        An example SAML Authentication Credential is included below.
       </p>
 
 <pre id="example-saml-token" class="example">
@@ -130,10 +130,10 @@
     </section>
 
     <section id="validation">
-      <h2>End-User Credential Validation</h2>
+      <h2>Authentication Credential Validation</h2>
 
       <p>
-        In order to validate a SAML end-user credential, there must be a trust relationship with the issuing identity provider.
+        In order to validate a SAML authentication credential, there must be a trust relationship with the issuing identity provider.
         This specification does not define how a validating entity establishes a trust relationship with an identity provider,
         expecting these relationships to be established out-of-band.
       </p>
@@ -147,7 +147,7 @@
       <h2>Token Type Identifier</h2>
 
       <p>
-        A SAML 2.0 assertion used as an end-user credential MUST use the <code>urn:ietf:params:oauth:token-type:saml2</code> URI when interacting with an authorization server.
+        A SAML 2.0 assertion used as an authentication credential MUST use the <code>urn:ietf:params:oauth:token-type:saml2</code> URI when interacting with an authorization server.
       </p>
     </section>
 
@@ -159,8 +159,8 @@
       </p>
 
       <p>
-        A SAML identity provider should support a mechanism to restrict the audience of an end-user credential to a limited set of entities,
-        including an authorization server. A client in possession of an end-user credential with no audience restrictions
+        A SAML identity provider should support a mechanism to restrict the audience of an authentication credential to a limited set of entities,
+        including an authorization server. A client in possession of an authentication credential with no audience restrictions
         should exchange this token for an equivalent audience-restricted token by using, for example, OAuth 2.0 Token Exchange [[RFC8693]].
       </p>
     </section>
