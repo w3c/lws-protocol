@@ -28,7 +28,7 @@
         </ul>
       </li>
       <li>
-        <dfn>service</dfn> - the <code>service</code> property is OPTIONAL. Its value MUST be a set of services,
+        <dfn>service</dfn> - the <code>service</code> property is REQUIRED. Its value MUST be a set of services,
         where each service is described by a map containing the following properties. Additional properties MAY be present.
         <ul>
           <li><dfn>id</dfn> - the <code>id</code> property is OPTIONAL. If present, its value MUST be a URI.</li>
@@ -41,11 +41,11 @@
     <pre id="example-storage-description-minimal" class="example" title="Minimum storage description resource">
 {
   "@context": "https://www.w3.org/ns/lws/v1",
-  "id": "https://storage.example/root/",
+  "id": "https://storage.example/",
   "type": "Storage",
   "service": [{
     "type": "StorageDescription",
-    "serviceEndpoint": "https://storage.example/root/description"
+    "serviceEndpoint": "https://storage.example/description"
   }]
 }
     </pre>
@@ -62,9 +62,15 @@
 
     <p>
       When dereferenced, the storage description MUST contain an <code>id</code> property that identifies the
-      storage. In addition, the storage property MUST contain a service description whose type equals
+      storage. In addition, the <code>service</code> property MUST contain a service description whose type equals
       <code>StorageDescription</code> and whose <code>serviceEndpoint</code> equals the URL of the
       storage description.
+    </p>
+
+    <p class="note">
+      The URI for a storage description may be distinct from the URI identifying a storage, which may be distinct
+      from the storage's root container. These URIs may also be identical, provided that the resulting representation
+      conforms to the requirements outlined in this document.
     </p>
   </section>
 
@@ -97,7 +103,7 @@
     <pre id="example-storage-description-resource" class="example" title="Storage description resource">
 {
   "@context": "https://w3.org/ns/lws/v1.jsonld",
-  "id": "https://storage.example/root/",
+  "id": "https://storage.example/",
   "type": "Storage",
   "capability": [{
     "type": "https://feature.example/PatchSupport",
@@ -126,6 +132,9 @@
   }, {
     "type": "DataSharingService",
     "serviceEndpoint": "https://storage.example/sharing/api"
+  }, {
+    "type": "StorageDescription",
+    "serviceEndpoint": "https://storage.example/description"
   }]
 }
     </pre>
