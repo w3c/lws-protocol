@@ -119,7 +119,7 @@ WWW-Authenticate: Bearer as_uri="https://authorization.example",
     <p>
       An LWS authorization server is a conforming OAuth 2.0 authorization server, capable of issuing access tokens to a client
       for use with a storage server. In order to issue an access token, a client must first present a valid subject token,
-      such as an end-user credential, to the authorization server via OAuth 2.0 Token Exchange [[!RFC8693]].
+      such as an authentication credential, to the authorization server via OAuth 2.0 Token Exchange [[!RFC8693]].
     </p>
 
     <section id="authorization-token-exchange-request">
@@ -144,7 +144,7 @@ WWW-Authenticate: Bearer as_uri="https://authorization.example",
 
         <li>
           The <code>subject_token</code> parameter is REQUIRED. The value of this parameter MUST include a valid subject token,
-        such as an end-user credential.
+        such as an authentication credential.
         </li>
 
         <li>
