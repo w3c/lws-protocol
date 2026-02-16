@@ -1,5 +1,5 @@
 ### Metadata
-This section defines the model for associating metadata with LWS resources. The LWS metadata system is based on the principles of Web Linking [[!RFC8288]], which allows servers to describe the relationships between resources using typed links. Metadata enhances discoverability, supports self-descriptive APIs, and aligns with resource operations, container hierarchies, and REST bindings as outlined in sections 7 and 8.
+This section defines the model for associating metadata with LWS resources. The LWS metadata system is based on the principles of Web Linking [[!RFC8288]], which allows servers to describe the relationships between resources using typed links. Metadata enhances discoverability, supports self-descriptive APIs, and aligns with resource operations, and container hierarchies.
 
 **Metadata Model**
 All metadata in LWS is expressed as a set of typed links originating from a resource (the link context). Each link consists of:
@@ -41,12 +41,12 @@ Core metadata MAY be modified by clients. To ensure interoperability, servers MU
 [!IMPORTANT] Clients SHOULD NOT assume support for PUT or specific patch formats unless they are advertised in the resource headers and MUST handle 405 Method Not Allowed or 415 Unsupported Media Type responses gracefully.
 
 **Managing Metadata**
-Metadata is managed by interacting with the resource's associated linkset URI. Servers MUST support concurrency controls (e.g., ETags) for updates.
+Metadata is managed by interacting with the resource's associated linkset URI. Servers MUST support concurrency controls for updates.
 
 - Partial Updates (PATCH): This is the primary mechanism for metadata management. Servers MUST support PATCH using application/merge-patch+json.
 
 - Replacement (PUT): If advertised in the Allow header, a client MAY replace the entire linkset. If the server does not support PUT, it MUST reject the request with 405 Method Not Allowed.
 
-- Restrictions: Servers MAY restrict modifications to specific links (like partOf or contains) to maintain system integrity (e.g., preventing resource "moves" that break slash-based semantics). If a server restricts partOf modifications, it MUST document this in its conformance statement.
+- Restrictions: Servers MAY restrict modifications to specific links (like partOf or contains) to maintain system integrity. If a server restricts partOf modifications, it MUST document this in its conformance statement.
 
 - Lifecycle: Metadata lifecycles are tied to the described resource; deleting a resource MUST result in the automatic removal of its associated linkset metadata.
