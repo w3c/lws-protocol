@@ -1,24 +1,43 @@
-### Logical Resource Organization
-This section delineates the abstract data model governing the organization of resources within the Linked Web Storage (LWS) system. It encompasses the structuring of containers and resources, their hierarchical interrelations, the functional semantics of containers as organizational units, rules pertaining to containment, and mechanisms for clients to organize and navigate resource collections. This model establishes the logical namespace of the storage, delineating inter-resource relationships therein, without presupposing any specific identifier structure or semantic implications derived from identifier composition. Logical organization MUST prioritize discoverability and self-descriptive APIs, avoiding hardcoded locations. Containment is represented as metadata to enable multiple containers per resource without URL changes, supporting sharing use cases. All entities MUST have associated metadata resources using Link Sets (RFC 9264), distinguishing server-managed and user-managed data.
+### Container Model
 
-### Resource
-In LWS, a resource constitutes the fundamental unit of storage and access. Each resource possesses a unique identifier within the system. A resource may encompass data, such as content or structured information, alongside associated metadata, including attributes like type or modification timestamps. Resources MUST be classified as 'DataResource', 'Container', or 'MetadataResource' via metadata types. DataResources MAY have multiple representations; servers MUST track original media types and support reification in metadata using the 'representation' property, which includes 'mediaType' and optional 'sizeInBytes'.
+Linked Web Storage organizes resources into containers. A <dfn>container</dfn> is a specialized resource that holds references to other resources, called its members. Containers serve as organizational units, analogous to directories or collections, enabling clients to group, discover, and navigate resources.
 
-### Container
-A container represents a specialized resource type capable of encompassing other resources as members. Containers function as organizational constructs, facilitating the grouping of resources in a manner akin to collections or directories. A container maintains references to its member resources, which may comprise both non-container resources and additional container resources, thereby enabling hierarchical formations. Typically, a container holds minimal intrinsic content beyond metadata or enumerations of its members; its principal role is to aggregate and structure subordinate resources. The storage system's root is designated as a container, serving as the apex organizational unit devoid of a superior parent. Containers MUST support pagination for membership listings using 'ContainerPage' types, with properties such as 'first', 'next', 'prev', and 'last'. Representations MUST use JSON-LD with a specific frame and normative context, optionally advertising content negotiation via 'Vary: Accept' headers. Storage MAY function as a root container, enabling direct writes.
+Every LWS storage has a **root container** that serves as the top-level organizational unit. The root container has no parent and acts as the entry point for the storage hierarchy.
 
-### Containment and Hierarchy
-With the exception of the root container, every resource is affiliated with precisely one parent container. This affiliation engenders a strict hierarchical structure, manifesting as a tree with a singular root container at its pinnacle. Upon creation within a designated container, a new resource becomes a member of that container, appearing within its membership enumeration. Cycles or multiple parent affiliations are prohibited within this model; a resource cannot concurrently belong to multiple containers without duplication or alternative referencing mechanisms external to the core containment framework. This constraint enhances model simplicity and aligns with conventional organizational paradigms. Containment MUST be modeled as metadata links using 'contains' (from container to member) and 'partOf' (from member to container), allowing transitive queries and multiple hierarchies without slash semantics. Servers MAY support hierarchy arrays for ancestors.
+Resources in LWS are classified as either:
 
-### Container Membership Management
-Operations involving the creation, deletion, or relocation of resources influence container memberships as follows:
-- Upon creation, a new resource is associated with a specified parent container. This association integrates the resource into the parent's membership.
-- Deletion of a resource entails its removal from the parent container's membership. Should this render the container devoid of members, it assumes an empty state, potentially permitting its subsequent deletion if warranted. Container deletion typically necessitates an empty state or invokes recursive removal of members.
-- The core operations (create, read, update, delete) do not incorporate an explicit relocation or renaming function. To reassign a resource to an alternative container, a client may replicate or recreate the resource in the target location followed by deletion of the original. Implementations may optionally extend non-core operations for relocation or renaming, achievable logically through combined creation and deletion.
-Membership is managed via create/delete operations; direct updates to membership listings are server-managed and not client-writable to avoid concurrency issues.
+- **Container** — a resource that contains other resources.
+- **DataResource** — a data-bearing resource (e.g., a document, image, or structured data file).
 
-### Container Creation
-Container instantiation occurs via the standard resource creation operation (Section 7.1), differentiated by an indicator specifying the intent to establish a container rather than a non-container resource. This process yields an empty container amenable to subsequent population with members, including sub-containers to extend the hierarchy. Servers MUST assign identifiers, and empty containers MUST be supported.
+### Single Containment
 
-### Navigating and Listing Resources
-Clients navigate the hierarchy through read operations on containers, which yield enumerations of member identifiers. A container's representation furnishes a listing of its members, enabling traversal and discovery of subordinate resources. Listings MUST include metadata for each member, such as resource IDs (MUST), types (array of system and user-defined), representations (MUST for DataResources, including mediaType and optional sizeInBytes), and modified timestamps (SHOULD).
+LWS enforces a **single containment** model: with the exception of the root container, every resource MUST belong to exactly one parent container. This produces a strict tree structure with the root container at its apex.
+
+The containment relationship between a resource and its parent container is expressed via the `rel="up"` link relation. Servers MUST include a `Link` header with `rel="up"` pointing to the parent container in responses to GET and HEAD requests on any non-root resource.
+
+```
+Link: </alice/notes/>; rel="up"
+```
+
+A container's members are listed in its representation using the `items` property. The server manages this list; clients cannot modify it directly. Membership changes occur as a side effect of resource creation and deletion.
+
+### Containment Integrity
+
+The server MUST maintain containment integrity at all times:
+
+- **Creation**: When a new resource is created in a container, the server MUST atomically add the resource to the container's `items` list.
+- **Deletion**: When a resource is deleted, the server MUST atomically remove it from its parent container's `items` list. Deleting a container requires the container to be empty, unless recursive deletion is explicitly requested.
+- **No orphans**: Every non-root resource MUST be reachable from the root container through the containment hierarchy.
+- **No cycles**: The containment hierarchy MUST form a tree. A container MUST NOT directly or indirectly contain itself.
+
+### Resource Identification
+
+Resources are identified by URIs. The URI of a resource is independent of its position in the containment hierarchy. Servers assign URIs during resource creation and MAY incorporate client hints (e.g., the `Slug` header), but clients MUST NOT assume that URI structure reflects containment.
+
+Containment relationships are expressed through metadata (`rel="up"` links and the `items` property in container representations), not through URI path structure. This separation allows servers flexibility in URI assignment while maintaining a well-defined organizational model.
+
+### Container Membership and Authorization
+
+A container's member listing is filtered by the requesting agent's permissions. When a client retrieves a container, the response MUST include only those member resources that the client is authorized to discover. The `totalItems` count in the container representation reflects the total number of accessible items for the requesting agent.
+
+Authorization is enforced per resource. A client's ability to read a container listing does not imply access to the contained resources themselves, and vice versa.
