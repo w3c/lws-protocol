@@ -1,4 +1,4 @@
-### Container Media Type
+### LWS Media Type
 
 The default media type for LWS container representations is:
 
@@ -17,7 +17,3 @@ Servers MUST support content negotiation for container representations. The resp
 - If a client requests `application/json`, the server MUST respond with `Content-Type: application/json`.
 
 In all three cases, the response body is the same JSON-LD document conforming to the LWS container vocabulary. Servers are free to support additional media types (e.g., `text/turtle`) through content negotiation.
-
-#### Processing as JSON
-
-Although container representations are valid JSON-LD, clients MAY process them as plain JSON without invoking a full JSON-LD processor. The `@context` property in the representation provides the mapping to the LWS vocabulary, but all property names used in container representations are short, predictable tokens (e.g., `id`, `type`, `items`, `totalItems`) that can be consumed directly as JSON keys.

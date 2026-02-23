@@ -29,7 +29,7 @@ A contained resource description SHOULD include:
 | Property | Required | Type | Description |
 |----------|----------|------|-------------|
 | `id` | MUST | URI | Identifier of the container |
-| `type` | MUST | String | `"Container"` |
+| `type` | MUST | String or Array | Must at least contain the value `"Container"`. |
 | `totalItems` | MUST | Integer | Total number of contained resources |
 | `items` | MUST | Array | List of contained resource descriptions |
 
