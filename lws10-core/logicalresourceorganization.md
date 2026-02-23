@@ -38,11 +38,11 @@ Containment relationships are expressed through metadata (`rel="up"` links and t
 
 ### Container Membership and Authorization
 
-If a client has read access to a container, the container representation MUST include the identifiers for all resources contained in that container.
+If a client has read access to a container, the container representation MUST include the identifiers for resources contained in that container. Servers MAY filter the container listing based on the client's access to individual contained resources.
 
 <div class="note" role="note">
 <p><b>Authorization Considerations</b></p>
-<p>Servers MAY choose to filter the container listing based on the client's access to individual contained resources. However, implementers should be aware this approach could have significant performance implications and complicates caching. An alternative approach is to use sub-containers with appropriate access controls to organize resources by authorization requirements.</p>
+<p>Filtering container listings based on individual resource access could have significant performance implications and complicates caching. An alternative approach is to use sub-containers with appropriate access controls to organize resources by authorization requirements.</p>
 </div>
 
 A client's ability to read a container listing does not imply access to the contained resources themselves, and vice versa.
