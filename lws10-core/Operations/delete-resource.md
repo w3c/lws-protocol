@@ -11,9 +11,11 @@ The delete resource operation is implemented using the HTTP DELETE method, as de
 The DELETE request targets the URI of the resource or container to remove. Clients MAY include an `If-Match` header with an ETag for concurrency checks, as described in the abstract operation.
 
 **Deletion and Containment:**
-When a resource is deleted, the server MUST atomically remove it from its parent container's `items` list. The parent container's `totalItems` count and ETag MUST be updated accordingly.
+When a resource is deleted, the server MUST atomically remove it from its parent container(s)' `items` list. Each affected parent container's `totalItems` count and ETag MUST be updated accordingly.
 
-For non-container resources, the server removes the resource content, its associated metadata (linkset), and the containment reference in the parent container.
+**Multiple containment:** If a resource belongs to multiple containers (when multiple containment is supported), a DELETE request permanently removes the resource and removes it from **all** parent containers. To remove a resource from a single container without deleting it, use the [Managing Containment](#manage-containment) operations instead.
+
+For non-container resources, the server removes the resource content, its associated metadata (linkset), and the containment references in all parent containers.
 
 For container resources, the server defaults to non-recursive deletion. If the container is not empty and recursion is not requested, the server MUST reject the request with 409 Conflict. If recursion is desired and supported, clients MUST use the `Depth: infinity` header, as defined in [[RFC4918]]. Servers that do not support recursion MUST reject such requests with 501 Not Implemented.
 
