@@ -51,7 +51,7 @@ Accept: application/ld+json
 Assuming the container exists and the client has access:
 ```
 HTTP/1.1 200 OK
-Content-Type: application/ld+json; profile="https://www.w3.org/ns/lws/v1"
+Content-Type: application/lws+json
 ETag: "container-etag-789"
 Link: </alice/notes/.meta>; rel="linkset"; type="application/linkset+json"
 Link: </alice/>; rel="up"

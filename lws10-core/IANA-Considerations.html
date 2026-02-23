@@ -45,22 +45,33 @@
 </section>
 
 <section id="iana-media-type-registry">
-  <h3>Media Type Registry</h3>
+  <h3>The <code>application/lws+json</code> Media Type</h3>
 
   <p>
-    This specification registers the <code>application/lws+json</code> media type for identifying documents conforming to the
-    linked web storage document format.
+    This specification registers the <code>application/lws+json</code> media type specifically for identifying documents
+    conforming to the Linked Web Storage container format.
   </p>
 
   <ul>
     <li>
-      Type Name: application
+      Type name: application
     </li>
     <li>
-      Subtype Name: lws+json
+      Subtype name: lws+json
     </li>
     <li>
-      Required parameter: None
+      Required parameters: None
+    </li>
+    <li>
+      Optional parameters: <b>profile</b>: The profile parameter for the <code>application/lws+json</code> media type allows
+      one or more profile URIs to be specified. These profile URIs have the identifier semantics defined in [[RFC6906]].
+      The "profile" media type parameter MUST be quoted. It contains a non-empty list of space-separated URIs (the profile URIs).
+      <pre>
+profile-param = "profile=" profile-value
+profile-value = &lt;"&gt; profile-URI 0*( 1*SP profile-URI ) &lt;"&gt;
+profile-URI   = URI
+      </pre>
+      The "URI" in the above grammar refers to the "URI" as defined in Section 3 of [[RFC3986]].
     </li>
     <li>
       Encoding considerations: Resources that use the <code>application/lws+json</code> media type are required to conform to
@@ -68,7 +79,21 @@
       considerations specified in Section 11 of [[RFC8259]].
     </li>
     <li>
-      Contact: W3C Linked Web Storage Working Group public-lws-wg@w3.org
+      Security considerations: As defined in this specification.
+    </li>
+    <li>
+      Contact: W3C Linked Web Storage Working Group &lt;public-lws-wg@w3.org&gt;
     </li>
   </ul>
+
+  <p>
+    Note that while the Linked Web Storage format uses JSON-LD conventions, there are a number of constraints and additional
+    requirements for LWS implementations that justify the use of a specific media type.
+  </p>
+
+  <p>
+    Because LWS containers can be considered a restricted profile of JSON-LD, implementations SHOULD consider the
+    <code>application/ld+json; profile="https://www.w3.org/ns/lws/v1"</code> media type as equivalent to
+    <code>application/lws+json</code>.
+  </p>
 </section>
