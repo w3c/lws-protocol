@@ -168,6 +168,10 @@
           capability such as a ZCAP.
         </li>
         <li><dfn>authentication suite</dfn> &mdash; a defined validation mechanism for a concrete serialization of an authentication credential.</li>
+        <li><dfn>container</dfn> &mdash; a resource that holds references to other resources, called its members. Containers serve as organizational units enabling clients to group, discover, and navigate resources.</li>
+        <li><dfn>data resource</dfn> &mdash; a data-bearing resource such as a document, image, or structured data file.</li>
+        <li><dfn>root container</dfn> &mdash; the top-level container in an LWS storage. The root container has no parent and acts as the entry point for the storage hierarchy.</li>
+        <li><dfn>containment</dfn> &mdash; the relationship between a container and its member resources, expressed via the <code>items</code> property in container representations and the <code>rel="up"</code> link relation in HTTP headers.</li>
       </ul>
 
       <p>
