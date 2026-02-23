@@ -38,6 +38,11 @@ Containment relationships are expressed through metadata (`rel="up"` links and t
 
 ### Container Membership and Authorization
 
-A container's member listing is filtered by the requesting agent's permissions. When a client retrieves a container, the response MUST include only those member resources that the client is authorized to discover. The `totalItems` count in the container representation reflects the total number of accessible items for the requesting agent.
+If a client has read access to a container, the container representation MUST include the identifiers for all resources contained in that container.
 
-Authorization is enforced per resource. A client's ability to read a container listing does not imply access to the contained resources themselves, and vice versa.
+<div class="note" role="note">
+<p><b>Authorization Considerations</b></p>
+<p>Servers MAY choose to filter the container listing based on the client's access to individual contained resources. However, implementers should be aware this approach could have significant performance implications and complicates caching. An alternative approach is to use sub-containers with appropriate access controls to organize resources by authorization requirements.</p>
+</div>
+
+A client's ability to read a container listing does not imply access to the contained resources themselves, and vice versa.

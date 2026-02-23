@@ -3,7 +3,7 @@ Retrieves the representation of an existing resource or the listing of a contain
 * **Inputs**: Target identifier and optional parameters.
 * **Behavior**:
     * For non-container resources, the server returns the resource content.
-    * For containers, the server returns a listing of member resources. Listings must include core metadata for each member and must be filtered based on the requester's permissions.
+    * For containers, the server returns a listing of all member resources. Listings must include core metadata for each member.
 * **Outcome**: The requested representation or a notification of failure.
 
 The read resource operation requests a resource representation with HTTP GET requests (and HEAD for header-only requests). The behavior differs depending on whether the target URL is a container or a non-container resource (DataResource). Servers MUST distinguish resource types via metadata. All responses MUST integrate with metadata as defined in Section 8.1, including Link headers for key relations such as `rel="linkset"`, `rel="acl"`, `rel="up"`, and `rel="type"`. Servers MUST ensure atomicity between the resource state and its metadata during reads.
