@@ -21,6 +21,16 @@ Link: </alice/notes/>; rel="up"
 
 A container's members are listed in its representation using the `items` property. The server manages this list; clients cannot modify it directly. Membership changes occur as a side effect of resource creation and deletion.
 
+### Multiple Containment
+
+Servers MAY support **multiple containment**, allowing a resource to belong to more than one container simultaneously. When multiple containment is enabled:
+
+- The containment graph forms a **directed acyclic graph (DAG)** instead of a tree.
+- A resource MAY have multiple `rel="up"` links, one for each parent container.
+- **No self-containment**: A container MUST NOT contain itself, directly or indirectly. The server MUST reject any operation that would create a cycle in the containment graph.
+
+Multiple containment enables sharing use cases where a single resource needs to appear in multiple organizational contexts without duplication. Containment links are managed through the [Managing Containment](#manage-containment) operations.
+
 ### Containment Integrity
 
 The server MUST maintain containment integrity at all times:
@@ -28,7 +38,7 @@ The server MUST maintain containment integrity at all times:
 - **Creation**: When a new resource is created in a container, the server MUST atomically add the resource to the container's `items` list.
 - **Deletion**: When a resource is deleted, the server MUST atomically remove it from its parent container's `items` list. Deleting a container requires the container to be empty, unless recursive deletion is explicitly requested.
 - **No orphans**: Every non-root resource MUST be reachable from the root container through the containment hierarchy.
-- **No cycles**: The containment hierarchy MUST form a tree. A container MUST NOT directly or indirectly contain itself.
+- **No cycles**: The containment graph MUST NOT contain cycles. A container MUST NOT directly or indirectly contain itself.
 
 ### Resource Identification
 

@@ -50,4 +50,6 @@ Metadata is managed by interacting with the resource's associated linkset URI. S
 
 - Restrictions: Servers MAY restrict modifications to specific links (like `up` or `items`) to maintain system integrity. If a server restricts `up` modifications, it MUST document this in its conformance statement.
 
+- Containment Management: When multiple containment is supported, containment relationships MAY be modified through PATCH operations on a container's linkset resource. See [Managing Containment](#manage-containment) for the specific protocol for adding and removing resources from containers.
+
 - Lifecycle: Metadata lifecycles are tied to the described resource; deleting a resource MUST result in the automatic removal of its associated linkset metadata.
