@@ -28,7 +28,7 @@ On success, return the 201 status code with the new URI in the `Location` header
 **POST (to a container URI)** – *Create with server-assigned name:*
 Use POST to add a new resource inside an existing container. The server assigns an identifier to the resource, optionally suggested via the `Slug` header. The server MAY honor the Slug header if it does not conflict with naming rules or existing resources. Clients indicate the type of resource to create as follows:
 
-- To create a **Container**, the client MUST include a `Link` header with `rel="type"` pointing to the Container type: `Link: <https://www.w3.org/ns/lws#Container>; rel="type"`. The request body MAY be empty.
+- To create a **Container**, the client MUST include a `Link` header with `rel="type"` pointing to the Container type: `Link: <https://www.w3.org/ns/lws#Container>; rel="type"`.
 - To create a **DataResource**, the client includes the resource content in the request body with the appropriate `Content-Type` header.
 
 **Example (POST to create a new data resource):**
