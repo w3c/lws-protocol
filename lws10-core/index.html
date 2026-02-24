@@ -164,6 +164,13 @@
           capability such as a ZCAP.
         </li>
         <li><dfn>authentication suite</dfn> &mdash; a defined validation mechanism for a concrete serialization of an authentication credential.</li>
+        <li><dfn>LWS resource</dfn> &mdash; An LWS Resource is a subset of information resources whose lifecycle is managed by the LWS storage.</li>
+        <li><dfn>container</dfn> &mdash; An LWS resource that maintains links to a set of contained resources whose lifecycle is governed by the same LWS server. Containers serve as organizational units enabling clients to group, discover, and navigate resources.</li>
+        <li><dfn>data resource</dfn> &mdash; a data-bearing resource such as a document, image, or structured data file.</li>
+        <li><dfn>contained resource</dfn> &mdash; A LWS resource, either a container or a data resource, that is referenced by one or more containers through a containment relationship.</li>
+        <li><dfn>root container</dfn> &mdash; the top-level container in an LWS storage. The root container has no parent and acts as the entry point for the storage hierarchy.</li>
+        <li><dfn>containment</dfn> &mdash; the relationship between a container and its member resources, expressed via the <code>items</code> property in container representations and the <code>rel="up"</code> link relation in HTTP headers.</li>
+        <li><dfn>linkset</dfn> &mdash; A separate resource associated with each LWS resource that contains the complete set of typed links (metadata) for that resource, as defined in [[RFC9264]]. The linkset is discovered via a rel="linkset" link relation and can be modified to manage resource relationships, including containment.</li>
       </ul>
 
       <p>
@@ -208,6 +215,11 @@
 	  <div data-include="logicalresourceorganization.md" data-include-format="markdown" data-include-replace="true"></div>
     </section>
 
+    <section id="container-representation">
+      <h2>Container Representation</h2>
+	  <div data-include="container-representation.md" data-include-format="markdown" data-include-replace="true"></div>
+    </section>
+
     <section id="operations">
       <h2>Operations</h2>
 	  <div data-include="operations.md" data-include-format="markdown" data-include-replace="true"></div>
@@ -235,6 +247,16 @@
 		<div data-include="Operations/delete-resource.md" data-include-format="markdown" data-include-replace="true"></div>
       </section>
 	  <div data-include="Operations/rest-table.md" data-include-format="markdown" data-include-replace="true"></div>
+    </section>
+
+    <section id="container-media-type">
+      <h2>Container Media Type</h2>
+	  <div data-include="container-media-type.md" data-include-format="markdown" data-include-replace="true"></div>
+    </section>
+
+    <section id="jsonld-context">
+      <h2>JSON-LD Context and Vocabulary</h2>
+	  <div data-include="jsonld-context.md" data-include-format="markdown" data-include-replace="true"></div>
     </section>
 
     <section id="resource-identification">
