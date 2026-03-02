@@ -1,0 +1,581 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8">
+  <title>Linked Web Agent Identification: HTTP-based Controlled Identifier Profile</title>
+  <meta content="width=device-width, initial-scale=1, shrink-to-fit=no" name="viewport" />
+  <script src="https://www.w3.org/Tools/respec/respec-w3c" class="remove"></script>
+  <link rel="stylesheet" href="local.css" />
+  <script class='remove'>
+    // See https://respec.org/docs/ for how to configure ReSpec
+    var respecConfig = {
+      specStatus: "ED",
+      shortName: "lws-ident-cid-http",
+      editors: [{
+        name: "Christoph Braun",
+        company: "FZI Forschungszentrum Informatik",
+        companyURL: "https://fzi.de/en/",
+      }],
+      github: "w3c/lws-protocol/",
+      xref: ["web-platform"],
+      group: "lws",
+      localBiblio: {
+        "BHKM24": {
+          title: "SSI, from Specifications to Protocol? Formally Verify Security!",
+          href: "https://doi.org/10.1145/3589334.3645426",
+          authors: [
+            "Christoph H.-J. Braun",
+            "Ross Horne",
+            "Tobias Käfer",
+            "Sjouke Mauw"
+          ],
+          publisher: "ACM",
+          date: "May 2024",
+          status: "Proceedings of the ACM on Web Conference 2024 (WWW '24)"
+        }
+      }
+    };
+  </script>
+</head>
+
+<body about="" prefix="rdf: http://www.w3.org/1999/02/22-rdf-syntax-ns# rdfs: http://www.w3.org/2000/01/rdf-schema# owl: http://www.w3.org/2002/07/owl# xsd: http://www.w3.org/2001/XMLSchema# dcterms: http://purl.org/dc/terms/ skos: http://www.w3.org/2004/02/skos/core# prov: http://www.w3.org/ns/prov# mem: http://mementoweb.org/ns# qb: http://purl.org/linked-data/cube# schema: http://schema.org/ doap: http://usefulinc.com/ns/doap# cito: http://purl.org/spar/cito/ as: https://www.w3.org/ns/activitystreams# ldp: http://www.w3.org/ns/ldp# earl: http://www.w3.org/ns/earl# spec: http://www.w3.org/ns/spec# rel: https://www.w3.org/ns/iana/link-relations/relation# odrl: http://www.w3.org/ns/odrl/2/">
+
+  <section id="abstract">
+    <p>
+      HTTP URIs form the foundation of the Web. HTTP URIs are dereferenceable by any standard HTTP client without additional infrastructure.
+      This specification defines an HTTP-based Controlled Identifier [[CID-1.0]] Profile for Agent Identification in the Linked Web Storage Protocol [[LWS-CORE]].
+    </p>
+  </section>
+  <section id="sotd">
+    <p>
+      This is an unofficial proposal.
+    </p>
+  </section>
+
+  <section id="introduction" class="informative">
+    <h2>Introduction</h2>
+    <p>
+      HTTP URIs form the foundation of the Web. Importantly, HTTP URIs are dereferenceable by any standard HTTP client without additional infrastructure.
+      This specification defines an HTTP-based Controlled Identifier (<abbr title="Controlled Identifier">CID</abbr>) [[CID-1.0]] Profile for Agent Identification in the Linked Web Storage (<abbr title="Linked Web Storage">LWS</abbr>) Protocol [[LWS-CORE]].
+    </p>
+    <p>
+      The LWS Protocol [[LWS-CORE]] mandates the subject of authentication, i.e., an agent, to be identified by a URI [[URI]].
+      LWS Authentication Suites, e.g., [[LWS-AUTHN-OPENID]],[[LWS-AUTHN-SAML]], or [[LWS-AUTHN-SSI-CID]], further recommend using a CID [[CID-1.0]] to this end.
+    </p>
+    <p>
+      A CID is a URI.
+      Dereferencing a CID yields the CID document that may detail e.g. the CID's verification methdods or its controller.
+      An LWS Server would thus be able to obtain information, e.g, the agent's authentication key, that enables the LWS Server to authenticate the agent.
+      How exactly a CID is to be derefenced depends on the particular type of URI used as the CID, and remains unspecified by [[CID-1.0]].
+    </p>
+    <p>
+      To achieve interoperability of Linked Web Storages, it is required that LWS Servers are able to implement LWS Authentication Suites that might rely on dereferencing <span>CID</span>s.
+      This in turn requires specifying a mechanism to dereference an agent's CID that LWS Servers can implement.
+      This specification provides one such mechanism, a mechanism based on HTTP [[RFC9110]] and the architecture of the Web itself [[WEBARCH]].
+    </p>
+
+    <p>This specification is for:</p>
+
+    <ul about="" rel="schema:audience">
+      <li><i>Identity provider <a href="http://data.europa.eu/esco/occupation/a7c1d23d-aeca-4bee-9a08-5993ed98b135">server developers</a></i> who want to identify agents on the Web using HTTP-based <span>CID</span>s and to enable their server to support dereferencing an agent's CID in LWS Authentication - implementing a <a href="#Server">Server</a> of <a href="#AgentDocument">LWS Agent Documents</a>;</li>
+      <li><i>Authorization <a href="http://data.europa.eu/esco/occupation/a7c1d23d-aeca-4bee-9a08-5993ed98b135">server developers</a></i> who want to enable their server to support dereferencing an agent's CID in LWS Authentication - implementing a <a href="#Client">Client</a> processing <a href="#AgentDocument">LWS Agent Documents</a>;</li>
+      <li><i><a href="http://data.europa.eu/esco/occupation/c40a2919-48a9-40ea-b506-1f34f693496d">Application developers</a></i> who want to enable their application to support dereferencing an agent's CID, e.g., to obtain the agent's cryptographic assertion keys - implementing a <a href="#Client">Client</a> processing <a href="#AgentDocument">LWS Agent Documents</a>.</li>
+    </ul>
+
+    <div class="note">
+      <p>HTTP-based <span>CID</span>s allow a user to simply click on a CID they encounter on a Web page to obtain more information directly in their Web browser.
+      </p>
+      <p>LWS Use Case: <a href="https://github.com/w3c/lws-ucs/issues/48">LWS UCS #48</a> </p>
+    </div>
+
+    <section id="terminology" class="informative">
+      <h2>Terminology</h2>
+      <p>
+        This specification adopts terminology from [[LWS-CORE]] and [[CID-1.0]], including but not limited to:
+      <dl>
+        <dt><dfn id="entity"><a href="">entity</a></dfn></dt>
+        <dd>as defined by [[LWS-CORE]].</dd>
+        <!-- <dt><dfn id="cid"><a href="https://www.w3.org/TR/cid/#dfn-controlled-identifier">controlled identifier</a></dfn></dt>
+        <dd>as defined by [[CID-1.0]].</dd> -->
+        <dt><dfn id="cidDocument"><a href="https://www.w3.org/TR/cid/#dfn-controlled-identifier-document">controlled identifier document</a></dfn></dt>
+        <dd>as defined by [[CID-1.0]].</dd>
+        <dt><dfn id="controller"><a href="https://www.w3.org/TR/cid/#dfn-controller">controller</a></dt>
+        <dd>as defined by [[CID-1.0]].</dd>
+        <dt id="verificationMethod"><a href="https://www.w3.org/TR/cid/#dfn-verification-method">verification method</a></dfn></dt>
+        <dd>as defined by [[CID-1.0]].</dd>
+        <p>Extracted from [[CID-1.0]] for easier reference:</p>
+        <dt id="cid-subject"><a href="https://www.w3.org/TR/cid/#dfn-subjects">subject</a></dt>
+        <dd><cite>
+            An entity, such as a person, group, organization, physical thing, digital thing, or logical thing that is referred to by the value of an <code>id</code> property in a controlled identifier document.
+          </cite></dd>
+        <dt id="cid-base-id"><a href="https://www.w3.org/TR/cid/#dfn-base-identifier">base identifier</a></dt>
+        <dd><cite>
+            The value of the <code>id</code> property in the <i>topmost</i> map of the <a href="#cidDocument">controlled identifier document</a> is called the base identifier for the <a href="#cidDocument">controlled identifier document</a>.
+          </cite></dd>
+        <dt id="cid-canonical-url"><a href="https://www.w3.org/TR/cid/#dfn-canonical-url">canonical URL</a></dt>
+        <dd><cite>
+            The URL for retrieving the current, authoritative <a href="#cidDocument">controlled identifier document</a> for a given identifier is called the canonical URL for the <a href="#cidDocument">controlled identifier document</a>.
+            Dereferencing the <a href="#cid-canonical-url">canonical URL</a> MUST return the current authoritative <a href="#cidDocument">controlled identifier document</a>.
+          </cite></dd>
+      </dl>
+      </p>
+
+      <p>
+        This specification further defines the following terminology:
+      <dl>
+        <dt id="agent">agent</dt>
+        <dd>
+          An agent is an <a href="#entity">entity</a> that is able to initiate or perform actions, e.g., a person, an organisation, or a software application.
+        </dd>
+        <dt id="agentIdentifier">agent identifier</dt>
+        <dd>
+          An HTTP URI identifying an <a href="#agent">agent</a>.
+        </dd>
+      </dl>
+      </p>
+    </section>
+
+    <section id="namespaces" inlist="" rel="schema:hasPart" resource="#namespaces" class="normative"><a class="self-link" href="#namespaces"></a>
+      <h3>Namespaces</h3>
+      <div datatype="rdf:HTML" property="schema:description">
+        <table>
+          <caption>
+            Prefixes and Namespaces
+          </caption>
+          <thead>
+            <tr>
+              <th>Prefix</th>
+              <th>Namespace</th>
+              <th>Description</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><code>rdf</code></td>
+              <td>http://www.w3.org/1999/02/22-rdf-syntax-ns#</td>
+              <td>
+                [[RDF-SCHEMA]]
+              </td>
+            </tr>
+            <tr>
+              <td><code>rdfs</code></td>
+              <td>http://www.w3.org/2000/01/rdf-schema#</td>
+              <td>
+                [[RDF-SCHEMA]]
+              </td>
+            </tr>
+            <tr>
+              <td><code>foaf</code></td>
+              <td>http://xmlns.com/foaf/0.1/</td>
+              <td>
+                [[!FOAF]]
+              </td>
+            </tr>
+            <tr>
+              <td><code>cid</code></td>
+              <td>https://www.w3.org/ns/cid/v1#</td>
+              <td>
+                [[CID-1.0]]
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <section id="conform" class="normative">
+      <h2>Conformance</h2>
+      <p>This section describes the <span about="" rel="spec:conformance" resource="#conformance">conformance model of the Linked Web Agent HTTP-CID Profile</span>.</p>
+
+      <section id="normative-informative-content" inlist="" rel="schema:hasPart" resource="#normative-informative-content"><a class="self-link" href="#normative-informative-content"></a>
+        <h4 property="schema:name">Normative and Informative Content</h4>
+        <div datatype="rdf:HTML" property="schema:description">
+          <p id="normative-informative-sections"><a class="self-link" href="#normative-informative-sections"></a>All assertions, diagrams, examples, and notes are non-normative, as are all sections explicitly marked non-normative. Everything else is normative.</p>
+          <p id="requirement-levels"><a class="self-link" href="#requirement-levels"></a>The key words “<span rel="dcterms:subject" resource="spec:MUST">MUST</span>”, “<span rel="dcterms:subject" resource="spec:MUSTNOT">MUST NOT</span>”, “<span rel="dcterms:subject" resource="spec:SHOULD">SHOULD</span>”, and “<span rel="dcterms:subject" resource="spec:MAY">MAY</span>” are to be interpreted as described in <a href="https://tools.ietf.org/html/bcp14">BCP 14</a> [[!RFC2119]] [[!RFC8174]] when, and only when, they appear in all capitals, as shown here.</p>
+          <p id="advisement-levels"><a class="self-link" href="#advisement-levels"></a>The key words “<span rel="dcterms:subject" resource="spec:StronglyEncouraged">strongly encouraged</span>”, “<span rel="dcterms:subject" resource="spec:StronglyDiscouraged">strongly discouraged</span>”, “<span rel="dcterms:subject" resource="spec:Encouraged">encouraged</span>", “<span rel="dcterms:subject" resource="spec:Discouraged">discouraged</span>", “<span rel="dcterms:subject" resource="spec:Can">can</span>", “<span rel="dcterms:subject" resource="spec:Cannot">cannot</span>”, “<span rel="dcterms:subject" resource="spec:Could">could</span>”, “<span rel="dcterms:subject" resource="spec:CouldNot">could not</span>”, “<span rel="dcterms:subject" resource="spec:Might">might</span>”, and “<span rel="dcterms:subject" resource="spec:MightNot">might not</span>” are used for non-normative content.</p>
+        </div>
+      </section>
+
+      <section id="specification-category" inlist="" rel="schema:hasPart" resource="#specification-category" typeof="skos:ConceptScheme"><a class="self-link" href="#specification-category"></a>
+        <h4 property="schema:name skos:prefLabel">Specification Category</h4>
+        <div datatype="rdf:HTML" property="schema:description">
+          <p property="skos:definition">The <span about="" rel="spec:specificationCategory" resource="#specification-category">Linked Web Agent HTTP-CID Profile</span> identifies the following <cite><a href="https://www.w3.org/TR/spec-variability/#spec-cat" rel="dcterms:subject" resource="spec:SpecificationCategory">Specification Category</a></cite> to distinguish the types of conformance: <span rel="skos:hasTopConcept" resource="spec:NotationSyntax">notation/syntax</span>, <span rel="skos:hasTopConcept" resource="spec:ProcessorBehavior">processor behavior</span>, <span rel="skos:hasTopConcept" resource="spec:Protocol">protocol</span>.</p>
+        </div>
+      </section>
+
+      <section id="classes-of-products" inlist="" rel="schema:hasPart" resource="#classes-of-products" typeof="skos:ConceptScheme"><a class="self-link" href="#classes-of-products"></a>
+        <h4 property="schema:name skos:prefLabel">Classes of Products</h4>
+        <div datatype="rdf:HTML" property="schema:description">
+          <p property="skos:definition">The <span about="" rel="spec:classesOfProducts" resource="#classes-of-products">Linked Web Agent HTTP-CID Profile</span> identifies the following <cite><a href="https://www.w3.org/TR/qaframe-spec/#cop-def" rel="dcterms:subject" resource="spec:ClassesOfProducts">Classes of Products</a></cite> for conforming implementations. These products are referenced throughout this specification.</p>
+
+          <dl rel="skos:hasTopConcept">
+            <dt about="#AgentDocument" property="skos:prefLabel" rel="skos:broadMatch" resource="spec:Content" typeof="skos:Concept"><dfn id="AgentDocument"><a class="self-link" href="#AgentDocument"></a>LWS Agent Document</dfn></dt>
+            <dd about="#AgentDocument" property="skos:definition">A CID document that describes an agent identified by an HTTP URI.</dd>
+            <dt about="#Server" property="skos:prefLabel" rel="skos:broadMatch" resource="spec:RespondingAgent" typeof="skos:Concept"><dfn id="Server"><a class="self-link" href="#Server"></a>Server</dfn></dt>
+            <dd about="#Server" property="skos:definition">A Server that responds to HTTP requests to provide an LWS Agent Document.</dd>
+            <dt about="#Client" property="skos:prefLabel" rel="skos:broadMatch" resource="spec:Consumer" typeof="skos:Concept"><dfn id="Client"><a class="self-link" href="#Client"></a>Client</dfn></dt>
+            <dd about="#Client" property="skos:definition">A Client that issues HTTP requests to obtain and process an LWS Agent Document.</dd>
+          </dl>
+        </div>
+      </section>
+
+      <section id="interoperability" inlist="" rel="schema:hasPart" resource="#interoperability" typeof="skos:ConceptScheme"><a class="self-link" href="#interoperability"></a>
+        <h4 property="schema:name skos:prefLabel">Interoperability</h4>
+        <div datatype="rdf:HTML" property="schema:description">
+          <dl>
+            <dt about="#client-server-interoperability" property="skos:prefLabel" typeof="skos:Concept"><dfn id="client-server-interoperability"><a class="self-link" href="#client-server-interoperability"></a>Client–Server interoperability</dfn></dt>
+            <dd about="#client-server-interoperability" property="skos:definition">
+              Interoperability of implementations for <a href="#Client" rel="rdfs:seeAlso">Client</a> and <a href="#Server" rel="rdfs:seeAlso">Servers</a> is tested by evaluating an implementation’s ability to request, respond and process HTTP messages that conform to this specification.
+              Interoperability is achieved when a <a href="#Client">Client</a>, given an <a href="#agentIdentifier">agent identifier</a>, can successfully obtain and validate the corresponding <a href="#AgentDocument">LWS Agent Document</a> from any conforming <a href="#Server">Server</a>, and thereby establish the authoritative binding between the agent identifier and LWS Agent Document, and subsequently, the agent's verification methods.
+            </dd>
+          </dl>
+        </div>
+      </section>
+
+    </section>
+
+  </section>
+
+  <section id="agent-identifier" class="normative">
+    <h2>Agent Identifier</h2>
+
+    <p>
+      An <a href="#agent">agent</a> and an <a href="#AgentDocument">LWS Agent Document</a> are two distinct resources [[WEBARCH]], which cannot be identified by the same URI at the same time.
+      This specification thus distinguishes between an <a href="#AgentDocument">LWS Agent Document's</a> identifier and an <a href="#agentIdentifier">agent identifier</a>.
+      Importantly, the two identifiers denote different things:
+    <ul>
+      <li>An <a href="#agentIdentifier">agent identifier</a> is an HTTP URI identifying an agent [[!URI]].</li>
+      <li>An <a href="#AgentDocument">LWS Agent Document's</a> identifier is an HTTP URI identifying the corresponding information resource [[!WEBARCH]], i.e., the document describing the agent.</li>
+    </ul>
+    </p>
+
+    <p>
+      A <a href="#Client">Client</a> can obtain the agent identifier's corresponding LWS Agent Document by <a href="#dereferencing">dereferencing</a> the agent identifier via HTTP [[RFC9110]].
+      A <a href="#Client">Client</a> then <a href="#validating">validates</a> the corresponding LWS Agent Document to be indeed authoritative.
+    </p>
+
+    <p> An <a href="#agentIdentifier">agent identifier</a> <span>SHOULD</span> be an HTTP URI that includes a fragment [[!URI]].</p>
+    <p>
+      When a <a href="#Server">Server</a> receives an HTTP request targeting an <a href="#agentIdentifier">agent identifier</a> that does not include a fragment, the <a href="#Server">Server</a> MUST respond with a redirect to the corresponding <a href="#AgentDocument">LWS Agent Document</a> identifier in its <code>Location</code> header field.
+    </p>
+
+  </section>
+
+  <section id="agent-document" class="normative">
+    <h2>LWS Agent Document</h2>
+    <p>
+      An <a href="#AgentDocument">LWS Agent Document</a> is a <a href="#cidDocument">CID document</a>; all property definitions by [[!CID-1.0]] apply.
+      In addition, this specification defines properties, restrictions, and examples provided in the following sections.
+    </p>
+
+    <p>
+      An <a href="#AgentDocument">LWS Agent Document</a> thus describes the <a href="#verificationMethod">verification methods</a> of an <a href="#agent">agent</a>.
+      It describes which verification methods might be used to make assertions about its <code>primaryTopic</code>, the agent.
+      Such assertions can be used as <a href="https://w3c.github.io/lws-protocol/lws10-core/#authentication-data-model">authentication credentials</a> to authenticate the agent [[LWS-CORE]].
+    </p>
+    <aside class="example" title="An LWS Agent Document; a Controlled Identifier Document that describes an agent using HTTP URIs.">
+      <pre class="json">
+{
+  "@context": [ 
+    "https://www.w3.org/ns/cid/v1", 
+    "https://www.w3.org/ns/ex/v1" 
+  ],
+  "id": "https://example.org/001",
+  "primaryTopic": "https://example.org/001#agent",
+  "controller": "https://example.org/001#agent",
+    "authentication": [{
+        "id": "https://example.org/001#key0",
+        "type": "Multikey",
+        "controller": "https://example.org/001#agent",
+        "publicKeyMultibase": "z6MkmM42vxfqZQsv4ehtTjFFxQ4sQKS2w6WR7emozFAn5cxu"
+  }]
+}
+      </pre>
+    </aside>
+
+    <section id="context">
+      <h2>Context</h2>
+      <p>
+        This specification mandates the strict inclusion of the <code>@context</code> property to ensure broad <a href="#client-server-interoperability">interoperability</a> across implementations of <a href="#Client">Clients</a> and <a href="#Server">Servers</a>:
+      </p>
+      <p>
+        An <a href="#AgentDocument">LWS Agent Document</a> <span>MUST</span> specify JSON-LD's <code>@context</code> property to indicate the entire applicable context of the <a href="#AgentDocument">LWS Agent Document</a>.
+      </p>
+    </section>
+
+
+    <section id="id-property">
+      <h2>ID</h2>
+
+      <p>
+        The CID specification [[!CID-1.0]] defines the <a href="#cid-subject">subject</a> of a <a href="#cidDocument">CID document</a> to be identified by the CID document's <a href="#cid-base-id">base identifier</a> which also MUST be the same as the <a href="#cid-canonical-url">canonical URL</a> to retrieve the CID document from.
+      </p>
+      <p>
+        This means that the URI identifying the <a href="#cid-subject">subject</a> is the same as the URL of the <a href="#cidDocument">CID document</a>.
+        When distinguishing between an <a href="#agent">agent</a> and a <a href="#cidDocument">CID document</a> describing the agent, this then means that the <a href="#cid-subject">subject</a> of a <a href="#cidDocument">CID document</a> is the <a href="#cidDocument">CID document</a> itself.
+        The <a href="#cid-base-id">base identifier</a>, the <a href="#cid-canonical-url">canonical URL</a> of the <a href="#cidDocument">CID document</a>, cannot identify an <a href="#agent">agent</a> at the same time.
+      </p>
+      <p>
+        An <a href="#AgentDocument">LWS Agent Document</a> <span>MUST</span> specify the <code>id</code> property to indicate the <a href="#AgentDocument">LWS Agent Document</a> itself.
+      </p>
+
+    </section>
+
+
+    <section id="primaryTopic">
+      <h2>Primary Topic</h2>
+      <p>
+        An <a href="#AgentDocument">LWS Agent Document</a> <span>MUST</span> specify the <code>primaryTopic</code> property to indicate the <a href="#agent">agent</a> it describes [[!FOAF]].
+        The value of the <code>primaryTopic</code> property <span>MUST</span> be different from the value of the <code>id</code> property.
+      </p>
+    </section>
+
+    <section id="Controller">
+      <h2>Controller</h2>
+      <p>
+        A <a href="#controller">controller</a> of a <a href="#cidDocument">CID document</a> is capable of modifying the document's contents.
+      </p>
+      <p>
+        An <a href="#AgentDocument">LWS Agent Document</a> <span>MUST</span> specify at least one <code>controller</code> property to indicate any <a href="#controller">controller</a> of the <a href="#AgentDocument">LWS Agent Document</a>.
+      </p>
+
+
+      <div class="example">
+        Examples of <a href="#controller">controllers</a> include
+        <ul>
+          <li>the agent that is listed as the document's <code>primaryTopic</code></li>
+          <li>an agent acting as a guardian of the agent that is listed as the document's <code>primaryTopic</code>, e.g., a parent of a child</li>
+          <li>a third party controlling the CID document, e.g., an Identity Provider</li>
+          <li>the entity exerting <a href="https://www.w3.org/TR/webarch/#uri-ownership">URI ownership</a> [[WEBARCH]] of the CID</li>
+        </ul>
+
+      </div>
+
+    </section>
+
+    <section id="verification-method" class="informative">
+      <h2>Verification Method</h2>
+      <p>
+        An <a href="#AgentDocument">LWS Agent Document</a> might include one or more <a href="#verificationMethod">verification methods</a>, e.g., for authentication or claim assertion, the choice of which depends on the particular protocols the <a href="#agent">agent</a> takes part in.
+        See the CID specification [[CID-1.0]] for more details on <a href="https://www.w3.org/TR/cid/#verification-relationships">verification relationships</a>.
+      </p>
+      <aside class="example" title="An LWS Agent Document providing a verification method for authentication.">
+        <pre class="json">
+{
+  "@context": [ 
+    "https://www.w3.org/ns/cid/v1", 
+    "https://www.w3.org/ns/ex/v1"
+  ],
+  "id": "https://example.org/001",
+  "primaryTopic": "https://example.org/001#agent",
+  "controller": "https://example.org/001#agent",
+    "authentication": [{
+        "id": "https://example.org/001#key0",
+        "type": "Multikey",
+        "controller": "https://example.org/001#agent",
+        "publicKeyMultibase": "z6MkmM42vxfqZQsv4ehtTjFFxQ4sQKS2w6WR7emozFAn5cxu"
+  }]
+}
+      </pre>
+      </aside>
+    </section>
+
+    <section id="service" class="informative">
+      <h2>Service</h2>
+      <p>
+        An <a href="#AgentDocument">LWS Agent Document</a> might include one or more <a href="#service">services</a>, e.g., to express ways of communicating with the <a href="#controller">controller</a>, or associated entities.
+        A service can be any type of <a href="#service">service</a> the <a href="#controller">controller</a> wants to advertise for further discovery, authentication, authorization, or interaction.
+      </p>
+
+      <aside class="example" title="An LWS Agent Document that (a) lists authentication via an OpenID Provider and (b) is controlled by a different agent than the primary topic, presumably the OpenID Provider.">
+        <pre class="json">
+{
+  "@context": [ 
+    "https://www.w3.org/ns/cid/v1", 
+    "https://www.w3.org/ns/ex/v1"
+  ],
+  "id": "https://example.org/001",
+  "primaryTopic": "https://example.org/001#agent",
+  "controller": "https://example.org/000#provider",
+  "service": [{
+        "type": "https://example.org/serviceTypes#OpenIdProvider",
+        "serviceEndpoint": "https://example.org/"
+  }]
+}
+      </pre>
+      </aside>
+    </section>
+
+  </section>
+
+  <section id="providing" class="normative">
+    <h2>Server</h2>
+    <div datatype="rdf:HTML" property="schema:description">
+      <p>
+        <span about="" id="server-http" rel="spec:requirement" resource="#server-http"><a class="self-link" href="#server-http"></a><span property="spec:statement">A <a rel="spec:requirementSubject" resource="#Server" href="#Server">Server</a> <span rel="spec:requirementLevel" resource="spec:MUST">MUST</span> conform to <cite>HTTP Semantics</cite> [[!RFC9110]].</span></span>
+        <span about="" id="server-tls-https" rel="spec:requirement" resource="#server-tls-https"><a class="self-link" href="#server-tls-https"></a><span property="spec:statement">A <a rel="spec:requirementSubject" resource="#Server" href="#Server">Server</a> <span rel="spec:requirementLevel" resource="spec:MUST">MUST</span> use TLS connections through the <code>https</code> URI scheme in order to secure the communication with <a href="#Client">Clients</a>.</span></span>
+      </p>
+      <p>
+        If a <a href="#Server">Server</a> provides redirects from an <a href="#agentIdentifier">agent identifier</a> to a corresponding <a href="#AgentDocument">LWS Agent Document</a>, then the <a href="#Server">Server</a> <span>SHOULD</span> use a <code>303</code> status code and provide the URL of the <a href="#AgentDocument">LWS Agent Document</a> in the <code>Location</code> header field.
+      </p>
+
+      <p about="" id="server-content-type-includes" rel="spec:requirement" resource="#server-content-type-includes"><a class="self-link" href="#server-content-type-includes"></a><span property="spec:statement">A <a rel="spec:requirementSubject" resource="#Server" href="#Server">Server</a> <span rel="spec:requirementLevel" resource="spec:MUST">MUST</span> include a <code>Content-Type</code> header field in a message that contains content.</span></p>
+    </div>
+
+
+    <h4>Content-Negotiation</h4>
+    <p>
+      A <a href="#Server">Server</a> <span>MUST</span> support content-negotiation for the media types of
+      <span><code>application/cid</code> [[!CID-1.0]],</span>
+      <span><code>application/json</code> [[!JSON]],</span> and
+      <span><code>application/ld+json</code> [[!JSON-LD]].</span>
+    </p>
+    <p>
+      When serving a response based on content negotiation, a <a href="#Server">Server</a> <span>MUST</span> include a <code>Vary: Accept</code> header field in the response to ensure proper caching behavior [[!RFC9110]].
+    </p>
+
+    <h4>Cross-Origin Resource Sharing (CORS)</h4>
+
+    <p>A <a href="#Server">Server</a> MUST support Cross-Origin Resource Sharing (CORS) [[!FETCH]].</p>
+
+    <p>
+      Concretely, whenever a <a href="#Server">Server</a> receives an HTTP request containing a valid <code>Origin</code> header [[!RFC6454]],
+      the server MUST respond with the appropriate <code>Access-Control-*</code> header fields as specified in the CORS protocol [[!FETCH]].
+      In particular, the <a href="#Server">Server</a> MUST set the <code>Access-Control-Allow-Origin</code> header field value to the valid <code>Origin</code> header field value from the request
+      and list <code>Origin</code> in the <code>Vary</code> header field value.
+      The <a href="#Server">Server</a> MUST make all used response headers readable for the <a href="#Client">Client</a> through <code>Access-Control-Expose-Headers</code> (with the possible exception of the <code> Access-Control-*</code> header fields themselves).
+      A <a href="#Server">Server</a> MUST also support the HTTP <code>OPTIONS</code> method [[!RFC9110]] such that it can respond appropriately to CORS preflight requests.
+    </p>
+
+
+
+  </section>
+
+  <section id="consuming" class="normative">
+    <h2>Client</h2>
+    <div datatype="rdf:HTML" property="schema:description">
+      <p about="" id="client-http" rel="spec:requirement" resource="#client-http"><a class="self-link" href="#client-http"></a><span property="spec:statement">A <a rel="spec:requirementSubject" resource="#Client" href="#Client">Client</a> <span rel="spec:requirementLevel" resource="spec:MUST">MUST</span> conform to <cite>HTTP Semantics</cite> [[!RFC9110]].</span></p>
+      <p about="" id="client-accept-includes" rel="spec:requirement" resource="#client-accept-includes"> <a class="self-link" href="#client-accept-includes"></a><span property="spec:statement">A <a rel="spec:requirementSubject" resource="#Client" href="#Client">Client</a> <span rel="spec:requirementLevel" resource="spec:MUST">MUST</span> use the <code>Accept</code> header field in a HTTP <code>GET</code> request to indicate acceptable media types for the requested <a href="#AgentDocument">LWS Agent Document</a> [[!RFC9110]].</span></p>
+    </div>
+
+
+
+    <h4 id="dereferencing">Dereferencing an Agent Identifier</h4>
+
+    <p>
+      If a <a href="#Client">Client</a> does not expect a given HTTP URI to be an <a href="#agentIdentifier">agent identifier</a>, the <a href="#Client">Client</a> derferences the URI as usual [[!RFC9110]][[!CID-1.0]].
+    </p>
+
+    <p>
+      If a <a href="#Client">Client</a> expects a given HTTP URI to be an <a href="#agentIdentifier">agent identifier</a>, dereferencing that identifier is expected to yield its <i>corresponding <a href="#AgentDocument">LWS Agent Document</a></i>:
+    <ul>
+      <li>
+        <p>
+          If the <a href="#agentIdentifier">agent identifier</a> includes a fragment, a <a href="#Client">Client</a> strips the fragment from the HTTP URI as usual [[!RFC9110]].
+          The <a href="#Client">Client</a> then dispatches an HTTP request to the resulting URI.
+        </p>
+      </li>
+      <li>
+        <p>
+          If the <a href="#agentIdentifier">agent identifier</a> does not include a fragment, the <a href="#Client">Client</a> checks that the <a href="#Server">Server</a> does not conflate the agent with its corresponding <a href="#AgentDocument">LWS Agent Document</a>:
+          When dereferencing this URI, if the <a href="#Server">Server</a> responds with a <code>200</code> status code directly (implying the URI identifies the document itself), the <a href="#Client">Client</a> <span>MUST</span> reject the response and provide a client-defined error.
+          The <a href="#Client">Client</a> <span>MUST</span> only accept a redirect response (e.g., <code>303</code> status code) that provides a distinct URI to the <a href="#AgentDocument">LWS Agent Document</a> in the <code>Location</code> header field.
+        </p>
+      </li>
+    </ul>
+    </p>
+
+
+
+
+    <div class="note" title="Following redirects is an implementation's choice.">
+      <p>
+        Whether or not a <a href="#Client">Client</a> allows following redirects depends on the trust model assumed by the implementation:
+      <ul>
+        <li>Some <a href="#Client">Clients</a> might trust the <a href="#controller">controller</a> of an <a href="#AgentDocument">LWS Agent Document</a> to configure their <a href="#Server">Servers</a> correctly and thus follow any redirect.</li>
+        <li>Some <a href="#Client">Clients</a> might enforce stricter trust boundaries and thus follow only redirects that point to the same origin as the <a href="#agentIdentifier">agent identifier's</a> origin.</li>
+        <li>Some <a href="#Client">Clients</a> might choose not follow any redirect.</li>
+      </ul>
+      </p>
+    </div>
+
+    <p> If a <a href="#Client">Client</a> chooses to not follow redirects, then the <a href="#Client">Client</a> <span>MUST</span> provide a client-defined error as the result of the process. </p>
+
+
+
+    <h4 id="validating">Validating an Agent Identifier against an Agent Document</h4>
+
+    <p>
+      A <a href="#Client">Client</a> MUST reject a non-conforming <a href="#AgentDocument">LWS Agent Document</a> and provide a client-defined error.
+    </p>
+
+    <p>
+      In addition, a <a href="#Client">Client</a> <span>MUST</span> verify that the value of the <code>primaryTopic</code> property for the <a href="#AgentDocument">LWS Agent Document</a> matches the expected <a href="#agentIdentifier">agent identifier</a>, i.e., the exact URI inlcuding any fragment, 
+      to validate that the obtained document is indeed authoritative for the given agent identifier.</span>
+    </p>
+
+    <!-- <span>The <a href="#Client">Client</a> <span>MUST</span> verify the presence of the <code>id</code> property for the <a href="#AgentDocument">LWS Agent Document</a>.</span> -->
+    <!-- <span>The <a href="#Client">Client</a> <span>MUST</span> verify that the value of the <code>id</code> property for the <a href="#AgentDocument">LWS Agent Document</a> matches the <a href="#cid-canonical-url">canonical URL</a> of the <a href="#AgentDocument">LWS Agent Document</a>.</span> -->
+    <!-- <span>The <a href="#Client">Client</a> <span>MUST</span> verify the presence of the <code>primaryTopic</code> property for the <a href="#AgentDocument">LWS Agent Document</a>.</span> -->
+    <!-- <span>The <a href="#Client">Client</a> <span>MUST</span> verify that the value of the <code>primaryTopic</code> property is different from the value of <code>id</code> property for the <a href="#AgentDocument">LWS Agent Document</a>.</span> -->
+
+    <!-- <p>
+      If any of the above verifications fail, the <a href="#Client">Client</a> <span>MUST</span> reject the document and provide a client-defined error.
+    </p> -->
+  </section>
+
+  <section id="security-considerations" class="informative">
+    <h2>Security Considerations</h2>
+
+    <p>
+      As this profile is an application of the Controlled Identifier (CID) specification all security considerations defined in [[CID-1.0]] apply directly to this specification.
+    </p>
+
+    <p>
+      The following HTTP-specific considerations also apply:
+    </p>
+
+    <ul>
+      <li>
+        <strong>HTTP Fetching Risks:</strong> Because <a href="#Client">Clients</a> may handle HTTP redirects, implementations are subject to standard HTTP fetching risks, including redirect loops and resource exhaustion. <a href="#Client">Clients</a> should apply standard mitigation strategies as defined in the Fetch Standard [[FETCH]].
+      </li>
+      <li>
+        <strong>Redirects:</strong> A <a href="#Client">Client</a> that chooses to follow redirects assumes the risk of the redirecting <a href="#Server">Server</a> being mistakingly or maliciously configured and thus points to a malicious <a href="#Server">Server</a>.
+        In such a case, the <a href="#Client">Client</a> might obtain a valid <a href="#AgentDocument">Agent Document</a> and validate it to be authoritative despite it being malicious.
+        This risk can be mitigated by a <a href="#Client">Client</a> by not following redirects, which means to only accept <a href="#agentIdentifier">agent identifiers</a> that include a fragment [[URI]].
+      </li>
+      <li>
+        <strong>Reliance on DNS:</strong> As for any HTTP-based communication that relies on DNS, there exists the risk of a malicious actor being able to modify the DNS record of a particular domain name entry to point to a malicious <a href="#Server">Server</a>.
+        In such a case, the <a href="#Client">Client</a> might obtain a valid <a href="#AgentDocument">Agent Document</a> and validate it to be authoritative despite it being malicious.
+        This risk can be addressed by mechanisms presented in [[RFC4033]].
+      </li>
+      <li>
+        <strong>Authoritative Binding Validation:</strong> The security of this profile relies entirely on the <a href="#Client">Client</a> successfully executing the validation steps. <a href="#Client">Clients</a> must strictly verify the <code>id</code> and <code>primaryTopic</code> properties as defined to prevent cryptographic material substitution.
+      </li>
+    </ul>
+
+    <p>
+      This specification only provides one component to be used in an authentication, authorization, or more general, interaction protocol on the Web.
+      While composing such protocols is common-place in software engineering, it poses in inherent risk from a formal security perspective:
+      Composing a protocol from components that are individually sound does not entail that the resulting protocol is also sound.
+      To ensure desired security properties hold for the composed protocol, the authors of this specification strongly recommend making trust assumptions explicit and verifying the protocols' security properties using formal methods, e.g., following the approach presented in [[BHKM24]].
+    </p>
+  </section>
+
+  <section id="privacy-considerations" class="informative">
+    <h2>Privacy Considerations</h2>
+    <p>
+      As this profile is an application of the Controlled Identifier (CID) specification all privacy considerations defined in [[CID-1.0]] apply directly to this specification.
+    </p>
+  </section>
+
+  <section class="appendix" id="acknowledgements" inlist="" rel="schema:hasPart" resource="#acknowledgements"><a class="self-link" href="#acknowledgements"></a>
+    <h2 property="schema:name">Acknowledgements</h2>
+    <div datatype="rdf:HTML" property="schema:description">
+      <p>Thanks to ...</p>
+    </div>
+  </section>
+</body>
+
+</html>
