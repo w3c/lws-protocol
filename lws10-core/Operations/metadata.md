@@ -25,7 +25,7 @@ Clients discover metadata primarily through Link headers in response to GET or H
 
 | Category | Description |
 |------------|------------|
-| System Managed | Maintained by the server; Read-Only. Includes `acl`, `linkset`, `type`, `mediaType`, `size`, `modified`. |
+| System Managed | Maintained by the server; Read-Only. Includes `linkset`, `type`, `mediaType`, `size`, `modified`. |
 | Core Metadata | Managed by the client (subject to server restrictions). Includes `up`, `items`, `title`, `creator`. |
 | User-Defined | Custom vocabularies and indexes created by the user. |
 
