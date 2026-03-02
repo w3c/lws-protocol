@@ -16,7 +16,7 @@ A container representation MUST include the following properties:
 Each entry in the `items` array describes a resource contained in the container. A contained resource description MUST include:
 
 - **`id`**: The URI of the contained resource.
-- **`type`**: The type of the resource. MUST be `"DataResource"` or `"Container"`. Servers MAY include additional user-defined types as an array (e.g., `["DataResource", "http://example.org/customType"]`).
+- **`type`**: The type of the resource. MUST be `"DataResource"` or `"Container"`, or an array containing at least one of these two strings. Servers MAY include additional user-defined types as URIs (e.g., `["DataResource", "http://example.org/customType"]`).
 
 A contained resource description SHOULD include:
 
