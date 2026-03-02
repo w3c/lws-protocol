@@ -1,6 +1,6 @@
 ### Container Representation
 
-When a client retrieves a container, the server returns a structured representation describing the container and its contents. This section defines the required and optional properties of a container representation.
+When a client retrieves a container, the server returns a structured <dfn>container representation</dfn> describing the container and its contents. This section defines the required and optional properties of a container representation.
 
 #### Container Properties
 

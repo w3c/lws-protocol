@@ -1,10 +1,6 @@
 ### LWS Media Type
 
-The default media type for LWS container representations is:
-
-```
-application/lws+json
-```
+LWS <a>container representation</a> and <a>storage description resource</a> MUST use the media type `application/lws+json`.
 
 While LWS container representations use JSON-LD conventions, the constraints and requirements for LWS justify the use of a specific media type. Because LWS containers can be considered a restricted profile of JSON-LD, implementations SHOULD consider the `application/ld+json; profile="https://www.w3.org/ns/lws/v1"` media type as equivalent to `application/lws+json`.
 
