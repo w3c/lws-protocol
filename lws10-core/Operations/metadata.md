@@ -7,7 +7,8 @@ All metadata in LWS is expressed as a set of typed links originating from a reso
 - A relation type: A string that defines the nature of the relationship.
 - Optional target attributes: Additional key-value pairs that further describe the link or the target resource.
 
-Metadata distinguishes between resources and their representations, allowing for multiple media types where applicable. For containers, metadata includes membership details. For DataResources, metadata includes media type and size information.
+Metadata distinguishes between resources and their representations, allowing for multiple media types where applicable. For Data Resources, metadata includes representations, each with mediaType and optional sizeInBytes. For Containers and Data Resources we consider the link to its parent container resource to be part of the metadata of the resource.
+
 
 **The Linkset Resource**
 For each resource in storage, a server MUST make metadata links available as a standalone resource according to [[!RFC9264]].
@@ -48,6 +49,6 @@ Metadata is managed by interacting with the resource's associated linkset URI. S
 
 - Replacement (PUT): If advertised in the Allow header, a client MAY replace the entire linkset. If the server does not support PUT, it MUST reject the request with 405 Method Not Allowed.
 
-- Restrictions: Servers MAY restrict modifications to specific links (like `up` or `items`) to maintain system integrity. If a server restricts `up` modifications, it MUST document this in its conformance statement.
+- Restrictions: Servers MAY restrict modifications to specific links (like `up` or `items`) to maintain system integrity.
 
 - Lifecycle: Metadata lifecycles are tied to the described resource; deleting a resource MUST result in the automatic removal of its associated linkset metadata.
