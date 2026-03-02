@@ -1,6 +1,12 @@
 ### Container Model
 
-Linked Web Storage organizes resources into containers. A <dfn>container</dfn> is a specialized resource that holds references to other resources, called its members. Containers serve as organizational units, analogous to directories or collections, enabling clients to group, discover, and navigate resources.
+Linked Web Storage organizes resources into containers. A <dfn>container</dfn> is a specialized resource that holds references to other resources, called its members. Containers serve
+as organizational units, analogous to directories or collections, enabling clients to group, discover, and navigate resources. A container maintains references to its member resources,
+which may comprise both non-container resources and additional container resources, thereby enabling hierarchical formations. Typically, a container holds minimal intrinsic content
+beyond metadata or enumerations of its members; its principal role is to aggregate and structure subordinate resources. The storage system's root is designated as a container, serving
+as the apex organizational unit devoid of a superior parent. Containers MUST support pagination for membership listings using 'ContainerPage' types, with properties such as 'first',
+'next', 'prev', and 'last'. Representations MUST use JSON-LD with a specific frame and normative context, optionally advertising content negotiation via 'Vary: Accept' headers.
+Storage MAY function as a root container, enabling direct writes.
 
 Every LWS storage has a **root container** that serves as the top-level organizational unit. The root container has no parent and acts as the entry point for the storage hierarchy.
 
