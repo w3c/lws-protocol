@@ -40,9 +40,4 @@ Containment relationships are expressed through metadata (`rel="up"` links and t
 
 If a client has read access to a container, the container representation MUST include the identifiers for all resources contained in that container to which the client has access. It MAY also contain the identifiers for resources contained in that container to which the client does not have access.
 
-<div class="note" role="note">
-<p><b>Authorization Considerations</b></p>
-<p>Filtering container listings based on individual resource access could have significant performance implications and complicates caching.</p>
-</div>
-
 A client's ability to read a container listing does not imply access to the contained resources themselves, and vice versa.
