@@ -32,7 +32,7 @@ The server MUST maintain containment integrity at all times:
 
 ### Resource Identification
 
-Resources are identified by URIs. The URI of a resource is independent of its position in the containment hierarchy. Servers assign URIs during resource creation and MAY incorporate client hints (e.g., the `Slug` header), but clients MUST NOT assume that URI structure reflects containment.
+Resources are identified by URIs. The URI of a resource is independent of its position in the containment hierarchy. Servers assign URIs during resource creation and MAY incorporate client hints (e.g., the `Slug` header), but clients SHOULD NOT assume that URI structure reflects containment.
 
 Containment relationships are expressed through metadata (`rel="up"` links and the `items` property in container representations), not through URI path structure. This separation allows servers flexibility in URI assignment while maintaining a well-defined organizational model.
 
