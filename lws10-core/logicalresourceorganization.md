@@ -9,18 +9,6 @@ Resources in LWS are classified as either:
 - **Container** — a resource that contains other resources.
 - **DataResource** — a data-bearing resource (e.g., a document, image, or structured data file).
 
-### Single Containment
-
-LWS enforces a **single containment** model: with the exception of the root container, every resource MUST belong to exactly one parent container. This produces a strict tree structure with the root container at its apex.
-
-The containment relationship between a resource and its parent container is expressed via the `rel="up"` link relation. Servers MUST include a `Link` header with `rel="up"` pointing to the parent container in responses to GET and HEAD requests on any non-root resource.
-
-```
-Link: </alice/notes/>; rel="up"
-```
-
-A container's members are listed in its representation using the `items` property. The server manages this list; clients cannot modify it directly. Membership changes occur as a side effect of resource creation and deletion.
-
 ### Containment Integrity
 
 The server MUST maintain containment integrity at all times:
