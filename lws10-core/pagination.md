@@ -1,6 +1,6 @@
 ### Pagination
 
-Containers MAY hold a large number of resources. To allow clients to retrieve container
+Containers may hold a large number of resources. To allow clients to retrieve container
 listings incrementally, servers MUST support pagination for containers whose membership
 exceeds a server-determined threshold.
 
@@ -32,7 +32,7 @@ URIs; they MUST use the URIs provided by the server.
 
 A client requests the container URI to obtain the first page. The response includes pagination
 Link headers that the client follows to retrieve subsequent pages. Servers MAY also support
-direct access to specific pages via the pagination URIs.
+direct access to specific pages via the pagination URIs obtained during a previous scan.
 
 When a paginated response is returned, the server MUST respond with 200 OK. The `totalItems`
 property in the response body MUST reflect the total number of items across all pages, not just the
