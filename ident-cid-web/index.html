@@ -527,7 +527,7 @@
 
     <ul>
       <li>
-        <strong>HTTP Fetching Risks:</strong> Because <a href="#Client">Clients</a> may handle HTTP redirects, implementations are subject to standard HTTP fetching risks, including redirect loops and resource exhaustion. <a href="#Client">Clients</a> should apply standard mitigation strategies as defined in the Fetch Standard [[FETCH]].
+        <strong>HTTP Fetching Risks:</strong> Because <a href="#Client">Clients</a> may handle HTTP redirects, implementations are subject to standard HTTP fetching risks, including redirect loops and resource exhaustion. <a href="#Client">Clients</a> are encouraged apply standard mitigation strategies as defined in the Fetch Standard [[FETCH]].
       </li>
       <li>
         <strong>Redirects:</strong> A <a href="#Client">Client</a> that chooses to follow redirects assumes the risk of the redirecting <a href="#Server">Server</a> being mistakingly or maliciously configured and thus points to a malicious <a href="#Server">Server</a>.
@@ -540,7 +540,7 @@
         This risk can be addressed by mechanisms presented in [[RFC4033]].
       </li>
       <li>
-        <strong>Authoritative Binding Validation:</strong> The security of this profile relies entirely on the <a href="#Client">Client</a> successfully executing the validation steps. <a href="#Client">Clients</a> must strictly verify the <code>id</code> and <code>primaryTopic</code> properties as defined to prevent cryptographic material substitution.
+        <strong>Authoritative Binding Validation:</strong> The security of this profile relies entirely on the <a href="#Client">Client</a> successfully executing the validation steps. <a href="#Client">Clients</a> strictly verifying the <code>id</code> and <code>primaryTopic</code> properties as defined is a security critical control to prevent cryptographic material substitution.
       </li>
     </ul>
 
