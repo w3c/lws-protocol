@@ -226,7 +226,7 @@
 {
   "@context": [ 
     "https://www.w3.org/ns/cid/v1", 
-    "https://www.w3.org/ns/example/v1" 
+    "https://www.w3.org/ns/web-cid/v1" 
   ],
   "id": "https://example.org/001",
   "primaryTopic": "https://example.org/001#agent",
@@ -247,6 +247,24 @@
         To ensure broad <a href="#client-server-interoperability">interoperability</a> across implementations of <a href="#Client">Clients</a> and <a href="#Server">Servers</a>,
         a <a href="#Agent-Document">Web-CID Agent Document</a> <span>MUST</span> specify JSON-LD's <code>@context</code> property to indicate its entire applicable context.
       </p>
+
+      <p>
+        Concretely, a <a href="#Agent-Document">Web-CID Agent Document</a> <span>MUST</span> at least include the JSON-LD context defined in [[CID-1.0]] and the JSON-LD context defined by in this specification.
+      </p>
+
+      <span>Let the following JSON-LD context be available at: <code>https://www.w3.org/ns/web-cid/v1</code>.</span>
+      <aside title="Web-CID JSON-LD Context Document:  <https://www.w3.org/ns/web-cid/v1>">
+        <pre>
+{
+  "@context": {
+    "primaryTopic": {
+      "@id": "http://xmlns.com/foaf/0.1/primaryTopic",
+      "@type": "@id"
+    }
+  }
+}
+        </pre>
+      </aside>
     </section>
 
 
@@ -312,7 +330,7 @@
 {
   "@context": [ 
     "https://www.w3.org/ns/cid/v1", 
-    "https://www.w3.org/ns/example/v1"
+    "https://www.w3.org/ns/web-cid/v1"
   ],
   "id": "https://example.org/001",
   "primaryTopic": "https://example.org/001#agent",
@@ -340,7 +358,7 @@
 {
   "@context": [ 
     "https://www.w3.org/ns/cid/v1", 
-    "https://www.w3.org/ns/example/v1"
+    "https://www.w3.org/ns/web-cid/v1"
   ],
   "id": "https://example.org/001",
   "primaryTopic": "https://example.org/001#agent",
