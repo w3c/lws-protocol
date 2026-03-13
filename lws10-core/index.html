@@ -2,18 +2,21 @@
 <html lang="en">
   <head>
     <meta charset="utf-8">
-    <title>LWS Protocol</title>
+    <title>Linked Web Storage Protocol 1.0</title>
     <script src="https://www.w3.org/Tools/respec/respec-w3c" class="remove"></script>
     <link rel="stylesheet" href="local.css"/>
     <script class='remove'>
       // See https://respec.org/docs/ for how to configure ReSpec
       var respecConfig = {
         specStatus: "ED",
-        shortName: "lws-protocol",
+        shortName: "lws10-core",
+        edDraftURI: "https://w3c.github.io/lws-protocol/lws10-core/",
         editors: [{
-          name: "Jesse Wright"
+          name: "Jesse Wright",
+          w3cid: "132252",
         }, {
-          name: "Erich Bremer"
+          name: "Erich Bremer",
+          w3cid: "45759",
         }],
         formerEditors: [{
           name: "Sarven Capadisli",
@@ -29,10 +32,23 @@
           name: "Kjetil Kjernsmo",
         }],
         github: "w3c/lws-protocol",
-        shortName: "@@",
         xref: ["web-platform"],
         group: "lws",
+        doJsonLd: true,
+        postProcess: [cleanEditorsDraft],
+        /*
+          The config below gets rid of the "unused definition" warnings,
+          which is useful for debugging *other* warnings.
+          But the rest of the time, I think it is better to keep those warnings apparent
+        */
+        // lint: { "no-unused-dfns": false },
       };
+
+      function cleanEditorsDraft(cfg) {
+        if (cfg.specStatus !== "ED") {
+          document.querySelector("#editors-notes").remove();
+        }
+      }
     </script>
   </head>
   <body>
@@ -137,11 +153,11 @@
       <section id="conformance">
         <!-- Respec automagically adds the heading. -->
         <p>
-          A <dfn>LWS REST Server</dfn> is an HTTP server [[!rfc9112]] that complies with all of the relevant "MUST" statements in this specification. Specifically, the relevant normative "MUST" statements in Sections <span class="TODO">999</span> <a href="#rest-binding">REST Binding</a> of this document MUST be respected.
+          A <dfn>LWS Server</dfn> is an HTTP server [[!rfc9112]] that complies with all of the relevant "MUST" statements in this specification. Specifically, the relevant normative "MUST" statements in <a href="#operations"></a> of this document MUST be respected.
         </p>
 
         <p>
-          A <dfn>LWS REST Client</dfn> is an HTTP client [[!rfc9112]] that complies with all of the relevant "MUST" statements in this specification. Specifically, the relevant normative "MUST" statements in Sections <span class="TODO">999</span> <a href="#rest-binding">REST Binding</a> of this document MUST be respected.
+          A <dfn>LWS Client</dfn> is an HTTP client [[!rfc9112]] that complies with all of the relevant "MUST" statements in this specification. Specifically, the relevant normative "MUST" statements in <a href="#operations"></a> of this document MUST be respected.
         </p>
       </section>
     </section>
@@ -188,7 +204,7 @@
         The folowing section will describe the semantics and <dfn>responses</dfn> of these operations but the following <dfn>core responses</dfn> apply to any operation:
       </p>
       <ul>
-        <li><dfn>success</dfn> - the operation is believe to have completed. This may be accompanied by a <dfn>resource representation</dfn> conveying the contents of a <a>served resource</a>. A <a>success</a> response is not defined for the <a>create resource</a> operation. See instead <a>created</a>.</li>
+        <li><dfn>success</dfn> - the operation is believe to have completed. This may be accompanied by a <dfn>resource representation</dfn> conveying the contents of a <a>served resource</a>. A <a>success</a> response is not defined for the <a>create resource</a> operation. See instead <a href="#dfn-created">created</a>.</li>
         <li><dfn>not permitted</dfn></li>
         <li><dfn>unknown requester</dfn></li>
         <li><dfn>unknown error</dfn> - reserved for error conditions that arrise that are not anticipated by the specification</li>
