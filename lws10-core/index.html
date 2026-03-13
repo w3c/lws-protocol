@@ -9,7 +9,8 @@
       // See https://respec.org/docs/ for how to configure ReSpec
       var respecConfig = {
         specStatus: "ED",
-        shortName: "lws-protocol",
+        shortName: "lws10-core",
+        edDraftURI: "https://w3c.github.io/lws-protocol/lws10-core/",
         editors: [{
           name: "Jesse Wright",
           w3cid: "132252",
@@ -31,10 +32,23 @@
           name: "Kjetil Kjernsmo",
         }],
         github: "w3c/lws-protocol",
-        shortName: "@@",
         xref: ["web-platform"],
         group: "lws",
+        doJsonLd: true,
+        postProcess: [cleanEditorsDraft],
+        /*
+          The config below gets rid of the "unused definition" warnings,
+          which is useful for debugging *other* warnings.
+          But the rest of the time, I think it is better to keep those warnings apparent
+        */
+        // lint: { "no-unused-dfns": false },
       };
+
+      function cleanEditorsDraft(cfg) {
+        if (cfg.specStatus !== "ED") {
+          document.querySelector("#editors-notes").remove();
+        }
+      }
     </script>
   </head>
   <body>
