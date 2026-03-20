@@ -19,10 +19,10 @@ contains only the resources on the current page.
 Pagination URIs are conveyed in `Link` headers using the following standard link relations:
 
 - **`rel="first"`**: The URI of the first page of results. MUST be present on paginated responses.
-- **`rel="last"`**: The URI of the last page of results. MUST be present on paginated responses.
+- **`rel="last"`**: The URI of the last page of results. MAY be present on paginated responses.
 - **`rel="next"`**: The URI of the next page of results. MUST be present when there are subsequent
 pages. MUST be omitted on the last page.
-- **`rel="prev"`**: The URI of the previous page of results. MUST be present when there are preceding
+- **`rel="prev"`**: The URI of the previous page of results. MAY be present when there are preceding
 pages. MUST be omitted on the first page.
 
 All pagination URIs are opaque to the client. Clients MUST NOT construct or modify pagination
