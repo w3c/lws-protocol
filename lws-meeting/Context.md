@@ -1,0 +1,1 @@
+ - We should have a JSON-Schema and a JSON-LD context which are *versioned*
