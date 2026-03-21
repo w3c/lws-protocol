@@ -398,10 +398,19 @@
         <p>
           The value of the <code>action</code> property MUST be a non-empty array of strings.
           Each value MUST correspond to an operation recognized by the server. The following
-          values MUST be supported: <code>read</code>, <code>modify</code>, <code>create</code>,
-          and <code>delete</code>. The <code>read</code>, <code>modify</code>, and
-          <code>delete</code> values are defined by the [[!ODRL-VOCAB|ODRL Vocabulary]]. The
-          <code>create</code> value is defined by this specification.
+          values MUST be supported: <code>read</code>, <code>modify</code>, <code>append</code>,
+          <code>create</code>, and <code>delete</code>. The <code>read</code>,
+          <code>modify</code>, and <code>delete</code> values are defined by the
+          [[!ODRL-VOCAB|ODRL Vocabulary]]. The <code>create</code> and <code>append</code>
+          values are defined by this specification.
+        </p>
+
+        <p>
+          The <code>append</code> action is defined as
+          <a href="https://www.w3.org/TR/odrl-vocab/#term-includedIn">included in</a>
+          <code>modify</code>. This means that granting <code>modify</code> implicitly
+          includes <code>append</code>, but granting <code>append</code> alone does not
+          permit full modification of a resource.
         </p>
 
         <p>
@@ -411,6 +420,10 @@
         <ul>
           <li><code>read</code> &mdash; retrieve a resource or its metadata (HTTP GET, HEAD)</li>
           <li><code>modify</code> &mdash; modify an existing resource (HTTP PUT, PATCH)</li>
+          <li>
+            <code>append</code> &mdash; add content to an existing resource without removing
+            or replacing existing content (HTTP PATCH, insert-only)
+          </li>
           <li>
             <code>create</code> &mdash; create a new resource within a container (HTTP POST)
           </li>
