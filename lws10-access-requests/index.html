@@ -34,6 +34,12 @@
             publisher: "W3C",
             status: "REC",
           },
+          "VCARD-RDF": {
+            title: "vCard Ontology - for describing People and Organizations",
+            href: "https://www.w3.org/TR/vcard-rdf/",
+            publisher: "W3C",
+            status: "NOTE",
+          },
         },
       };
     </script>
@@ -569,10 +575,11 @@ lws:Creator a rdfs:Class, skos:Concept ;
         <pre class="example nohighlight" title="JSON-LD context (excerpt)">
 {
   "@context": {
-    "lws":  "https://www.w3.org/ns/lws#",
-    "as":   "https://www.w3.org/ns/activitystreams#",
-    "odrl": "http://www.w3.org/ns/odrl/2/",
-    "xsd":  "http://www.w3.org/2001/XMLSchema#",
+    "lws":   "https://www.w3.org/ns/lws#",
+    "as":    "https://www.w3.org/ns/activitystreams#",
+    "odrl":  "http://www.w3.org/ns/odrl/2/",
+    "vcard": "http://www.w3.org/2006/vcard/ns#",
+    "xsd":   "http://www.w3.org/2001/XMLSchema#",
 
     "AccessRequest":  "lws:AccessRequest",
     "AccessGrant":    "lws:AccessGrant",
@@ -762,10 +769,32 @@ lws:Creator a rdfs:Class, skos:Concept ;
           </p>
 
           <p>
-            The <code>assignee</code> value MAY also reference an ODRL
-            <a href="https://www.w3.org/TR/odrl-model/#party">Party Collection</a>,
-            which represents a group of agents. This allows a single rule to apply to
-            all members of a group.
+            The <code>assignee</code> value MAY also reference a group of agents. A group
+            is represented as a [[!VCARD-RDF|vcard]] <code>Group</code> with one or more
+            <code>hasMember</code> entries identifying the agents in the group. The group
+            definition MAY be provided in several ways:
+          </p>
+
+          <ol>
+            <li>
+              <strong>Inline</strong> &mdash; the group is defined directly within the
+              access request or grant document using a blank node.
+            </li>
+            <li>
+              <strong>Server-hosted</strong> &mdash; the group is defined in a separate
+              resource hosted on the same server, referenced by URI.
+            </li>
+            <li>
+              <strong>External</strong> &mdash; the group is defined at an external URL,
+              referenced by URI.
+            </li>
+          </ol>
+
+          <p>
+            Implementations MAY reject group definitions based on their trust model. For
+            example, a server MAY choose to only accept inline or same-origin group
+            definitions and reject external group URIs. Servers SHOULD document which
+            group definition patterns they support.
           </p>
 
           <p>
@@ -791,7 +820,55 @@ lws:Creator a rdfs:Class, skos:Concept ;
 }
           </pre>
 
-          <pre class="example" title="Assignee as a group (Party Collection)">
+          <pre class="example" title="Inline group definition (blank node)">
+{
+  "permission": [
+    {
+      "action": "read",
+      "target": "https://storage.example/projects/",
+      "assignee": {
+        "type": "vcard:Group",
+        "vcard:hasMember": [
+          { "@id": "https://id.example/alice" },
+          { "@id": "https://id.example/bob" }
+        ]
+      }
+    }
+  ]
+}
+          </pre>
+
+          <pre class="example" title="Server-hosted group (trusted resource on the same server)">
+{
+  "permission": [
+    {
+      "action": "read",
+      "target": "https://storage.example/projects/",
+      "assignee": "https://storage.example/groups/engineering-team"
+    }
+  ]
+}
+          </pre>
+
+          <p>
+            Where the server-hosted resource at
+            <code>https://storage.example/groups/engineering-team</code> contains:
+          </p>
+
+          <pre class="example nohighlight" title="Server-hosted group document">
+{
+  "@context": "https://www.w3.org/ns/lws/v1",
+  "@id": "https://storage.example/groups/engineering-team",
+  "type": "vcard:Group",
+  "vcard:hasMember": [
+    { "@id": "https://id.example/alice" },
+    { "@id": "https://id.example/bob" },
+    { "@id": "https://id.example/carol" }
+  ]
+}
+          </pre>
+
+          <pre class="example" title="External group (hosted at another origin)">
 {
   "permission": [
     {
@@ -802,6 +879,13 @@ lws:Creator a rdfs:Class, skos:Concept ;
   ]
 }
           </pre>
+
+          <p class="note">
+            Accepting an external group URI means the server delegates group membership
+            decisions to the external origin. Implementations should consider the
+            security implications carefully and MAY require explicit authorization
+            before trusting external group definitions.
+          </p>
 
           <pre class="example" title="Public access using foaf:Agent">
 {
