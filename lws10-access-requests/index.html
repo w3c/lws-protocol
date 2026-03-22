@@ -28,6 +28,12 @@
             publisher: "W3C",
             status: "ED",
           },
+          "JSON-LD11-FRAMING": {
+            title: "JSON-LD 1.1 Framing",
+            href: "https://www.w3.org/TR/json-ld11-framing/",
+            publisher: "W3C",
+            status: "REC",
+          },
         },
       };
     </script>
@@ -147,9 +153,9 @@
       <p>
         An <a>access request</a> or <a>access grant</a> is a [[!JSON-LD11|JSON-LD]] document with a limited set
         of top-level properties for identity and routing, and an <code>access</code> object that
-        describes the requested or permitted operations. A profile that describes
-        <a>access requests</a> using ODRL
-        concepts is described in <a href="#odrl-access-policy-profile"></a>.
+        describes the requested or permitted operations. The <code>access</code> object is an
+        [[!ODRL-MODEL|ODRL]] Policy, conforming to the profile described in
+        <a href="#odrl-access-policy-profile"></a>.
       </p>
 
       <p>
@@ -166,15 +172,29 @@
   "storage": "https://storage.example/",
   "access": {
     "type": ["ODRLAccessPolicy"],
-    "action": ["read", "create"],
-    "assignee": "https://id.example/agent",
-    "target": ["https://storage.example/projects/"],
-    "hasPurpose": ["https://purpose.example/collaboration"],
-    "constraint": [
+    "profile": "https://www.w3.org/ns/lws#ODRLAccessProfile",
+    "permission": [
       {
-        "leftOperand": "dateTime",
-        "operator": "lteq",
-        "rightOperand": "2026-06-09T10:00:00Z"
+        "action": "read",
+        "target": "https://storage.example/projects/",
+        "assignee": "https://id.example/agent",
+        "constraint": [
+          {
+            "leftOperand": "dateTime",
+            "operator": "lteq",
+            "rightOperand": "2026-06-09T10:00:00Z"
+          },
+          {
+            "leftOperand": "purpose",
+            "operator": "eq",
+            "rightOperand": "https://purpose.example/collaboration"
+          }
+        ]
+      },
+      {
+        "action": "create",
+        "target": "https://storage.example/projects/",
+        "assignee": "https://id.example/agent"
       }
     ]
   }
@@ -194,15 +214,20 @@
   "storage": "https://storage.example/",
   "access": {
     "type": ["ODRLAccessPolicy"],
-    "action": ["read"],
-    "assignee": "https://id.example/agent",
-    "target": ["https://storage.example/projects/"],
-    "hasPurpose": ["https://purpose.example/collaboration"],
-    "constraint": [
+    "uid": "urn:uuid:e6a09a85-3f72-4e6d-bcd3-7e4a0e6378a2",
+    "profile": "https://www.w3.org/ns/lws#ODRLAccessProfile",
+    "permission": [
       {
-        "leftOperand": "dateTime",
-        "operator": "lteq",
-        "rightOperand": "2026-06-09T10:00:00Z"
+        "action": "read",
+        "target": "https://storage.example/projects/",
+        "assignee": "https://id.example/agent",
+        "constraint": [
+          {
+            "leftOperand": "dateTime",
+            "operator": "lteq",
+            "rightOperand": "2026-06-09T10:00:00Z"
+          }
+        ]
       }
     ]
   }
@@ -353,238 +378,435 @@
       <p>
         This specification defines an Access Policy profile based on the
         [[!ODRL-MODEL|ODRL Information Model]] and [[!ODRL-VOCAB|ODRL Vocabulary]], identified
-        with the URL:
+        by the URL:
         <code>https://www.w3.org/ns/lws#ODRLAccessProfile</code>.
       </p>
 
       <p>
-        Servers that support this profile MUST validate the following properties on the
-        <code>access</code> object of an <a>access request</a> and <a>access grant</a>.
+        The <code>access</code> object of an <a>access request</a> or <a>access grant</a>
+        conforming to this profile is an ODRL
+        <a href="https://www.w3.org/TR/odrl-model/#policy-set">Policy</a> containing one or more
+        rules. Each rule is a
+        <a href="https://www.w3.org/TR/odrl-model/#permission">Permission</a>,
+        <a href="https://www.w3.org/TR/odrl-model/#prohibition">Prohibition</a>, or
+        <a href="https://www.w3.org/TR/odrl-model/#obligation">Obligation</a>.
+        Each rule carries its own <code>action</code>, <code>target</code>,
+        <code>assignee</code>, and <code>constraint</code> properties.
       </p>
 
-      <section id="odrl-type">
-        <h3>Types</h3>
+      <section id="profile-vocabulary">
+        <h3>Vocabulary</h3>
 
         <p>
-          The <code>type</code> property expresses the type of access policy.
+          This profile introduces the following terms, defined in the
+          <code>https://www.w3.org/ns/lws#</code> namespace. Terms that already exist in
+          the [[!ODRL-VOCAB|ODRL Vocabulary]] (<code>read</code>, <code>modify</code>,
+          <code>delete</code>, <code>dateTime</code>, <code>purpose</code>) are reused
+          directly.
+        </p>
+
+        <section id="vocab-actions">
+          <h4>Actions</h4>
+
+          <p>
+            The <code>action</code> property on a rule describes the operation that the agent
+            wishes to perform (in the case of a request) or is authorized to perform (in the
+            case of a grant). The value of the <code>action</code> property MUST be a string
+            corresponding to an action recognized by the server.
+          </p>
+
+          <p>
+            The following action values MUST be supported by servers advertising this profile:
+          </p>
+
+          <ul>
+            <li><code>read</code> &mdash; retrieve a resource or its metadata (HTTP GET, HEAD).
+              Defined by [[!ODRL-VOCAB]].</li>
+            <li><code>modify</code> &mdash; modify an existing resource (HTTP PUT, PATCH).
+              Defined by [[!ODRL-VOCAB]].</li>
+            <li><code>append</code> &mdash; add content to an existing resource without removing
+              or replacing existing content (HTTP PATCH, insert-only). Defined by this
+              specification as
+              <a href="https://www.w3.org/TR/odrl-vocab/#term-includedIn">included in</a>
+              <code>modify</code>; granting <code>modify</code> implicitly includes
+              <code>append</code>, but granting <code>append</code> alone does not permit
+              full modification.</li>
+            <li><code>create</code> &mdash; create a new resource within a container
+              (HTTP POST). Defined by this specification.</li>
+            <li><code>delete</code> &mdash; remove an existing resource (HTTP DELETE).
+              Defined by [[!ODRL-VOCAB]].</li>
+          </ul>
+
+          <p>
+            The formal RDF definitions for the profile-specific actions are:
+          </p>
+
+          <pre class="example nohighlight" title="LWS ODRL Profile actions (Turtle)">
+@prefix lws:  &lt;https://www.w3.org/ns/lws#&gt; .
+@prefix odrl: &lt;http://www.w3.org/ns/odrl/2/&gt; .
+@prefix rdfs: &lt;http://www.w3.org/2000/01/rdf-schema#&gt; .
+@prefix skos: &lt;http://www.w3.org/2004/02/skos/core#&gt; .
+
+lws:create a odrl:Action, skos:Concept ;
+    rdfs:label "Create"@en ;
+    skos:definition "Create a new resource within a container."@en ;
+    odrl:includedIn odrl:use ;
+    skos:note "Corresponds to HTTP POST on an LWS container."@en .
+
+lws:append a odrl:Action, skos:Concept ;
+    rdfs:label "Append"@en ;
+    skos:definition "Add content to an existing resource without removing or replacing existing content."@en ;
+    odrl:includedIn odrl:modify ;
+    skos:note "Corresponds to an insert-only HTTP PATCH on an LWS resource."@en .
+          </pre>
+        </section>
+
+        <section id="vocab-left-operands">
+          <h4>Left Operands</h4>
+
+          <p>
+            The following left operand values are used in
+            <a href="https://www.w3.org/TR/odrl-model/#constraint-class">Constraint</a>
+            objects. A server advertising support for this profile MUST support all of
+            these values:
+          </p>
+
+          <ul>
+            <li><code>dateTime</code> &mdash; the current date and time. Defined by
+              [[!ODRL-VOCAB]].</li>
+            <li><code>purpose</code> &mdash; the intended purpose of the access. Defined by
+              [[!ODRL-VOCAB]].</li>
+            <li><code>client</code> &mdash; the client identifier for an HTTP request.
+              Defined by this specification.</li>
+            <li><code>mediaType</code> &mdash; the media type of the target HTTP resource.
+              Defined by this specification.</li>
+            <li><code>type</code> &mdash; the type URL expressed in a resource's link headers.
+              Defined by this specification.</li>
+          </ul>
+
+          <p>
+            The formal RDF definitions for the profile-specific left operands are:
+          </p>
+
+          <pre class="example nohighlight" title="LWS ODRL Profile left operands (Turtle)">
+@prefix lws:  &lt;https://www.w3.org/ns/lws#&gt; .
+@prefix odrl: &lt;http://www.w3.org/ns/odrl/2/&gt; .
+@prefix rdfs: &lt;http://www.w3.org/2000/01/rdf-schema#&gt; .
+@prefix skos: &lt;http://www.w3.org/2004/02/skos/core#&gt; .
+
+lws:client a odrl:LeftOperand, skos:Concept ;
+    rdfs:label "Client"@en ;
+    skos:definition "The client identifier for an HTTP request."@en ;
+    skos:note "Used to restrict access to specific client applications."@en .
+
+lws:mediaType a odrl:LeftOperand, skos:Concept ;
+    rdfs:label "Media Type"@en ;
+    skos:definition "The media type of the target HTTP resource."@en ;
+    skos:note "Used to restrict access based on IANA media types."@en .
+
+lws:type a odrl:LeftOperand, skos:Concept ;
+    rdfs:label "Resource Type"@en ;
+    skos:definition "The type URL expressed in a resource's link headers."@en ;
+    skos:note "Used to restrict access based on Link rel=type headers."@en .
+          </pre>
+        </section>
+      </section>
+
+      <section id="profile-jsonld-context">
+        <h3>JSON-LD Context</h3>
+
+        <p>
+          The LWS JSON-LD context (<code>https://www.w3.org/ns/lws/v1</code>) maps the
+          short-form property names used in this specification to their full IRIs. This
+          context MUST be included in the <code>@context</code> of any <a>access request</a>
+          or <a>access grant</a> conforming to this profile.
         </p>
 
         <p>
-          The value of the <code>type</code> property MUST be an array of strings that includes
-          <code>ODRLAccessPolicy</code>. Additional type values MAY be included.
+          The following excerpt shows the context entries relevant to this profile:
         </p>
 
-        <p>
-          The property is REQUIRED.
-        </p>
-
-        <pre class="example" title="ODRL access policy type">
+        <pre class="example nohighlight" title="JSON-LD context (excerpt)">
 {
-  "access": {
-    "type": ["ODRLAccessPolicy"]
+  "@context": {
+    "lws":  "https://www.w3.org/ns/lws#",
+    "odrl": "http://www.w3.org/ns/odrl/2/",
+    "xsd":  "http://www.w3.org/2001/XMLSchema#",
+
+    "AccessRequest":     "lws:AccessRequest",
+    "AccessGrant":       "lws:AccessGrant",
+    "ODRLAccessPolicy":  "lws:ODRLAccessPolicy",
+
+    "access":      "lws:access",
+    "profile":     "odrl:profile",
+    "uid":         "odrl:uid",
+    "permission":  { "@id": "odrl:permission",  "@container": "@set" },
+    "prohibition": { "@id": "odrl:prohibition", "@container": "@set" },
+    "obligation":  { "@id": "odrl:obligation",  "@container": "@set" },
+
+    "action":       "odrl:action",
+    "target":       { "@id": "odrl:target",   "@type": "@id" },
+    "assignee":     { "@id": "odrl:assignee", "@type": "@id" },
+    "constraint":   { "@id": "odrl:constraint",    "@container": "@set" },
+    "leftOperand":  "odrl:leftOperand",
+    "operator":     "odrl:operator",
+    "rightOperand": "odrl:rightOperand",
+
+    "read":      "odrl:read",
+    "modify":    "odrl:modify",
+    "delete":    "odrl:delete",
+    "create":    "lws:create",
+    "append":    "lws:append",
+    "dateTime":  "odrl:dateTime",
+    "purpose":   "odrl:purpose",
+    "client":    "lws:client",
+    "mediaType": "lws:mediaType",
+    "type":      "lws:type",
+
+    "eq":       "odrl:eq",
+    "lt":       "odrl:lt",
+    "lteq":     "odrl:lteq",
+    "gteq":     "odrl:gteq",
+    "isAnyOf":  "odrl:isAnyOf"
   }
 }
         </pre>
       </section>
 
-      <section id="odrl-action">
-        <h3>Actions</h3>
+      <section id="profile-jsonld-frame">
+        <h3>JSON-LD Frame</h3>
 
         <p>
-          The <code>action</code> property describes the operations that the agent wishes to
-          perform (in the case of a request) or is authorized to perform (in the case of a grant).
+          A [[!JSON-LD11-FRAMING|JSON-LD Frame]] can be used to ensure a deterministic
+          shape when deserializing an <a>access request</a> or <a>access grant</a>. The
+          following frame produces the structure used in this specification:
         </p>
 
-        <p>
-          The value of the <code>action</code> property MUST be a non-empty array of strings.
-          Each value MUST correspond to an operation recognized by the server. The following
-          values MUST be supported: <code>read</code>, <code>modify</code>, <code>append</code>,
-          <code>create</code>, and <code>delete</code>. The <code>read</code>,
-          <code>modify</code>, and <code>delete</code> values are defined by the
-          [[!ODRL-VOCAB|ODRL Vocabulary]]. The <code>create</code> and <code>append</code>
-          values are defined by this specification.
-        </p>
+        <pre class="example nohighlight" title="JSON-LD frame for access documents">
+{
+  "@context": "https://www.w3.org/ns/lws/v1",
+  "type": {},
+  "access": {
+    "type": "ODRLAccessPolicy",
+    "permission": {
+      "action": {},
+      "target": {},
+      "assignee": {},
+      "constraint": {}
+    },
+    "prohibition": {
+      "action": {},
+      "target": {},
+      "assignee": {},
+      "constraint": {}
+    },
+    "obligation": {
+      "action": {},
+      "target": {},
+      "assignee": {},
+      "constraint": {}
+    }
+  }
+}
+        </pre>
+      </section>
+
+      <section id="profile-policy">
+        <h3>Policy</h3>
 
         <p>
-          The <code>append</code> action is defined as
-          <a href="https://www.w3.org/TR/odrl-vocab/#term-includedIn">included in</a>
-          <code>modify</code>. This means that granting <code>modify</code> implicitly
-          includes <code>append</code>, but granting <code>append</code> alone does not
-          permit full modification of a resource.
-        </p>
-
-        <p>
-          These action values correspond to LWS operations as follows:
+          The <code>access</code> object MUST be a valid ODRL Policy. The following
+          properties are defined on the Policy:
         </p>
 
         <ul>
-          <li><code>read</code> &mdash; retrieve a resource or its metadata (HTTP GET, HEAD)</li>
-          <li><code>modify</code> &mdash; modify an existing resource (HTTP PUT, PATCH)</li>
           <li>
-            <code>append</code> &mdash; add content to an existing resource without removing
-            or replacing existing content (HTTP PATCH, insert-only)
+            <code>type</code> &mdash; REQUIRED. MUST be an array of strings that includes
+            <code>ODRLAccessPolicy</code>. Additional type values MAY be included.
           </li>
           <li>
-            <code>create</code> &mdash; create a new resource within a container (HTTP POST)
+            <code>profile</code> &mdash; REQUIRED. MUST be the string
+            <code>https://www.w3.org/ns/lws#ODRLAccessProfile</code>.
           </li>
-          <li><code>delete</code> &mdash; remove an existing resource (HTTP DELETE)</li>
+          <li>
+            <code>uid</code> &mdash; OPTIONAL. A URI that uniquely identifies the policy.
+            Servers SHOULD assign a <code>uid</code> when creating an <a>access grant</a>.
+          </li>
+          <li>
+            <code>permission</code> &mdash; an array of Permission rules.
+          </li>
+          <li>
+            <code>prohibition</code> &mdash; an array of Prohibition rules.
+          </li>
+          <li>
+            <code>obligation</code> &mdash; an array of Obligation (Duty) rules.
+          </li>
         </ul>
 
         <p>
-          This property is REQUIRED.
+          At least one of <code>permission</code>, <code>prohibition</code>, or
+          <code>obligation</code> MUST be present.
         </p>
 
-        <pre class="example" title="action property">
+        <pre class="example" title="ODRL Access Policy">
 {
   "access": {
-    "action": ["read", "create"]
-  }
-}
-        </pre>
-      </section>
-
-      <section id="odrl-assignee">
-        <h3>Assignee</h3>
-
-        <p>
-          The <code>assignee</code> property identifies the party that is requesting access (in
-          the case of a request) or that is being granted access (in the case of a grant).
-        </p>
-
-        <p>
-          The value of the <code>assignee</code> property MUST be a URI. Public access MAY be
-          assigned using the <code>Agent</code> class from the [[!FOAF|FOAF vocabulary]], identified by the URI
-          <code>http://xmlns.com/foaf/0.1/Agent</code>.
-        </p>
-
-        <p>
-          This property is REQUIRED.
-        </p>
-
-        <pre class="example" title="assignee property">
-{
-  "access": {
-    "assignee": "https://id.example/agent"
-  }
-}
-        </pre>
-      </section>
-
-      <section id="odrl-target">
-        <h3>Targets</h3>
-
-        <p>
-          The <code>target</code> property identifies the resources to which the
-          <a>access request</a> or <a>access grant</a> applies.
-        </p>
-
-        <p>
-          The <code>target</code> property MUST be a non-empty array of resource identifiers.
-          When a URI is provided that identifies a container, the access applies to all resources
-          that are members of that container or any subcontainers.
-        </p>
-
-        <p>
-          This property is OPTIONAL.
-        </p>
-
-        <pre class="example" title="target property">
-{
-  "access": {
-    "target": [
-      "https://storage.example/projects/alpha",
-      "https://storage.example/projects/beta"
+    "type": ["ODRLAccessPolicy"],
+    "profile": "https://www.w3.org/ns/lws#ODRLAccessProfile",
+    "permission": [
+      {
+        "action": "read",
+        "target": "https://storage.example/projects/",
+        "assignee": "https://id.example/agent"
+      }
     ]
   }
 }
         </pre>
       </section>
 
-      <section id="odrl-hasPurpose">
-        <h3>Purposes</h3>
+      <section id="profile-rules">
+        <h3>Rules</h3>
 
         <p>
-          The <code>hasPurpose</code> property describes the intended use of the access being
-          requested or granted.
+          Each rule within a Policy is a Permission, Prohibition, or Obligation object.
+          Rules have the following properties:
         </p>
 
-        <p>
-          The value of the <code>hasPurpose</code> property MUST be an array. Each element MUST
-          be a URI identifying a purpose.
-        </p>
+        <section id="rule-action">
+          <h4>Action</h4>
 
-        <p>
-          This property is OPTIONAL.
-        </p>
+          <p>
+            The <code>action</code> property identifies the operation for the rule. The value
+            MUST be a string corresponding to a supported action (see
+            <a href="#vocab-actions"></a>).
+          </p>
 
-        <pre class="example" title="hasPurpose property">
+          <p>
+            This property is REQUIRED.
+          </p>
+
+          <pre class="example" title="Rule with action">
 {
-  "access": {
-    "hasPurpose": ["https://purpose.example/collaboration"]
-  }
+  "permission": [
+    {
+      "action": "read"
+    }
+  ]
 }
-        </pre>
+          </pre>
+        </section>
+
+        <section id="rule-assignee">
+          <h4>Assignee</h4>
+
+          <p>
+            The <code>assignee</code> property identifies the party that is requesting
+            access (in the case of a request) or that is being granted access (in the case
+            of a grant).
+          </p>
+
+          <p>
+            The value of the <code>assignee</code> property MUST be a URI. Public access
+            MAY be assigned using the <code>Agent</code> class from the
+            [[!FOAF|FOAF vocabulary]], identified by the URI
+            <code>http://xmlns.com/foaf/0.1/Agent</code>.
+          </p>
+
+          <p>
+            This property is REQUIRED.
+          </p>
+
+          <pre class="example" title="Rule with assignee">
+{
+  "permission": [
+    {
+      "action": "read",
+      "assignee": "https://id.example/agent"
+    }
+  ]
+}
+          </pre>
+        </section>
+
+        <section id="rule-target">
+          <h4>Target</h4>
+
+          <p>
+            The <code>target</code> property identifies the resource to which the rule
+            applies.
+          </p>
+
+          <p>
+            The value of the <code>target</code> property MUST be a URI identifying a
+            resource. When the URI identifies a container, the rule applies to all resources
+            that are members of that container or any subcontainers.
+          </p>
+
+          <p>
+            This property is OPTIONAL, though servers MAY require it.
+          </p>
+
+          <pre class="example" title="Rule with target">
+{
+  "permission": [
+    {
+      "action": "read",
+      "target": "https://storage.example/projects/",
+      "assignee": "https://id.example/agent"
+    }
+  ]
+}
+          </pre>
+        </section>
+
+        <section id="rule-constraint">
+          <h4>Constraints</h4>
+
+          <p>
+            The <code>constraint</code> property defines conditions that limit or qualify the
+            rule. This property uses the ODRL
+            <a href="https://www.w3.org/TR/odrl-model/#constraint-class">Constraint</a>
+            model.
+          </p>
+
+          <p>
+            The value of the <code>constraint</code> property MUST be an array of constraint
+            objects. Each constraint object MUST include the following properties:
+          </p>
+
+          <ul>
+            <li>
+              <code>leftOperand</code> &mdash; a string identifying the operand being
+              constrained (see <a href="#vocab-left-operands"></a>).
+            </li>
+            <li>
+              <code>operator</code> &mdash; a string identifying the comparison operator.
+              Supported values include: <code>eq</code>, <code>lt</code>, <code>lteq</code>,
+              <code>gteq</code>, and <code>isAnyOf</code>.
+            </li>
+            <li>
+              <code>rightOperand</code> &mdash; the value to compare against. The type
+              depends on the <code>leftOperand</code>.
+            </li>
+          </ul>
+
+          <p>
+            When multiple constraint objects are present on a rule, all of them MUST be
+            satisfied.
+          </p>
+
+          <p>
+            This property is OPTIONAL.
+          </p>
+        </section>
       </section>
 
-      <section id="odrl-constraint">
-        <h3>Constraints</h3>
+      <section id="constraint-examples">
+        <h3>Constraint Examples</h3>
 
         <p>
-          The <code>constraint</code> property defines conditions that limit or qualify the
-          access being requested or granted. This property uses the ODRL
-          <a href="https://www.w3.org/TR/odrl-model/#constraint-class">Constraint</a> model.
-        </p>
-
-        <p>
-          The value of the <code>constraint</code> property MUST be an array of constraint
-          objects. Each constraint object MUST include the following properties:
-        </p>
-
-        <ul>
-          <li>
-            <code>leftOperand</code> &mdash; a string identifying the operand being constrained.
-          </li>
-          <li>
-            <code>operator</code> &mdash; a string identifying the comparison operator.
-          </li>
-          <li>
-            <code>rightOperand</code> &mdash; the value to compare against. The type depends on
-            the <code>leftOperand</code>.
-          </li>
-        </ul>
-
-        <p>
-          When multiple constraint objects are present, all of them MUST be satisfied.
-        </p>
-
-        <p>
-          A server advertising support for this profile MUST support the following
-          <code>leftOperand</code> values:
-        </p>
-
-        <ul>
-          <li>
-            <code>client</code> &mdash; representing the client identifier for an HTTP request
-          </li>
-          <li>
-            <code>mediaType</code> &mdash; representing the media type of the target HTTP
-            resource
-          </li>
-          <li>
-            <code>type</code> &mdash; representing the type URL expressed in a resource's link
-            headers
-          </li>
-          <li>
-            <code>dateTime</code> &mdash; representing the current date time
-          </li>
-        </ul>
-
-        <p>
-          This property is OPTIONAL.
-        </p>
-
-        <p>
-          The following examples illustrate the use of these constraints:
+          The following examples illustrate the use of constraints within rules.
         </p>
 
         <section id="constraint-client">
@@ -592,22 +814,27 @@
 
           <p>
             The following example uses a <code>leftOperand</code> value of
-            <code>client</code> to restrict access
-            to a specific client application. When the <code>eq</code> operator is used, the
-            <code>rightOperand</code> value is a URI identifying the client:
+            <code>client</code> to restrict a permission to a specific client application.
+            When the <code>eq</code> operator is used, the <code>rightOperand</code> value
+            is a URI identifying the client:
           </p>
 
           <pre class="example" title="Client constraint">
 {
-  "access": {
-    "constraint": [
-      {
-        "leftOperand": "client",
-        "operator": "eq",
-        "rightOperand": "https://app.example/client-id"
-      }
-    ]
-  }
+  "permission": [
+    {
+      "action": "read",
+      "target": "https://storage.example/projects/",
+      "assignee": "https://id.example/agent",
+      "constraint": [
+        {
+          "leftOperand": "client",
+          "operator": "eq",
+          "rightOperand": "https://app.example/client-id"
+        }
+      ]
+    }
+  ]
 }
           </pre>
         </section>
@@ -617,26 +844,28 @@
 
           <p>
             The following example uses a <code>leftOperand</code> value of
-            <code>mediaType</code> to restrict
-            access to resources with specific media types. When the <code>eq</code> operator
-            is used, the <code>rightOperand</code> value is a string identifying an
-            <a href="https://www.iana.org/assignments/media-types/">IANA media type</a>. When
-            the <code>isAnyOf</code> operator is used, the <code>rightOperand</code> value
-            is an array of media type strings, and access is permitted if the resource's
-            media type matches any of the listed values:
+            <code>mediaType</code> to restrict a permission to resources with specific media
+            types. When the <code>isAnyOf</code> operator is used, the
+            <code>rightOperand</code> value is an array of media type strings, and access
+            is permitted if the resource's media type matches any of the listed values:
           </p>
 
           <pre class="example" title="Media type constraint">
 {
-  "access": {
-    "constraint": [
-      {
-        "leftOperand": "mediaType",
-        "operator": "isAnyOf",
-        "rightOperand": ["image/jpeg", "image/png"]
-      }
-    ]
-  }
+  "permission": [
+    {
+      "action": "read",
+      "target": "https://storage.example/media/",
+      "assignee": "https://id.example/agent",
+      "constraint": [
+        {
+          "leftOperand": "mediaType",
+          "operator": "isAnyOf",
+          "rightOperand": ["image/jpeg", "image/png"]
+        }
+      ]
+    }
+  ]
 }
           </pre>
         </section>
@@ -657,26 +886,59 @@ Link: &lt;https://type.example/Playlist&gt;; rel="type"
             The following example uses a <code>leftOperand</code> value of
             <code>type</code> to restrict access based on the resource types advertised
             in HTTP <code>Link</code> headers.
-            When the <code>eq</code> operator is used, the <code>rightOperand</code> value
-            is a URI identifying a resource type. When the <code>isAnyOf</code> operator is
-            used, the <code>rightOperand</code> value is an array of type URIs, and access
-            is permitted if the resource's type matches any of the listed values:
+            When the <code>isAnyOf</code> operator is used, the <code>rightOperand</code>
+            value is an array of type URIs, and access is permitted if the resource's type
+            matches any of the listed values:
           </p>
 
           <pre class="example" title="Resource type constraint">
 {
-  "access": {
-    "constraint": [
-      {
-        "leftOperand": "type",
-        "operator": "isAnyOf",
-        "rightOperand": [
-          "https://type.example/Playlist",
-          "https://type.example/Song"
-        ]
-      }
-    ]
-  }
+  "permission": [
+    {
+      "action": "read",
+      "target": "https://storage.example/data/",
+      "assignee": "https://id.example/agent",
+      "constraint": [
+        {
+          "leftOperand": "type",
+          "operator": "isAnyOf",
+          "rightOperand": [
+            "https://type.example/Playlist",
+            "https://type.example/Song"
+          ]
+        }
+      ]
+    }
+  ]
+}
+          </pre>
+        </section>
+
+        <section id="constraint-purpose">
+          <h4>Purpose Constraints</h4>
+
+          <p>
+            The <code>purpose</code> left operand (defined by [[!ODRL-VOCAB]]) describes
+            the intended use of the access. The <code>rightOperand</code> value MUST be a
+            URI identifying a purpose:
+          </p>
+
+          <pre class="example" title="Purpose constraint">
+{
+  "permission": [
+    {
+      "action": "read",
+      "target": "https://storage.example/projects/",
+      "assignee": "https://id.example/agent",
+      "constraint": [
+        {
+          "leftOperand": "purpose",
+          "operator": "eq",
+          "rightOperand": "https://purpose.example/collaboration"
+        }
+      ]
+    }
+  ]
 }
           </pre>
         </section>
@@ -686,29 +948,33 @@ Link: &lt;https://type.example/Playlist&gt;; rel="type"
 
           <p>
             The following example uses a <code>leftOperand</code> value of
-            <code>dateTime</code> to limit access
-            to a specific time window. The <code>gteq</code> operator defines the start of the
-            window and the <code>lteq</code> operator defines the end. The
-            <code>rightOperand</code> value for temporal constraints is an
-            [[!XMLSCHEMA11-2|XML Schema]] <code>dateTime</code> string:
+            <code>dateTime</code> to limit access to a specific time window. The
+            <code>gteq</code> operator defines the start and the <code>lteq</code>
+            operator defines the end. The <code>rightOperand</code> value for temporal
+            constraints is an [[!XMLSCHEMA11-2|XML Schema]] <code>dateTime</code> string:
           </p>
 
           <pre class="example" title="Temporal constraint">
 {
-  "access": {
-    "constraint": [
-      {
-        "leftOperand": "dateTime",
-        "operator": "gteq",
-        "rightOperand": "2026-03-09T12:00:00Z"
-      },
-      {
-        "leftOperand": "dateTime",
-        "operator": "lteq",
-        "rightOperand": "2026-06-09T10:00:00Z"
-      }
-    ]
-  }
+  "permission": [
+    {
+      "action": "read",
+      "target": "https://storage.example/projects/",
+      "assignee": "https://id.example/agent",
+      "constraint": [
+        {
+          "leftOperand": "dateTime",
+          "operator": "gteq",
+          "rightOperand": "2026-03-09T12:00:00Z"
+        },
+        {
+          "leftOperand": "dateTime",
+          "operator": "lteq",
+          "rightOperand": "2026-06-09T10:00:00Z"
+        }
+      ]
+    }
+  ]
 }
           </pre>
         </section>
@@ -717,33 +983,100 @@ Link: &lt;https://type.example/Playlist&gt;; rel="type"
           <h4>Combining Constraints</h4>
 
           <p>
-            When multiple constraint objects are present, all of them MUST be satisfied for
-            access to be permitted. The following example restricts access to a specific client
-            application before a specific date:
+            When multiple constraint objects are present on a rule, all of them MUST be
+            satisfied for the rule to apply. The following example restricts a permission
+            to a specific client application before a specific date:
           </p>
 
           <pre class="example" title="Combined constraints">
 {
+  "permission": [
+    {
+      "action": "read",
+      "target": "https://storage.example/projects/",
+      "assignee": "https://id.example/agent",
+      "constraint": [
+        {
+          "leftOperand": "dateTime",
+          "operator": "lteq",
+          "rightOperand": "2026-06-09T10:00:00Z"
+        },
+        {
+          "leftOperand": "client",
+          "operator": "eq",
+          "rightOperand": "https://app.example/client-id"
+        }
+      ]
+    }
+  ]
+}
+          </pre>
+        </section>
+      </section>
+
+      <section id="profile-prohibitions-obligations">
+        <h3>Prohibitions and Obligations</h3>
+
+        <p>
+          In addition to permissions, this profile supports prohibitions and obligations.
+        </p>
+
+        <p>
+          A <strong>prohibition</strong> explicitly denies an action. This is useful when
+          broad permissions are granted but specific operations must be excluded:
+        </p>
+
+        <pre class="example" title="Permission with prohibition">
+{
   "access": {
-    "action": ["read"],
-    "assignee": "https://id.example/agent",
-    "target": ["https://storage.example/projects/"],
-    "constraint": [
+    "type": ["ODRLAccessPolicy"],
+    "profile": "https://www.w3.org/ns/lws#ODRLAccessProfile",
+    "permission": [
       {
-        "leftOperand": "dateTime",
-        "operator": "lteq",
-        "rightOperand": "2026-06-09T10:00:00Z"
-      },
+        "action": "read",
+        "target": "https://storage.example/projects/",
+        "assignee": "https://id.example/agent"
+      }
+    ],
+    "prohibition": [
       {
-        "leftOperand": "client",
-        "operator": "eq",
-        "rightOperand": "https://app.example/client-id"
+        "action": "read",
+        "target": "https://storage.example/projects/confidential/",
+        "assignee": "https://id.example/agent"
       }
     ]
   }
 }
-          </pre>
-        </section>
+        </pre>
+
+        <p>
+          An <strong>obligation</strong> expresses a duty that MUST be fulfilled in
+          conjunction with the granted permissions. The interpretation and enforcement of
+          obligations is implementation-specific:
+        </p>
+
+        <pre class="example" title="Permission with obligation">
+{
+  "access": {
+    "type": ["ODRLAccessPolicy"],
+    "profile": "https://www.w3.org/ns/lws#ODRLAccessProfile",
+    "permission": [
+      {
+        "action": "modify",
+        "target": "https://storage.example/projects/",
+        "assignee": "https://id.example/agent"
+      }
+    ],
+    "obligation": [
+      {
+        "action": "read",
+        "target": "https://storage.example/projects/policy.html",
+        "assignee": "https://id.example/agent"
+      }
+    ]
+  }
+}
+        </pre>
       </section>
     </section>
 
