@@ -20,7 +20,7 @@
         github: "w3c/lws-protocol",
         xref: ["web-platform"],
         group: "lws",
-        maxTocLevel: 2,
+        maxTocLevel: 4,
         localBiblio: {
           "LWS-PROTOCOL": {
             title: "LWS Protocol",
@@ -75,8 +75,8 @@
 
       <p>
         The <a>access policy profile</a> defined in this document is based on concepts from the
-        <a href="https://www.w3.org/TR/odrl-model/">Open Digital Rights Language</a> (ODRL), including
-        actions, constraints, and assignees. Other profiles could use a different conceptual framework.
+        <a href="https://www.w3.org/TR/odrl-model/">Open Digital Rights Language</a> (ODRL).
+        Other profiles could use a different conceptual framework.
       </p>
     </section>
 
@@ -96,7 +96,7 @@
           purposes and constraints.
         </li>
         <li>
-          <dfn>Access Grant</dfn> &mdash; a JSON-LD object created by a storage manager, expressing
+          <dfn>Access Grant</dfn> &mdash; a JSON-LD object created by a <a>storage manager</a>, expressing
           an ability for an agent to perform specific actions on storage resources within certain
           defined constraints and for specific purposes.
         </li>
@@ -105,6 +105,11 @@
           requirements for expressing a valid access policy. Every access policy profile is identified
           with a URI, and a server indicates support for an access control policy profile by
           referencing it with a <code>conformsTo</code> property in a Storage Description resource.
+        </li>
+        <li>
+          <dfn>Storage Manager</dfn> &mdash; an agent with administrative control over a
+          storage, responsible for reviewing <a>access requests</a> and creating
+          <a>access grants</a>.
         </li>
       </ul>
     </section>
@@ -171,7 +176,7 @@
   "inbox": "https://id.example/agent/inbox/",
   "storage": "https://storage.example/",
   "access": {
-    "type": ["ODRLAccessPolicy"],
+    "type": ["Request"],
     "profile": "https://www.w3.org/ns/lws#ODRLAccessProfile",
     "permission": [
       {
@@ -213,8 +218,7 @@
   "type": ["AccessGrant"],
   "storage": "https://storage.example/",
   "access": {
-    "type": ["ODRLAccessPolicy"],
-    "uid": "urn:uuid:e6a09a85-3f72-4e6d-bcd3-7e4a0e6378a2",
+    "type": ["Offer"],
     "profile": "https://www.w3.org/ns/lws#ODRLAccessProfile",
     "permission": [
       {
@@ -292,7 +296,7 @@
             <code>AccessRequest</code> &mdash; a request by an agent for access to resources.
           </li>
           <li>
-            <code>AccessGrant</code> &mdash; an authorization by a storage manager granting
+            <code>AccessGrant</code> &mdash; an authorization by a <a>storage manager</a> granting
             access to resources.
           </li>
         </ul>
@@ -385,8 +389,12 @@
       <p>
         The <code>access</code> object of an <a>access request</a> or <a>access grant</a>
         conforming to this profile is an ODRL
-        <a href="https://www.w3.org/TR/odrl-model/#policy-set">Policy</a> containing one or more
-        rules. Each rule is a
+        <a href="https://www.w3.org/TR/odrl-model/#policy-subclasses">Policy</a> containing
+        one or more rules. For an <a>access request</a>, the policy is an
+        <a href="https://www.w3.org/TR/odrl-model/#request">ODRL Request</a>; for an
+        <a>access grant</a>, it is an
+        <a href="https://www.w3.org/TR/odrl-model/#offer">ODRL Offer</a>.
+        Each rule is a
         <a href="https://www.w3.org/TR/odrl-model/#permission">Permission</a>,
         <a href="https://www.w3.org/TR/odrl-model/#prohibition">Prohibition</a>, or
         <a href="https://www.w3.org/TR/odrl-model/#obligation">Obligation</a>.
@@ -479,9 +487,12 @@ lws:append a odrl:Action, skos:Concept ;
             <li><code>client</code> &mdash; the client identifier for an HTTP request.
               Defined by this specification.</li>
             <li><code>mediaType</code> &mdash; the media type of the target HTTP resource.
+              Reuses the <code>as:mediaType</code> term from
+              [[ACTIVITY-STREAMS-VOCABULARY]].</li>
+            <li><code>resourceType</code> &mdash; the type URL expressed in a resource's link headers.
               Defined by this specification.</li>
-            <li><code>type</code> &mdash; the type URL expressed in a resource's link headers.
-              Defined by this specification.</li>
+            <li><code>issuer</code> &mdash; the identity provider (issuer) that authenticated
+              the requesting agent. Defined by this specification.</li>
           </ul>
 
           <p>
@@ -499,15 +510,44 @@ lws:client a odrl:LeftOperand, skos:Concept ;
     skos:definition "The client identifier for an HTTP request."@en ;
     skos:note "Used to restrict access to specific client applications."@en .
 
-lws:mediaType a odrl:LeftOperand, skos:Concept ;
-    rdfs:label "Media Type"@en ;
-    skos:definition "The media type of the target HTTP resource."@en ;
-    skos:note "Used to restrict access based on IANA media types."@en .
-
-lws:type a odrl:LeftOperand, skos:Concept ;
+lws:resourceType a odrl:LeftOperand, skos:Concept ;
     rdfs:label "Resource Type"@en ;
     skos:definition "The type URL expressed in a resource's link headers."@en ;
     skos:note "Used to restrict access based on Link rel=type headers."@en .
+
+lws:issuer a odrl:LeftOperand, skos:Concept ;
+    rdfs:label "Issuer"@en ;
+    skos:definition "The identity provider (issuer) that authenticated the requesting agent."@en ;
+    skos:note "Used to restrict access based on the agent's identity provider."@en .
+          </pre>
+        </section>
+
+        <section id="vocab-party-classes">
+          <h4>Party Classes</h4>
+
+          <p>
+            The following class is defined by this specification for use as an
+            <code>assignee</code> value:
+          </p>
+
+          <ul>
+            <li><code>Creator</code> &mdash; the agent that originally created the target
+              resource. Defined by this specification.</li>
+          </ul>
+
+          <p>
+            The formal RDF definition is:
+          </p>
+
+          <pre class="example nohighlight" title="LWS ODRL Profile party classes (Turtle)">
+@prefix lws:  &lt;https://www.w3.org/ns/lws#&gt; .
+@prefix rdfs: &lt;http://www.w3.org/2000/01/rdf-schema#&gt; .
+@prefix skos: &lt;http://www.w3.org/2004/02/skos/core#&gt; .
+
+lws:Creator a rdfs:Class, skos:Concept ;
+    rdfs:label "Creator"@en ;
+    skos:definition "The agent that originally created the target resource."@en ;
+    skos:note "Used as an assignee value to grant access to the resource creator."@en .
           </pre>
         </section>
       </section>
@@ -530,16 +570,18 @@ lws:type a odrl:LeftOperand, skos:Concept ;
 {
   "@context": {
     "lws":  "https://www.w3.org/ns/lws#",
+    "as":   "https://www.w3.org/ns/activitystreams#",
     "odrl": "http://www.w3.org/ns/odrl/2/",
     "xsd":  "http://www.w3.org/2001/XMLSchema#",
 
-    "AccessRequest":     "lws:AccessRequest",
-    "AccessGrant":       "lws:AccessGrant",
-    "ODRLAccessPolicy":  "lws:ODRLAccessPolicy",
+    "AccessRequest":  "lws:AccessRequest",
+    "AccessGrant":    "lws:AccessGrant",
+    "Request":        "odrl:Request",
+    "Offer":          "odrl:Offer",
+    "Creator":        "lws:Creator",
 
     "access":      "lws:access",
     "profile":     "odrl:profile",
-    "uid":         "odrl:uid",
     "permission":  { "@id": "odrl:permission",  "@container": "@set" },
     "prohibition": { "@id": "odrl:prohibition", "@container": "@set" },
     "obligation":  { "@id": "odrl:obligation",  "@container": "@set" },
@@ -552,18 +594,23 @@ lws:type a odrl:LeftOperand, skos:Concept ;
     "operator":     "odrl:operator",
     "rightOperand": "odrl:rightOperand",
 
-    "read":      "odrl:read",
-    "modify":    "odrl:modify",
-    "delete":    "odrl:delete",
-    "create":    "lws:create",
-    "append":    "lws:append",
-    "dateTime":  "odrl:dateTime",
-    "purpose":   "odrl:purpose",
-    "client":    "lws:client",
-    "mediaType": "lws:mediaType",
-    "type":      "lws:type",
+    "storage":   { "@id": "lws:storage", "@type": "@id" },
+    "inbox":     { "@id": "lws:inbox",   "@type": "@id" },
+
+    "read":          "odrl:read",
+    "modify":        "odrl:modify",
+    "delete":        "odrl:delete",
+    "create":        "lws:create",
+    "append":        "lws:append",
+    "dateTime":      "odrl:dateTime",
+    "purpose":       "odrl:purpose",
+    "client":        "lws:client",
+    "mediaType":     "as:mediaType",
+    "resourceType":  "lws:resourceType",
+    "issuer":        "lws:issuer",
 
     "eq":       "odrl:eq",
+    "gt":       "odrl:gt",
     "lt":       "odrl:lt",
     "lteq":     "odrl:lteq",
     "gteq":     "odrl:gteq",
@@ -587,7 +634,7 @@ lws:type a odrl:LeftOperand, skos:Concept ;
   "@context": "https://www.w3.org/ns/lws/v1",
   "type": {},
   "access": {
-    "type": "ODRLAccessPolicy",
+    "type": {},
     "permission": {
       "action": {},
       "target": {},
@@ -622,15 +669,16 @@ lws:type a odrl:LeftOperand, skos:Concept ;
         <ul>
           <li>
             <code>type</code> &mdash; REQUIRED. MUST be an array of strings that includes
-            <code>ODRLAccessPolicy</code>. Additional type values MAY be included.
+            the appropriate ODRL policy subclass. For an <a>access request</a>, the array
+            MUST contain <code>Request</code> (an
+            <a href="https://www.w3.org/TR/odrl-model/#request">ODRL Request</a>). For an
+            <a>access grant</a>, the array MUST contain <code>Offer</code> (an
+            <a href="https://www.w3.org/TR/odrl-model/#offer">ODRL Offer</a>).
+            Additional type values MAY be included.
           </li>
           <li>
             <code>profile</code> &mdash; REQUIRED. MUST be the string
             <code>https://www.w3.org/ns/lws#ODRLAccessProfile</code>.
-          </li>
-          <li>
-            <code>uid</code> &mdash; OPTIONAL. A URI that uniquely identifies the policy.
-            Servers SHOULD assign a <code>uid</code> when creating an <a>access grant</a>.
           </li>
           <li>
             <code>permission</code> &mdash; an array of Permission rules.
@@ -648,10 +696,10 @@ lws:type a odrl:LeftOperand, skos:Concept ;
           <code>obligation</code> MUST be present.
         </p>
 
-        <pre class="example" title="ODRL Access Policy">
+        <pre class="example" title="ODRL Access Policy (in an access grant)">
 {
   "access": {
-    "type": ["ODRLAccessPolicy"],
+    "type": ["Offer"],
     "profile": "https://www.w3.org/ns/lws#ODRLAccessProfile",
     "permission": [
       {
@@ -714,6 +762,21 @@ lws:type a odrl:LeftOperand, skos:Concept ;
           </p>
 
           <p>
+            The <code>assignee</code> value MAY also reference an ODRL
+            <a href="https://www.w3.org/TR/odrl-model/#party">Party Collection</a>,
+            which represents a group of agents. This allows a single rule to apply to
+            all members of a group.
+          </p>
+
+          <p>
+            To grant access to the agent that created a resource, the <code>assignee</code>
+            value MAY use the <code>Creator</code> class
+            (<code>https://www.w3.org/ns/lws#Creator</code>) defined by this
+            specification. The server MUST resolve this to the agent that originally
+            created the target resource.
+          </p>
+
+          <p>
             This property is REQUIRED.
           </p>
 
@@ -723,6 +786,42 @@ lws:type a odrl:LeftOperand, skos:Concept ;
     {
       "action": "read",
       "assignee": "https://id.example/agent"
+    }
+  ]
+}
+          </pre>
+
+          <pre class="example" title="Assignee as a group (Party Collection)">
+{
+  "permission": [
+    {
+      "action": "read",
+      "target": "https://storage.example/projects/",
+      "assignee": "https://groups.example/engineering-team"
+    }
+  ]
+}
+          </pre>
+
+          <pre class="example" title="Public access using foaf:Agent">
+{
+  "permission": [
+    {
+      "action": "read",
+      "target": "https://storage.example/public/",
+      "assignee": "http://xmlns.com/foaf/0.1/Agent"
+    }
+  ]
+}
+          </pre>
+
+          <pre class="example" title="Creator access using lws:Creator">
+{
+  "permission": [
+    {
+      "action": "read",
+      "target": "https://storage.example/projects/",
+      "assignee": "https://www.w3.org/ns/lws#Creator"
     }
   ]
 }
@@ -782,8 +881,8 @@ lws:type a odrl:LeftOperand, skos:Concept ;
             </li>
             <li>
               <code>operator</code> &mdash; a string identifying the comparison operator.
-              Supported values include: <code>eq</code>, <code>lt</code>, <code>lteq</code>,
-              <code>gteq</code>, and <code>isAnyOf</code>.
+              Supported values include: <code>eq</code>, <code>gt</code>, <code>lt</code>,
+              <code>lteq</code>, <code>gteq</code>, and <code>isAnyOf</code>.
             </li>
             <li>
               <code>rightOperand</code> &mdash; the value to compare against. The type
@@ -884,8 +983,8 @@ Link: &lt;https://type.example/Playlist&gt;; rel="type"
 
           <p>
             The following example uses a <code>leftOperand</code> value of
-            <code>type</code> to restrict access based on the resource types advertised
-            in HTTP <code>Link</code> headers.
+            <code>resourceType</code> to restrict access based on the resource types
+            advertised in HTTP <code>Link</code> headers.
             When the <code>isAnyOf</code> operator is used, the <code>rightOperand</code>
             value is an array of type URIs, and access is permitted if the resource's type
             matches any of the listed values:
@@ -900,7 +999,7 @@ Link: &lt;https://type.example/Playlist&gt;; rel="type"
       "assignee": "https://id.example/agent",
       "constraint": [
         {
-          "leftOperand": "type",
+          "leftOperand": "resourceType",
           "operator": "isAnyOf",
           "rightOperand": [
             "https://type.example/Playlist",
@@ -979,6 +1078,40 @@ Link: &lt;https://type.example/Playlist&gt;; rel="type"
           </pre>
         </section>
 
+        <section id="constraint-issuer">
+          <h4>Issuer Constraints</h4>
+
+          <p>
+            The <code>issuer</code> left operand restricts access based on the identity
+            provider that authenticated the requesting agent. The
+            <code>rightOperand</code> value MUST be a URI identifying the issuer. When the
+            <code>isAnyOf</code> operator is used, access is permitted if the agent was
+            authenticated by any of the listed issuers:
+          </p>
+
+          <pre class="example" title="Issuer constraint">
+{
+  "permission": [
+    {
+      "action": "read",
+      "target": "https://storage.example/projects/",
+      "assignee": "https://id.example/agent",
+      "constraint": [
+        {
+          "leftOperand": "issuer",
+          "operator": "isAnyOf",
+          "rightOperand": [
+            "https://idp.example/",
+            "https://trusted-provider.example/"
+          ]
+        }
+      ]
+    }
+  ]
+}
+          </pre>
+        </section>
+
         <section id="constraint-combining">
           <h4>Combining Constraints</h4>
 
@@ -1029,7 +1162,7 @@ Link: &lt;https://type.example/Playlist&gt;; rel="type"
         <pre class="example" title="Permission with prohibition">
 {
   "access": {
-    "type": ["ODRLAccessPolicy"],
+    "type": ["Offer"],
     "profile": "https://www.w3.org/ns/lws#ODRLAccessProfile",
     "permission": [
       {
@@ -1058,7 +1191,7 @@ Link: &lt;https://type.example/Playlist&gt;; rel="type"
         <pre class="example" title="Permission with obligation">
 {
   "access": {
-    "type": ["ODRLAccessPolicy"],
+    "type": ["Offer"],
     "profile": "https://www.w3.org/ns/lws#ODRLAccessProfile",
     "permission": [
       {
@@ -1095,21 +1228,28 @@ Link: &lt;https://type.example/Playlist&gt;; rel="type"
 
       <p>
         An agent creates an <a>access request</a> by submitting a <code>POST</code> request to the
-        <a>access request</a> endpoint. A storage manager creates an <a>access grant</a> by
+        <a>access request</a> endpoint. A <a>storage manager</a> creates an <a>access grant</a> by
         submitting a <code>POST</code> request to the <a>access grant</a> endpoint.
       </p>
 
       <p>
-        For POST operations, a server MUST validate the request body, rejecting any invalid
-        requests with an error response. A successful POST operation MUST respond with a
-        <code>Location</code> header set to the URL of the new resource.
+        A POST request MUST include a <code>Content-Type</code> header with a value of
+        <code>application/ld+json</code>.
+      </p>
+
+      <p>
+        For POST operations, a server MUST validate the request body. If the request body is
+        invalid, the server MUST respond with a <code>400 Bad Request</code> status code. If a
+        valid request contains values that the server cannot represent in its underlying access
+        policy layer, the server MUST respond with a <code>422 Unprocessable Content</code>
+        status code. A successful POST operation MUST respond with a <code>201 Created</code>
+        status code and a <code>Location</code> header set to the URL of the new resource.
       </p>
 
       <p class="note">
-        When a storage manager processes an <a>access request</a>, either by creating an
-        <a>access grant</a> or by rejecting the request, deleting the original request can help
-        keep the request container
-        more manageable.
+        When a <a>storage manager</a> processes an <a>access request</a>, either by creating
+        an <a>access grant</a> or by rejecting the request, deleting the original request can
+        help keep the request container more manageable.
       </p>
 
       <section id="access-request-endpoint">
@@ -1145,10 +1285,10 @@ Link: &lt;https://type.example/Playlist&gt;; rel="type"
           Each endpoint contains <a>access requests</a> and <a>access grants</a> received on
           behalf of a storage. The
           server SHOULD filter the content of these containers according to the requester's
-          permission. In general, the storage manager will have the ability to read and delete
-          all resources while other users will only have access to the resources for which they
-          are the assignee. Non-owner users might have the ability to delete access requests
-          that they created.
+          permission. In general, the <a>storage manager</a> will have the ability to read
+          and delete all resources while other users will only have access to the resources
+          for which they are the assignee. Non-owner users might have the ability to delete
+          access requests that they created.
         </p>
       </section>
 
@@ -1161,6 +1301,12 @@ Link: &lt;https://type.example/Playlist&gt;; rel="type"
           profile. A server MUST reject any
           payload that cannot be represented fully in its underlying access policy layer.
         </p>
+
+        <p>
+          When validating an <a>access request</a> or <a>access grant</a>, a server SHOULD
+          verify that any <code>target</code> URI references a resource within the scope of the
+          advertised <code>storage</code>.
+        </p>
       </section>
     </section>
 
@@ -1172,7 +1318,7 @@ Link: &lt;https://type.example/Playlist&gt;; rel="type"
       </p>
 
       <p>
-        Notifications provide a mechanism for informing agents and storage managers about changes to
+        Notifications provide a mechanism for informing agents and <a>storage managers</a> about changes to
         <a>access requests</a> and <a>access grants</a>. When an <code>inbox</code> property is
         present on an <a>access request</a> or <a>access grant</a>, the server SHOULD deliver
         notifications to that endpoint, informing an
@@ -1206,12 +1352,17 @@ Link: &lt;https://type.example/Playlist&gt;; rel="type"
         <ul>
           <li>
             <strong>Access Request creation</strong>: When a new <a>access request</a> is
-            submitted, the storage manager SHOULD be notified.
+            submitted, the <a>storage manager</a> SHOULD be notified.
           </li>
           <li>
             <strong>Access Grant creation</strong>: When a new <a>access grant</a> is created,
             the requesting agent SHOULD be notified at the <code>inbox</code> specified in
             the associated <a>access request</a>.
+          </li>
+          <li>
+            <strong>Access Grant revocation</strong>: When an <a>access grant</a> is deleted
+            (revoked), the affected agent SHOULD be notified at the <code>inbox</code>
+            specified in the associated <a>access grant</a> or <a>access request</a>.
           </li>
         </ul>
 
@@ -1226,13 +1377,19 @@ Link: &lt;https://type.example/Playlist&gt;; rel="type"
 
       <ul>
         <li>
-          Servers are encouraged to restrict which clients are able to perform POST operations
-          on the <a>access grant</a> endpoint.
+          A server SHOULD restrict which clients are able to perform POST operations
+          on the <a>access grant</a> endpoint to the <a>storage manager</a> or
+          appropriately authorized agents.
         </li>
         <li>
-          When an agent creates an <a>access request</a>, the server is encouraged to verify
+          When an agent creates an <a>access request</a>, a server SHOULD verify
           that the <code>assignee</code> value in the request is associated with the
           authenticated identity of the requesting agent.
+        </li>
+        <li>
+          A server SHOULD validate that any <code>target</code> URI in an <a>access request</a>
+          or <a>access grant</a> is within the scope of the associated storage, to prevent
+          an agent from crafting requests that reference external resources.
         </li>
       </ul>
     </section>
@@ -1244,7 +1401,7 @@ Link: &lt;https://type.example/Playlist&gt;; rel="type"
         <li>
           An <a>access request</a> or <a>access grant</a> can reveal sensitive information
           about the resources, agents, and purposes involved. Servers are encouraged to limit
-          the visibility of these resources to authorized parties, such as the storage manager
+          the visibility of these resources to authorized parties, such as the <a>storage manager</a>
           and the assignee identified in the document.
         </li>
         <li>
