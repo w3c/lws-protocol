@@ -888,6 +888,13 @@ Link: &lt;https://type.example/Playlist&gt;; rel="type"
           that the <code>assignee</code> value in the request is associated with the
           authenticated identity of the requesting agent.
         </li>
+        <li>
+          Because the <a>access request</a> endpoint accepts content from external agents,
+          servers are encouraged to implement measures to prevent abuse, such as rate limiting,
+          payload size restrictions, or requiring authentication before accepting submissions.
+          Without such protections, the endpoint may be vulnerable to spam, resource exhaustion,
+          or other forms of unwanted content.
+        </li>
       </ul>
     </section>
 
