@@ -63,17 +63,6 @@
       Required parameters: None
     </li>
     <li>
-      Optional parameters: <b>profile</b>: The profile parameter for the <code>application/lws+json</code> media type allows
-      one or more profile URIs to be specified. These profile URIs have the identifier semantics defined in [[RFC6906]].
-      The "profile" media type parameter MUST be quoted. It contains a non-empty list of space-separated URIs (the profile URIs).
-      <pre>
-profile-param = "profile=" profile-value
-profile-value = &lt;"&gt; profile-URI 0*( 1*SP profile-URI ) &lt;"&gt;
-profile-URI   = URI
-      </pre>
-      The "URI" in the above grammar refers to the "URI" as defined in Section 3 of [[RFC3986]].
-    </li>
-    <li>
       Encoding considerations: Resources that use the <code>application/lws+json</code> media type are required to conform to
       all of the requirements for the <code>application/json</code> media type and are therefore subject to the same encoding
       considerations specified in Section 11 of [[RFC8259]].

@@ -23,12 +23,12 @@ The **create resource** operation adds a new [served resource](#dfn-served-resou
 
 New resources are created using POST to a target container URI, with the server assigning the final identifier. Clients MAY suggest a name via the `Slug` header. Clients MAY provide initial user-managed metadata for the new resource by including one or more `Link` headers in the POST request, following the syntax of Web Linking in [[RFC8288]]. Server-managed metadata MUST be generated automatically by the server upon creation and MUST NOT be overridden by client-provided links.
 
-On success, return the 201 status code with the new URI in the `Location` header. The server MUST include `Link` headers for key server-managed metadata, such as a link to the parent container (`rel="up"`), a link to the ACL resource (`rel="acl"`), and a link to its dedicated linkset resource (`rel="linkset"; type="application/linkset+json"`). Additional links SHOULD include `rel="type"` (indicating `Container` or `DataResource`). The body MAY be empty or include a minimal representation of the resource. All metadata creation and linking MUST be atomic with the resource creation to maintain consistency.
+On success, the server MUST return the 201 status code with the new URI in the `Location` header. The server MUST include `Link` headers for key server-managed metadata, including a link to the parent container (`rel="up"`), and a link to the created resource's dedicated linkset resource (`rel="linkset"; type="application/linkset+json"`). Additional links SHOULD include `rel="type"` (indicating `https://www.w3.org/ns/lws#Container` or `https://www.w3.org/ns/lws#DataResource`). The body MAY be empty or include a minimal representation of the resource. All metadata creation and linking MUST be atomic with the resource creation to maintain consistency.
 
 **POST (to a container URI)** – *Create with server-assigned name:*
 Use POST to add a new resource inside an existing container. The server assigns an identifier to the resource, optionally suggested via the `Slug` header. The server MAY honor the Slug header if it does not conflict with naming rules or existing resources. Clients indicate the type of resource to create as follows:
 
-- To create a **Container**, the client MUST include a `Link` header with `rel="type"` pointing to the Container type: `Link: <https://www.w3.org/ns/lws#Container>; rel="type"`. The request body MAY be empty.
+- To create a **Container**, the client MUST include a `Link` header with `rel="type"` pointing to the Container type: `Link: <https://www.w3.org/ns/lws#Container>; rel="type"`.
 - To create a **DataResource**, the client includes the resource content in the request body with the appropriate `Content-Type` header.
 
 **Example (POST to create a new data resource):**
@@ -49,19 +49,17 @@ orange juice
 ```
 In this example, the client is posting to the container `/alice/notes/`. It provides `text/plain` content (a grocery list) and suggests the name `shoppinglist.txt` for the new resource. If `/alice/notes/` exists and the client is authorized, the server will create a new DataResource and add it to the container's membership.
 
-**Example (Response to POST — data resource):**
+**Example (Response to POST — Data Resource):**
 ```
 HTTP/1.1 201 Created
 Location: /alice/notes/shoppinglist.txt
 Content-Type: text/plain; charset=UTF-8
-ETag: "def789012"
 Link: </alice/notes/shoppinglist.txt.meta>; rel="linkset"; type="application/linkset+json"
 Link: </alice/notes/>; rel="up"
-Link: </alice/notes/shoppinglist.txt.acl>; rel="acl"
 Link: <https://www.w3.org/ns/lws#DataResource>; rel="type"
 Content-Length: 0
 ```
-On success, return 201 Created with the new URI in the `Location` header. The body may be empty or a minimal representation. Server responses MUST use entity tags for responses that contain resource representations or successful responses to HEAD requests, enabling concurrency control in subsequent operations.
+On success, return 201 Created with the new URI in the `Location` header. The body may be empty or a minimal representation.
 If the target container `/alice/notes/` does not exist, the server MUST return a 404 error status unless another status code is more appropriate.
 
 **Creating Containers:** To create a new container, a client uses POST to an existing parent container with a `Link` header indicating the Container type. For example:
@@ -78,10 +76,8 @@ Link: <https://www.w3.org/ns/lws#Container>; rel="type"
 ```
 HTTP/1.1 201 Created
 Location: /alice/notes/
-ETag: "container-new-123"
 Link: </alice/notes/.meta>; rel="linkset"; type="application/linkset+json"
 Link: </alice/>; rel="up"
-Link: </alice/notes/.acl>; rel="acl"
 Link: <https://www.w3.org/ns/lws#Container>; rel="type"
 Content-Length: 0
 ```

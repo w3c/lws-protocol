@@ -8,16 +8,16 @@ Permanently removes a resource and its associated metadata.
 
 The delete resource operation is implemented using the HTTP DELETE method, as defined in the abstract operation above. This section specifies the HTTP bindings for inputs, behaviors, and responses.
 
-The DELETE request targets the URI of the resource or container to remove. Clients MAY include an `If-Match` header with an ETag for concurrency checks, as described in the abstract operation.
+The DELETE request targets the URI of the resource or container to remove. Clients MAY include an `If-Match` header with an ETag for concurrency checks.
 
 **Deletion and Containment:**
 When a resource is deleted, the server MUST atomically remove it from its parent container's `items` list. The parent container's `totalItems` count and ETag MUST be updated accordingly.
 
 For non-container resources, the server removes the resource content, its associated metadata (linkset), and the containment reference in the parent container.
 
-For container resources, the server defaults to non-recursive deletion. If the container is not empty and recursion is not requested, the server MUST reject the request with 409 Conflict. If recursion is desired and supported, clients MUST use the `Depth: infinity` header, as defined in [[RFC4918]]. Servers that do not support recursion MUST reject such requests with 501 Not Implemented.
+For container resources, the server defaults to non-recursive deletion. If the container is not empty and recursion is not requested, the server MUST reject the request with 409 Conflict. Servers MAY support recursive deletion of all contained resources within the container that is being deleted. Clients MUST use the `Depth: infinity` header to request for a recursive delete, as defined in [[RFC4918]].
 
-On success, the server MUST respond with 204 No Content. Servers SHOULD support concurrency checks via `If-Match` with ETags; mismatches MUST yield 412 Precondition Failed.
+On success, the server MUST respond with 204 No Content. Servers SHOULD support conditional requests, as defined in [[RFC9110]].
 
 If the client lacks authorization, the server MUST return 403 Forbidden (if the client's identity is known but permissions are insufficient) or 401 Unauthorized (if no valid authentication is provided). In cases where revealing resource existence poses a security risk, the server MAY return 404 Not Found instead.
 
