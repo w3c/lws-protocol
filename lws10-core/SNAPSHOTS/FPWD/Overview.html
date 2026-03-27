@@ -126,7 +126,7 @@ dd{margin-left:0}
   "name": "Linked Web Storage Protocol 1.0",
   "inLanguage": "en",
   "license": "https://www.w3.org/copyright/software-license-2023/",
-  "datePublished": "2026-03-24",
+  "datePublished": "2026-03-31",
   "copyrightHolder": {
     "name": "World Wide Web Consortium",
     "url": "https://www.w3.org/"
@@ -694,21 +694,21 @@ var[data-type]:hover::after,var[data-type]:hover::before{opacity:1}
   "postProcess": [
     null
   ],
-  "publishDate": "2026-03-24",
-  "publishISODate": "2026-03-24T00:00:00.000Z",
-  "generatedSubtitle": "W3C First Public Working Draft 24 March 2026"
+  "publishDate": "2026-03-31",
+  "publishISODate": "2026-03-31T00:00:00.000Z",
+  "generatedSubtitle": "W3C First Public Working Draft 31 March 2026"
 }</script>
 <link rel="stylesheet" href="https://www.w3.org/StyleSheets/TR/2021/W3C-WD"></head>
   <body class="h-entry" data-cite="web-platform"><div class="head">
     <p class="logos"><a class="logo" href="https://www.w3.org/"><img crossorigin="" alt="W3C" height="48" src="https://www.w3.org/StyleSheets/TR/2021/logos/W3C" width="72">
   </a></p>
     <h1 id="title" class="title">Linked Web Storage Protocol 1.0</h1> 
-    <p id="w3c-state"><a href="https://www.w3.org/standards/types#FPWD">W3C First Public Working Draft</a> <time class="dt-published" datetime="2026-03-24">24 March 2026</time></p>
+    <p id="w3c-state"><a href="https://www.w3.org/standards/types#FPWD">W3C First Public Working Draft</a> <time class="dt-published" datetime="2026-03-31">31 March 2026</time></p>
     <details open="">
       <summary>More details about this document</summary>
       <dl>
         <dt>This version:</dt><dd>
-                <a class="u-url" href="https://www.w3.org/TR/2026/WD-lws10-core-20260324/">https://www.w3.org/TR/2026/WD-lws10-core-20260324/</a>
+                <a class="u-url" href="https://www.w3.org/TR/2026/WD-lws10-core-20260331/">https://www.w3.org/TR/2026/WD-lws10-core-20260331/</a>
               </dd>
         <dt>Latest published version:</dt><dd>
                 <a href="https://www.w3.org/TR/lws10-core/">https://www.w3.org/TR/lws10-core/</a>
@@ -840,7 +840,7 @@ var[data-type]:hover::after,var[data-type]:hover::before{opacity:1}
       <section id="resource-access"><div class="header-wrapper"><h3 id="x2-1-resource-access"><bdi class="secno">2.1 </bdi>Resource Access</h3><a class="self-link" href="#resource-access" aria-label="Permalink for Section 2.1"></a></div>
         
         <p>
-          The LWS Protocol defines standard interactions by which a some party can make some resources available to some agents.
+          The LWS Protocol defines standard interactions by which some party can make some resources available to some agents.
         </p>
 
         <ul>
@@ -855,7 +855,7 @@ var[data-type]:hover::after,var[data-type]:hover::before{opacity:1}
       <section id="security-privacy"><div class="header-wrapper"><h3 id="x2-2-security-and-privacy"><bdi class="secno">2.2 </bdi>Security and Privacy</h3><a class="self-link" href="#security-privacy" aria-label="Permalink for Section 2.2"></a></div>
         
         <p>
-          A <a href="#dfn-resource-manager" class="internalDFN" data-link-type="dfn" id="ref-for-dfn-resource-manager-1">resource manager</a> may keep a <a href="#dfn-served-resource" class="internalDFN" data-link-type="dfn" id="ref-for-dfn-served-resource-1">served resource</a> private, may make it publicly available to anyone, or may limited its visibility to a constrained set of <a href="#dfn-requesting-agent" class="internalDFN" data-link-type="dfn" id="ref-for-dfn-requesting-agent-1">requesting agents</a>.
+          A <a href="#dfn-resource-manager" class="internalDFN" data-link-type="dfn" id="ref-for-dfn-resource-manager-1">resource manager</a> may keep a <a href="#dfn-served-resource" class="internalDFN" data-link-type="dfn" id="ref-for-dfn-served-resource-1">served resource</a> private, may make it publicly available to anyone, or may limit its visibility to a constrained set of <a href="#dfn-requesting-agent" class="internalDFN" data-link-type="dfn" id="ref-for-dfn-requesting-agent-1">requesting agents</a>.
         </p>
 
         <ul>
@@ -897,7 +897,7 @@ var[data-type]:hover::after,var[data-type]:hover::before{opacity:1}
       </p>
 
       <p>
-        This specificaiton defines the following terms:
+        This specification defines the following terms:
       </p>
       <ul>
         <li><dfn id="dfn-authentication-credential" tabindex="0" aria-haspopup="dialog" data-dfn-type="dfn" class="respec-offending-element" title="Found definition for &quot;authentication credential&quot;, but nothing links to it. This is usually a spec bug!">authentication credential</dfn> — a security token that asserts claims about an agent or end-user. This token is secured with a cryptographic proof.
@@ -915,7 +915,7 @@ var[data-type]:hover::after,var[data-type]:hover::before{opacity:1}
       </ul>
 
       <p>
-        This specification defines <a href="#dfn-operation" class="internalDFN" data-link-type="dfn" id="ref-for-dfn-operation-2">operations</a> on <a href="#dfn-served-resource" class="internalDFN" data-link-type="dfn" id="ref-for-dfn-served-resource-3">served resources</a>, the resulting change of state, and a <a href="#dfn-responses" class="internalDFN" data-link-type="dfn" id="ref-for-dfn-responses-1">response</a> indended to give the <a href="#dfn-requesting-agent" class="internalDFN" data-link-type="dfn" id="ref-for-dfn-requesting-agent-2">requesting agent</a> requested infomation or inform them of the outcome of the <a href="#dfn-operation" class="internalDFN" data-link-type="dfn" id="ref-for-dfn-operation-3">operation</a>.
+        This specification defines <a href="#dfn-operation" class="internalDFN" data-link-type="dfn" id="ref-for-dfn-operation-2">operations</a> on <a href="#dfn-served-resource" class="internalDFN" data-link-type="dfn" id="ref-for-dfn-served-resource-3">served resources</a>, the resulting change of state, and a <a href="#dfn-responses" class="internalDFN" data-link-type="dfn" id="ref-for-dfn-responses-1">response</a> intended to give the <a href="#dfn-requesting-agent" class="internalDFN" data-link-type="dfn" id="ref-for-dfn-requesting-agent-2">requesting agent</a> requested infomation or inform them of the outcome of the <a href="#dfn-operation" class="internalDFN" data-link-type="dfn" id="ref-for-dfn-operation-3">operation</a>.
         An <dfn data-plurals="operations" id="dfn-operation" tabindex="0" aria-haspopup="dialog" data-dfn-type="dfn">operation</dfn> is any of the following actions that can be performed on a <a href="#dfn-served-resource" class="internalDFN" data-link-type="dfn" id="ref-for-dfn-served-resource-4">served resource</a>:
       </p>
       <ul>
@@ -929,10 +929,10 @@ var[data-type]:hover::after,var[data-type]:hover::before{opacity:1}
         The folowing section will describe the semantics and <dfn data-plurals="response" id="dfn-responses" tabindex="0" aria-haspopup="dialog" data-dfn-type="dfn">responses</dfn> of these operations but the following <dfn id="dfn-core-responses" tabindex="0" aria-haspopup="dialog" data-dfn-type="dfn" class="respec-offending-element" title="Found definition for &quot;core responses&quot;, but nothing links to it. This is usually a spec bug!">core responses</dfn> apply to any operation:
       </p>
       <ul>
-        <li><dfn id="dfn-success" tabindex="0" aria-haspopup="dialog" data-dfn-type="dfn">success</dfn> - the operation is believe to have completed. This may be accompanied by a <dfn id="dfn-resource-representation" tabindex="0" aria-haspopup="dialog" data-dfn-type="dfn">resource representation</dfn> conveying the contents of a <a href="#dfn-served-resource" class="internalDFN" data-link-type="dfn" id="ref-for-dfn-served-resource-5">served resource</a>. A <a href="#dfn-success" class="internalDFN" data-link-type="dfn" id="ref-for-dfn-success-1">success</a> response is not defined for the <a href="#dfn-creation" class="internalDFN" data-link-type="dfn" id="ref-for-dfn-creation-1">create resource</a> operation. See instead <a href="#dfn-created">created</a>.</li>
+        <li><dfn id="dfn-success" tabindex="0" aria-haspopup="dialog" data-dfn-type="dfn">success</dfn> - the operation is believed to have completed. This may be accompanied by a <dfn id="dfn-resource-representation" tabindex="0" aria-haspopup="dialog" data-dfn-type="dfn">resource representation</dfn> conveying the contents of a <a href="#dfn-served-resource" class="internalDFN" data-link-type="dfn" id="ref-for-dfn-served-resource-5">served resource</a>. A <a href="#dfn-success" class="internalDFN" data-link-type="dfn" id="ref-for-dfn-success-1">success</a> response is not defined for the <a href="#dfn-creation" class="internalDFN" data-link-type="dfn" id="ref-for-dfn-creation-1">create resource</a> operation. See instead <a href="#dfn-created">created</a>.</li>
         <li><dfn id="dfn-not-permitted" tabindex="0" aria-haspopup="dialog" data-dfn-type="dfn" class="respec-offending-element" title="Found definition for &quot;not permitted&quot;, but nothing links to it. This is usually a spec bug!">not permitted</dfn></li>
         <li><dfn id="dfn-unknown-requester" tabindex="0" aria-haspopup="dialog" data-dfn-type="dfn" class="respec-offending-element" title="Found definition for &quot;unknown requester&quot;, but nothing links to it. This is usually a spec bug!">unknown requester</dfn></li>
-        <li><dfn id="dfn-unknown-error" tabindex="0" aria-haspopup="dialog" data-dfn-type="dfn" class="respec-offending-element" title="Found definition for &quot;unknown error&quot;, but nothing links to it. This is usually a spec bug!">unknown error</dfn> - reserved for error conditions that arrise that are not anticipated by the specification</li>
+        <li><dfn id="dfn-unknown-error" tabindex="0" aria-haspopup="dialog" data-dfn-type="dfn" class="respec-offending-element" title="Found definition for &quot;unknown error&quot;, but nothing links to it. This is usually a spec bug!">unknown error</dfn> - reserved for error conditions that arise that are not anticipated by the specification</li>
       </ul>
     </section>
 
