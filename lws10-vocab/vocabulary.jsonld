@@ -1,6 +1,7 @@
 {
     "@context": {
         "lws": "https://www.w3.org/ns/lws#",
+        "as": "https://www.w3.org/ns/activitystreams#",
         "dc": "http://purl.org/dc/terms/",
         "owl": "http://www.w3.org/2002/07/owl#",
         "rdf": "http://www.w3.org/1999/02/22-rdf-syntax-ns#",
@@ -87,7 +88,7 @@
         },
         "vs:term_status": "stable",
         "mentioned": [{
-            "@id": "vocab",
+            "@id": "https://www.w3.org/ns/lws/v1",
             "@type": "jsonld:Context"
         }]
     }, {
@@ -101,7 +102,7 @@
         },
         "vs:term_status": "stable",
         "mentioned": [{
-            "@id": "vocab",
+            "@id": "https://www.w3.org/ns/lws/v1",
             "@type": "jsonld:Context"
         }]
     }, {
@@ -115,7 +116,7 @@
         },
         "vs:term_status": "stable",
         "mentioned": [{
-            "@id": "vocab",
+            "@id": "https://www.w3.org/ns/lws/v1",
             "@type": "jsonld:Context"
         }]
     }, {
@@ -129,7 +130,7 @@
         },
         "vs:term_status": "stable",
         "mentioned": [{
-            "@id": "vocab",
+            "@id": "https://www.w3.org/ns/lws/v1",
             "@type": "jsonld:Context"
         }]
     }, {
@@ -143,7 +144,7 @@
         },
         "vs:term_status": "stable",
         "mentioned": [{
-            "@id": "vocab",
+            "@id": "https://www.w3.org/ns/lws/v1",
             "@type": "jsonld:Context"
         }]
     }, {
@@ -156,7 +157,7 @@
         },
         "vs:term_status": "stable",
         "mentioned": [{
-            "@id": "vocab",
+            "@id": "https://www.w3.org/ns/lws/v1",
             "@type": "jsonld:Context"
         }]
     }],
@@ -170,7 +171,7 @@
         },
         "vs:term_status": "stable",
         "mentioned": [{
-            "@id": "vocab",
+            "@id": "https://www.w3.org/ns/lws/v1",
             "@type": "jsonld:Context"
         }]
     }, {
@@ -183,7 +184,7 @@
         },
         "vs:term_status": "stable",
         "mentioned": [{
-            "@id": "vocab",
+            "@id": "https://www.w3.org/ns/lws/v1",
             "@type": "jsonld:Context"
         }]
     }, {
@@ -196,7 +197,7 @@
         },
         "vs:term_status": "stable",
         "mentioned": [{
-            "@id": "vocab",
+            "@id": "https://www.w3.org/ns/lws/v1",
             "@type": "jsonld:Context"
         }]
     }, {
@@ -209,7 +210,7 @@
         },
         "vs:term_status": "stable",
         "mentioned": [{
-            "@id": "vocab",
+            "@id": "https://www.w3.org/ns/lws/v1",
             "@type": "jsonld:Context"
         }]
     }, {
@@ -223,7 +224,7 @@
         "rdfs:isDefinedBy": "https://www.w3.org/TR/lws-authn-openid/",
         "vs:term_status": "stable",
         "mentioned": [{
-            "@id": "vocab",
+            "@id": "https://www.w3.org/ns/lws/v1",
             "@type": "jsonld:Context"
         }]
     }]

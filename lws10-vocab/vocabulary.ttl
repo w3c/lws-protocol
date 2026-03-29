@@ -1,4 +1,5 @@
 @prefix lws: <https://www.w3.org/ns/lws#> .
+@prefix as: <https://www.w3.org/ns/activitystreams#> .
 @prefix dc: <http://purl.org/dc/terms/> .
 @prefix owl: <http://www.w3.org/2002/07/owl#> .
 @prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
@@ -101,8 +102,10 @@ lws:OpenIdProvider a rdfs:Class ;
 
 
 # Context files and their mentions
-<vocab> a jsonld:Context ;
+<https://www.w3.org/ns/lws/v1> a jsonld:Context ;
     schema:mentions
+        as:mediaType,
+        as:totalItems,
         lws:Container,
         lws:DataResource,
         lws:OpenIdProvider,

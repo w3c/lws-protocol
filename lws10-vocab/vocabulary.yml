@@ -1,6 +1,7 @@
 vocab:
   - id: lws
     value: https://www.w3.org/ns/lws#
+    context: https://www.w3.org/ns/lws/v1
 
 prefix:
   - id: as
@@ -41,10 +42,20 @@ class:
     defined_by: https://www.w3.org/TR/lws-authn-openid/
 
 property:
-  - id: items
+  - id: lws:items
     label: items
     domain: lws:Container
     comment: The list of resources contained in a container.
+
+  - id: as:totalItems
+    label: total items
+    domain: lws:Container
+    comment: The total number of items in a container.
+  
+  - id: as:mediaType
+    label: media type
+    domain: lws:DataResource
+    comment: The media type of a data resource.
 
   - id: capability
     label: capability
