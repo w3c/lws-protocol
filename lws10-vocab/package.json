@@ -1,0 +1,10 @@
+{
+  "name": "lws-vocab",
+  "private": true,
+  "scripts": {
+    "build": "yml2vocab -v vocabulary -t template.html -c"
+  },
+  "devDependencies": {
+    "yml2vocab": "^1"
+  }
+}
