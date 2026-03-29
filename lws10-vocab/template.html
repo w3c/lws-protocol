@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <title>LWS Vocabulary</title>
+    <script class="remove" src="https://www.w3.org/Tools/respec/respec-w3c"></script>
+    <script class="remove">
+      var respecConfig = {
+        specStatus: "ED",
+        shortName: "lws-vocab",
+        editors: [
+          {
+            name: "Jesse Wright",
+          },
+          {
+            name: "Erich Bremer",
+          },
+        ],
+        github: "w3c/lws-protocol",
+        group: "lws",
+        alternateFormats: [
+          { uri: "vocabulary.ttl", label: "Turtle" },
+          { uri: "vocabulary.jsonld", label: "JSON-LD" },
+        ],
+        doJsonLd: true,
+        inlineCSS: true,
+        doRDFa: false,
+        noIDLIn: true,
+        noLegacyStyle: false,
+      };
+    </script>
+    <style type="text/css">
+      dl.terms dt {
+        float: left;
+        clear: left;
+        width: 10vw;
+      }
+      dl.terms dd {
+        margin-left: 15vw;
+      }
+      dl.terms dd:after {
+        content: "";
+        display: block;
+        clear: both;
+        margin-bottom: 5px;
+      }
+      table.rdfs-definition td {
+        vertical-align: top;
+        margin-right: 2em;
+      }
+      .bold {
+        font-weight: bold;
+      }
+      .term_definitions section {
+        border-bottom-style: solid;
+        border-bottom-width: 1px;
+        border-bottom-color: darkgrey;
+      }
+    </style>
+  </head>
+  <body typeof="owl:Ontology">
+    <section id="abstract">
+      <p>
+        This document describes the
+        <span property="dc:title" id="title"></span>, i.e., the
+        <span property="dc:description" id="description"></span>.
+      </p>
+      <p>
+        Alternate versions of the vocabulary definition exist in
+        <a rel="alternate" href="vocabulary.ttl">Turtle</a> and
+        <a rel="alternate" href="vocabulary.jsonld">JSON-LD</a>.
+      </p>
+      <dl>
+        <dt>Published:</dt>
+        <dd><time property="dc:date" id="time"></time></dd>
+        <dt id="see_also">See Also:</dt>
+      </dl>
+    </section>
+    <section id="sotd">
+      <p>
+        This vocabulary has been defined by the
+        <a href="https://www.w3.org/groups/wg/lws/"
+          >W3C Linked Web Storage Working Group</a
+        >
+        and provides the official RDFS vocabulary for the
+        <a href="https://www.w3.org/TR/lws-protocol/"
+          >Linked Web Storage Protocol</a
+        >.
+        Comments regarding this document are welcome. Please file issues
+        directly on
+        <a href="https://github.com/w3c/lws-protocol/issues/">GitHub</a>.
+      </p>
+    </section>
+    <section id="conformance"></section>
+    <section>
+      <h2>Namespaces</h2>
+      <p>This specification makes use of the following namespaces:</p>
+      <dl class="terms" id="namespaces"></dl>
+    </section>
+    <section>
+      <h2><code>@context</code> files</h2>
+      <p>
+        The following <code>@context</code> files make use of the terms defined
+        in this specification:
+      </p>
+      <ul id="contexts"></ul>
+    </section>
+    <section id="term_definitions">
+      <h2>Term definitions</h2>
+      <section id="class_definitions" class="term_definitions">
+        <h3>Class definitions</h3>
+      </section>
+      <section id="property_definitions" class="term_definitions">
+        <h3>Property definitions</h3>
+      </section>
+    </section>
+  </body>
+</html>
