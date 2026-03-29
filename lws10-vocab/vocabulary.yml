@@ -1,0 +1,76 @@
+vocab:
+  - id: lws
+    value: https://www.w3.org/ns/lws#
+
+prefix:
+  - id: as
+    value: https://www.w3.org/ns/activitystreams#
+  - id: schema
+    value: https://schema.org/
+
+ontology:
+  - property: dc:title
+    value: Linked Web Storage Vocabulary
+
+  - property: dc:description
+    value: RDFS [[RDF-SCHEMA]] vocabulary used by the Linked Web Storage Protocol [[lws-protocol]]
+
+  - property: rdfs:seeAlso
+    value: https://www.w3.org/TR/lws-protocol/
+
+class:
+  - id: Container
+    label: Container
+    comment: A resource that contains other resources.
+
+  - id: DataResource
+    label: Data Resource
+    comment: A data-bearing resource such as a document, image, or structured data file.
+
+  - id: Storage
+    label: Storage
+    comment: A Linked Web Storage instance.
+
+  - id: StorageDescription
+    label: Storage Description
+    comment: A service that provides a storage description resource.
+
+  - id: OpenIdProvider
+    label: OpenID Provider
+    comment: An OpenID Connect identity provider service.
+    defined_by: https://www.w3.org/TR/lws-authn-openid/
+
+property:
+  - id: items
+    label: items
+    domain: lws:Container
+    comment: The list of resources contained in a container.
+
+  - id: capability
+    label: capability
+    domain: lws:Storage
+    comment: A capability supported by the storage.
+
+  - id: service
+    label: service
+    domain: lws:Storage
+    comment: A service associated with the storage.
+
+  - id: serviceEndpoint
+    label: service endpoint
+    range: xsd:anyURI
+    comment: The URI of a service endpoint.
+
+  - id: storageDescription
+    label: storage description
+    range: xsd:anyURI
+    comment: Link relation pointing to a storage description resource.
+
+  - id: PreferLinkRelations
+    label: Prefer Link Relations
+    comment: A preference URI for including or omitting specific link relations in responses.
+
+json_ld:
+  alias:
+    id: "@id"
+    type: "@type"
