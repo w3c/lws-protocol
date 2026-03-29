@@ -1,0 +1,230 @@
+{
+    "@context": {
+        "lws": "https://www.w3.org/ns/lws#",
+        "dc": "http://purl.org/dc/terms/",
+        "owl": "http://www.w3.org/2002/07/owl#",
+        "rdf": "http://www.w3.org/1999/02/22-rdf-syntax-ns#",
+        "rdfs": "http://www.w3.org/2000/01/rdf-schema#",
+        "xsd": "http://www.w3.org/2001/XMLSchema#",
+        "vs": "http://www.w3.org/2003/06/sw-vocab-status/ns#",
+        "jsonld": "http://www.w3.org/ns/json-ld#",
+        "dc:date": {
+            "@type": "xsd:date"
+        },
+        "rdfs:domain": {
+            "@type": "@id"
+        },
+        "rdfs:range": {
+            "@type": "@id"
+        },
+        "rdfs:seeAlso": {
+            "@type": "@id"
+        },
+        "rdfs:subClassOf": {
+            "@type": "@id"
+        },
+        "rdfs:subPropertyOf": {
+            "@type": "@id"
+        },
+        "rdfs:isDefinedBy": {
+            "@type": "@id"
+        },
+        "owl:oneOf": {
+            "@container": "@list",
+            "@type": "@vocab"
+        },
+        "owl:deprecated": {
+            "@type": "xsd:boolean"
+        },
+        "owl:inverseOf": {
+            "@type": "@vocab"
+        },
+        "owl:unionOf": {
+            "@container": "@list",
+            "@type": "@vocab"
+        },
+        "rdfs_classes": {
+            "@reverse": "rdfs:isDefinedBy",
+            "@type": "@id"
+        },
+        "rdfs_properties": {
+            "@reverse": "rdfs:isDefinedBy",
+            "@type": "@id"
+        },
+        "rdfs_individuals": {
+            "@reverse": "rdfs:isDefinedBy",
+            "@type": "@id"
+        },
+        "rdfs_datatypes": {
+            "@reverse": "rdfs:isDefinedBy",
+            "@type": "@id"
+        },
+        "mentioned": {
+            "@reverse": "schema:mentions",
+            "@type": "@id"
+        }
+    },
+    "@id": "https://www.w3.org/ns/lws#",
+    "@type": "owl:Ontology",
+    "dc:title": {
+        "@value": "Linked Web Storage Vocabulary",
+        "@language": "en"
+    },
+    "dc:description": {
+        "@value": "RDFS [[RDF-SCHEMA]] vocabulary used by the Linked Web Storage Protocol [[lws-protocol]]",
+        "@type": "http://www.w3.org/1999/02/22-rdf-syntax-ns#HTML"
+    },
+    "rdfs:seeAlso": "https://www.w3.org/TR/lws-protocol/",
+    "dc:date": "2026-03-29",
+    "rdfs_properties": [{
+        "@id": "lws:items",
+        "@type": "rdf:Property",
+        "rdfs:domain": "lws:Container",
+        "rdfs:label": "items",
+        "rdfs:comment": {
+            "@value": "<div>The list of resources contained in a container.</div>",
+            "@type": "http://www.w3.org/1999/02/22-rdf-syntax-ns#HTML"
+        },
+        "vs:term_status": "stable",
+        "mentioned": [{
+            "@id": "vocab",
+            "@type": "jsonld:Context"
+        }]
+    }, {
+        "@id": "lws:capability",
+        "@type": "rdf:Property",
+        "rdfs:domain": "lws:Storage",
+        "rdfs:label": "capability",
+        "rdfs:comment": {
+            "@value": "<div>A capability supported by the storage.</div>",
+            "@type": "http://www.w3.org/1999/02/22-rdf-syntax-ns#HTML"
+        },
+        "vs:term_status": "stable",
+        "mentioned": [{
+            "@id": "vocab",
+            "@type": "jsonld:Context"
+        }]
+    }, {
+        "@id": "lws:service",
+        "@type": "rdf:Property",
+        "rdfs:domain": "lws:Storage",
+        "rdfs:label": "service",
+        "rdfs:comment": {
+            "@value": "<div>A service associated with the storage.</div>",
+            "@type": "http://www.w3.org/1999/02/22-rdf-syntax-ns#HTML"
+        },
+        "vs:term_status": "stable",
+        "mentioned": [{
+            "@id": "vocab",
+            "@type": "jsonld:Context"
+        }]
+    }, {
+        "@id": "lws:serviceEndpoint",
+        "@type": ["rdf:Property", "owl:DatatypeProperty"],
+        "rdfs:range": "xsd:anyURI",
+        "rdfs:label": "service endpoint",
+        "rdfs:comment": {
+            "@value": "<div>The URI of a service endpoint.</div>",
+            "@type": "http://www.w3.org/1999/02/22-rdf-syntax-ns#HTML"
+        },
+        "vs:term_status": "stable",
+        "mentioned": [{
+            "@id": "vocab",
+            "@type": "jsonld:Context"
+        }]
+    }, {
+        "@id": "lws:storageDescription",
+        "@type": ["rdf:Property", "owl:DatatypeProperty"],
+        "rdfs:range": "xsd:anyURI",
+        "rdfs:label": "storage description",
+        "rdfs:comment": {
+            "@value": "<div>Link relation pointing to a storage description resource.</div>",
+            "@type": "http://www.w3.org/1999/02/22-rdf-syntax-ns#HTML"
+        },
+        "vs:term_status": "stable",
+        "mentioned": [{
+            "@id": "vocab",
+            "@type": "jsonld:Context"
+        }]
+    }, {
+        "@id": "lws:PreferLinkRelations",
+        "@type": "rdf:Property",
+        "rdfs:label": "Prefer Link Relations",
+        "rdfs:comment": {
+            "@value": "<div>A preference URI for including or omitting specific link relations in responses.</div>",
+            "@type": "http://www.w3.org/1999/02/22-rdf-syntax-ns#HTML"
+        },
+        "vs:term_status": "stable",
+        "mentioned": [{
+            "@id": "vocab",
+            "@type": "jsonld:Context"
+        }]
+    }],
+    "rdfs_classes": [{
+        "@id": "lws:Container",
+        "@type": "rdfs:Class",
+        "rdfs:label": "Container",
+        "rdfs:comment": {
+            "@value": "<div>A resource that contains other resources.</div>",
+            "@type": "http://www.w3.org/1999/02/22-rdf-syntax-ns#HTML"
+        },
+        "vs:term_status": "stable",
+        "mentioned": [{
+            "@id": "vocab",
+            "@type": "jsonld:Context"
+        }]
+    }, {
+        "@id": "lws:DataResource",
+        "@type": "rdfs:Class",
+        "rdfs:label": "Data Resource",
+        "rdfs:comment": {
+            "@value": "<div>A data-bearing resource such as a document, image, or structured data file.</div>",
+            "@type": "http://www.w3.org/1999/02/22-rdf-syntax-ns#HTML"
+        },
+        "vs:term_status": "stable",
+        "mentioned": [{
+            "@id": "vocab",
+            "@type": "jsonld:Context"
+        }]
+    }, {
+        "@id": "lws:Storage",
+        "@type": "rdfs:Class",
+        "rdfs:label": "Storage",
+        "rdfs:comment": {
+            "@value": "<div>A Linked Web Storage instance.</div>",
+            "@type": "http://www.w3.org/1999/02/22-rdf-syntax-ns#HTML"
+        },
+        "vs:term_status": "stable",
+        "mentioned": [{
+            "@id": "vocab",
+            "@type": "jsonld:Context"
+        }]
+    }, {
+        "@id": "lws:StorageDescription",
+        "@type": "rdfs:Class",
+        "rdfs:label": "Storage Description",
+        "rdfs:comment": {
+            "@value": "<div>A service that provides a storage description resource.</div>",
+            "@type": "http://www.w3.org/1999/02/22-rdf-syntax-ns#HTML"
+        },
+        "vs:term_status": "stable",
+        "mentioned": [{
+            "@id": "vocab",
+            "@type": "jsonld:Context"
+        }]
+    }, {
+        "@id": "lws:OpenIdProvider",
+        "@type": "rdfs:Class",
+        "rdfs:label": "OpenID Provider",
+        "rdfs:comment": {
+            "@value": "<div>An OpenID Connect identity provider service.</div>",
+            "@type": "http://www.w3.org/1999/02/22-rdf-syntax-ns#HTML"
+        },
+        "rdfs:isDefinedBy": "https://www.w3.org/TR/lws-authn-openid/",
+        "vs:term_status": "stable",
+        "mentioned": [{
+            "@id": "vocab",
+            "@type": "jsonld:Context"
+        }]
+    }]
+}
