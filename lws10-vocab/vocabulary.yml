@@ -56,6 +56,18 @@ property:
     label: media type
     domain: lws:DataResource
     comment: The media type of a data resource.
+    
+  - id: as:updated
+    label: modified
+    domain: lws:DataResource
+    range: xsd:dateTime
+    comment: The date and time the resource was last modified.
+    
+  - id: schema:size
+    label: size
+    domain: lws:DataResource
+    range: xsd:long
+    comment: The size of the resource in bytes.
 
   - id: capability
     label: capability
