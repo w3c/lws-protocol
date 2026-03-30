@@ -139,5 +139,236 @@
 }
     </pre>
   </section>
+
 </section>
 
+<section id="type-index-service">
+  <h3>TypeIndexService</h3>
+  <p>A server advertising in <code>storageDescription</code>:</p>
+  <pre class="example" title="TypeIndexService advertised in storage description">
+{
+  "@context": "https://www.w3.org/ns/lws/v1",
+  "type": "Storage",
+  "service": [
+    {
+      "type": "TypeIndexService",
+      "serviceEndpoint": "https://example.org/types/index"
+    }
+  ]
+}
+  </pre>
+  <p>A server that implements this MUST advertise the service in the storage description resource.</p>
+
+  <section>
+    <h4>GET [serviceEndpoint]</h4>
+    <p>Returns <code>application/lws+json</code>:</p>
+    <pre class="example">
+{
+  "@context": "https://www.w3.org/ns/lws/v1",
+  "type": "TypeIndex",
+  "searchEndpoint": "https://example.org/types/search",
+  "totalItems": 55,
+  "items": [
+    { 
+      "type": "https://schema.org/Person",
+      "default": "https://example.org/data/people/",
+      "location": ["https://example.org/data/people/"]
+    },
+    { 
+      "type": "https://schema.org/Event",
+      "default": "https://example.org/data/events/",
+      "location": [
+        "https://example.org/data/events/",
+        "https://example.org/data/calendar/"]
+    }
+  ],
+  "next": "..."
+}
+    </pre>
+    <p><code>searchEndpoint</code> REQUIRED.<br><code>default</code> OPTIONAL.<br><code>location</code> array of container URIs (always an array).</p>
+    <p>Supports query parameters (all optional): <code>?type=&lt;URI&gt;</code> (repeatable, AND), <code>?filter[&lt;propURI&gt;]=&lt;value&gt;</code> (repeatable, AND), <code>?fields=type,default,location</code>.</p>
+    <p class="note">Clients MUST URL-encode query parameter keys/values.</p>
+    <p>Returns paginated TypeIndex following LWS pagination. No other parameters.</p>
+  </section>
+
+  <section>
+    <h4>POST [serviceEndpoint]</h4>
+    <p>MUST support <code>application/lws+json</code> body:</p>
+    <pre class="example">
+{
+  "@context": "https://www.w3.org/ns/lws/v1"
+}
+    </pre>
+    <p>Returns everything in the type index (same as GET).</p>
+    <p>Optional filters: <code>type</code> array of URIs (AND), top-level property-URI keys = filters (AND).</p>
+    <p>Returns paginated TypeIndex of matching entries. No other params.</p>
+  </section>
+
+  <section>
+    <h4>GET [searchEndpoint]</h4>
+    <p>Supports same query params as GET [serviceEndpoint] except <code>fields</code>.</p>
+    <p>Returns <code>application/lws+json</code>: paginated ContainerPage of matching LWS Resource URIs. No other params.</p>
+  </section>
+
+  <section>
+    <h4>POST [searchEndpoint]</h4>
+    <p>MUST support <code>application/lws+json</code> body:</p>
+    <pre class="example">
+{
+  "@context": "https://www.w3.org/ns/lws/v1",
+  "type": ["https://schema.org/Person"]
+}
+    </pre>
+    <p><code>type</code>: array of URIs (AND). Top-level property-URI keys = filters (AND).</p>
+    <p>Returns paginated ContainerPage of matching LWS Resource URIs. No other parameters.</p>
+  </section>
+
+  <section>
+    <h4>Security</h4>
+    <p>Servers MUST enforce authorization per access grants. Responses to GET/POST on <code>TypeIndexService</code> or <code>searchEndpoint</code> include only types, defaults, locations, and resource URIs the authenticated client may read (via grants). Unauthorized entries omitted. Grant listing implicitly yields a client-specific type index.</p>
+  </section>
+
+  <section>
+    <h4>Non-Normative Examples</h4>
+
+    <pre class="example" title="Example 1: GET TypeIndex">
+Request
+GET /types/index
+Response
+{
+  "@context": "https://www.w3.org/ns/lws/v1",
+  "type": "TypeIndex",
+  "searchEndpoint": "https://example.org/types/search",
+  "totalItems": 55,
+  "items": [
+    { 
+      "type": "https://schema.org/Person",
+      "default": "https://example.org/data/people/",
+      "location": ["https://example.org/data/people/"]
+    },
+    { 
+      "type": "https://schema.org/Event",
+      "default": "https://example.org/data/events/",
+      "location": [
+        "https://example.org/data/events/",
+        "https://example.org/data/calendar/"]
+    }
+  ],
+  "next": "https://example.org/types/index?page=2"
+}
+    </pre>
+
+    <pre class="example" title="Example 2: GET TypeIndex with filter">
+Request
+GET /types/index?type=https%3A%2F%2Fschema.org%2FEvent&amp;fields=type,default
+Response
+{
+  "@context": "https://www.w3.org/ns/lws/v1",
+  "type": "TypeIndex",
+  "searchEndpoint": "https://example.org/types/search",
+  "totalItems": 8,
+  "items": [{ "type": "https://schema.org/Event", "default": "https://example.org/data/events/" }],
+  "next": "https://example.org/types/index?type=https%3A%2F%2Fschema.org%2FEvent&amp;fields=type,default&amp;page=2"
+}
+    </pre>
+
+    <pre class="example" title="Example 3: POST TypeIndex with filters">
+Request
+POST /types/index
+Request Body
+{
+  "@context": "https://www.w3.org/ns/lws/v1",
+  "type": ["https://schema.org/Person"]
+}
+Response
+{
+  "@context": "https://www.w3.org/ns/lws/v1",
+  "type": "TypeIndex",
+  "searchEndpoint": "https://example.org/types/search",
+  "totalItems": 27,
+  "items": [{ "type": "https://schema.org/Person" }],
+  "next": "https://example.org/types/index?page=2"
+}
+    </pre>
+
+    <pre class="example" title="Example 4: Simple GET search">
+Request
+GET /types/search?type=https%3A%2F%2Fschema.org%2FPerson
+Response
+{
+  "@context": "https://www.w3.org/ns/lws/v1",
+  "type": "ContainerPage",
+  "totalItems": 27,
+  "items": [
+    "https://example.org/data/person-4872",
+    "https://example.org/data/person-4873",
+    "https://example.org/data/person-5882",
+    "https://example.org/data/person-1877",
+    "https://example.org/data/person-9341"
+  ],
+  "next": "https://example.org/types/search?type=https%3A%2F%2Fschema.org%2FPerson&amp;page=2"
+}
+    </pre>
+
+    <pre class="example" title="Example 5: GET with filter">
+Request
+GET /types/search?filter[https://schema.org/location]=https://example.org/venue
+Response
+{
+  "@context": "https://www.w3.org/ns/lws/v1",
+  "type": "ContainerPage",
+  "totalItems": 4,
+  "items": [
+    "https://example.org/data/event-123",
+    "https://example.org/data/event-456"
+  ],
+  "next": "https://example.org/types/search?filter[https%3A%2F%2Fschema.org%2Flocation]=https%3A%2F%2Fexample.org%2Fvenue&amp;page=2"
+}
+    </pre>
+
+    <pre class="example" title="Example 6: POST search with filters">
+Request
+POST /types/search
+Request Body
+{
+  "@context": "https://www.w3.org/ns/lws/v1",
+  "type": ["https://schema.org/Person"],
+  "https://schema.org/worksFor": "https://example.org/companies/acme-inc"
+}
+Response
+{
+  "@context": "https://www.w3.org/ns/lws/v1",
+  "type": "ContainerPage",
+  "totalItems": 3,
+  "items": [
+    "https://example.org/data/person-4872",
+    "https://example.org/data/person-9341",
+    "https://example.org/data/person-1123"
+  ]
+}
+    </pre>
+
+    <pre class="example" title="Example 7: POST with multiple filters">
+Request
+POST /types/search
+Request Body
+{
+  "@context": "https://www.w3.org/ns/lws/v1",
+  "type": ["https://schema.org/Event"],
+  "https://schema.org/location": "https://example.org/venue"
+}
+Response
+{
+  "@context": "https://www.w3.org/ns/lws/v1",
+  "type": "ContainerPage",
+  "totalItems": 2,
+  "items": [
+    "https://example.org/data/event-8821",
+    "https://example.org/data/event-9014"
+  ],
+  "next": "https://example.org/types/search?page=2"
+}
+    </pre>
+  </section>
+</section>
+  
