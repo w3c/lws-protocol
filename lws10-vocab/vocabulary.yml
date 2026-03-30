@@ -42,7 +42,7 @@ class:
     defined_by: https://www.w3.org/TR/lws-authn-openid/
 
 property:
-  - id: lws:items
+  - id: items
     label: items
     domain: lws:Container
     comment: The list of resources contained in a container.
