@@ -1,47 +1,83 @@
-### Container Model
+The storage system organizes resources into two distinct layers: primary and auxiliary. The two layers are complementary. The primary layer organizes resources spatially and hierarchically, while the auxiliary layer attaches supplementary resources to each node in that hierarchy.
 
-Linked Web Storage organizes resources into containers. A <dfn>container</dfn> is a specialized resource that holds references to other resources, called its members. Containers serve
-as organizational units, analogous to directories or collections, enabling clients to group, discover, and navigate resources. A container maintains references to its member resources,
-which may comprise both non-container resources and additional container resources, thereby enabling hierarchical formations. Typically, a container holds minimal intrinsic content
-beyond metadata or enumerations of its members; its principal role is to aggregate and structure subordinate resources. The storage system's root is designated as a container, serving
-as the apex organizational unit devoid of a superior parent. Containers MUST support pagination for membership listings using 'ContainerPage' types, with properties such as 'first',
-'next', 'prev', and 'last'. Representations MUST use JSON-LD with a specific frame and normative context, optionally advertising content negotiation via 'Vary: Accept' headers.
-Storage MAY function as a root container, enabling direct writes.
+### Primary resource layer
 
-Every LWS storage has a **root container** that serves as the top-level organizational unit. The root container has no parent and acts as the entry point for the storage hierarchy.
+The primary resource layer forms a strict hierarchy rooted at a single root container. Every primary resource except the storage root is contained by one or more parents. 
 
-Resources in LWS are classified as either:
+A <dfn>container</dfn> is a specialized resource that can contain other resources, called its contained members. Containers serve
+as organizational units, analogous to directories or collections, enabling clients to group, discover, and navigate resources. A container maintains references to its contained member resources,
+which may comprise both non-container resources and additional container resources, thereby enabling hierarchical formations. The principal role of a container is to aggregate and structure subordinate resources.
 
-- **Container** — a resource that contains other resources.
-- **DataResource** — a data-bearing resource (e.g., a document, image, or structured data file).
+The storage system's root is designated as a container, serving as the apex organizational unit devoid of a superior parent, and acts as the entry point for the storage hierarchy. Storage MAY function as a root container, enabling direct writes.
 
-### Containment
+Servers MUST include a `Link` header with `rel="type"` pointing to `https://www.w3.org/ns/lws#Container`.
 
-The containment relationship between a resource and its parent container is expressed via the `rel="up"` link relation. Servers MUST include a `Link` header with `rel="up"` pointing to the parent container in responses to GET and HEAD requests on any non-root resource.
+```
+Link: <https://www.w3.org/ns/lws#Container>; rel="type"
+```
+
+#### Containment
+
+The containment relationship between a resource and its parent container is expressed via the `rel="up"` link relation. Servers MUST include a `Link` header with `rel="up"` pointing to the parent container in responses to GET and HEAD requests on any contained resource.
 
 ```
 Link: </alice/notes/>; rel="up"
 ```
 
-A container's members are listed in its representation using the `items` property. The server manages this list; clients cannot modify it directly. Membership changes occur as a side effect of resource creation and deletion.
+### Auxiliary resource layer
 
-### Containment Integrity
+The auxiliary resource layer is flat. Each primary resource owns a local set of auxiliary resources. An auxiliary resource is an LWS resource that is used to provide additional information or functionality related to a unique principal resource. The lifetime of an auxiliary resource is bound to the lifetime of its principal resource. Auxiliary resources do not participate in the containment hierarchy.
 
-The server MUST maintain containment integrity at all times:
 
-- **Creation**: When a new resource is created in a container, the server MUST atomically add the resource to the container's `items` list.
-- **Deletion**: When a resource is deleted, the server MUST atomically remove it from its parent container's `items` list. Deleting a container requires the container to be empty, unless recursive deletion is explicitly requested.
-- **No orphans**: Every non-root resource MUST be reachable from the root container through the containment hierarchy.
+#### Auxiliarity
+
+The auxiliarity relationship between an auxiliary resource and its principal resource is expressed via the `rel="principal"` link relation. Servers MUST include a `Link` header with `rel="principal"` pointing to the principal resource in responses to GET and HEAD requests on any auxiliary resource.
+
+```
+Link: </alice/notes/>; rel="principal"
+```
+
+Along with the general `rel="principal"` relation from auxiliary resource to its principal resource, an auxiliary resource is linked from the principal resource through a specialized link relation. This specialized relation is called the `auxiliaryRel` of the auxiliarity. Auxiliary relations are constrained to be functional. For each `auxiliaryRel`, there MUST be at most one auxiliary resource.
+
+In responses to GET and HEAD requests on any principal resource, servers MUST link to each auxiliary resource with `rel` value set to the auxiliaryRel of the auxiliarity.
+
+```
+Link: </alice/notes/~manifest.json>; rel="manifest"
+Link: </alice/notes/~acl>; rel="acl"
+```
+
+This specification predefines the following auxiliary relations:
+
+- `manifest`: Server-managed manifest auxiliary resource (see below)
+- `linkset`: Server-managed linkset auxiliary resource (see below)
+- `acl`: ACL auxiliary resource. Server interprets it for access control over the resource.
+
+### Manifest resource
+
+Each <dfn>primary resource</dfn> has a unique server-managed auxiliary resource called the <dfn>manifest resource</dfn>. A manifest resource holds basic metadata and enumerations of auxiliary members and contained members (for containers) of the principal resource. It has `manifest` as the specialized auxiliarity relation. That is, servers MUST include a `Link` header with `rel="manifest"` pointing to the auxiliary manifest resource in responses to GET and HEAD requests on any primary resource.
+
+```
+Link: </alice/notes~manifest.json>; rel="manifest"
+```
+
+For each primary resource, its auxiliary members are enumerated in its manifest representation using the `auxiliaryMap` property. Each map entry has the auxiliaryRel value as the key, and description of the corresponding auxiliary resource as the value. Auxiliary membership changes occur as a side effect of auxiliary resource creation and deletion.
+
+For each container, its contained members are listed in its manifest representation using the `containedItems` property. Containment membership changes occur as a side effect of contained resource creation and deletion.
+
+Manifest resources MUST support pagination for container membership listings using 'ContainerPage' types, with properties such as 'first', 'next', 'prev', and 'last'. Representations MUST use JSON-LD with a specific frame and normative context, optionally advertising content negotiation via 'Vary: Accept' headers.
+
+#### Manifest integrity
+
+The server MUST maintain manifest integrity at all times:
+
+- **Creation**: When a new resource is created in a container, the server MUST atomically add the resource to its manifest's `containedItems` list. When a new auxiliary resource is created, the server MUST atomically add the corresponding entry to its principal's manifest's `auxiliaryMap` map.
+- **Deletion**: When a contained resource is deleted, the server MUST atomically remove it from its parent container's `containedItems` list. Deleting a container requires the container to be empty, unless recursive deletion is explicitly requested. When an auxiliary resource is deleted, the server MUST atomically remove the corresponding entry from `auxiliaryMap` in the manifest of its principal resource. When a principal resource is deleted, the server MUST atomically delete all its auxiliary resources including the manifest resource.
+- **No orphans**: Every resource MUST be either a contained resource reachable from the root container through the containment hierarchy, or an auxiliary resource reachable from a principal resource through an auxiliary relation.
 - **No cycles**: A container MUST NOT directly or indirectly contain itself.
+- **Layer hygiene**: A primary resource cannot have other primary resources as its auxiliary resource. An auxiliary resource cannot be a container containing other primary resources.
 
-### Resource Identification
+#### Manifest membership and Authorization
 
-Resources are identified by URIs. The URI of a resource is independent of its position in the containment hierarchy. Servers assign URIs during resource creation and MAY incorporate client hints (e.g., the `Slug` header), but clients SHOULD NOT assume that URI structure reflects containment.
+If a client has read access to a resource, the resource manifest representation MUST include the identifiers for all members either auxiliaries or contained to which the client has access. It MAY also contain the identifiers for contained/auxiliary resources of that resource to which the client does not have access.
 
-Containment relationships are expressed through metadata (`rel="up"` links and the `items` property in container representations), not through URI path structure. This separation allows servers flexibility in URI assignment while maintaining a well-defined organizational model.
-
-### Container Membership and Authorization
-
-If a client has read access to a container, the container representation MUST include the identifiers for all resources contained in that container to which the client has access. It MAY also contain the identifiers for resources contained in that container to which the client does not have access.
-
-A client's ability to read a container listing does not imply access to the contained resources themselves, and vice versa.
+A client's ability to read a manifest listing does not imply access to the listed resources themselves, and vice versa.
