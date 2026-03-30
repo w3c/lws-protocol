@@ -24,8 +24,7 @@ pagination for containers whose membership exceeds a server-determined threshold
 ##### Pagination Model
 
 Pagination is link-based: the server provides pagination URIs via HTTP `Link` headers [[!RFC8288]],
-allowing clients to navigate the full listing without relying on numeric offsets. The server
-determines page boundaries and page size.
+allowing clients to navigate the full listing without relying on numeric offsets.
 
 When a listing is paginated, the response body contains only the current page of items. The
 composite resource's `id`, `type`, and `totalItems` properties reflect the full membership, while `items`
