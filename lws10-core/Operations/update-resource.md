@@ -34,13 +34,13 @@ This tells the client the update went through and provides the new `ETag`. If th
 
 **PATCH (partial update)** – The HTTP PATCH method [[RFC5789]] allows a client to specify partial modifications to a resource, rather than sending the whole new content. This is useful for large resources where sending the entire content would be inefficient if only a small part changed, or for concurrent editing where you want to apply specific changes. LWS server MUST minimally support JSON Merge Patch (application/merge-patch+json) as defined in [[RFC7386]].
 
-**Update Resource Metadata (HTTP PUT / PATCH on Linkset)**
-A resource's metadata is updated by modifying its corresponding linkset resource, discovered via the Link header with rel="linkset".
+**Update Primary Resource Metadata (HTTP PUT / PATCH on Linkset)**
+A primary resource's metadata is updated by modifying its corresponding linkset auxiliary resource, discovered via the Link header with rel="linkset".
 Full Replacement (PUT): A PUT request to the linkset URI with a complete linkset document in the body replaces all metadata for the resource.
 Partial Update (PATCH): A PATCH request to the linkset URI adds, removes, or modifies specific links.
 
 **Concurrency Control for Metadata**
-Because a resource's metadata can be modified by multiple actors, preventing concurrent overwrites is critical. To ensure data integrity, LWS servers and clients MUST implement optimistic concurrency control using conditional requests [[RFC7232]] for all PUT and PATCH operations on a linkset resource.
+Because a primary resource's metadata can be modified by multiple actors, preventing concurrent overwrites is critical. To ensure data integrity, LWS servers and clients MUST implement optimistic concurrency control using conditional requests [[RFC7232]] for all PUT and PATCH operations on a linkset resource.
 Server Responsibilities:
 A server MUST include an Etag header in its responses to GET and HEAD requests for a linkset resource.
 Upon a successful PUT or PATCH on the linkset, the server MUST generate a new, unique Etag value for the modified linkset and return it in the Etag header of the response.
