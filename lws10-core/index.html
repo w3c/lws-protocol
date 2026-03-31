@@ -35,32 +35,39 @@
         xref: ["web-platform"],
         group: "lws",
         doJsonLd: true,
+        preProcess: [allowUnusedDfnInWd],
         postProcess: [cleanEditorsDraft],
-        /*
-          The config below gets rid of the "unused definition" warnings,
-          which is useful for debugging *other* warnings.
-          But the rest of the time, I think it is better to keep those warnings apparent
-        */
-        // lint: { "no-unused-dfns": false },
+        lint: { "no-unused-dfns": true},
       };
+
+      function allowUnusedDfnInWd(cfg) {
+        // It is OK to have unused definition in a Working Draft
+        // In the editors' draft we keep these warnings for awareness.
+        // And of course, we keep them in more mature state, as we don't want them to exist in the end.
+        if (cfg.specStatus === "FPWD" || cfg.specSTatus === "WD") {
+          respecConfig.lint['no-unused-dfns'] = false;
+        }
+      }
 
       function cleanEditorsDraft(cfg) {
         if (cfg.specStatus !== "ED") {
-          document.querySelector("#editors-notes").remove();
+          for (elt of document.querySelectorAll(".editors-notes")) {
+            elt.remove();
+          }
         }
       }
     </script>
   </head>
   <body>
     <section id="abstract">
-      <p>
+      <p class="editors-notes">
         [@@ from <a href="https://www.w3.org/2024/09/linked-web-storage-wg-charter#lws-protocol">charter</a>]
       </p>
       <p>
         The Linked Web Storage Protocol specification aims to provide applications with secure and permissioned access to externally stored data in an interoperable way.
       </p>
 
-      <p>
+      <p class="editors-notes">
         The Linked Web Storage Protocol <span class="TODO">does/does not</span> include protocol details for integration with identity layers and mechanisms; access management and data integrity; notifications about resource changes; and authorization mechanisms.
       </p>
     </section>
@@ -70,7 +77,7 @@
       </p>
     </section>
 
-    <section id="editors-notes" class="informative notoc">
+    <section class="informative notoc editors-notes">
       <h2>For Editors</h2>
       <p>
         List of <span class="TODO">TODO</span>s and ideas in flux to enable editors to communicate asynchronously.

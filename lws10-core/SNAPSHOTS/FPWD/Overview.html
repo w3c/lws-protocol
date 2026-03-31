@@ -1,6 +1,6 @@
 <!DOCTYPE html><html lang="en"><head>
 <meta charset="utf-8">
-<meta name="generator" content="ReSpec 35.8.0">
+<meta name="generator" content="ReSpec 35.9.0">
 <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 <style>
 span.example-title{text-transform:none}
@@ -691,9 +691,15 @@ var[data-type]:hover::after,var[data-type]:hover::before{opacity:1}
   ],
   "group": "lws",
   "doJsonLd": true,
+  "preProcess": [
+    null
+  ],
   "postProcess": [
     null
   ],
+  "lint": {
+    "no-unused-dfns": false
+  },
   "publishDate": "2026-03-31",
   "publishISODate": "2026-03-31T00:00:00.000Z",
   "generatedSubtitle": "W3C First Public Working Draft 31 March 2026"
@@ -771,16 +777,12 @@ var[data-type]:hover::after,var[data-type]:hover::before{opacity:1}
     <hr title="Separator for header">
   </div>
     <section id="abstract" class="introductory"><h2>Abstract</h2>
-      <p>
-        [@@ from <a href="https://www.w3.org/2024/09/linked-web-storage-wg-charter#lws-protocol">charter</a>]
-      </p>
+      
       <p>
         The Linked Web Storage Protocol specification aims to provide applications with secure and permissioned access to externally stored data in an interoperable way.
       </p>
 
-      <p>
-        The Linked Web Storage Protocol <span class="TODO">does/does not</span> include protocol details for integration with identity layers and mechanisms; access management and data integrity; notifications about resource changes; and authorization mechanisms.
-      </p>
+      
     </section>
     <section id="sotd" class="introductory"><h2>Status of This Document</h2><p><em>This section describes the status of this
       document at the time of its publication. A list of current <abbr title="World Wide Web Consortium">W3C</abbr>
@@ -859,8 +861,8 @@ var[data-type]:hover::after,var[data-type]:hover::before{opacity:1}
         </p>
 
         <ul>
-          <li><dfn id="dfn-authentication" tabindex="0" aria-haspopup="dialog" data-dfn-type="dfn" class="respec-offending-element" title="Found definition for &quot;authentication&quot;, but nothing links to it. This is usually a spec bug!">authentication</dfn> - the process of verifying the identity of an agent executing a request.</li>
-          <li><dfn id="dfn-authorization" tabindex="0" aria-haspopup="dialog" data-dfn-type="dfn" class="respec-offending-element" title="Found definition for &quot;authorization&quot;, but nothing links to it. This is usually a spec bug!">authorization</dfn> - the process of determining whether an agent has permission to access a specific resource or perform one of a set of <a href="#dfn-operation" class="internalDFN" data-link-type="dfn" id="ref-for-dfn-operation-1">operations</a>.</li>
+          <li><dfn id="dfn-authentication" tabindex="0" aria-haspopup="dialog" data-dfn-type="dfn">authentication</dfn> - the process of verifying the identity of an agent executing a request.</li>
+          <li><dfn id="dfn-authorization" tabindex="0" aria-haspopup="dialog" data-dfn-type="dfn">authorization</dfn> - the process of determining whether an agent has permission to access a specific resource or perform one of a set of <a href="#dfn-operation" class="internalDFN" data-link-type="dfn" id="ref-for-dfn-operation-1">operations</a>.</li>
           <li><dfn id="dfn-resource-manager" tabindex="0" aria-haspopup="dialog" data-dfn-type="dfn">resource manager</dfn> - (<a href="https://w3c.github.io/lws-ucs/spec/#dfn-controller">controller</a> in UCS) An agent that has permission to control access to a <a href="#dfn-served-resource" class="internalDFN" data-link-type="dfn" id="ref-for-dfn-served-resource-2">served resource</a>.</li>
         </ul>
 
@@ -878,11 +880,11 @@ var[data-type]:hover::after,var[data-type]:hover::before{opacity:1}
       </p>
         
         <p>
-          A <dfn id="dfn-lws-server" tabindex="0" aria-haspopup="dialog" data-dfn-type="dfn" class="respec-offending-element" title="Found definition for &quot;LWS Server&quot;, but nothing links to it. This is usually a spec bug!">LWS Server</dfn> is an HTTP server [<cite><a class="bibref" data-link-type="biblio" href="#bib-rfc9112" title="HTTP/1.1">rfc9112</a></cite>] that complies with all of the relevant "<em class="rfc2119">MUST</em>" statements in this specification. Specifically, the relevant normative "<em class="rfc2119">MUST</em>" statements in <a href="#operations" class="sec-ref"><bdi class="secno">9. </bdi>Operations</a> of this document <em class="rfc2119">MUST</em> be respected.
+          A <dfn id="dfn-lws-server" tabindex="0" aria-haspopup="dialog" data-dfn-type="dfn">LWS Server</dfn> is an HTTP server [<cite><a class="bibref" data-link-type="biblio" href="#bib-rfc9112" title="HTTP/1.1">rfc9112</a></cite>] that complies with all of the relevant "<em class="rfc2119">MUST</em>" statements in this specification. Specifically, the relevant normative "<em class="rfc2119">MUST</em>" statements in <a href="#operations" class="sec-ref"><bdi class="secno">9. </bdi>Operations</a> of this document <em class="rfc2119">MUST</em> be respected.
         </p>
 
         <p>
-          A <dfn id="dfn-lws-client" tabindex="0" aria-haspopup="dialog" data-dfn-type="dfn" class="respec-offending-element" title="Found definition for &quot;LWS Client&quot;, but nothing links to it. This is usually a spec bug!">LWS Client</dfn> is an HTTP client [<cite><a class="bibref" data-link-type="biblio" href="#bib-rfc9112" title="HTTP/1.1">rfc9112</a></cite>] that complies with all of the relevant "<em class="rfc2119">MUST</em>" statements in this specification. Specifically, the relevant normative "<em class="rfc2119">MUST</em>" statements in <a href="#operations" class="sec-ref"><bdi class="secno">9. </bdi>Operations</a> of this document <em class="rfc2119">MUST</em> be respected.
+          A <dfn id="dfn-lws-client" tabindex="0" aria-haspopup="dialog" data-dfn-type="dfn">LWS Client</dfn> is an HTTP client [<cite><a class="bibref" data-link-type="biblio" href="#bib-rfc9112" title="HTTP/1.1">rfc9112</a></cite>] that complies with all of the relevant "<em class="rfc2119">MUST</em>" statements in this specification. Specifically, the relevant normative "<em class="rfc2119">MUST</em>" statements in <a href="#operations" class="sec-ref"><bdi class="secno">9. </bdi>Operations</a> of this document <em class="rfc2119">MUST</em> be respected.
         </p>
       </section>
     </section>
@@ -900,18 +902,18 @@ var[data-type]:hover::after,var[data-type]:hover::before{opacity:1}
         This specification defines the following terms:
       </p>
       <ul>
-        <li><dfn id="dfn-authentication-credential" tabindex="0" aria-haspopup="dialog" data-dfn-type="dfn" class="respec-offending-element" title="Found definition for &quot;authentication credential&quot;, but nothing links to it. This is usually a spec bug!">authentication credential</dfn> — a security token that asserts claims about an agent or end-user. This token is secured with a cryptographic proof.
+        <li><dfn id="dfn-authentication-credential" tabindex="0" aria-haspopup="dialog" data-dfn-type="dfn">authentication credential</dfn> — a security token that asserts claims about an agent or end-user. This token is secured with a cryptographic proof.
           Examples of an authentication credentials include assertions of identity such as OpenID Connect ID Tokens and SAML-based assertions as well as assertions of
           capability such as a ZCAP.
         </li>
-        <li><dfn id="dfn-authentication-suite" tabindex="0" aria-haspopup="dialog" data-dfn-type="dfn" class="respec-offending-element" title="Found definition for &quot;authentication suite&quot;, but nothing links to it. This is usually a spec bug!">authentication suite</dfn> — a defined validation mechanism for a concrete serialization of an authentication credential.</li>
-        <li><dfn id="dfn-lws-resource" tabindex="0" aria-haspopup="dialog" data-dfn-type="dfn" class="respec-offending-element" title="Found definition for &quot;LWS resource&quot;, but nothing links to it. This is usually a spec bug!">LWS resource</dfn> — An LWS Resource is an <a href="https://www.w3.org/TR/webarch/#def-information-resource">information resource</a> whose lifecycle is managed by the LWS storage.</li>
+        <li><dfn id="dfn-authentication-suite" tabindex="0" aria-haspopup="dialog" data-dfn-type="dfn">authentication suite</dfn> — a defined validation mechanism for a concrete serialization of an authentication credential.</li>
+        <li><dfn id="dfn-lws-resource" tabindex="0" aria-haspopup="dialog" data-dfn-type="dfn">LWS resource</dfn> — An LWS Resource is an <a href="https://www.w3.org/TR/webarch/#def-information-resource">information resource</a> whose lifecycle is managed by the LWS storage.</li>
         <li><dfn id="dfn-container" tabindex="0" aria-haspopup="dialog" data-dfn-type="dfn">container</dfn> — An LWS resource that maintains links to a set of contained resources whose lifecycle is governed by the same LWS server. Containers serve as organizational units enabling clients to group, discover, and navigate resources.</li>
         <li><dfn id="dfn-data-resource" tabindex="0" aria-haspopup="dialog" data-dfn-type="dfn">data resource</dfn> — a data-bearing resource such as a document, image, or structured data file.</li>
-        <li><dfn id="dfn-contained-resource" tabindex="0" aria-haspopup="dialog" data-dfn-type="dfn" class="respec-offending-element" title="Found definition for &quot;contained resource&quot;, but nothing links to it. This is usually a spec bug!">contained resource</dfn> — A LWS resource, either a <a href="#dfn-container" class="internalDFN" data-link-type="dfn" id="ref-for-dfn-container-1">container</a> or a <a href="#dfn-data-resource" class="internalDFN" data-link-type="dfn" id="ref-for-dfn-data-resource-1">data resource</a>, that is referenced by one or more containers through a containment relationship.</li>
-        <li><dfn id="dfn-root-container" tabindex="0" aria-haspopup="dialog" data-dfn-type="dfn" class="respec-offending-element" title="Found definition for &quot;root container&quot;, but nothing links to it. This is usually a spec bug!">root container</dfn> — a top-level container in an LWS storage. A root container has no parent and acts as the entry point for the storage hierarchy.</li>
-        <li><dfn id="dfn-containment" tabindex="0" aria-haspopup="dialog" data-dfn-type="dfn" class="respec-offending-element" title="Found definition for &quot;containment&quot;, but nothing links to it. This is usually a spec bug!">containment</dfn> — the relationship between a container and its member resources, expressed via the <code>items</code> property in container representations and the <code>rel="up"</code> link relation in HTTP headers.</li>
-        <li><dfn id="dfn-linkset" tabindex="0" aria-haspopup="dialog" data-dfn-type="dfn" class="respec-offending-element" title="Found definition for &quot;linkset&quot;, but nothing links to it. This is usually a spec bug!">linkset</dfn> — A separate resource associated with each LWS resource that contains the complete set of typed links (metadata) for that resource, as defined in [<cite><a class="bibref" data-link-type="biblio" href="#bib-rfc9264" title="Linkset: Media Types and a Link Relation Type for Link Sets">RFC9264</a></cite>]. The linkset is discovered via a rel="linkset" link relation and can be modified to manage resource relationships, including containment.</li>
+        <li><dfn id="dfn-contained-resource" tabindex="0" aria-haspopup="dialog" data-dfn-type="dfn">contained resource</dfn> — A LWS resource, either a <a href="#dfn-container" class="internalDFN" data-link-type="dfn" id="ref-for-dfn-container-1">container</a> or a <a href="#dfn-data-resource" class="internalDFN" data-link-type="dfn" id="ref-for-dfn-data-resource-1">data resource</a>, that is referenced by one or more containers through a containment relationship.</li>
+        <li><dfn id="dfn-root-container" tabindex="0" aria-haspopup="dialog" data-dfn-type="dfn">root container</dfn> — a top-level container in an LWS storage. A root container has no parent and acts as the entry point for the storage hierarchy.</li>
+        <li><dfn id="dfn-containment" tabindex="0" aria-haspopup="dialog" data-dfn-type="dfn">containment</dfn> — the relationship between a container and its member resources, expressed via the <code>items</code> property in container representations and the <code>rel="up"</code> link relation in HTTP headers.</li>
+        <li><dfn id="dfn-linkset" tabindex="0" aria-haspopup="dialog" data-dfn-type="dfn">linkset</dfn> — A separate resource associated with each LWS resource that contains the complete set of typed links (metadata) for that resource, as defined in [<cite><a class="bibref" data-link-type="biblio" href="#bib-rfc9264" title="Linkset: Media Types and a Link Relation Type for Link Sets">RFC9264</a></cite>]. The linkset is discovered via a rel="linkset" link relation and can be modified to manage resource relationships, including containment.</li>
       </ul>
 
       <p>
@@ -920,19 +922,19 @@ var[data-type]:hover::after,var[data-type]:hover::before{opacity:1}
       </p>
       <ul>
         <li><dfn data-lt="creation|create resource" id="dfn-creation" tabindex="0" aria-haspopup="dialog" data-dfn-type="dfn">create resource</dfn> - </li>
-        <li><dfn data-lt="retrieval|read resource" id="dfn-retrieval" tabindex="0" aria-haspopup="dialog" data-dfn-type="dfn" class="respec-offending-element" title="Found definition for &quot;read resource&quot;, but nothing links to it. This is usually a spec bug!">read resource</dfn> - </li>
+        <li><dfn data-lt="retrieval|read resource" id="dfn-retrieval" tabindex="0" aria-haspopup="dialog" data-dfn-type="dfn">read resource</dfn> - </li>
         <li><dfn id="dfn-update-resource" tabindex="0" aria-haspopup="dialog" data-dfn-type="dfn">update resource</dfn> - </li>
-        <li><dfn data-lt="deletion|delete resource" id="dfn-deletion" tabindex="0" aria-haspopup="dialog" data-dfn-type="dfn" class="respec-offending-element" title="Found definition for &quot;delete resource&quot;, but nothing links to it. This is usually a spec bug!">delete resource</dfn> - </li>
+        <li><dfn data-lt="deletion|delete resource" id="dfn-deletion" tabindex="0" aria-haspopup="dialog" data-dfn-type="dfn">delete resource</dfn> - </li>
       </ul>
 
       <p>
-        The folowing section will describe the semantics and <dfn data-plurals="response" id="dfn-responses" tabindex="0" aria-haspopup="dialog" data-dfn-type="dfn">responses</dfn> of these operations but the following <dfn id="dfn-core-responses" tabindex="0" aria-haspopup="dialog" data-dfn-type="dfn" class="respec-offending-element" title="Found definition for &quot;core responses&quot;, but nothing links to it. This is usually a spec bug!">core responses</dfn> apply to any operation:
+        The folowing section will describe the semantics and <dfn data-plurals="response" id="dfn-responses" tabindex="0" aria-haspopup="dialog" data-dfn-type="dfn">responses</dfn> of these operations but the following <dfn id="dfn-core-responses" tabindex="0" aria-haspopup="dialog" data-dfn-type="dfn">core responses</dfn> apply to any operation:
       </p>
       <ul>
         <li><dfn id="dfn-success" tabindex="0" aria-haspopup="dialog" data-dfn-type="dfn">success</dfn> - the operation is believed to have completed. This may be accompanied by a <dfn id="dfn-resource-representation" tabindex="0" aria-haspopup="dialog" data-dfn-type="dfn">resource representation</dfn> conveying the contents of a <a href="#dfn-served-resource" class="internalDFN" data-link-type="dfn" id="ref-for-dfn-served-resource-5">served resource</a>. A <a href="#dfn-success" class="internalDFN" data-link-type="dfn" id="ref-for-dfn-success-1">success</a> response is not defined for the <a href="#dfn-creation" class="internalDFN" data-link-type="dfn" id="ref-for-dfn-creation-1">create resource</a> operation. See instead <a href="#dfn-created">created</a>.</li>
-        <li><dfn id="dfn-not-permitted" tabindex="0" aria-haspopup="dialog" data-dfn-type="dfn" class="respec-offending-element" title="Found definition for &quot;not permitted&quot;, but nothing links to it. This is usually a spec bug!">not permitted</dfn></li>
-        <li><dfn id="dfn-unknown-requester" tabindex="0" aria-haspopup="dialog" data-dfn-type="dfn" class="respec-offending-element" title="Found definition for &quot;unknown requester&quot;, but nothing links to it. This is usually a spec bug!">unknown requester</dfn></li>
-        <li><dfn id="dfn-unknown-error" tabindex="0" aria-haspopup="dialog" data-dfn-type="dfn" class="respec-offending-element" title="Found definition for &quot;unknown error&quot;, but nothing links to it. This is usually a spec bug!">unknown error</dfn> - reserved for error conditions that arise that are not anticipated by the specification</li>
+        <li><dfn id="dfn-not-permitted" tabindex="0" aria-haspopup="dialog" data-dfn-type="dfn">not permitted</dfn></li>
+        <li><dfn id="dfn-unknown-requester" tabindex="0" aria-haspopup="dialog" data-dfn-type="dfn">unknown requester</dfn></li>
+        <li><dfn id="dfn-unknown-error" tabindex="0" aria-haspopup="dialog" data-dfn-type="dfn">unknown error</dfn> - reserved for error conditions that arise that are not anticipated by the specification</li>
       </ul>
     </section>
 
@@ -958,10 +960,10 @@ var[data-type]:hover::after,var[data-type]:hover::before{opacity:1}
   </p>
 
   <ul>
-    <li><dfn id="dfn-subject" tabindex="0" aria-haspopup="dialog" data-dfn-type="dfn" class="respec-offending-element" title="Found definition for &quot;subject&quot;, but nothing links to it. This is usually a spec bug!">subject</dfn> <strong><em class="rfc2119">REQUIRED</em></strong> — an identifier for an end user. This <em class="rfc2119">MUST</em> be a URI.</li>
-    <li><dfn id="dfn-issuer" tabindex="0" aria-haspopup="dialog" data-dfn-type="dfn" class="respec-offending-element" title="Found definition for &quot;issuer&quot;, but nothing links to it. This is usually a spec bug!">issuer</dfn> <strong><em class="rfc2119">REQUIRED</em></strong> — an identifier for the entity that issued the authentication credential. This <em class="rfc2119">MUST</em> be a URI.</li>
-    <li><dfn id="dfn-client" tabindex="0" aria-haspopup="dialog" data-dfn-type="dfn" class="respec-offending-element" title="Found definition for &quot;client&quot;, but nothing links to it. This is usually a spec bug!">client</dfn> <strong><em class="rfc2119">REQUIRED</em></strong> — an identifier for a client application. This <em class="rfc2119">SHOULD</em> be a URI.</li>
-    <li><dfn id="dfn-audience-restriction" tabindex="0" aria-haspopup="dialog" data-dfn-type="dfn" class="respec-offending-element" title="Found definition for &quot;audience restriction&quot;, but nothing links to it. This is usually a spec bug!">audience restriction</dfn> <strong><em class="rfc2119">RECOMMENDED</em></strong> — a list of values that <em class="rfc2119">SHOULD</em> include an authorization server identifier.</li>
+    <li><dfn id="dfn-subject" tabindex="0" aria-haspopup="dialog" data-dfn-type="dfn">subject</dfn> <strong><em class="rfc2119">REQUIRED</em></strong> — an identifier for an end user. This <em class="rfc2119">MUST</em> be a URI.</li>
+    <li><dfn id="dfn-issuer" tabindex="0" aria-haspopup="dialog" data-dfn-type="dfn">issuer</dfn> <strong><em class="rfc2119">REQUIRED</em></strong> — an identifier for the entity that issued the authentication credential. This <em class="rfc2119">MUST</em> be a URI.</li>
+    <li><dfn id="dfn-client" tabindex="0" aria-haspopup="dialog" data-dfn-type="dfn">client</dfn> <strong><em class="rfc2119">REQUIRED</em></strong> — an identifier for a client application. This <em class="rfc2119">SHOULD</em> be a URI.</li>
+    <li><dfn id="dfn-audience-restriction" tabindex="0" aria-haspopup="dialog" data-dfn-type="dfn">audience restriction</dfn> <strong><em class="rfc2119">RECOMMENDED</em></strong> — a list of values that <em class="rfc2119">SHOULD</em> include an authorization server identifier.</li>
   </ul>
 </section>
 
