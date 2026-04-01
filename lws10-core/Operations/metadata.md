@@ -7,7 +7,7 @@ All metadata in LWS is expressed as a set of typed links originating from a reso
 - A relation type: A string that defines the nature of the relationship.
 - Optional target attributes: Additional key-value pairs that further describe the link or the target resource.
 
-Metadata distinguishes between resources and their representations, allowing for multiple media types where applicable. For resources with representations, metadata includes representations, each with mediaType and optional sizeInBytes. For contained resources, the link to its parent container resource is part of the metadata of the resource. For auxiliary resources, the link to its principal resource is part of the metadata of the resource. For all primary resources, the links to their auxiliary resources are part of the metadata of the resource.
+Metadata distinguishes between resources and their representations, allowing for multiple media types where applicable. For resources with representations, metadata includes representations, each with mediaType and optional sizeInBytes. For contained resources, the link to its parent container resource is part of the metadata of the resource. For auxiliary resources, the link to its principal resource is part of the metadata of the resource. For all primary resources, the links to their auxiliary resources are part of the metadata of the resource. These auxilary links MUST have `auxiliary=true` parameter set.
 
 
 **The Linkset Resource**
@@ -20,7 +20,7 @@ For each primary resource in storage, a server MUST make metadata links availabl
 Clients discover metadata primarily through Link headers in response to GET or HEAD requests.
 - Storage Description: Servers MUST support a Link header with `rel="storageDescription"` on relevant responses.
 - Containment: Servers MUST include a Link header with `rel="up"` pointing to the parent container for any contained resource.
-- Auxiliarity: Servers MUST include a Link header with `rel="principal"` pointing to the principal resource for any auxiliary resource. For any principal resource, servers MUST include Link headers for each auxiliary resource with `rel` value set to the auxiliaryRel, pointing to the corresponding auxiliary resource.
+- Auxiliarity: Servers MUST include a Link header with `rel="principal"` pointing to the principal resource for any auxiliary resource. For any principal resource, servers MUST include Link headers for each auxiliary resource with `rel` value set to the auxiliaryRel, pointing to the corresponding auxiliary resource, augumented with `auxiliary=true` parameter.
 - Preferences: Clients MAY use the Prefer header [[!RFC7240]] with the URI `https://www.w3.org/ns/lws#PreferLinkRelations` to include or omit specific relations.
 
 **Metadata Types**
@@ -50,6 +50,6 @@ Metadata is managed by interacting with the primary resource's associated linkse
 
 - Replacement (PUT): If advertised in the Allow header, a client MAY replace the entire linkset. If the server does not support PUT, it MUST reject the request with 405 Method Not Allowed.
 
-- Restrictions: Servers MAY restrict modifications to specific links (like `up`, `principal`,  `manifest` or `items`) to maintain system integrity.
+- Restrictions: Servers MAY restrict modifications to specific links (like `up`, `principal`,  `manifest` or `items`, and auxiliary relations) to maintain system integrity.
 
 - Lifecycle: Metadata lifecycles are tied to the described primary resource; deleting a primary resource MUST result in the automatic removal of its associated linkset metadata.

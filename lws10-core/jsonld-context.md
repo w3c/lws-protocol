@@ -23,9 +23,8 @@ The normative JSON-LD context document defines the mapping between the short pro
     "type": "@type",
     "Resource": "lws:Resource",
     "Container": "lws:Container",
-    "containedItems": "lws:containedItems",
-    "auxiliaryMap": "lws:auxiliaryMap",
-    "totalContainedItems": "as:totalItems",
+    "items": "lws:items",
+    "totalItems": "as:totalItems",
     "mediaType": "as:mediaType",
     "size": {
       "@id": "schema:size",
@@ -56,9 +55,8 @@ The LWS vocabulary defines the following types and properties used in manifest r
 
 | Term | URI | Description |
 |------|-----|-------------|
-| `containedItems` | `lws:containedItems` | The list of resources contained in a container |
-| `auxiliaryMap` | `lws:auxiliaryMap` | The map with entries corresponding to auxiliary resources of a resource |
-| `totalContainedItems` | `as:totalItems` | The total number of contained resources |
+| `items` | `lws:items` | The list of resources contained in a container |
+| `totalItems` | `as:totalItems` | The total number of contained resources |
 | `mediaType` | `as:mediaType` | The media type of a resource |
 | `size` | `schema:size` | The size of a resource in bytes |
 | `modified` | `as:updated` | The date-time a resource was last modified |

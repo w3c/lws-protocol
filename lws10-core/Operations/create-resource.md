@@ -10,8 +10,8 @@ The **create resource** operation adds a new [served resource](#dfn-served-resou
 **Behavior:**
 
 * **Identity generation:** The server determines the final identifier (URI) for the new resource. If an identity hint was provided, the server attempts to incorporate it while ensuring uniqueness and validity within the scope of the patron resource. If no hint is provided, the server generates a unique identifier.
-* **Patron membership update:** The server atomically adds the new resource to the contained/auxiliary membership of the target patron by updating its manifest. It uses the provided membership links to determine the type of membership.
-* **Metadata initialization:** The server initializes system metadata for the new resource. If the resource has an associated metadata resource it is also initialized.
+* **Patron membership update:** The server atomically adds the new resource to the contained/auxiliary membership of the target patron by updating its manifest/linkset respectively. It uses the provided membership links to determine the type of membership.
+* **Metadata initialization:** The server initializes system metadata for the new resource. If the resource has an associated metadata resource or manifest resource they are also initialized.
 
 **Possible Responses:**
 
@@ -32,7 +32,7 @@ Use POST to add a new resource to an existing patron resource, either as an auxi
 Clients indicate the type of membership as follows:
 
 - To create a **Contained member**, the client MUST include a `Link` header with `rel="up"` pointing to the target patron container.
-- To create an **Auxiliary member**, the client MUST include a `Link` header with `rel="principal"` pointing to the target principal resource. The client MUST also include a `Link` header with the `anchor` parameter set to the target principal resource, `rel` value set to the required auxiliaryRel, pointing to the new resource to create using an empty URI reference `<>`.
+- To create an **Auxiliary member**, the client MUST include a `Link` header with `rel="principal"` pointing to the target principal resource. The client MUST also include a `Link` header with the `anchor` parameter set to the target principal resource, `rel` value set to the required auxiliaryRel, pointing to the new resource to create using an empty URI reference `<>` augmented with `auxiliary=true` parameter.
 
 Clients indicate the containment capability of the contained member resource to create as follows:
 
@@ -62,8 +62,8 @@ In this example, the client is posting to the container `/alice/notes/`. It prov
 HTTP/1.1 201 Created
 Location: /alice/notes/shoppinglist.txt
 Content-Type: text/plain; charset=UTF-8
-Link: </alice/notes/shoppinglist.txt.meta>; rel="linkset"; type="application/linkset+json"
-Link: </alice/notes/shoppinglist.txt.manifest>; rel="manifest"; type="application/lws+json"
+Link: </alice/notes/shoppinglist.txt.meta>; rel="linkset"; type="application/linkset+json; auxiliary=true;"
+Link: </alice/notes/shoppinglist.txt.manifest>; rel="manifest"; type="application/lws+json; auxiliary=true"
 Link: </alice/notes/>; rel="up"
 Link: <https://www.w3.org/ns/lws#Resource>; rel="type"
 Content-Length: 0
@@ -86,8 +86,8 @@ Link: <https://www.w3.org/ns/lws#Container>; rel="type"
 ```
 HTTP/1.1 201 Created
 Location: /alice/notes/
-Link: </alice/notes/.meta>; rel="linkset"; type="application/linkset+json"
-Link: </alice/notes/.manifest>; rel="manifest"; type="application/lws+json"
+Link: </alice/notes/.meta>; rel="linkset"; type="application/linkset+json; auxiliary=true;"
+Link: </alice/notes/.manifest>; rel="manifest"; type="application/lws+json; auxiliary=true;"
 Link: </alice/>; rel="up"
 Link: <https://www.w3.org/ns/lws#Container>; rel="type"
 Content-Length: 0
@@ -131,7 +131,7 @@ HTTP/1.1 201 Created
 Location: /alice/notes/shoppinglist.txt.acl
 Content-Type: text/plain; charset=UTF-8
 Link: </alice/notes/shoppinglist.txt>; rel="principal"
-Link: <>; rel="acl"; anchor="/alice/notes/shoppinglist.txt"
+Link: <>; rel="acl"; anchor="/alice/notes/shoppinglist.txt; auxiliary=true;"
 Link: <https://www.w3.org/ns/lws#Resource>; rel="type"
 Content-Length: 0
 ```

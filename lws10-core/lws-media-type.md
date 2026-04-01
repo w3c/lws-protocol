@@ -6,7 +6,7 @@ While LWS manifest representations use JSON-LD conventions, the constraints and 
 
 #### Content Negotiation
 
-Servers MUST support content negotiation for manifest representations. The response payload MUST be identical regardless of the requested media type — only the `Content-Type` response header varies:
+Servers MUST support content negotiation for container manifest representations. The response payload MUST be identical regardless of the requested media type — only the `Content-Type` response header varies:
 
 - If a client requests `application/lws+json`, the server MUST respond with `Content-Type: application/lws+json`.
 - If a client requests `application/ld+json`, the server MUST respond with `Content-Type: application/ld+json`.

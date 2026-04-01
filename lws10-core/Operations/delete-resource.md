@@ -4,7 +4,7 @@ Permanently removes a resource and its associated auxiliary resources.
 * **Behavior**:
     * For non-container primary resources, the server removes the content, metadata, all its auxiliary resources, and updates the parent container's containment membership.
     * For containers, the server typically requires the container to be empty unless a recursive delete is explicitly requested and supported.
-    * For auxiliary resources, the server removes the content, metadata, and updates the principal resource's auxiliary membership.
+    * For auxiliary resources, the server removes the content, and updates the principal resource's metadata linkset by removing corresponding auxiliary link.
 * **Outcome**: Confirmation of removal or a notification of failure.
 
 The delete resource operation is implemented using the HTTP DELETE method, as defined in the abstract operation above. This section specifies the HTTP bindings for inputs, behaviors, and responses.
@@ -12,9 +12,9 @@ The delete resource operation is implemented using the HTTP DELETE method, as de
 The DELETE request targets the URI of the resource or container to remove. Clients MAY include an `If-Match` header with an ETag for concurrency checks.
 
 **Deletion and Containment:**
-When a contained resource is deleted, the server MUST atomically remove it from its parent container manifest's `containedItems` list. The parent container manifest's `totalContainedItems` count and ETag MUST be updated accordingly.
+When a contained resource is deleted, the server MUST atomically remove it from its parent container manifest's `items` list. The parent container manifest's `totalItems` count and ETag MUST be updated accordingly.
 
-When an auxiliary resource is deleted, the server MUST atomically remove the corresponding entry from its principal resource manifest's `auxiliaryMap` list, and MUST remove the auxiliarity link from the principal resource's metadata linkset. ETags of the manifest and linkset resources of the principal resource MUST be updated accordingly.
+When an auxiliary resource is deleted, the server MUST atomically remove the corresponding link from its principal resource's metadata linkset. ETags of the manifest and linkset resources of the principal resource MUST be updated accordingly.
 
 For all resources, the server removes the resource content. For all primary resources, the server removes its associated auxiliary resources.
 
@@ -65,7 +65,7 @@ DELETE /alice/notes/~acl HTTP/1.1
 Authorization: Bearer <token>
 If-Match: "abc123456"
 ```
-Assuming the ETag matches and the client is authorized, the server deletes the auxiliary resource and removes it from the principal resource `/alice/notes/` by updating its manifest atomically:
+Assuming the ETag matches and the client is authorized, the server deletes the auxiliary resource and removes it from the principal resource `/alice/notes/` by updating its linkset atomically:
 ```
 HTTP/1.1 204 No Content
 ```

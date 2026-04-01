@@ -23,7 +23,7 @@ HTTP/1.1 200 OK
 Content-Type: text/plain; charset=UTF-8
 Content-Length: 34
 ETag: "abc123456"
-Link: </alice/notes/shoppinglist.txt.meta>; rel="linkset"; type="application/linkset+json"
+Link: </alice/notes/shoppinglist.txt.meta>; rel="linkset"; auxiliary=true; type="application/linkset+json"
 Link: </alice/notes/>; rel="up"
 Link: <https://www.w3.org/ns/lws#Resource>; rel="type"
 
@@ -38,16 +38,16 @@ eggs
 ```
 The server returned the text content (34 bytes in total, as indicated by `Content-Length`). The content is exactly the stored data in the file. The `ETag: "abc123456"` is a version identifier for caching or concurrency purposes. The response includes Link headers for metadata discoverability, with mandatory fields such as `up` and `type`.
 
-**GET (manifest resource)** – *Retrieve a resource's manifest:*
-When the target URI corresponds to a manifest resource, a GET request returns a manifest representation as defined in the [Manifest Representation](#manifest-representation) section, using the LWS manifest media type. The manifest includes metadata for each of contained auxiliary members: resource identifiers (MUST), types (MUST), media types (MUST), sizes (SHOULD), and modification timestamps (SHOULD).
+**GET (manifest resource)** – *Retrieve a container's manifest:*
+When the target URI corresponds to a container manifest resource, a GET request returns a manifest representation as defined in the [Container Manifest Representation](#manifest-representation) section, using the LWS manifest media type. The manifest includes metadata for each of contained members: resource identifiers (MUST), types (MUST), media types (MUST), sizes (SHOULD), and modification timestamps (SHOULD).
 
-**Example (GET a manifest):**
+**Example (GET a container manifest):**
 ```
 GET /alice/notes/~manifest HTTP/1.1
 Authorization: Bearer <token>
 Accept: application/lws+json
 ```
-Assuming the principal resource and the manifest exists and the client has access:
+Assuming the container resource and the manifest exists and the client has access:
 ```
 HTTP/1.1 200 OK
 Content-Type: application/lws+json
@@ -74,27 +74,7 @@ Link: </alice/notes/>; rel="principal";
       "size": 2048,
       "modified": "2025-11-24T13:00:00Z"
     }
-  ],
-  "auxiliaryMap": {
-    "manifest":     {
-      "id": "/alice/notes/~manifest.json",
-      "type": ["Manifest", "Resource"],
-      "mediaType": "application/lws+json",
-      "modified": "2025-11-24T14:00:00Z",
-    },
-    "linkset":     {
-      "id": "/alice/notes/~linkset.json",
-      "type": ["Linkset", "Resource"],
-      "mediaType": "application/linkset+json",
-      "modified": "2025-11-24T14:00:00Z",
-    },
-    "acl":     {
-      "id": "/alice/notes/~acl",
-      "type": ["Resource"],
-      "mediaType": "text/turtle",
-      "modified": "2025-12-24T15:00:00Z",
-    }
-  } 
+  ] 
 }
 ```
 In this example, `/alice/notes/` is a container, and `alice/notes/~manifest` is it's manifest auxiliary resource. The response uses JSON-LD with the LWS context, listing contained and auxiliary members with required metadata. Each item includes its `type`, `id`, `mediaType`, `size`, and `modified` timestamp as flat properties.
