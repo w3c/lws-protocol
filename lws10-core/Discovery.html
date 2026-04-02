@@ -143,17 +143,17 @@
 </section>
 
 <section id="type-index-service">
-	<h3>Type Index and Search Services</h3>
-	<p>
-    The <code>TypeIndexService</code> provides a server-managed discovery mechanism to locate containers holding specific resource types, while the <code>TypeSearchService</code> allows clients to query for specific resource URIs by type.
+  <h3>Type Index and Search Services</h3>
+  <p>
+    The <code>TypeIndexService</code> provides a server-managed discovery mechanism to query the distinct resource types available within a storage, while the <code>TypeSearchService</code> allows clients to retrieve the specific resource or container URIs matching those types.
   </p>
-	<p>
+  <p>
     To prevent inadvertent or malicious corruption by clients, these services are strictly populated and managed by the server. To mitigate security and performance risks associated with deep-parsing arbitrary resource bodies, servers MUST derive resource types solely from HTTP <code>Link</code> headers provided by the client during resource creation or modification.
   </p>
-	<p>
+  <p>
     A server that implements these services MUST advertise the endpoints in the storage description resource using the <code>typeIndexService</code> and <code>typeSearchService</code> properties.
   </p>
-	<pre class="example" title="Services advertised in storage description">
+  <pre class="example" title="Services advertised in storage description">
 {
   "@context": "https://www.w3.org/ns/lws/v1",
   "id": "https://example.org/storage/alice/",
@@ -162,139 +162,97 @@
   "typeSearchService": "https://example.org/types/search"
 }
   </pre>
-	<section>
-		<h4>GET [typeIndexService]</h4>
-		<p>Returns <code>application/lws+json</code>:</p>
-		<pre class="example">
+  
+  <section>
+    <h4>GET [typeIndexService]</h4>
+    <p>Returns <code>application/lws+json</code>:</p>
+    <pre class="example">
 {
   "@context": "https://www.w3.org/ns/lws/v1",
   "type": "TypeIndex",
-  "totalItems": 55,
+  "totalItems": 142,
   "items": [
-    { 
-      "type": "https://schema.org/Person",
-      "location": ["https://example.org/data/people/"]
-    },
-    { 
-      "type": "https://schema.org/Event",
-      "location": [
-        "https://example.org/data/events/",
-        "https://example.org/data/calendar/",
-        "https://example.org/data/event-123"
-      ]
-    }
+    { "type": "https://schema.org/Person" },
+    { "type": "https://schema.org/Event" },
+    { "type": "https://schema.org/Message" }
   ],
   "next": "..."
 }
     </pre>
-		<p>
-			<code>location</code>: An array of URIs (containers or specific resources) where instances of this type can currently be found. 
-      <strong>Note:</strong> This is strictly a read-oriented discovery property. It does <em>not</em> dictate or mandate where clients should create (<code>POST</code> or <code>PUT</code>) new resources of this type.
-    </p>
-		<p>Supports query parameters (all optional): <code>?type=&lt;URI&gt;</code> (repeatable, AND), <code>?filter[&lt;propURI&gt;]=&lt;value&gt;</code> (repeatable, AND), <code>?fields=type,location</code>.</p>
-		<p class="note">Clients MUST URL-encode query parameter keys/values.</p>
-		<p>Returns paginated TypeIndex following LWS pagination. No other parameters.</p>
-	</section>
-	<section>
-		<h4>POST [typeIndexService]</h4>
-		<p>MUST support <code>application/lws+json</code> body:</p>
-		<pre class="example">
+    <p>Supports query parameters (all optional): <code>?type=&lt;URI&gt;</code> (repeatable, AND), <code>?filter[&lt;propURI&gt;]=&lt;value&gt;</code> (repeatable, AND).</p>
+    <p class="note">Clients MUST URL-encode query parameter keys/values.</p>
+    <p>Returns a paginated TypeIndex following LWS pagination. It only lists the unique types that exist within the storage. No other parameters.</p>
+  </section>
+  
+  <section>
+    <h4>POST [typeIndexService]</h4>
+    <p>MUST support <code>application/lws+json</code> body:</p>
+    <pre class="example">
 {
   "@context": "https://www.w3.org/ns/lws/v1"
 }
     </pre>
-		<p>Returns everything in the type index (same as GET).</p>
-		<p>Optional filters: <code>type</code> array of URIs (AND), top-level property-URI keys = filters (AND).</p>
-		<p>Returns paginated TypeIndex of matching entries. No other parameters.</p>
-	</section>
-	<section>
-		<h4>GET [typeSearchService]</h4>
-		<p>Supports same query params as GET [typeIndexService] except <code>fields</code>.</p>
-		<p>Returns <code>application/lws+json</code>: paginated ContainerPage of matching LWS Resource URIs. No other parameters.</p>
-		<p>If a resource declares multiple types, it MUST be discoverable when querying for any of its declared types.</p>
-	</section>
-	<section>
-		<h4>POST [typeSearchService]</h4>
-		<p>MUST support <code>application/lws+json</code> body:</p>
-		<pre class="example">
+    <p>Returns everything in the type index (same as GET).</p>
+    <p>Optional filters: <code>type</code> array of URIs (AND), top-level property-URI keys = filters (AND).</p>
+    <p>Returns paginated TypeIndex of matching types. No other parameters.</p>
+  </section>
+  
+  <section>
+    <h4>GET [typeSearchService]</h4>
+    <p>Supports same query params as GET [typeIndexService].</p>
+    <p>Returns <code>application/lws+json</code>: A paginated <code>ContainerPage</code> of matching LWS Resource URIs. No other parameters.</p>
+    <p>If a resource declares multiple types, it MUST be discoverable when querying for any of its declared types.</p>
+    <p>Clients MAY use the native LWS classes <code>https://www.w3.org/ns/lws#DataResource</code> or <code>https://www.w3.org/ns/lws#Container</code> as <code>type</code> filters to restrict the search results exclusively to resource instances or containers, respectively.</p>
+  </section>
+  
+  <section>
+    <h4>POST [typeSearchService]</h4>
+    <p>MUST support <code>application/lws+json</code> body:</p>
+    <pre class="example">
 {
   "@context": "https://www.w3.org/ns/lws/v1",
   "type": ["https://schema.org/Person"]
 }
     </pre>
-		<p>
-			<code>type</code>: array of URIs (AND). Top-level property-URI keys = filters (AND).</p>
-		<p>Returns paginated ContainerPage of matching LWS Resource URIs. No other parameters.</p>
-	</section>
-	<section>
-		<h4>Security and Authorization</h4>
-		<p>
-      Servers MUST enforce authorization per access grants. Responses to GET/POST on <code>typeIndexService</code> or <code>typeSearchService</code> include only types, locations, and resource URIs that the authenticated client is explicitly authorized to read. 
+    <p>
+      <code>type</code>: array of URIs (AND). Top-level property-URI keys = filters (AND).
     </p>
-		<p>
-      Unauthorized entries MUST be omitted entirely. A client must not be able to discover the existence of a resource, or that a specific type exists in the storage, if they do not have the required access grants. 
+    <p>Returns paginated ContainerPage of matching LWS Resource URIs. No other parameters.</p>
+  </section>
+  
+  <section>
+    <h4>Security and Authorization</h4>
+    <p>
+      Servers MUST enforce authorization per access grants. Responses to GET/POST on <code>typeIndexService</code> or <code>typeSearchService</code> include only types and resource URIs that the authenticated client is explicitly authorized to read. 
     </p>
-		<p>
-      Furthermore, servers MUST evaluate authorization for the <code>location</code> array independently: a container URI MUST NOT be included in the <code>location</code> array unless the client explicitly has read access to that parent container, even if the client has access to resources within it. This ensures no directory structures or storage topologies are leaked. This implicit filtering yields a dynamically generated, client-specific type index.
+    <p>
+      Unauthorized entries MUST be omitted entirely. A client must not be able to discover the existence of a specific resource instance, or that a specific type exists in the storage at all, if they do not have the required access grants. This implicit filtering yields a dynamically generated, client-specific type index and search result.
     </p>
-	</section>
-	<section>
-		<h4>Non-Normative Examples</h4>
-		<pre class="example" title="Example 1: GET TypeIndex">
+  </section>
+  
+  <section>
+    <h4>Non-Normative Examples</h4>
+    <pre class="example" title="Example 1: GET TypeIndex (Discovering available types)">
 Request
 GET /types/index
+
 Response
 {
   "@context": "https://www.w3.org/ns/lws/v1",
   "type": "TypeIndex",
-  "totalItems": 55,
+  "totalItems": 142,
   "items": [
-    { 
-      "type": "https://schema.org/Person",
-      "location": ["https://example.org/data/people/"]
-    },
-    { 
-      "type": "https://schema.org/Event",
-      "location": [
-        "https://example.org/data/events/",
-        "https://example.org/data/calendar/"]
-    }
+    { "type": "https://schema.org/Person" },
+    { "type": "https://schema.org/Event" }
   ],
   "next": "https://example.org/types/index?page=2"
 }
     </pre>
-		<pre class="example" title="Example 2: GET TypeIndex with filter">
+    
+    <pre class="example" title="Example 2: GET Search for Instances (Using DataResource filter)">
 Request
-GET /types/index?type=https%3A%2F%2Fschema.org%2FEvent&amp;fields=type
-Response
-{
-  "@context": "https://www.w3.org/ns/lws/v1",
-  "type": "TypeIndex",
-  "totalItems": 8,
-  "items": [{ "type": "https://schema.org/Event" }],
-  "next": "https://example.org/types/index?type=https%3A%2F%2Fschema.org%2FEvent&amp;fields=type&amp;page=2"
-}
-    </pre>
-		<pre class="example" title="Example 3: POST TypeIndex with filters">
-Request
-POST /types/index
-Request Body
-{
-  "@context": "https://www.w3.org/ns/lws/v1",
-  "type": ["https://schema.org/Person"]
-}
-Response
-{
-  "@context": "https://www.w3.org/ns/lws/v1",
-  "type": "TypeIndex",
-  "totalItems": 27,
-  "items": [{ "type": "https://schema.org/Person" }],
-  "next": "https://example.org/types/index?page=2"
-}
-    </pre>
-		<pre class="example" title="Example 4: Simple GET search">
-Request
-GET /types/search?type=https%3A%2F%2Fschema.org%2FPerson
+GET /types/search?type=https%3A%2F%2Fschema.org%2FPerson&amp;type=https%3A%2F%2Fwww.w3.org%2Fns%2Flws%23DataResource
+
 Response
 {
   "@context": "https://www.w3.org/ns/lws/v1",
@@ -303,16 +261,32 @@ Response
   "items": [
     "https://example.org/data/person-4872",
     "https://example.org/data/person-4873",
-    "https://example.org/data/person-5882",
-    "https://example.org/data/person-1877",
-    "https://example.org/data/person-9341"
+    "https://example.org/data/person-5882"
   ],
-  "next": "https://example.org/types/search?type=https%3A%2F%2Fschema.org%2FPerson&amp;page=2"
+  "next": "https://example.org/types/search?type=https%3A%2F%2Fschema.org%2FPerson&amp;type=https%3A%2F%2Fwww.w3.org%2Fns%2Flws%23DataResource&amp;page=2"
 }
     </pre>
-		<pre class="example" title="Example 5: GET with filter">
+    
+    <pre class="example" title="Example 3: GET Search for Containers (Using Container filter)">
+Request
+GET /types/search?type=https%3A%2F%2Fschema.org%2FPerson&amp;type=https%3A%2F%2Fwww.w3.org%2Fns%2Flws%23Container
+
+Response
+{
+  "@context": "https://www.w3.org/ns/lws/v1",
+  "type": "ContainerPage",
+  "totalItems": 2,
+  "items": [
+    "https://example.org/data/people/",
+    "https://example.org/data/contacts/"
+  ]
+}
+    </pre>
+    
+    <pre class="example" title="Example 4: GET Search with Property Filter">
 Request
 GET /types/search?filter[https://schema.org/location]=https://example.org/venue
+
 Response
 {
   "@context": "https://www.w3.org/ns/lws/v1",
@@ -325,15 +299,20 @@ Response
   "next": "https://example.org/types/search?filter[https%3A%2F%2Fschema.org%2Flocation]=https%3A%2F%2Fexample.org%2Fvenue&amp;page=2"
 }
     </pre>
-		<pre class="example" title="Example 6: POST search with filters">
+    
+    <pre class="example" title="Example 5: POST Search with Multiple Filters">
 Request
 POST /types/search
 Request Body
 {
   "@context": "https://www.w3.org/ns/lws/v1",
-  "type": ["https://schema.org/Person"],
+  "type": [
+    "https://schema.org/Person",
+    "https://www.w3.org/ns/lws#DataResource"
+  ],
   "https://schema.org/worksFor": "https://example.org/companies/acme-inc"
 }
+
 Response
 {
   "@context": "https://www.w3.org/ns/lws/v1",
@@ -346,26 +325,5 @@ Response
   ]
 }
     </pre>
-		<pre class="example" title="Example 7: POST with multiple filters">
-Request
-POST /types/search
-Request Body
-{
-  "@context": "https://www.w3.org/ns/lws/v1",
-  "type": ["https://schema.org/Event"],
-  "https://schema.org/location": "https://example.org/venue"
-}
-Response
-{
-  "@context": "https://www.w3.org/ns/lws/v1",
-  "type": "ContainerPage",
-  "totalItems": 2,
-  "items": [
-    "https://example.org/data/event-8821",
-    "https://example.org/data/event-9014"
-  ],
-  "next": "https://example.org/types/search?page=2"
-}
-    </pre>
-	</section>
+  </section>
 </section>
