@@ -179,14 +179,13 @@
   "next": "..."
 }
     </pre>
-    <p>Supports query parameter (optional): <code>?type=&lt;URI&gt;</code> (repeatable, AND) to check for the existence of specific types.</p>
-    <p class="note">Clients MUST URL-encode query parameter keys/values.</p>
-    <p>Returns a paginated TypeIndex following LWS pagination. It only lists the unique types that exist within the storage. No other parameters.</p>
+    <p>Returns a paginated <code>TypeIndex</code> following standard LWS pagination. It lists the unique types of resources that currently exist within the storage. This endpoint accepts no query parameters.</p>
   </section>
   
   <section>
     <h4>GET [typeSearchService]</h4>
     <p>Supports query parameters (all optional): <code>?type=&lt;URI&gt;</code> (repeatable, AND), <code>?filter[&lt;propURI&gt;]=&lt;value&gt;</code> (repeatable, AND).</p>
+    <p class="note">Clients MUST URL-encode query parameter keys/values.</p>
     <p>Returns <code>application/lws+json</code>: A paginated <code>ContainerPage</code> of matching LWS Resource URIs. No other parameters.</p>
     <p>If a resource declares multiple types, it MUST be discoverable when querying for any of its declared types.</p>
     <p>Clients MAY use the native LWS classes <code>https://www.w3.org/ns/lws#DataResource</code> or <code>https://www.w3.org/ns/lws#Container</code> as <code>type</code> filters to restrict the search results exclusively to resource instances or containers, respectively.</p>
