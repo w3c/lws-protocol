@@ -148,7 +148,7 @@
     The <code>TypeIndexService</code> provides a server-managed discovery mechanism to locate containers holding specific resource types, while the <code>TypeSearchService</code> allows clients to query for specific resource URIs by type.
   </p>
 	<p>
-    To prevent inadvertent or malicious corruption by clients, these services are strictly populated and managed by the server. To mitigate security and performance risks associated with deep-parsing arbitrary resource bodies (e.g., JSON-LD or RDF documents), servers MUST derive resource types solely from HTTP <code>Link</code> headers provided by the client during resource creation or modification.
+    To prevent inadvertent or malicious corruption by clients, these services are strictly populated and managed by the server. To mitigate security and performance risks associated with deep-parsing arbitrary resource bodies, servers MUST derive resource types solely from HTTP <code>Link</code> headers provided by the client during resource creation or modification.
   </p>
 	<p>
     A server that implements these services MUST advertise the endpoints in the storage description resource using the <code>typeIndexService</code> and <code>typeSearchService</code> properties.
