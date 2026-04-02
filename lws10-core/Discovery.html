@@ -185,19 +185,6 @@
   </section>
   
   <section>
-    <h4>POST [typeIndexService]</h4>
-    <p>MUST support <code>application/lws+json</code> body:</p>
-    <pre class="example">
-{
-  "@context": "https://www.w3.org/ns/lws/v1"
-}
-    </pre>
-    <p>Returns everything in the type index (same as GET).</p>
-    <p>Optional filters: <code>type</code> array of URIs (AND).</p>
-    <p>Returns paginated TypeIndex of matching types. No other parameters.</p>
-  </section>
-  
-  <section>
     <h4>GET [typeSearchService]</h4>
     <p>Supports query parameters (all optional): <code>?type=&lt;URI&gt;</code> (repeatable, AND), <code>?filter[&lt;propURI&gt;]=&lt;value&gt;</code> (repeatable, AND).</p>
     <p>Returns <code>application/lws+json</code>: A paginated <code>ContainerPage</code> of matching LWS Resource URIs. No other parameters.</p>
