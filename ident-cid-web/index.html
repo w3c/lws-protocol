@@ -444,7 +444,8 @@
     <p>
       Concretely, whenever a <a href="#Server">Server</a> receives an HTTP request containing a valid <code>Origin</code> header [[!RFC6454]],
       the server MUST respond with the appropriate <code>Access-Control-*</code> header fields as specified in the CORS protocol [[!FETCH]].
-      A <a href="#Server">Server</a> MUST also support the HTTP <code>OPTIONS</code> method [[!RFC9110]] such that it can respond appropriately to CORS preflight requests.
+      When serving a response with dynamically generated CORS headers based on the request's origin, a Server MUST include a <code>Vary: Origin</code> header field in the response to ensure proper caching behavior [[!RFC9110]].
+      <!-- A <a href="#Server">Server</a> MUST also support the HTTP <code>OPTIONS</code> method [[!RFC9110]] such that it can respond appropriately to CORS preflight requests. -->
     </p>
 
   </section>
