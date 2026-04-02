@@ -237,7 +237,7 @@ Response
     
     <pre class="example" title="Example 2: GET Search for Instances (Using DataResource filter)">
 Request
-GET /types/search?type=https%3A%2F%2Fschema.org%2FPerson&amp;type=https%3A%2F%2Fwww.w3.org%2Fns%2Flws%23DataResource
+GET /types/search?type=https://schema.org/Person&amp;type=https://www.w3.org/ns/lws#DataResource
 
 Response
 {
@@ -249,13 +249,13 @@ Response
     "https://example.org/data/person-4873",
     "https://example.org/data/person-5882"
   ],
-  "next": "https://example.org/types/search?type=https%3A%2F%2Fschema.org%2FPerson&amp;type=https%3A%2F%2Fwww.w3.org%2Fns%2Flws%23DataResource&amp;page=2"
+  "next": "https://example.org/types/search?type=https://schema.org/Person&amp;type=https://www.w3.org/ns/lws#DataResource&amp;page=2"
 }
     </pre>
     
     <pre class="example" title="Example 3: GET Search for Containers (Using Container filter)">
 Request
-GET /types/search?type=https%3A%2F%2Fschema.org%2FPerson&amp;type=https%3A%2F%2Fwww.w3.org%2Fns%2Flws%23Container
+GET /types/search?type=https://schema.org/Person&amp;type=https://www.w3.org/ns/lws#Container
 
 Response
 {
@@ -282,7 +282,7 @@ Response
     "https://example.org/data/event-123",
     "https://example.org/data/event-456"
   ],
-  "next": "https://example.org/types/search?filter[https%3A%2F%2Fschema.org%2Flocation]=https%3A%2F%2Fexample.org%2Fvenue&amp;page=2"
+  "next": "https://example.org/types/search?filter[https://schema.org/location]=https://example.org/venue&amp;page=2"
 }
     </pre>
     
