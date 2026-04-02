@@ -43,7 +43,7 @@
 
   <section id="abstract">
     <p>
-      HTTP URIs form the foundation of the Web. HTTP URIs are dereferenceable by any standard HTTP client without additional infrastructure.
+      HTTP URLs form the foundation of the Web. HTTP URLs are dereferenceable by any standard HTTP client without additional infrastructure.
       This specification defines an HTTP-based Controlled Identifier [[CID-1.0]] Profile for Agent Identification on the Web.
     </p>
   </section>
@@ -56,14 +56,14 @@
   <section id="introduction" class="informative">
     <h2>Introduction</h2>
     <p>
-      HTTP URIs form the foundation of the Web. Importantly, HTTP URIs are dereferenceable by any standard HTTP client without additional infrastructure.
+      HTTP URLs form the foundation of the Web. Importantly, HTTP URLs are dereferenceable by any standard HTTP client without additional infrastructure.
       This specification defines an HTTP-based Controlled Identifier (<abbr title="Controlled Identifier">CID</abbr>) [[CID-1.0]] Profile for Agent Identification on the Web.
     </p>
     <p>
-      A CID is a URI.
+      A CID is a URL.
       Dereferencing a CID yields the CID document that may detail, e.g., the CID's verification methods or its controller.
       How exactly a CID is to be derefenced remains unspecified by [[CID-1.0]].
-      It depends on the particular type of URI used as the CID.
+      It depends on the particular type of URL used as the CID.
     </p>
     <p>
       To achieve interoperability in CID-based agent identification and subsequent authentication on the Web, implementations of Clients and Servers require a common mechanism to dereference an agent's CID.
@@ -119,7 +119,7 @@
         </dd>
         <dt id="agent-identifier">agent identifier</dt>
         <dd>
-          An HTTP URI identifying an agent.
+          An HTTP URL identifying an agent.
         </dd>
       </dl>
       </p>
@@ -152,7 +152,7 @@
 
           <dl rel="skos:hasTopConcept">
             <dt about="#Agent-Document" property="skos:prefLabel" rel="skos:broadMatch" resource="spec:Content" typeof="skos:Concept"><dfn id="Agent-Document"><a class="self-link" href="#Agent-Document"></a>Web-CID Agent Document</dfn></dt>
-            <dd about="#Agent-Document" property="skos:definition">A CID document that describes an agent identified by an HTTP URI.</dd>
+            <dd about="#Agent-Document" property="skos:definition">A CID document that describes an agent identified by an HTTP URL.</dd>
             <dt about="#Server" property="skos:prefLabel" rel="skos:broadMatch" resource="spec:RespondingAgent" typeof="skos:Concept"><dfn id="Server"><a class="self-link" href="#Server"></a>Server</dfn></dt>
             <dd about="#Server" property="skos:definition">A Server that responds to HTTP requests to provide an Web-CID Agent Document.</dd>
             <dt about="#Client" property="skos:prefLabel" rel="skos:broadMatch" resource="spec:Consumer" typeof="skos:Concept"><dfn id="Client"><a class="self-link" href="#Client"></a>Client</dfn></dt>
@@ -182,12 +182,12 @@
     <h2>Agent Identifier</h2>
 
     <p>
-      An <a href="#agent">agent</a> and a <a href="#Agent-Document">Web-CID Agent Document</a> are two distinct resources [[WEBARCH]], which cannot be identified by the same URI at the same time.
+      An <a href="#agent">agent</a> and a <a href="#Agent-Document">Web-CID Agent Document</a> are two distinct resources [[WEBARCH]], which cannot be identified by the same URL at the same time.
       This specification thus distinguishes between an <a href="#agent-identifier">agent identifier</a> and an <a href="#Agent-Document">Web-CID Agent Document's</a> identifier.
       Importantly, the two identifiers denote different things:
     <ul>
-      <li>An <a href="#agent-identifier">agent identifier</a> is an HTTP URI identifying an agent [[!URI]].</li>
-      <li>An <a href="#Agent-Document">Web-CID Agent Document's</a> identifier is an HTTP URI identifying the corresponding information resource [[!WEBARCH]], i.e., the document describing the agent.</li>
+      <li>An <a href="#agent-identifier">agent identifier</a> is an HTTP URL identifying an agent [[!URL]].</li>
+      <li>An <a href="#Agent-Document">Web-CID Agent Document's</a> identifier is an HTTP URL identifying the corresponding information resource [[!WEBARCH]], i.e., the document describing the agent.</li>
     </ul>
     </p>
 
@@ -196,7 +196,7 @@
       A <a href="#Client">Client</a> then <a href="#validating">validates</a> the corresponding Web-CID Agent Document to be indeed authoritative for the expected agent identifier.
     </p>
 
-    <p> An <a href="#agent-identifier">agent identifier</a> <span>SHOULD</span> be an HTTP URI that includes a fragment [[!URI]].</p>
+    <p> An <a href="#agent-identifier">agent identifier</a> <span>SHOULD</span> be an HTTP URL that includes a fragment [[!URL]].</p>
     <p>
       When a <a href="#Server">Server</a> receives an HTTP request targeting an <a href="#agent-identifier">agent identifier</a> that does not include a fragment, the <a href="#Server">Server</a> MUST respond with a redirect and provide the corresponding <a href="#Agent-Document">Web-CID Agent Document</a> identifier in the response's <code>Location</code> header field.
     </p>
@@ -215,7 +215,7 @@
       It describes which verification methods might be used to make assertions about its <code>primaryTopic</code>, the agent.
       Such assertions can be used as authentication credentials, e.g., ID tokens [[OPENID-CONNECT-CORE]], SAML assertions [[SAML2-CORE]], or custom JSON Web Tokens [[RFC7519]], to authenticate an agent.
     </p>
-    <aside class="example" title="Web-CID Agent Document: a CID document describing an agent using HTTP URIs.">
+    <aside class="example" title="Web-CID Agent Document: a CID document describing an agent using HTTP URLs.">
       <pre class="json">
 {
   "@context": [ 
@@ -274,7 +274,7 @@
           The CID specification [[!CID-1.0]] defines the <a href="#cid-subject">subject</a> of a <a href="#cid-document">CID document</a> to be identified by the CID document's <a href="#cid-base-id">base identifier</a> which also MUST be the same as the <a href="#cid-canonical-url">canonical URL</a> to retrieve the CID document from.
         </p>
         <p>
-          This means that the URI identifying the <a href="#cid-subject">subject</a> is the same as the URL of the <a href="#cid-document">CID document</a>.
+          This means that the URL identifying the <a href="#cid-subject">subject</a> is the same as the URL of the <a href="#cid-document">CID document</a>.
           When distinguishing between an agent and a CID document describing the agent, this then means that the subject of a CID document is the CID document itself.
           The base identifier, the canonical URL of the CID document, cannot identify an agent at the same time.
         </p>
@@ -374,7 +374,7 @@
     <div datatype="rdf:HTML" property="schema:description">
       <p>
         <span about="" id="server-http" rel="spec:requirement" resource="#server-http"><a class="self-link" href="#server-http"></a><span property="spec:statement">A <a rel="spec:requirementSubject" resource="#Server" href="#Server">Server</a> <span rel="spec:requirementLevel" resource="spec:MUST">MUST</span> conform to <cite>HTTP Semantics</cite> [[!RFC9110]].</span></span>
-        <span about="" id="server-tls-https" rel="spec:requirement" resource="#server-tls-https"><a class="self-link" href="#server-tls-https"></a><span property="spec:statement">A <a rel="spec:requirementSubject" resource="#Server" href="#Server">Server</a> <span rel="spec:requirementLevel" resource="spec:MUST">MUST</span> use TLS connections through the <code>https</code> URI scheme in order to secure the communication with <a href="#Client">Clients</a>.</span></span>
+        <span about="" id="server-tls-https" rel="spec:requirement" resource="#server-tls-https"><a class="self-link" href="#server-tls-https"></a><span property="spec:statement">A <a rel="spec:requirementSubject" resource="#Server" href="#Server">Server</a> <span rel="spec:requirementLevel" resource="spec:MUST">MUST</span> use TLS connections through the <code>https</code> URL scheme in order to secure the communication with <a href="#Client">Clients</a>.</span></span>
       </p>
       <p>
         If a <a href="#Server">Server</a> provides redirects from an <a href="#agent-identifier">agent identifier</a> to a corresponding <a href="#Agent-Document">Web-CID Agent Document</a>, then the <a href="#Server">Server</a> <span>SHOULD</span> use a <code>303</code> status code and provide the URL of the <a href="#Agent-Document">Web-CID Agent Document</a> in the <code>Location</code> header field.
@@ -418,23 +418,23 @@
     <h4 id="dereferencing">Dereferencing an Agent Identifier</h4>
 
     <p>
-      If a <a href="#Client">Client</a> does not expect a given HTTP URI to be an <a href="#agent-identifier">agent identifier</a>, the <a href="#Client">Client</a> derferences the URI as usual [[!RFC9110]][[!CID-1.0]].
+      If a <a href="#Client">Client</a> does not expect a given HTTP URL to be an <a href="#agent-identifier">agent identifier</a>, the <a href="#Client">Client</a> derferences the URL as usual [[!RFC9110]][[!CID-1.0]].
     </p>
 
     <p>
-      If a <a href="#Client">Client</a> expects a given HTTP URI to be an <a href="#agent-identifier">agent identifier</a>, dereferencing that identifier is expected to yield its <i>corresponding <a href="#Agent-Document">Web-CID Agent Document</a></i>:
+      If a <a href="#Client">Client</a> expects a given HTTP URL to be an <a href="#agent-identifier">agent identifier</a>, dereferencing that identifier is expected to yield its <i>corresponding <a href="#Agent-Document">Web-CID Agent Document</a></i>:
     <ul>
       <li>
         <p>
-          If the <a href="#agent-identifier">agent identifier</a> includes a fragment, a <a href="#Client">Client</a> strips the fragment from the HTTP URI as usual [[!RFC9110]].
-          The <a href="#Client">Client</a> then dispatches an HTTP request to the resulting URI.
+          If the <a href="#agent-identifier">agent identifier</a> includes a fragment, a <a href="#Client">Client</a> strips the fragment from the HTTP URL as usual [[!RFC9110]].
+          The <a href="#Client">Client</a> then dispatches an HTTP request to the resulting URL.
         </p>
       </li>
       <li>
         <p>
           If the <a href="#agent-identifier">agent identifier</a> does not include a fragment, the <a href="#Client">Client</a> checks that the <a href="#Server">Server</a> does not conflate the agent with its corresponding <a href="#Agent-Document">Web-CID Agent Document</a>:
-          When dereferencing this URI, if the <a href="#Server">Server</a> responds with a <code>200</code> status code directly (implying the URI identifies the document itself), the <a href="#Client">Client</a> <span>MUST</span> reject the response and provide a client-defined error.
-          The <a href="#Client">Client</a> <span>MUST</span> only accept a redirect response (e.g., <code>303</code> status code) that provides a distinct URI to the <a href="#Agent-Document">Web-CID Agent Document</a> in the <code>Location</code> header field.
+          When dereferencing this URL, if the <a href="#Server">Server</a> responds with a <code>200</code> status code directly (implying the URL identifies the document itself), the <a href="#Client">Client</a> <span>MUST</span> reject the response and provide a client-defined error.
+          The <a href="#Client">Client</a> <span>MUST</span> only accept a redirect response (e.g., <code>303</code> status code) that provides a distinct URL to the <a href="#Agent-Document">Web-CID Agent Document</a> in the <code>Location</code> header field.
         </p>
       </li>
     </ul>
@@ -465,7 +465,7 @@
     </p>
 
     <p>
-      In addition, a <a href="#Client">Client</a> <span>MUST</span> verify that the value of the <code>primaryTopic</code> property for the <a href="#Agent-Document">Web-CID Agent Document</a> matches the expected <a href="#agent-identifier">agent identifier</a>, i.e., the exact URI inlcuding any fragment,
+      In addition, a <a href="#Client">Client</a> <span>MUST</span> verify that the value of the <code>primaryTopic</code> property for the <a href="#Agent-Document">Web-CID Agent Document</a> matches the expected <a href="#agent-identifier">agent identifier</a>, i.e., the exact URL inlcuding any fragment,
       to validate that the obtained document is indeed authoritative for the given agent identifier.</span>
     </p>
 
@@ -497,7 +497,7 @@
       <li>
         <strong>Redirects:</strong> A <a href="#Client">Client</a> that chooses to follow redirects assumes the risk of the redirecting <a href="#Server">Server</a> being mistakingly or maliciously configured and thus points to a malicious <a href="#Server">Server</a>.
         In such a case, the <a href="#Client">Client</a> might obtain a valid <a href="#Agent-Document">Web-CID Agent Document</a> and validate it to be authoritative despite it being malicious.
-        This risk can be mitigated by a <a href="#Client">Client</a> by not following redirects, which means to only accept <a href="#agent-identifier">agent identifiers</a> that include a fragment [[URI]].
+        This risk can be mitigated by a <a href="#Client">Client</a> by not following redirects, which means to only accept <a href="#agent-identifier">agent identifiers</a> that include a fragment [[URL]].
       </li>
       <li>
         <strong>Reliance on DNS:</strong> As for any HTTP-based communication that relies on DNS, there exists the risk of a malicious actor being able to modify the DNS record of a particular domain name entry to point to a malicious <a href="#Server">Server</a>.
