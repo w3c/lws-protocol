@@ -1,0 +1,350 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <title>Linked Web Storage Vocabulary</title>
+    <script class="remove" src="https://www.w3.org/Tools/respec/respec-w3c"></script>
+    <script>
+        function remove_status_remark() {
+            const sotd = document.getElementById("sotd");
+            const p = sotd.getElementsByTagName('p')[0];
+            sotd.removeChild(p);
+        }
+    </script>
+    <script class="remove">
+        // See https://respec.org/docs/ for how to configure ReSpec
+        var respecConfig = {
+            specStatus: "ED",
+            shortName: "lws-vocab",
+            editors: [{
+                name: "Jesse Wright"
+            }, {
+                name: "Erich Bremer"
+            }],
+            authors: [{
+                name: "Laurens Debackere"
+            }],
+            github: "w3c/lws-protocol",
+            shortName: "@@",
+            xref: ["web-platform"],
+            group: "lws",
+            localBiblio: {
+                "lws-protocol": {
+                    title: "LWS Protocol",
+                    href: "https://w3c.github.io/lws-protocol/lws10-core/",
+                    publisher: "W3C",
+                },
+            }
+        };
+    </script>
+    <style type="text/css">
+        dl.terms dt {
+            float: left;
+            clear: left;
+            width: 10vw;
+        }
+
+        dl.terms dd {
+            margin-left: 15vw;
+        }
+
+        dl.terms dd:after {
+            content: '';
+            display: block;
+            clear: both;
+            margin-bottom: 5px;
+        }
+
+        table.rdfs-definition td {
+            vertical-align: top;
+            margin-right: 2em;
+        }
+
+        .bold {
+            font-weight: bold;
+        }
+
+        /* code {
+        color: red;
+      } */
+
+        .term_definitions section {
+            border-bottom-style: solid;
+            border-bottom-width: 1px;
+            border-bottom-color: darkgrey;
+        }
+
+        .annoy {
+            background: hsla(40, 100%, 50%, 0.95);
+            color: black;
+            padding: .75em 1em;
+            border: red;
+            border-style: solid none;
+            box-shadow: 0 2px 8px black;
+            text-align: center;
+        }
+
+        summary {
+            font-weight: normal !important;
+        }
+    </style>
+    <link href="vocabulary.jsonld" rel="alternate" type="application/ld+json">
+    <link href="vocabulary.ttl" rel="alternate" type="text/turtle">
+</head>
+
+<body>
+    <section id="abstract">
+        <p>This document describes the <span property="dc:title" id="title">Linked Web Storage Vocabulary</span>, i.e.,
+            the <span property="dc:description" id="description">RDFS [[RDF-SCHEMA]] vocabulary used by the Linked Web Storage Protocol [[lws-protocol]]</span>.
+        </p>
+        <p>Alternate versions of the vocabulary definition exist in
+            <a rel="alternate" href="vocabulary.ttl">Turtle</a> and
+            <a rel="alternate" href="vocabulary.jsonld">JSON-LD</a>.
+        </p>
+        <dl>
+            <dt>Published:</dt>
+            <dd><time property="dc:date" id="time">2026-03-29</time></dd>
+            <dt>Version Info:</dt>
+            <dd>1.0</dd>
+            <dt id="see_also">See Also: <a href="https://www.w3.org/TR/lws-protocol/">https://www.w3.org/TR/lws-protocol/</a></dt>
+        </dl>
+    </section>
+    <section id="sotd">
+        <p>
+            This vocabulary has been defined by the <a href="https://www.w3.org/groups/wg/lws/">W3C Linked Web Storage Working Group</a> and provides
+            the official RDFS vocabulary for <a href="https://w3c.github.io/lws-protocol/lws10-core/">the Linked Web Storage Protocol</a>.
+            Comments regarding this document are welcome. Please file issues
+            directly on <a href="https://github.com/w3c/lws-protocol/issues">GitHub</a>.
+        </p>
+    </section>
+
+    <section id="conformance"></section>
+    <section>
+        <h2>Namespaces</h2>
+        <p>This specification makes use of the following namespaces:</p>
+        <dl class="terms" id="namespaces">
+            <dt><code>lws</code></dt>
+            <dd><code>https://www.w3.org/ns/lws#</code></dd>
+            <dt><code>as</code></dt>
+            <dd><code>https://www.w3.org/ns/activitystreams#</code></dd>
+            <dt><code>dc</code></dt>
+            <dd><code>http://purl.org/dc/terms/</code></dd>
+            <dt><code>owl</code></dt>
+            <dd><code>http://www.w3.org/2002/07/owl#</code></dd>
+            <dt><code>rdf</code></dt>
+            <dd><code>http://www.w3.org/1999/02/22-rdf-syntax-ns#</code></dd>
+            <dt><code>rdfs</code></dt>
+            <dd><code>http://www.w3.org/2000/01/rdf-schema#</code></dd>
+            <dt><code>xsd</code></dt>
+            <dd><code>http://www.w3.org/2001/XMLSchema#</code></dd>
+        </dl>
+    </section>
+
+    <section>
+        <h2><code>@context</code> files</h2>
+        <p>The following <code>@context</code> files make use of the terms defined in this specification:</p>
+        <ul id="contexts">
+            <li><a href="https://www.w3.org/ns/lws/v1"><code>https://www.w3.org/ns/lws/v1</code></a>
+                <details>
+                    <summary>term list</summary>
+                    <ul>
+                        <li><a href="#8821fe640fb97946823030bc45b4fd56e0e7b8a05d36284295acc670761ed10a"><code>mediaType<code></code></code></a></li>
+                        <li><a href="#7705770160b173ebe124d6db3ffe6c2af9967bcaa2bdf1c9a30b260f3fd8cadd"><code>totalItems<code></code></code></a></li>
+                        <li><a href="#Container"><code>Container<code></code></code></a></li>
+                        <li><a href="#DataResource"><code>DataResource<code></code></code></a></li>
+                        <li><a href="#OpenIdProvider"><code>OpenIdProvider<code></code></code></a></li>
+                        <li><a href="#PreferLinkRelations"><code>PreferLinkRelations<code></code></code></a></li>
+                        <li><a href="#Storage"><code>Storage<code></code></code></a></li>
+                        <li><a href="#StorageDescription"><code>StorageDescription<code></code></code></a></li>
+                        <li><a href="#capability"><code>capability<code></code></code></a></li>
+                        <li><a href="#items"><code>items<code></code></code></a></li>
+                        <li><a href="#service"><code>service<code></code></code></a></li>
+                        <li><a href="#serviceEndpoint"><code>serviceEndpoint<code></code></code></a></li>
+                        <li><a href="#storageDescription"><code>storageDescription<code></code></code></a></li>
+                    </ul>
+                </details>
+            </li>
+        </ul>
+    </section>
+
+    <section id="term_definitions">
+        <h2>Term definitions</h2>
+
+        <section id="property_definitions" class="term_definitions">
+            <h3>Property definitions</h3>
+            <p>The following are property definitions in the <code>lws</code> namespace.</p>
+            <section id="items">
+                <h4><code>items</code></h4>
+                <p><em>items</em></p>
+                <div>The list of resources contained in a container.</div>
+                <dl class="terms">
+                    <dt>Domain:</dt>
+                    <dd><a href="#Container"><code>Container</code></a></dd>
+                </dl>
+                <dl class="terms">
+                    <dt>Relevant <code>@context</code>:</dt>
+                    <dd><a href="https://www.w3.org/ns/lws/v1"><code>https://www.w3.org/ns/lws/v1</code></a></dd>
+                </dl>
+            </section>
+            <section id="7705770160b173ebe124d6db3ffe6c2af9967bcaa2bdf1c9a30b260f3fd8cadd">
+                <h4><code>totalItems</code></h4>
+                <p><em>total items</em></p>
+                <div>The total number of items in a container.</div>
+                <p class="note">
+                    <b>This term is formally defined in another vocabulary</b>
+                    (as <a href="https://www.w3.org/ns/activitystreams#totalItems">as:totalItems</a>), but is frequently used with this vocabulary and has been
+                    included to aid readability of this document.
+                </p>
+                <dl class="terms">
+                    <dt>Relevant <code>@context</code>:</dt>
+                    <dd><a href="https://www.w3.org/ns/lws/v1"><code>https://www.w3.org/ns/lws/v1</code></a></dd>
+                </dl>
+            </section>
+            <section id="8821fe640fb97946823030bc45b4fd56e0e7b8a05d36284295acc670761ed10a">
+                <h4><code>mediaType</code></h4>
+                <p><em>media type</em></p>
+                <div>The media type of a data resource.</div>
+                <p class="note">
+                    <b>This term is formally defined in another vocabulary</b>
+                    (as <a href="https://www.w3.org/ns/activitystreams#mediaType">as:mediaType</a>), but is frequently used with this vocabulary and has been
+                    included to aid readability of this document.
+                </p>
+                <dl class="terms">
+                    <dt>Relevant <code>@context</code>:</dt>
+                    <dd><a href="https://www.w3.org/ns/lws/v1"><code>https://www.w3.org/ns/lws/v1</code></a></dd>
+                </dl>
+            </section>
+            <section id="capability">
+                <h4><code>capability</code></h4>
+                <p><em>capability</em></p>
+                <div>A capability supported by the storage.</div>
+                <dl class="terms">
+                    <dt>Domain:</dt>
+                    <dd><a href="#Storage"><code>Storage</code></a></dd>
+                </dl>
+                <dl class="terms">
+                    <dt>Relevant <code>@context</code>:</dt>
+                    <dd><a href="https://www.w3.org/ns/lws/v1"><code>https://www.w3.org/ns/lws/v1</code></a></dd>
+                </dl>
+            </section>
+            <section id="service">
+                <h4><code>service</code></h4>
+                <p><em>service</em></p>
+                <div>A service associated with the storage.</div>
+                <dl class="terms">
+                    <dt>Domain:</dt>
+                    <dd><a href="#Storage"><code>Storage</code></a></dd>
+                </dl>
+                <dl class="terms">
+                    <dt>Relevant <code>@context</code>:</dt>
+                    <dd><a href="https://www.w3.org/ns/lws/v1"><code>https://www.w3.org/ns/lws/v1</code></a></dd>
+                </dl>
+            </section>
+            <section id="serviceEndpoint">
+                <h4><code>serviceEndpoint</code></h4>
+                <p><em>service endpoint</em></p>
+                <div>The URI of a service endpoint.</div>
+                <dl class="terms">
+                    <dt>Range:</dt>
+                    <dd><code>xsd:anyURI</code></dd>
+                </dl>
+                <dl class="terms">
+                    <dt>Relevant <code>@context</code>:</dt>
+                    <dd><a href="https://www.w3.org/ns/lws/v1"><code>https://www.w3.org/ns/lws/v1</code></a></dd>
+                </dl>
+            </section>
+            <section id="storageDescription">
+                <h4><code>storageDescription</code></h4>
+                <p><em>storage description</em></p>
+                <div>Link relation pointing to a storage description resource.</div>
+                <dl class="terms">
+                    <dt>Range:</dt>
+                    <dd><code>xsd:anyURI</code></dd>
+                </dl>
+                <dl class="terms">
+                    <dt>Relevant <code>@context</code>:</dt>
+                    <dd><a href="https://www.w3.org/ns/lws/v1"><code>https://www.w3.org/ns/lws/v1</code></a></dd>
+                </dl>
+            </section>
+            <section id="PreferLinkRelations">
+                <h4><code>PreferLinkRelations</code></h4>
+                <p><em>Prefer Link Relations</em></p>
+                <div>A preference URI for including or omitting specific link relations in responses.</div>
+                <dl class="terms">
+                    <dt>Relevant <code>@context</code>:</dt>
+                    <dd><a href="https://www.w3.org/ns/lws/v1"><code>https://www.w3.org/ns/lws/v1</code></a></dd>
+                </dl>
+            </section>
+        </section>
+
+        <section id="class_definitions" class="term_definitions">
+            <h2>Class definitions</h2>
+            <p>The following are class definitions in the <code>lws</code> namespace.</p>
+            <section id="Container">
+                <h4><code>Container</code></h4>
+                <p><em>Container</em></p>
+                <div>A resource that contains other resources.</div>
+                <dl class="terms">
+                    <dt>Domain of:</dt>
+                    <dd><a href="#items"><code>items</code></a>, <a href="#7705770160b173ebe124d6db3ffe6c2af9967bcaa2bdf1c9a30b260f3fd8cadd"><code>totalItems</code></a></dd>
+                </dl>
+                <dl class="terms">
+                    <dt>Relevant <code>@context</code>:</dt>
+                    <dd><a href="https://www.w3.org/ns/lws/v1"><code>https://www.w3.org/ns/lws/v1</code></a></dd>
+                </dl>
+            </section>
+            <section id="DataResource">
+                <h4><code>DataResource</code></h4>
+                <p><em>Data Resource</em></p>
+                <div>A data-bearing resource such as a document, image, or structured data file.</div>
+                <dl class="terms">
+                    <dt>Domain of:</dt>
+                    <dd><a href="#8821fe640fb97946823030bc45b4fd56e0e7b8a05d36284295acc670761ed10a"><code>mediaType</code></a></dd>
+                </dl>
+                <dl class="terms">
+                    <dt>Relevant <code>@context</code>:</dt>
+                    <dd><a href="https://www.w3.org/ns/lws/v1"><code>https://www.w3.org/ns/lws/v1</code></a></dd>
+                </dl>
+            </section>
+            <section id="Storage">
+                <h4><code>Storage</code></h4>
+                <p><em>Storage</em></p>
+                <div>A Linked Web Storage instance.</div>
+                <dl class="terms">
+                    <dt>Domain of:</dt>
+                    <dd><a href="#capability"><code>capability</code></a>, <a href="#service"><code>service</code></a></dd>
+                </dl>
+                <dl class="terms">
+                    <dt>Relevant <code>@context</code>:</dt>
+                    <dd><a href="https://www.w3.org/ns/lws/v1"><code>https://www.w3.org/ns/lws/v1</code></a></dd>
+                </dl>
+            </section>
+            <section id="StorageDescription">
+                <h4><code>StorageDescription</code></h4>
+                <p><em>Storage Description</em></p>
+                <div>A service that provides a storage description resource.</div>
+                <dl class="terms">
+                    <dt>Relevant <code>@context</code>:</dt>
+                    <dd><a href="https://www.w3.org/ns/lws/v1"><code>https://www.w3.org/ns/lws/v1</code></a></dd>
+                </dl>
+            </section>
+            <section id="OpenIdProvider">
+                <h4><code>OpenIdProvider</code></h4>
+                <p><em>OpenID Provider</em></p>
+                <p>See the <a href="https://www.w3.org/TR/lws-authn-openid/">formal definition of the term</a>.</p>
+                <div>An OpenID Connect identity provider service.</div>
+                <dl class="terms">
+                    <dt>Relevant <code>@context</code>:</dt>
+                    <dd><a href="https://www.w3.org/ns/lws/v1"><code>https://www.w3.org/ns/lws/v1</code></a></dd>
+                </dl>
+            </section>
+        </section>
+
+
+    </section>
+
+
+</body>
+
+</html>

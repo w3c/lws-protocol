@@ -1,0 +1,43 @@
+name: Build Vocabulary
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - "lws10-vocab/vocabulary.yml"
+      - "lws10-vocab/template.html"
+
+permissions:
+  contents: write
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: lws10-vocab
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+          cache: "npm"
+          cache-dependency-path: lws10-vocab/package-lock.json
+
+      - run: npm ci
+
+      - run: npx yml2vocab -v vocabulary -t template.html -c && mv vocabulary.html index.html
+
+      - name: Commit generated vocabulary files
+        working-directory: .
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add lws10-vocab/index.html lws10-vocab/vocabulary.ttl lws10-vocab/vocabulary.jsonld lws10-vocab/vocabulary.context.jsonld
+          if git diff --cached --quiet; then
+            echo "No changes to commit"
+          else
+            git commit -m "build(vocab): regenerate vocabulary artifacts"
+            git push
+          fi

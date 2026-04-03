@@ -1,0 +1,121 @@
+@prefix lws: <https://www.w3.org/ns/lws#> .
+@prefix as: <https://www.w3.org/ns/activitystreams#> .
+@prefix dc: <http://purl.org/dc/terms/> .
+@prefix owl: <http://www.w3.org/2002/07/owl#> .
+@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+@prefix vs: <http://www.w3.org/2003/06/sw-vocab-status/ns#> .
+
+# Ontology definition
+lws: a owl:Ontology ;
+    dc:title """Linked Web Storage Vocabulary"""@en ;
+    dc:description """RDFS [[RDF-SCHEMA]] vocabulary used by the Linked Web Storage Protocol [[lws-protocol]]"""^^rdf:HTML ;
+    rdfs:seeAlso <https://www.w3.org/TR/lws-protocol/> ;
+    dc:date "2026-03-29"^^xsd:date ;
+.
+
+# Property definitions
+lws:items a rdf:Property ;
+    rdfs:domain lws:Container ;
+    rdfs:label "items" ;
+    rdfs:comment """<div>The list of resources contained in a container.</div>"""^^rdf:HTML ;
+    rdfs:isDefinedBy <https://www.w3.org/ns/lws#> ;
+    vs:term_status "stable" ;
+.
+
+lws:capability a rdf:Property ;
+    rdfs:domain lws:Storage ;
+    rdfs:label "capability" ;
+    rdfs:comment """<div>A capability supported by the storage.</div>"""^^rdf:HTML ;
+    rdfs:isDefinedBy <https://www.w3.org/ns/lws#> ;
+    vs:term_status "stable" ;
+.
+
+lws:service a rdf:Property ;
+    rdfs:domain lws:Storage ;
+    rdfs:label "service" ;
+    rdfs:comment """<div>A service associated with the storage.</div>"""^^rdf:HTML ;
+    rdfs:isDefinedBy <https://www.w3.org/ns/lws#> ;
+    vs:term_status "stable" ;
+.
+
+lws:serviceEndpoint a rdf:Property, owl:DatatypeProperty ;
+    rdfs:range xsd:anyURI ;
+    rdfs:label "service endpoint" ;
+    rdfs:comment """<div>The URI of a service endpoint.</div>"""^^rdf:HTML ;
+    rdfs:isDefinedBy <https://www.w3.org/ns/lws#> ;
+    vs:term_status "stable" ;
+.
+
+lws:storageDescription a rdf:Property, owl:DatatypeProperty ;
+    rdfs:range xsd:anyURI ;
+    rdfs:label "storage description" ;
+    rdfs:comment """<div>Link relation pointing to a storage description resource.</div>"""^^rdf:HTML ;
+    rdfs:isDefinedBy <https://www.w3.org/ns/lws#> ;
+    vs:term_status "stable" ;
+.
+
+lws:PreferLinkRelations a rdf:Property ;
+    rdfs:label "Prefer Link Relations" ;
+    rdfs:comment """<div>A preference URI for including or omitting specific link relations in responses.</div>"""^^rdf:HTML ;
+    rdfs:isDefinedBy <https://www.w3.org/ns/lws#> ;
+    vs:term_status "stable" ;
+.
+
+# Class definitions
+lws:Container a rdfs:Class ;
+    rdfs:label "Container" ;
+    rdfs:comment """<div>A resource that contains other resources.</div>"""^^rdf:HTML ;
+    rdfs:isDefinedBy <https://www.w3.org/ns/lws#> ;
+    vs:term_status "stable" ;
+.
+
+lws:DataResource a rdfs:Class ;
+    rdfs:label "Data Resource" ;
+    rdfs:comment """<div>A data-bearing resource such as a document, image, or structured data file.</div>"""^^rdf:HTML ;
+    rdfs:isDefinedBy <https://www.w3.org/ns/lws#> ;
+    vs:term_status "stable" ;
+.
+
+lws:Storage a rdfs:Class ;
+    rdfs:label "Storage" ;
+    rdfs:comment """<div>A Linked Web Storage instance.</div>"""^^rdf:HTML ;
+    rdfs:isDefinedBy <https://www.w3.org/ns/lws#> ;
+    vs:term_status "stable" ;
+.
+
+lws:StorageDescription a rdfs:Class ;
+    rdfs:label "Storage Description" ;
+    rdfs:comment """<div>A service that provides a storage description resource.</div>"""^^rdf:HTML ;
+    rdfs:isDefinedBy <https://www.w3.org/ns/lws#> ;
+    vs:term_status "stable" ;
+.
+
+lws:OpenIdProvider a rdfs:Class ;
+    rdfs:label "OpenID Provider" ;
+    rdfs:comment """<div>An OpenID Connect identity provider service.</div>"""^^rdf:HTML ;
+    rdfs:isDefinedBy <https://www.w3.org/TR/lws-authn-openid/>, <https://www.w3.org/ns/lws#> ;
+    vs:term_status "stable" ;
+.
+
+
+
+# Context files and their mentions
+<https://www.w3.org/ns/lws/v1> a jsonld:Context ;
+    schema:mentions
+        as:mediaType,
+        as:totalItems,
+        lws:Container,
+        lws:DataResource,
+        lws:OpenIdProvider,
+        lws:PreferLinkRelations,
+        lws:Storage,
+        lws:StorageDescription,
+        lws:capability,
+        lws:items,
+        lws:service,
+        lws:serviceEndpoint,
+        lws:storageDescription ;
+.
+

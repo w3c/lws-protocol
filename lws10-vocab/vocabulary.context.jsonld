@@ -1,0 +1,41 @@
+{
+    "@context": {
+        "@protected": true,
+        "id": "@id",
+        "type": "@type",
+        "Container": {
+            "@id": "https://www.w3.org/ns/lws#Container",
+            "@context": {
+                "@protected": true,
+                "items": "https://www.w3.org/ns/lws#items",
+                "totalItems": "https://www.w3.org/ns/activitystreams#totalItems"
+            }
+        },
+        "DataResource": {
+            "@id": "https://www.w3.org/ns/lws#DataResource",
+            "@context": {
+                "@protected": true,
+                "mediaType": "https://www.w3.org/ns/activitystreams#mediaType"
+            }
+        },
+        "Storage": {
+            "@id": "https://www.w3.org/ns/lws#Storage",
+            "@context": {
+                "@protected": true,
+                "capability": "https://www.w3.org/ns/lws#capability",
+                "service": "https://www.w3.org/ns/lws#service"
+            }
+        },
+        "StorageDescription": "https://www.w3.org/ns/lws#StorageDescription",
+        "OpenIdProvider": "https://www.w3.org/ns/lws#OpenIdProvider",
+        "serviceEndpoint": {
+            "@id": "https://www.w3.org/ns/lws#serviceEndpoint",
+            "@type": "http://www.w3.org/2001/XMLSchema#anyURI"
+        },
+        "storageDescription": {
+            "@id": "https://www.w3.org/ns/lws#storageDescription",
+            "@type": "http://www.w3.org/2001/XMLSchema#anyURI"
+        },
+        "PreferLinkRelations": "https://www.w3.org/ns/lws#PreferLinkRelations"
+    }
+}
