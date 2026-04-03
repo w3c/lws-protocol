@@ -175,7 +175,10 @@
     "type": ["ODRLAccessPolicy"],
     "action": ["read", "create"],
     "assignee": "https://id.example/agent",
-    "target": ["https://storage.example/projects/"],
+    "target": {
+      "type": "StorageResource",
+      "value": ["https://storage.example/projects/"]
+    },
     "hasPurpose": ["https://purpose.example/collaboration"],
     "constraint": [
       {
@@ -203,7 +206,10 @@
     "type": ["ODRLAccessPolicy"],
     "action": ["read"],
     "assignee": "https://id.example/agent",
-    "target": ["https://storage.example/projects/"],
+    "target": {
+      "type": "StorageResource",
+      "value": ["https://storage.example/projects/"]
+    },
     "hasPurpose": ["https://purpose.example/collaboration"],
     "constraint": [
       {
@@ -473,22 +479,76 @@
         </p>
 
         <p>
-          The <code>target</code> property MUST be a non-empty array of resource identifiers.
-          When a URI is provided that identifies a container, the access applies to all resources
-          that are members of that container or any subcontainers.
+          The <code>target</code> property MUST be an object containing the
+          following properties:
+        </p>
+
+        <ul>
+          <li>
+            <code>type</code> &mdash; a string or URI identifying the type of target matcher.
+          </li>
+          <li>
+            <code>value</code> &mdash; a non-empty array of strings used to identify
+            the target resources.
+          </li>
+        </ul>
+
+        <p>
+          This specification defines the following <code>type</code> values for use
+          with target objects:
+        </p>
+
+        <ul>
+          <li>
+            <code>https://www.w3.org/ns/lws#DataResource</code> &mdash; matches
+            resources of type <code>lws:DataResource</code>.
+          </li>
+          <li>
+            <code>https://www.w3.org/ns/lws#Container</code> &mdash; matches
+            resources of type <code>lws:Container</code>.
+          </li>
+          <li>
+            <code>https://www.w3.org/ns/lws#StorageResource</code> &mdash; matches
+            any resource managed by a storage.
+          </li>
+          <li>
+            <code>https://www.w3.org/ns/lws#TypeIndex</code> &mdash; matches
+            resources via a type index lookup.
+          </li>
+        </ul>
+
+        <p>
+          A server MAY support additional type values.
         </p>
 
         <p>
           This property is OPTIONAL.
         </p>
 
-        <pre class="example" title="target property">
+        <pre class="example" title="target property with Resource type">
 {
   "access": {
-    "target": [
-      "https://storage.example/projects/alpha",
-      "https://storage.example/projects/beta"
-    ]
+    "target": {
+      "type": "StorageResource",
+      "value": [
+        "https://storage.example/data/2025",
+        "https://storage.example/data/2026"
+      ]
+    }
+  }
+}
+        </pre>
+
+        <pre class="example" title="target property with TypeIndex type">
+{
+  "access": {
+    "target": {
+      "type": "TypeIndex",
+      "value": [
+        "https://index.example/?type=http%3A%2F%2Ftype.example%2FImage",
+        "https://index.example/?type=http%3A%2F%2Ftype.example%2FPhotoAlbum"
+      ]
+    }
   }
 }
         </pre>
@@ -721,7 +781,10 @@ Link: &lt;https://type.example/Playlist&gt;; rel="type"
   "access": {
     "action": ["read"],
     "assignee": "https://id.example/agent",
-    "target": ["https://storage.example/projects/"],
+    "target": {
+      "type": "StorageResource",
+      "value": ["https://storage.example/projects/"]
+    },
     "constraint": [
       {
         "leftOperand": "dateTime",
