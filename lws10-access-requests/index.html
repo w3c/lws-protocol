@@ -862,17 +862,7 @@ Link: &lt;https://type.example/Playlist&gt;; rel="type"
         <h3>Endpoint Authorization</h3>
 
         <p>
-          A server MUST set appropriate access controls on these endpoints.
-        </p>
-
-        <p>
-          Each endpoint contains <a>access requests</a> and <a>access grants</a> received on
-          behalf of a storage. The
-          server SHOULD filter the content of these containers according to the requester's
-          permission. In general, the storage manager will have the ability to read and delete
-          all resources while other users will only have access to the resources for which they
-          are the assignee. Non-owner users might have the ability to delete access requests
-          that they created.
+          A server MUST require authorization for access to these endpoints.
         </p>
       </section>
 
@@ -950,8 +940,8 @@ Link: &lt;https://type.example/Playlist&gt;; rel="type"
 
       <ul>
         <li>
-          Servers are encouraged to restrict which clients are able to perform POST operations
-          on the <a>access grant</a> endpoint.
+          Servers are encouraged to restrict write access to the <a>access grant</a> endpoint
+          to authorized storage managers and to specific clients.
         </li>
         <li>
           When an agent creates an <a>access request</a>, the server is encouraged to verify
@@ -976,7 +966,9 @@ Link: &lt;https://type.example/Playlist&gt;; rel="type"
           An <a>access request</a> or <a>access grant</a> can reveal sensitive information
           about the resources, agents, and purposes involved. Servers are encouraged to limit
           the visibility of these resources to authorized parties, such as the storage manager
-          and the assignee identified in the document.
+          and the assignee identified in the document. For example, a storage manager might
+          have the ability to read and delete all resources while other agents would only have
+          access to the resources for which they are the assignee.
         </li>
         <li>
           When an <a>access grant</a> includes a client constraint, it is advisable for a
