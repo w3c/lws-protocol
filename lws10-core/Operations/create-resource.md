@@ -14,7 +14,7 @@ The **create resource** operation adds a new [served resource](#dfn-served-resou
 
 **Possible Responses:**
 
-* **Created:** The operation succeeded. The server returns the final identifier of the newly created resource.
+* <strong id="dfn-created">Created:</strong> The operation succeeded. The server returns the final identifier of the newly created resource.
 * **Target Not Found:** The specified target container does not exist.
 * **Not Permitted:** The client's identity is known, but they do not have permission to create resources in this container.
 * **Unknown Requester:** The server does not recognize the client's identity and requires authentication.
