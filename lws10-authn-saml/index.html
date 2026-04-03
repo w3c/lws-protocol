@@ -12,6 +12,7 @@
         shortName: "lws-authn-saml",
         editors: [{
           name: "Jesse Wright",
+          w3cid: "132252",
           company: "University of Oxford",
           companyURL: "https://www.ox.ac.uk/"
         }],
@@ -23,6 +24,14 @@
         github: "w3c/lws-protocol",
         xref: ["web-platform"],
         group: "lws",
+        localBiblio: {
+          "LWS-PROTOCOL": {
+            title: "LWS Protocol",
+            href: "https://www.w3.org/TR/lws-core/",
+            publisher: "W3C",
+            status: "FPWD",
+          },
+        },
       };
     </script>
   </head>
@@ -167,6 +176,13 @@
         A SAML identity provider should support a mechanism to restrict the audience of an authentication credential to a limited set of entities,
         including an authorization server. A client in possession of an authentication credential with no audience restrictions
         should exchange this token for an equivalent audience-restricted token by using, for example, OAuth 2.0 Token Exchange [[RFC8693]].
+      </p>
+    </section>
+    <section id="privacy-considerations" class="informative">
+      <h2>Privacy Considerations</h2>
+
+      <p class="issue" data-number="119">
+        This section needs to be completed.
       </p>
     </section>
   </body>
