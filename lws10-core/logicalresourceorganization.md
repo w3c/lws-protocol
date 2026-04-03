@@ -1,6 +1,6 @@
 ### Container Model
 
-Linked Web Storage organizes resources into containers. A <dfn>container</dfn> is a specialized resource that holds references to other resources, called its members. Containers serve
+Linked Web Storage organizes resources into containers. A <a>container</a> is a specialized resource that holds references to other resources, called its members. Containers serve
 as organizational units, analogous to directories or collections, enabling clients to group, discover, and navigate resources. A container maintains references to its member resources,
 which may comprise both non-container resources and additional container resources, thereby enabling hierarchical formations. Typically, a container holds minimal intrinsic content
 beyond metadata or enumerations of its members; its principal role is to aggregate and structure subordinate resources. The storage system's root is designated as a container, serving
