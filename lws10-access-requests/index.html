@@ -1,0 +1,982 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <title>LWS Access Requests and Access Grants</title>
+    <script src="https://www.w3.org/Tools/respec/respec-w3c" class="remove"></script>
+    <script class='remove'>
+      // See https://respec.org/docs/ for how to configure ReSpec
+      var respecConfig = {
+        specStatus: "ED",
+        shortName: "lws-access-requests",
+        editors: [{
+          name: "Jesse Wright",
+          w3cid: "132252",
+          company: "University of Oxford",
+          companyURL: "https://www.ox.ac.uk/"
+        }],
+        authors: [{
+          name: "Aaron Coburn",
+          company: "Inrupt Inc.",
+          companyURL: "https://www.inrupt.com/"
+        }, {
+          name: "Luke Dary",
+          company: "IBM Corporation",
+          companyURL: "https://www.ibm.com/"
+        }],
+        github: "w3c/lws-protocol",
+        xref: ["web-platform"],
+        group: "lws",
+        maxTocLevel: 2,
+        localBiblio: {
+          "LWS-PROTOCOL": {
+            title: "LWS Protocol",
+            href: "https://www.w3.org/TR/lws-core/",
+            publisher: "W3C",
+            status: "FPWD",
+          },
+        },
+      };
+    </script>
+  </head>
+  <body>
+    <section id="abstract">
+      <p>
+        This document extends Linked Web Storage (LWS) with a mechanism for an agent to request access to
+        resources and for a storage manager to grant access with defined constraints. The access policy
+        profile defined in this document is based on concepts from the
+        <a href="https://www.w3.org/TR/odrl-model/">Open Digital Rights Language</a> (ODRL), including
+        actions, constraints, and assignees.
+      </p>
+    </section>
+    <section id="sotd">
+      <p>
+        This is an unofficial proposal.
+      </p>
+    </section>
+
+    <section id="introduction">
+      <h2>Introduction</h2>
+      <p>
+        Linked Web Storage (LWS) defines a protocol for storing and managing data. This document extends
+        LWS with a mechanism for an agent to request access to resources and for a storage manager to
+        grant access with defined constraints. The endpoints for requesting and granting access act as a
+        type of specialized inbox.
+      </p>
+
+      <p>
+        An agent does not present an <a>access grant</a> to a server as an authorization token.
+        Rather, the <a>access grant</a> serves as a durable record of what was authorized, to whom,
+        and under what constraints. When an <a>access grant</a> is created or revoked (deleted), it
+        is the responsibility of the server to adjust any underlying access policy to account for the
+        change. The interaction between an <a>access grant</a> endpoint and a particular policy
+        enforcement layer is out of scope for
+        this specification.
+      </p>
+
+      <p>
+        The <a>access policy profile</a> defined in this document is based on concepts from the
+        <a href="https://www.w3.org/TR/odrl-model/">Open Digital Rights Language</a> (ODRL), including
+        actions, constraints, and assignees. Other profiles could use a different conceptual framework.
+      </p>
+    </section>
+
+    <section id="conformance"></section>
+
+    <section id="terminology">
+      <h2>Terminology</h2>
+
+      <p>
+        This specification defines the following terms:
+      </p>
+
+      <ul>
+        <li>
+          <dfn>Access Request</dfn> &mdash; a JSON-LD object submitted by an agent, expressing a
+          request to perform specific actions on storage resources, including the desired scope,
+          purposes and constraints.
+        </li>
+        <li>
+          <dfn>Access Grant</dfn> &mdash; a JSON-LD object created by a storage manager, expressing
+          an ability for an agent to perform specific actions on storage resources within certain
+          defined constraints and for specific purposes.
+        </li>
+        <li>
+          <dfn>Access Policy Profile</dfn> &mdash; an access policy profile describes the
+          requirements for expressing a valid access policy. Every access policy profile is identified
+          with a URI, and a server indicates support for an access control policy profile by
+          referencing it with a <code>conformsTo</code> property in a Storage Description resource.
+        </li>
+      </ul>
+    </section>
+
+    <section id="discovery">
+      <h2>Discovery</h2>
+
+      <p>
+        A storage that supports <a>access requests</a> and <a>access grants</a> MUST advertise the
+        associated service
+        endpoints in its Storage Description resource. A service object describing an endpoint for
+        <a>access requests</a> MUST have a <code>type</code> equal to the string
+        <code>AccessRequestService</code>. A service object describing an endpoint for
+        <a>access grants</a> MUST have a <code>type</code> equal to the string
+        <code>AccessGrantService</code>. A service
+        object SHOULD include a <code>conformsTo</code> property to indicate supported profiles for access
+        policies. Additional properties MAY be included:
+      </p>
+
+      <pre class="example" title="Storage Description with access request and grant services">
+{
+  "@context": [
+    "https://www.w3.org/ns/lws/v1"
+  ],
+  "id": "https://storage.example/",
+  "type": "Storage",
+  "service": [
+    {
+      "type": "AccessRequestService",
+      "serviceEndpoint": "https://access.example/request/",
+      "conformsTo": "https://www.w3.org/ns/lws#ODRLAccessProfile"
+    },
+    {
+      "type": "AccessGrantService",
+      "serviceEndpoint": "https://access.example/grant/",
+      "conformsTo": "https://www.w3.org/ns/lws#ODRLAccessProfile"
+    }
+  ]
+}
+      </pre>
+    </section>
+
+    <section id="data-model">
+      <h2>Data Model</h2>
+
+      <p>
+        An <a>access request</a> or <a>access grant</a> is a [[!JSON-LD11|JSON-LD]] document with a limited set
+        of top-level properties for identity and routing, and an <code>access</code> object that
+        describes the requested or permitted operations. A profile that describes
+        <a>access requests</a> using ODRL
+        concepts is described in <a href="#odrl-access-policy-profile"></a>.
+      </p>
+
+      <p>
+        The following example illustrates an <a>access request</a>:
+      </p>
+
+      <pre class="example" title="Access Request">
+{
+  "@context": [
+    "https://www.w3.org/ns/lws/v1"
+  ],
+  "type": ["AccessRequest"],
+  "inbox": "https://id.example/agent/inbox/",
+  "storage": "https://storage.example/",
+  "access": {
+    "type": ["ODRLAccessPolicy"],
+    "action": ["read", "create"],
+    "assignee": "https://id.example/agent",
+    "target": {
+      "type": "StorageResource",
+      "value": ["https://storage.example/projects/"]
+    },
+    "hasPurpose": ["https://purpose.example/collaboration"],
+    "constraint": [
+      {
+        "leftOperand": "dateTime",
+        "operator": "lteq",
+        "rightOperand": "2026-06-09T10:00:00Z"
+      }
+    ]
+  }
+}
+      </pre>
+
+      <p>
+        The following example illustrates an <a>access grant</a>:
+      </p>
+
+      <pre class="example" title="Access Grant">
+{
+  "@context": [
+    "https://www.w3.org/ns/lws/v1"
+  ],
+  "type": ["AccessGrant"],
+  "storage": "https://storage.example/",
+  "access": {
+    "type": ["ODRLAccessPolicy"],
+    "action": ["read"],
+    "assignee": "https://id.example/agent",
+    "target": {
+      "type": "StorageResource",
+      "value": ["https://storage.example/projects/"]
+    },
+    "hasPurpose": ["https://purpose.example/collaboration"],
+    "constraint": [
+      {
+        "leftOperand": "dateTime",
+        "operator": "lteq",
+        "rightOperand": "2026-06-09T10:00:00Z"
+      }
+    ]
+  }
+}
+      </pre>
+
+      <p>
+        Other properties MAY be present on <a>access requests</a> and <a>access grants</a>.
+      </p>
+
+      <section id="context-property">
+        <h3>Contexts</h3>
+
+        <p>
+          The <code>@context</code> property provides the JSON-LD context for the document.
+        </p>
+
+        <p>
+          The value of the <code>@context</code> property MUST be an ordered set that includes
+          <code>https://www.w3.org/ns/lws/v1</code>. Additional context entries MAY be included
+          to define extension terms.
+        </p>
+
+        <p>
+          This property is REQUIRED.
+        </p>
+
+        <pre class="example" title="@context property">
+{
+  "@context": [
+    "https://www.w3.org/ns/lws/v1"
+  ]
+}
+        </pre>
+      </section>
+
+      <section id="type-property">
+        <h3>Types</h3>
+
+        <p>
+          The <code>type</code> property expresses the type of the document.
+        </p>
+
+        <p>
+          The value of the <code>type</code> property MUST be an array of strings. For an
+          <a>access request</a>, the array MUST contain <code>AccessRequest</code>. For an
+          <a>access grant</a>, the array MUST contain <code>AccessGrant</code>. Additional type
+          values MAY be included.
+        </p>
+
+        <p>
+          This property is REQUIRED.
+        </p>
+
+        <p>
+          This document defines the following type values for <a>access requests</a> and
+          <a>access grants</a>:
+        </p>
+
+        <ul>
+          <li>
+            <code>AccessRequest</code> &mdash; a request by an agent for access to resources.
+          </li>
+          <li>
+            <code>AccessGrant</code> &mdash; an authorization by a storage manager granting
+            access to resources.
+          </li>
+        </ul>
+
+        <pre class="example" title="type property">
+{
+  "type": ["AccessGrant"]
+}
+        </pre>
+      </section>
+
+      <section id="storage-property">
+        <h3>Storage</h3>
+
+        <p>
+          The <code>storage</code> property identifies the LWS storage to which the
+          <a>access request</a> or <a>access grant</a> is scoped.
+        </p>
+
+        <p>
+          The value of the <code>storage</code> property MUST be a URI.
+        </p>
+
+        <p>
+          This property is REQUIRED.
+        </p>
+
+        <pre class="example" title="storage property">
+{
+  "storage": "https://storage.example/"
+}
+        </pre>
+      </section>
+
+      <section id="inbox-property">
+        <h3>Inbox</h3>
+
+        <p>
+          The <code>inbox</code> property specifies a URI for receiving notifications related to
+          the <a>access request</a> or <a>access grant</a>
+          (see <a href="#notifications"></a>).
+        </p>
+
+        <p>
+          The value of the <code>inbox</code> property MUST be a URI.
+        </p>
+
+        <p>
+          This property is OPTIONAL.
+        </p>
+
+        <pre class="example" title="inbox property">
+{
+  "inbox": "https://id.example/agent/inbox/"
+}
+        </pre>
+      </section>
+
+      <section id="access-property">
+        <h3>Access</h3>
+
+        <p>
+          The <code>access</code> property describes the characteristics of an
+          <a>access policy profile</a>, based on the profile supported by a server. A profile
+          based on the
+          <a href="https://www.w3.org/TR/odrl-model/">ODRL Information Model</a> is described in
+          <a href="#odrl-access-policy-profile"></a>.
+        </p>
+
+        <p>
+          The value of the <code>access</code> property MUST be a JSON object.
+        </p>
+
+        <p>
+          This property is REQUIRED.
+        </p>
+      </section>
+    </section>
+
+    <section id="odrl-access-policy-profile">
+      <h2>ODRL Access Policy Profile</h2>
+
+      <p>
+        This specification defines an Access Policy profile based on the
+        [[!ODRL-MODEL|ODRL Information Model]] and [[!ODRL-VOCAB|ODRL Vocabulary]], identified
+        with the URL:
+        <code>https://www.w3.org/ns/lws#ODRLAccessProfile</code>.
+      </p>
+
+      <p>
+        Servers that support this profile MUST validate the following properties on the
+        <code>access</code> object of an <a>access request</a> and <a>access grant</a>.
+      </p>
+
+      <section id="odrl-type">
+        <h3>Types</h3>
+
+        <p>
+          The <code>type</code> property expresses the type of access policy.
+        </p>
+
+        <p>
+          The value of the <code>type</code> property MUST be an array of strings that includes
+          <code>ODRLAccessPolicy</code>. Additional type values MAY be included.
+        </p>
+
+        <p>
+          The property is REQUIRED.
+        </p>
+
+        <pre class="example" title="ODRL access policy type">
+{
+  "access": {
+    "type": ["ODRLAccessPolicy"]
+  }
+}
+        </pre>
+      </section>
+
+      <section id="odrl-action">
+        <h3>Actions</h3>
+
+        <p>
+          The <code>action</code> property describes the operations that the agent wishes to
+          perform (in the case of a request) or is authorized to perform (in the case of a grant).
+        </p>
+
+        <p>
+          The value of the <code>action</code> property MUST be a non-empty array of strings.
+          Each value MUST correspond to an operation recognized by the server. The following
+          values MUST be supported: <code>read</code>, <code>modify</code>, <code>create</code>,
+          and <code>delete</code>. The <code>read</code>, <code>modify</code>, and
+          <code>delete</code> values are defined by the [[!ODRL-VOCAB|ODRL Vocabulary]]. The
+          <code>create</code> value is defined by this specification.
+        </p>
+
+        <p>
+          These action values correspond to LWS operations as follows:
+        </p>
+
+        <ul>
+          <li><code>read</code> &mdash; retrieve a resource or its metadata (HTTP GET, HEAD)</li>
+          <li><code>modify</code> &mdash; modify an existing resource (HTTP PUT, PATCH)</li>
+          <li>
+            <code>create</code> &mdash; create a new resource within a container (HTTP POST)
+          </li>
+          <li><code>delete</code> &mdash; remove an existing resource (HTTP DELETE)</li>
+        </ul>
+
+        <p>
+          This property is REQUIRED.
+        </p>
+
+        <pre class="example" title="action property">
+{
+  "access": {
+    "action": ["read", "create"]
+  }
+}
+        </pre>
+      </section>
+
+      <section id="odrl-assignee">
+        <h3>Assignee</h3>
+
+        <p>
+          The <code>assignee</code> property identifies the party that is requesting access (in
+          the case of a request) or that is being granted access (in the case of a grant).
+        </p>
+
+        <p>
+          The value of the <code>assignee</code> property MUST be a URI. Public access MAY be
+          assigned using the <code>Agent</code> class from the [[!FOAF|FOAF vocabulary]], identified by the URI
+          <code>http://xmlns.com/foaf/0.1/Agent</code>.
+        </p>
+
+        <p>
+          This property is REQUIRED.
+        </p>
+
+        <pre class="example" title="assignee property">
+{
+  "access": {
+    "assignee": "https://id.example/agent"
+  }
+}
+        </pre>
+      </section>
+
+      <section id="odrl-target">
+        <h3>Targets</h3>
+
+        <p>
+          The <code>target</code> property identifies the resources to which the
+          <a>access request</a> or <a>access grant</a> applies.
+        </p>
+
+        <p>
+          The <code>target</code> property MUST be an object containing the
+          following properties:
+        </p>
+
+        <ul>
+          <li>
+            <code>type</code> &mdash; a string or URI identifying the type of target matcher.
+          </li>
+          <li>
+            <code>value</code> &mdash; a non-empty array of strings used to identify
+            the target resources.
+          </li>
+        </ul>
+
+        <p>
+          This specification defines the following <code>type</code> values for use
+          with target objects:
+        </p>
+
+        <ul>
+          <li>
+            <code>https://www.w3.org/ns/lws#DataResource</code> &mdash; matches
+            resources of type <code>lws:DataResource</code>.
+          </li>
+          <li>
+            <code>https://www.w3.org/ns/lws#Container</code> &mdash; matches
+            resources of type <code>lws:Container</code>.
+          </li>
+          <li>
+            <code>https://www.w3.org/ns/lws#StorageResource</code> &mdash; matches
+            any resource managed by a storage.
+          </li>
+          <li>
+            <code>https://www.w3.org/ns/lws#TypeIndex</code> &mdash; matches
+            resources via a type index lookup.
+          </li>
+        </ul>
+
+        <p>
+          A server MAY support additional type values.
+        </p>
+
+        <p>
+          This property is OPTIONAL.
+        </p>
+
+        <pre class="example" title="target property with Resource type">
+{
+  "access": {
+    "target": {
+      "type": "StorageResource",
+      "value": [
+        "https://storage.example/data/2025",
+        "https://storage.example/data/2026"
+      ]
+    }
+  }
+}
+        </pre>
+
+        <pre class="example" title="target property with TypeIndex type">
+{
+  "access": {
+    "target": {
+      "type": "TypeIndex",
+      "value": [
+        "https://index.example/?type=http%3A%2F%2Ftype.example%2FImage",
+        "https://index.example/?type=http%3A%2F%2Ftype.example%2FPhotoAlbum"
+      ]
+    }
+  }
+}
+        </pre>
+      </section>
+
+      <section id="odrl-hasPurpose">
+        <h3>Purposes</h3>
+
+        <p>
+          The <code>hasPurpose</code> property describes the intended use of the access being
+          requested or granted.
+        </p>
+
+        <p>
+          The value of the <code>hasPurpose</code> property MUST be an array. Each element MUST
+          be a URI identifying a purpose.
+        </p>
+
+        <p>
+          This property is OPTIONAL.
+        </p>
+
+        <pre class="example" title="hasPurpose property">
+{
+  "access": {
+    "hasPurpose": ["https://purpose.example/collaboration"]
+  }
+}
+        </pre>
+      </section>
+
+      <section id="odrl-constraint">
+        <h3>Constraints</h3>
+
+        <p>
+          The <code>constraint</code> property defines conditions that limit or qualify the
+          access being requested or granted. This property uses the ODRL
+          <a href="https://www.w3.org/TR/odrl-model/#constraint-class">Constraint</a> model.
+        </p>
+
+        <p>
+          The value of the <code>constraint</code> property MUST be an array of constraint
+          objects. Each constraint object MUST include the following properties:
+        </p>
+
+        <ul>
+          <li>
+            <code>leftOperand</code> &mdash; a string identifying the operand being constrained.
+          </li>
+          <li>
+            <code>operator</code> &mdash; a string identifying the comparison operator.
+          </li>
+          <li>
+            <code>rightOperand</code> &mdash; the value to compare against. The type depends on
+            the <code>leftOperand</code>.
+          </li>
+        </ul>
+
+        <p>
+          When multiple constraint objects are present, all of them MUST be satisfied.
+        </p>
+
+        <p>
+          A server advertising support for this profile MUST support the following
+          <code>leftOperand</code> values:
+        </p>
+
+        <ul>
+          <li>
+            <code>client</code> &mdash; representing the client identifier for an HTTP request
+          </li>
+          <li>
+            <code>mediaType</code> &mdash; representing the media type of the target HTTP
+            resource
+          </li>
+          <li>
+            <code>type</code> &mdash; representing the type URL expressed in a resource's link
+            headers
+          </li>
+          <li>
+            <code>dateTime</code> &mdash; representing the current date time
+          </li>
+        </ul>
+
+        <p>
+          This property is OPTIONAL.
+        </p>
+
+        <p>
+          The following examples illustrate the use of these constraints:
+        </p>
+
+        <section id="constraint-client">
+          <h4>Client Constraints</h4>
+
+          <p>
+            The following example uses a <code>leftOperand</code> value of
+            <code>client</code> to restrict access
+            to a specific client application. When the <code>eq</code> operator is used, the
+            <code>rightOperand</code> value is a URI identifying the client:
+          </p>
+
+          <pre class="example" title="Client constraint">
+{
+  "access": {
+    "constraint": [
+      {
+        "leftOperand": "client",
+        "operator": "eq",
+        "rightOperand": "https://app.example/client-id"
+      }
+    ]
+  }
+}
+          </pre>
+        </section>
+
+        <section id="constraint-mediaType">
+          <h4>Media Type Constraints</h4>
+
+          <p>
+            The following example uses a <code>leftOperand</code> value of
+            <code>mediaType</code> to restrict
+            access to resources with specific media types. When the <code>eq</code> operator
+            is used, the <code>rightOperand</code> value is a string identifying an
+            <a href="https://www.iana.org/assignments/media-types/">IANA media type</a>. When
+            the <code>isAnyOf</code> operator is used, the <code>rightOperand</code> value
+            is an array of media type strings, and access is permitted if the resource's
+            media type matches any of the listed values:
+          </p>
+
+          <pre class="example" title="Media type constraint">
+{
+  "access": {
+    "constraint": [
+      {
+        "leftOperand": "mediaType",
+        "operator": "isAnyOf",
+        "rightOperand": ["image/jpeg", "image/png"]
+      }
+    ]
+  }
+}
+          </pre>
+        </section>
+
+        <section id="constraint-type">
+          <h4>Resource Type Constraints</h4>
+
+          <p>
+            All LWS resources will include link headers indicating type values:
+          </p>
+
+          <pre class="example" title="Link headers with type values">
+Link: &lt;https://www.w3.org/ns/lws#DataResource&gt;; rel="type"
+Link: &lt;https://type.example/Playlist&gt;; rel="type"
+          </pre>
+
+          <p>
+            The following example uses a <code>leftOperand</code> value of
+            <code>type</code> to restrict access based on the resource types advertised
+            in HTTP <code>Link</code> headers.
+            When the <code>eq</code> operator is used, the <code>rightOperand</code> value
+            is a URI identifying a resource type. When the <code>isAnyOf</code> operator is
+            used, the <code>rightOperand</code> value is an array of type URIs, and access
+            is permitted if the resource's type matches any of the listed values:
+          </p>
+
+          <pre class="example" title="Resource type constraint">
+{
+  "access": {
+    "constraint": [
+      {
+        "leftOperand": "type",
+        "operator": "isAnyOf",
+        "rightOperand": [
+          "https://type.example/Playlist",
+          "https://type.example/Song"
+        ]
+      }
+    ]
+  }
+}
+          </pre>
+        </section>
+
+        <section id="constraint-temporal">
+          <h4>Temporal Constraints</h4>
+
+          <p>
+            The following example uses a <code>leftOperand</code> value of
+            <code>dateTime</code> to limit access
+            to a specific time window. The <code>gteq</code> operator defines the start of the
+            window and the <code>lteq</code> operator defines the end. The
+            <code>rightOperand</code> value for temporal constraints is an
+            [[!XMLSCHEMA11-2|XML Schema]] <code>dateTime</code> string:
+          </p>
+
+          <pre class="example" title="Temporal constraint">
+{
+  "access": {
+    "constraint": [
+      {
+        "leftOperand": "dateTime",
+        "operator": "gteq",
+        "rightOperand": "2026-03-09T12:00:00Z"
+      },
+      {
+        "leftOperand": "dateTime",
+        "operator": "lteq",
+        "rightOperand": "2026-06-09T10:00:00Z"
+      }
+    ]
+  }
+}
+          </pre>
+        </section>
+
+        <section id="constraint-combining">
+          <h4>Combining Constraints</h4>
+
+          <p>
+            When multiple constraint objects are present, all of them MUST be satisfied for
+            access to be permitted. The following example restricts access to a specific client
+            application before a specific date:
+          </p>
+
+          <pre class="example" title="Combined constraints">
+{
+  "access": {
+    "action": ["read"],
+    "assignee": "https://id.example/agent",
+    "target": {
+      "type": "StorageResource",
+      "value": ["https://storage.example/projects/"]
+    },
+    "constraint": [
+      {
+        "leftOperand": "dateTime",
+        "operator": "lteq",
+        "rightOperand": "2026-06-09T10:00:00Z"
+      },
+      {
+        "leftOperand": "client",
+        "operator": "eq",
+        "rightOperand": "https://app.example/client-id"
+      }
+    ]
+  }
+}
+          </pre>
+        </section>
+      </section>
+    </section>
+
+    <section id="protocol">
+      <h2>Protocol</h2>
+
+      <p>
+        The <a>access request</a> and <a>access grant</a> endpoints are LWS containers and MUST
+        conform to the rules defined in the [[!LWS-PROTOCOL|LWS Protocol]].
+      </p>
+
+      <p>
+        These endpoints minimally require support for GET and POST operations. The DELETE operation
+        is RECOMMENDED. Other operations MAY be supported.
+      </p>
+
+      <p>
+        An agent creates an <a>access request</a> by submitting a <code>POST</code> request to the
+        <a>access request</a> endpoint. A storage manager creates an <a>access grant</a> by
+        submitting a <code>POST</code> request to the <a>access grant</a> endpoint.
+      </p>
+
+      <p>
+        For POST operations, a server MUST validate the request body, rejecting any invalid
+        requests with an error response. A successful POST operation MUST respond with a
+        <code>Location</code> header set to the URL of the new resource.
+      </p>
+
+      <p class="note">
+        When a storage manager processes an <a>access request</a>, either by creating an
+        <a>access grant</a> or by rejecting the request, deleting the original request can help
+        keep the request container
+        more manageable.
+      </p>
+
+      <section id="access-request-endpoint">
+        <h3>Access Request Endpoint</h3>
+
+        <ul>
+          <li><code>POST /</code> &mdash; Create an access request.</li>
+          <li><code>GET /</code> &mdash; Retrieve a list of access requests.</li>
+          <li><code>GET /:id</code> &mdash; Retrieve a specific access request.</li>
+          <li><code>DELETE /:id</code> &mdash; Cancel an access request.</li>
+        </ul>
+      </section>
+
+      <section id="access-grant-endpoint">
+        <h3>Access Grant Endpoint</h3>
+
+        <ul>
+          <li><code>POST /</code> &mdash; Create an access grant.</li>
+          <li><code>GET /</code> &mdash; Retrieve a list of access grants.</li>
+          <li><code>GET /:id</code> &mdash; Retrieve a specific access grant.</li>
+          <li><code>DELETE /:id</code> &mdash; Revoke an access grant.</li>
+        </ul>
+      </section>
+
+      <section id="endpoint-authorization">
+        <h3>Endpoint Authorization</h3>
+
+        <p>
+          A server MUST require authorization for access to these endpoints.
+        </p>
+      </section>
+
+      <section id="data-validation">
+        <h3>Data Validation</h3>
+
+        <p>
+          A server that advertises an <a>access policy profile</a> MUST validate
+          <a>access requests</a> and <a>access grants</a> according to the requirements of that
+          profile. A server MUST reject any
+          payload that cannot be represented fully in its underlying access policy layer.
+        </p>
+      </section>
+    </section>
+
+    <section id="notifications">
+      <h2>Notifications</h2>
+
+      <p class="issue" data-number="103">
+        This section needs to align with the yet-to-be-defined notification section of LWS.
+      </p>
+
+      <p>
+        Notifications provide a mechanism for informing agents and storage managers about changes to
+        <a>access requests</a> and <a>access grants</a>. When an <code>inbox</code> property is
+        present on an <a>access request</a> or <a>access grant</a>, the server SHOULD deliver
+        notifications to that endpoint, informing an
+        assignee of the event.
+      </p>
+
+      <p>
+        The serialization of notifications MUST conform to the requirements of the LWS
+        notification data model.
+      </p>
+
+      <p>
+        Notifications delivered to an <code>inbox</code> endpoint MUST conform to the
+        requirements defined in the LWS protocol for notification delivery.
+      </p>
+
+      <p class="note">
+        The notification mechanism described in this section is comparable to the
+        [[LDN|Linked Data Notifications]] pattern, in which notifications are discovered
+        via an <code>inbox</code> property and delivered by sending a <code>POST</code>
+        request to that inbox.
+      </p>
+
+      <section id="notification-events">
+        <h3>Notification Events</h3>
+
+        <p>
+          A server SHOULD send notifications in response to the following events:
+        </p>
+
+        <ul>
+          <li>
+            <strong>Access Request creation</strong>: When a new <a>access request</a> is
+            submitted, the storage manager SHOULD be notified.
+          </li>
+          <li>
+            <strong>Access Grant creation</strong>: When a new <a>access grant</a> is created,
+            the requesting agent SHOULD be notified at the <code>inbox</code> specified in
+            the associated <a>access request</a>.
+          </li>
+        </ul>
+
+        <p>
+          A server MAY send notifications in response to other events.
+        </p>
+      </section>
+    </section>
+
+    <section id="security-considerations" class="informative">
+      <h2>Security Considerations</h2>
+
+      <ul>
+        <li>
+          Servers are encouraged to restrict write access to the <a>access grant</a> endpoint
+          to authorized storage managers and to specific clients.
+        </li>
+        <li>
+          When an agent creates an <a>access request</a>, the server is encouraged to verify
+          that the <code>assignee</code> value in the request is associated with the
+          authenticated identity of the requesting agent.
+        </li>
+        <li>
+          Because the <a>access request</a> endpoint accepts content from external agents,
+          servers are encouraged to implement measures to prevent abuse, such as rate limiting,
+          payload size restrictions, or requiring authentication before accepting submissions.
+          Without such protections, the endpoint may be vulnerable to spam, resource exhaustion,
+          or other forms of unwanted content.
+        </li>
+      </ul>
+    </section>
+
+    <section id="privacy-considerations" class="informative">
+      <h2>Privacy Considerations</h2>
+
+      <ul>
+        <li>
+          An <a>access request</a> or <a>access grant</a> can reveal sensitive information
+          about the resources, agents, and purposes involved. Servers are encouraged to limit
+          the visibility of these resources to authorized parties, such as the storage manager
+          and the assignee identified in the document. For example, a storage manager might
+          have the ability to read and delete all resources while other agents would only have
+          access to the resources for which they are the assignee.
+        </li>
+        <li>
+          When an <a>access grant</a> includes a client constraint, it is advisable for a
+          server to filter that grant from responses to requests made by other clients. For
+          example, if an agent is granted access to a resource only when using a specific
+          client, that grant would not be visible when the agent uses a different client.
+        </li>
+      </ul>
+    </section>
+  </body>
+</html>
