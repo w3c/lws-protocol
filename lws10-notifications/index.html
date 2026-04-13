@@ -1,0 +1,987 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <title>LWS Notifications</title>
+    <script src="https://www.w3.org/Tools/respec/respec-w3c" class="remove"></script>
+    <script class='remove'>
+      // See https://respec.org/docs/ for how to configure ReSpec
+      var respecConfig = {
+        specStatus: "ED",
+        shortName: "lws-notifications",
+        editors: [{
+          name: "Jesse Wright",
+          w3cid: "132252",
+          company: "University of Oxford",
+          companyURL: "https://www.ox.ac.uk/"
+        }],
+        authors: [{
+          name: "Laurens Debackere"
+        }],
+        github: "w3c/lws-protocol",
+        xref: ["web-platform"],
+        group: "lws",
+        maxTocLevel: 3,
+        localBiblio: {
+          "LWS-PROTOCOL": {
+            title: "LWS Protocol",
+            href: "https://www.w3.org/TR/lws-core/",
+            publisher: "W3C",
+            status: "FPWD",
+          },
+          "RFC9421": {
+            title: "HTTP Message Signatures",
+            href: "https://www.rfc-editor.org/rfc/rfc9421",
+            publisher: "IETF",
+            status: "Proposed Standard",
+          },
+          "RFC9530": {
+            title: "Digest Fields",
+            href: "https://www.rfc-editor.org/rfc/rfc9530",
+            publisher: "IETF",
+            status: "Proposed Standard",
+          },
+        },
+      };
+    </script>
+  </head>
+  <body>
+    <section id="abstract">
+      <p>
+        This document extends the Linked Web Storage (LWS) protocol with a mechanism for clients
+        to receive timely updates about changes to resources. Three notification channels are
+        defined: Server-Sent Events, WebSocket, and Webhooks. All channels share a common
+        notification data model and are discoverable via the storage description resource.
+      </p>
+    </section>
+    <section id="sotd">
+      <p>
+        This is an unofficial proposal.
+      </p>
+    </section>
+
+    <section id="introduction">
+      <h2>Introduction</h2>
+
+      <p>
+        The [[!LWS-PROTOCOL|Linked Web Storage]] protocol defines a resource-centric storage
+        system built on HTTP. While the core protocol supports creating, reading, updating, and
+        deleting resources, it does not define a mechanism for clients to learn about changes
+        without polling.
+      </p>
+
+      <p>
+        This specification extends LWS with a <a>notification</a> mechanism that allows clients
+        to subscribe to resource changes and receive updates through one of three channels:
+      </p>
+
+      <ul>
+        <li>
+          <strong>Server-Sent Events (SSE)</strong>: A client opens a persistent HTTP connection
+          and receives real-time change events as a stream of server-sent events.
+        </li>
+        <li>
+          <strong>WebSocket</strong>: A client opens a persistent WebSocket connection and receives
+          real-time change events as WebSocket messages.
+        </li>
+        <li>
+          <strong>Webhooks</strong>: A server-to-server mechanism whereby the LWS storage server
+          delivers change events to a registered endpoint via HTTP POST.
+        </li>
+      </ul>
+
+      <p>
+        All three channels share a common notification envelope and are discoverable
+        via the storage description resource.
+      </p>
+    </section>
+
+    <section id="conformance"></section>
+
+    <section id="terminology">
+      <h2>Terminology</h2>
+
+      <p>
+        The terms "storage description resource", "resource manager", and "requesting agent" are
+        defined by [[!LWS-PROTOCOL]].
+      </p>
+
+      <p>
+        This specification defines the following additional terms:
+      </p>
+
+      <ul>
+        <li>
+          <dfn>Notification</dfn> &mdash; a message describing an event that has occurred on
+          a resource.
+        </li>
+        <li>
+          <dfn>Subscription</dfn> &mdash; a registration expressing interest in receiving
+          notifications for a given resource or set of resources.
+        </li>
+        <li>
+          <dfn>Capability URL</dfn> &mdash; a URL that encodes a subscription scope and
+          serves as the credential for establishing a notification connection.
+        </li>
+        <li>
+          <dfn>Webhook Endpoint</dfn> &mdash; a URL controlled by a subscribing party to
+          which the server delivers notifications via HTTP.
+        </li>
+      </ul>
+    </section>
+
+    <section id="discovery">
+      <h2>Discovery</h2>
+
+      <p>
+        A client discovers notification support through the storage description resource.
+        A storage that supports notifications MUST advertise a service object in its
+        <code>service</code> array with <code>type</code> equal to
+        <code>NotificationService</code>.
+      </p>
+
+      <p>
+        The service object MUST include a <code>serviceEndpoint</code> property whose value
+        is the URI of the subscription endpoint. The service object MUST include a
+        <code>subscriptionType</code> property whose value is an array of strings, each
+        identifying a supported <a>subscription</a> type.
+      </p>
+
+      <p>
+        Additional properties MAY be present on the service object.
+      </p>
+
+      <pre class="example" title="Storage description with notification service">
+{
+  "@context": ["https://www.w3.org/ns/lws/v1"],
+  "id": "https://storage.example/",
+  "type": "Storage",
+  "service": [{
+    "type": "NotificationService",
+    "serviceEndpoint": "https://notification.example/subscriptions",
+    "subscriptionType": [
+      "WebhookSubscription",
+      "WebSocketSubscription",
+      "EventSourceSubscription"
+    ]
+  }]
+}
+      </pre>
+
+      <p class="note">
+        A server is not required to support all subscription types. The
+        <code>subscriptionType</code> array advertises exactly which types are available.
+      </p>
+    </section>
+
+    <section id="notification-envelope">
+      <h2>Notification Envelope</h2>
+
+      <p>
+        A <a>notification</a> is represented as a JSON-LD document with a
+        <code>Notification</code> type. The envelope carries metadata about the delivery
+        context and wraps an Activity Streams 2.0 [[ACTIVITYSTREAMS-CORE]] [[ACTIVITYSTREAMS-VOCABULARY]]
+        activity describing the event.
+      </p>
+
+      <section id="envelope-properties">
+        <h3>Envelope Properties</h3>
+
+        <p>
+          A notification envelope has the following properties:
+        </p>
+
+        <ul>
+          <li>
+            <code>type</code> &mdash; REQUIRED. The value MUST be the string
+            <code>Notification</code>.
+          </li>
+          <li>
+            <code>phase</code> &mdash; REQUIRED. A string indicating the lifecycle phase
+            of the notification. The value MUST be <code>post-commit</code>. Other values
+            MAY be defined by future specifications.
+          </li>
+          <li>
+            <code>storage</code> &mdash; REQUIRED. A URI identifying the LWS storage with
+            which the notification is associated.
+          </li>
+          <li>
+            <code>activity</code> &mdash; REQUIRED. A JSON object or an array of JSON objects,
+            each conforming to the Activity Streams 2.0 data model, describing the event or
+            events that occurred. See <a href="#activity-properties"></a>.
+          </li>
+        </ul>
+
+        <pre class="example" title="Notification envelope">
+{
+  "@context": [
+    "https://www.w3.org/ns/lws/v1",
+    "https://www.w3.org/ns/activitystreams"
+  ],
+  "type": "Notification",
+  "phase": "post-commit",
+  "storage": "https://storage.example/",
+  "activity": {
+    "id": "ec4dcc48-6581-4232-81c9-584525a98693",
+    "type": ["Delete"],
+    "object": {
+      "id": "https://storage.example/alice/notes/shopping.txt",
+      "type": "DataResource"
+    },
+    "origin": "https://storage.example/alice/notes/",
+    "published": "2026-03-26T10:30:00Z"
+  }
+}
+        </pre>
+      </section>
+
+      <section id="activity-properties">
+        <h3>Activity Properties</h3>
+
+        <p>
+          The <code>activity</code> object MUST conform to the Activity Streams 2.0 data model
+          and MUST include the following properties:
+        </p>
+
+        <ul>
+          <li>
+            <code>id</code> &mdash; REQUIRED. A string uniquely identifying the activity.
+          </li>
+          <li>
+            <code>type</code> &mdash; REQUIRED. An array containing at least one Activity
+            Streams 2.0 activity type.
+          </li>
+          <li>
+            <code>object</code> &mdash; REQUIRED. A JSON object identifying the resource
+            that the notification is about. The object MUST include an <code>id</code>
+            property with the resource URI and a <code>type</code> property.
+          </li>
+          <li>
+            <code>published</code> &mdash; REQUIRED. A datetime value indicating when the
+            activity occurred.
+          </li>
+        </ul>
+
+        <p>
+          The following properties are OPTIONAL:
+        </p>
+
+        <ul>
+          <li>
+            <code>actor</code> &mdash; the agent that performed the action.
+          </li>
+          <li>
+            <code>target</code> &mdash; a URI identifying the container into which the
+            resource was added. Used with <code>Create</code> activities.
+          </li>
+          <li>
+            <code>origin</code> &mdash; a URI identifying the container from which the
+            resource was removed. Used with <code>Delete</code> activities.
+          </li>
+        </ul>
+      </section>
+
+      <section id="activity-types">
+        <h3>Activity Types</h3>
+
+        <p>
+          A server MUST support the following Activity Streams 2.0 activity types to
+          indicate LWS resource changes:
+        </p>
+
+        <ul>
+          <li>
+            <code>Create</code> &mdash; a new resource was created in a container. The
+            <code>target</code> field indicates the container to which the resource was added.
+          </li>
+          <li>
+            <code>Update</code> &mdash; an existing resource's content or metadata was modified.
+          </li>
+          <li>
+            <code>Delete</code> &mdash; a resource was removed. The <code>origin</code> field
+            indicates the container from which the resource was removed.
+          </li>
+        </ul>
+
+        <p>
+          Other activity types MAY also be supported.
+        </p>
+      </section>
+
+      <section id="batching">
+        <h3>Batching Notifications</h3>
+
+        <p>
+          A server MAY combine multiple activities into a single notification envelope by
+          providing an array of activity objects as the value of the <code>activity</code>
+          property.
+        </p>
+
+        <pre class="example" title="Batched notification">
+{
+  "@context": [
+    "https://www.w3.org/ns/lws/v1",
+    "https://www.w3.org/ns/activitystreams"
+  ],
+  "type": "Notification",
+  "phase": "post-commit",
+  "storage": "https://storage.example/",
+  "activity": [
+    {
+      "id": "a1b2c3d4-5678-9abc-def0-1234567890ab",
+      "type": ["Create"],
+      "object": {
+        "id": "https://storage.example/alice/notes/meeting.txt",
+        "type": "DataResource"
+      },
+      "target": "https://storage.example/alice/notes/",
+      "published": "2026-03-26T10:30:00Z"
+    },
+    {
+      "id": "b2c3d4e5-6789-abcd-ef01-234567890abc",
+      "type": ["Update"],
+      "object": {
+        "id": "https://storage.example/alice/profile",
+        "type": "DataResource"
+      },
+      "published": "2026-03-26T10:30:01Z"
+    }
+  ]
+}
+        </pre>
+      </section>
+    </section>
+
+    <section id="subscriptions">
+      <h2>Subscriptions</h2>
+
+      <p>
+        To receive notifications, a client creates a <a>subscription</a> by sending an
+        authenticated <code>POST</code> request to the <code>serviceEndpoint</code> of the
+        <code>NotificationService</code>. The request body MUST conform to the
+        <code>application/lws+json</code> media type.
+      </p>
+
+      <section id="subscription-request">
+        <h3>Subscription Request</h3>
+
+        <p>
+          A subscription request MUST contain the following fields:
+        </p>
+
+        <ul>
+          <li>
+            <code>type</code> &mdash; REQUIRED. A string identifying the subscription type.
+            The value MUST be one of the types listed in the <code>subscriptionType</code>
+            array of the <code>NotificationService</code>.
+          </li>
+          <li>
+            <code>phase</code> &mdash; REQUIRED. A string indicating the lifecycle phase for
+            which notifications are requested. The value MUST be <code>post-commit</code>.
+            Other values MAY be defined by future specifications.
+          </li>
+          <li>
+            <code>topic</code> &mdash; REQUIRED. An array of URIs identifying the resources
+            included in the subscription. A subscription to a container includes notifications
+            for all resources contained in that container.
+          </li>
+        </ul>
+
+        <p>
+          A subscription request MAY contain additional fields as required by the specific
+          subscription type.
+        </p>
+
+        <pre class="example" title="Subscription request">
+POST /subscriptions HTTP/2
+Host: notification.example
+Authorization: Bearer &lt;access-token&gt;
+Content-Type: application/lws+json
+
+{
+  "@context": ["https://www.w3.org/ns/lws/v1"],
+  "type": "EventSourceSubscription",
+  "phase": "post-commit",
+  "topic": [
+    "https://storage.example/alice/notes/",
+    "https://storage.example/alice/profile"
+  ]
+}
+        </pre>
+
+        <p>
+          A server MUST enforce resource authorization. If an agent does not have the
+          equivalent of read access to all listed resources, a server MUST reject the
+          subscription request.
+        </p>
+      </section>
+
+      <section id="subscription-response">
+        <h3>Subscription Response</h3>
+
+        <p>
+          The response to a successful subscription creation request MUST conform to the
+          <code>application/lws+json</code> media type and MUST contain the following fields:
+        </p>
+
+        <ul>
+          <li>
+            <code>type</code> &mdash; REQUIRED. A string equal to the subscription type from
+            the request.
+          </li>
+          <li>
+            <code>subscription</code> &mdash; REQUIRED. A URL representing the subscription.
+          </li>
+        </ul>
+      </section>
+    </section>
+
+    <section id="websocket-notifications">
+      <h2>WebSocket Notifications</h2>
+
+      <p>
+        The WebSocket notification channel allows a client to receive notifications over a
+        persistent WebSocket connection.
+      </p>
+
+      <section id="websocket-subscription">
+        <h3>Creating a WebSocket Subscription</h3>
+
+        <p>
+          When a client creates a WebSocket notification subscription, the subscription body
+          MUST include a <code>type</code> field equal to <code>WebSocketSubscription</code>.
+        </p>
+
+        <p>
+          A successful response body has these additional requirements:
+        </p>
+
+        <ul>
+          <li>
+            <code>type</code> &mdash; the value of this property MUST be a string equal to
+            <code>WebSocketSubscription</code>.
+          </li>
+          <li>
+            <code>subscription</code> &mdash; the value of this property MUST be a
+            <a>capability URL</a> that can be used by the WebSocket API.
+          </li>
+        </ul>
+
+        <pre class="example" title="WebSocket subscription response">
+{
+  "@context": ["https://www.w3.org/ns/lws/v1"],
+  "type": "WebSocketSubscription",
+  "subscription": "wss://notification.example/ws/1c2d3e4f5a6b"
+}
+        </pre>
+      </section>
+
+      <section id="websocket-connection">
+        <h3>Establishing a WebSocket Connection</h3>
+
+        <p>
+          After obtaining a <a>capability URL</a>, the client opens a WebSocket connection to
+          that URL. The server sends notification envelopes as WebSocket text messages, serialized
+          as JSON.
+        </p>
+
+        <pre class="example" title="WebSocket client">
+const ws = new WebSocket(capabilityUrl);
+ws.onmessage = (event) => {
+  const notification = JSON.parse(event.data);
+  // handle notification
+};
+        </pre>
+
+        <p>
+          The lifecycle of a WebSocket <a>subscription</a> is tied to the connection. When the
+          WebSocket connection is closed, the subscription is terminated.
+        </p>
+      </section>
+    </section>
+
+    <section id="eventsource-notifications">
+      <h2>Server-Sent Event Notifications</h2>
+
+      <p>
+        The Server-Sent Event (SSE) notification channel allows a client to receive
+        notifications over a persistent HTTP connection using the EventSource API.
+      </p>
+
+      <section id="eventsource-subscription">
+        <h3>Creating an EventSource Subscription</h3>
+
+        <p>
+          When a client creates an EventSource notification subscription, the subscription body
+          MUST include a <code>type</code> field equal to <code>EventSourceSubscription</code>.
+        </p>
+
+        <p>
+          A successful response body has these additional requirements:
+        </p>
+
+        <ul>
+          <li>
+            <code>type</code> &mdash; the value of this property MUST be a string equal to
+            <code>EventSourceSubscription</code>.
+          </li>
+          <li>
+            <code>subscription</code> &mdash; the value of this property MUST be a
+            <a>capability URL</a> that can be used by the EventSource API.
+          </li>
+        </ul>
+
+        <pre class="example" title="EventSource subscription response">
+{
+  "@context": ["https://www.w3.org/ns/lws/v1"],
+  "type": "EventSourceSubscription",
+  "subscription": "https://notification.example/sse/0d8b4c2e1a3f"
+}
+        </pre>
+      </section>
+
+      <section id="eventsource-connection">
+        <h3>Establishing an EventSource Connection</h3>
+
+        <p>
+          After obtaining a <a>capability URL</a>, the client establishes a persistent SSE
+          connection to that URL. The server responds with <code>Content-Type:
+          text/event-stream</code> and pushes notification envelopes as events. Each event
+          MUST include an <code>id</code> field to support reconnection via the
+          <code>Last-Event-ID</code> header.
+        </p>
+
+        <pre class="example" title="EventSource client">
+const source = new EventSource(capabilityUrl);
+source.onmessage = (event) => {
+  const notification = JSON.parse(event.data);
+  // handle notification
+};
+        </pre>
+
+        <p>
+          The lifecycle of an EventSource <a>subscription</a> is tied to the connection. When
+          the connection is closed, the subscription is terminated.
+        </p>
+      </section>
+    </section>
+
+    <section id="webhook-notifications">
+      <h2>Webhook Notifications</h2>
+
+      <p>
+        Webhooks enable server-to-server notification delivery. After a webhook subscription is
+        created, the LWS storage server delivers notifications to the registered
+        <a>webhook endpoint</a> when relevant changes occur.
+      </p>
+
+      <section id="webhook-subscription">
+        <h3>Creating a Webhook Subscription</h3>
+
+        <p>
+          When a client creates a webhook notification subscription, the subscription body MUST
+          include a <code>type</code> field equal to <code>WebhookSubscription</code>. In
+          addition, a server MUST support the following fields:
+        </p>
+
+        <ul>
+          <li>
+            <code>inbox</code> &mdash; REQUIRED. The URI of the endpoint to which notification
+            messages are sent.
+          </li>
+          <li>
+            <code>expires</code> &mdash; OPTIONAL. A datetime value indicating when the
+            subscription expires.
+          </li>
+        </ul>
+
+        <pre class="example" title="Webhook subscription request">
+POST /subscriptions HTTP/2
+Host: notification.example
+Authorization: Bearer &lt;access-token&gt;
+Content-Type: application/lws+json
+
+{
+  "@context": ["https://www.w3.org/ns/lws/v1"],
+  "type": "WebhookSubscription",
+  "phase": "post-commit",
+  "topic": [
+    "https://storage.example/alice/notes/",
+    "https://storage.example/alice/profile"
+  ],
+  "inbox": "https://receiver.example/hooks/lws",
+  "expires": "2026-06-09T12:00:00Z"
+}
+        </pre>
+
+        <p>
+          A successful response body has these additional requirements:
+        </p>
+
+        <ul>
+          <li>
+            <code>type</code> &mdash; the value of this property MUST be a string equal to
+            <code>WebhookSubscription</code>.
+          </li>
+          <li>
+            <code>subscription</code> &mdash; a URL that can be used to manage the lifecycle of
+            the subscription.
+          </li>
+          <li>
+            <code>expires</code> &mdash; OPTIONAL. A datetime value indicating when the
+            subscription expires.
+          </li>
+        </ul>
+
+        <pre class="example" title="Webhook subscription response">
+HTTP/2 200 OK
+Content-Type: application/lws+json
+Location: https://notification.example/subscriptions/9e8d7c6b5a4f
+
+{
+  "@context": ["https://www.w3.org/ns/lws/v1"],
+  "type": "WebhookSubscription",
+  "subscription": "https://notification.example/subscriptions/9e8d7c6b5a4f",
+  "expires": "2026-06-09T12:00:00Z"
+}
+        </pre>
+      </section>
+
+      <section id="webhook-authentication">
+        <h3>Webhook Authentication</h3>
+
+        <p>
+          When a server delivers a notification to a <a>webhook endpoint</a>, the receiving
+          party needs to verify that the request is authentic.
+        </p>
+
+        <p>
+          A server SHOULD sign each outbound request using HTTP Message Signatures
+          [[!RFC9421]]. When a <a>webhook endpoint</a> receives a signed message, it MUST verify
+          the signature using the notification server's public key, discoverable via the storage
+          description resource.
+        </p>
+
+        <p>
+          A server that supports HTTP Message Signatures MUST include the public portion of
+          its signing key in the storage description resource using a
+          <code>verificationMethod</code> property.
+        </p>
+
+        <pre class="example" title="Storage description with verification method">
+{
+  "@context": ["https://www.w3.org/ns/lws/v1"],
+  "id": "https://storage.example/",
+  "type": "Storage",
+  "verificationMethod": [{
+    "id": "https://storage.example/#key-20260320",
+    "type": "JsonWebKey",
+    "controller": "https://storage.example/",
+    "publicKeyJwk": {
+      "kid": "key-20260320",
+      "kty": "EC",
+      "crv": "P-256",
+      "alg": "ES256",
+      "x": "f83OJ3D2xF1Bg8vub9tLe1gHMzV76e8Tus9uPHvRVEU",
+      "y": "x_FEzRu9m36HLN_tue659LNpXW6pCyStikYjKIWI5a0"
+    }
+  }],
+  "service": [{
+    "type": "NotificationService",
+    "serviceEndpoint": "https://notification.example/subscriptions",
+    "subscriptionType": ["WebhookSubscription"]
+  }]
+}
+        </pre>
+
+        <section id="signature-requirements">
+          <h4>Signature Requirements</h4>
+
+          <p>
+            A server that signs webhook delivery requests MUST include at least the following
+            components in the signature base:
+          </p>
+
+          <ul>
+            <li><code>@method</code> &mdash; the HTTP method of the request (always POST).</li>
+            <li><code>@scheme</code> &mdash; prevents downgrade from https to http.</li>
+            <li>
+              <code>@authority</code> &mdash; the host of the <a>webhook endpoint</a>,
+              preventing delivery to an unintended endpoint.
+            </li>
+            <li>
+              <code>@path</code> &mdash; the path component of the <a>webhook endpoint</a> URL.
+            </li>
+            <li>
+              <code>content-type</code> &mdash; the media type of the request body.
+            </li>
+            <li>
+              <code>content-digest</code> &mdash; a digest of the request body, computed
+              according to [[!RFC9530]].
+            </li>
+          </ul>
+
+          <p>
+            The <code>Signature-Input</code> field MUST include the <code>created</code> and
+            <code>keyid</code> parameters. The <code>keyid</code> value MUST correspond to
+            the <code>id</code> of a key in the <code>verificationMethod</code> array of the
+            storage description resource.
+          </p>
+        </section>
+
+        <section id="signature-verification">
+          <h4>Signature Verification</h4>
+
+          <p>
+            To verify a webhook signature, a receiver MUST perform the following steps:
+          </p>
+
+          <ol>
+            <li>
+              Extract the <code>keyid</code> value from the <code>Signature-Input</code>
+              field. The <code>keyid</code> value MUST be a URL with a fragment component.
+            </li>
+            <li>
+              Remove the fragment component from the <code>keyid</code> URL. The resulting
+              URL is the storage identifier.
+            </li>
+            <li>
+              Dereference the storage identifier to retrieve the storage description resource.
+              The <code>id</code> property of the top-level document map MUST match the
+              storage identifier.
+            </li>
+            <li>
+              Find the object in the <code>verificationMethod</code> array whose
+              <code>id</code> property matches either the full <code>keyid</code> URL or the
+              fragment component of the <code>keyid</code> URL.
+            </li>
+            <li>
+              Verify the HTTP Message Signature using the located verification method.
+            </li>
+          </ol>
+        </section>
+      </section>
+
+      <section id="webhook-subscription-management">
+        <h3>Subscription Management</h3>
+
+        <p>
+          The value of the <code>serviceEndpoint</code> property for a
+          <code>NotificationService</code> that supports <code>WebhookSubscription</code>
+          MUST be a URL that supports <code>GET</code> operations to list an agent's active
+          webhook subscriptions. The resulting serialization MUST conform to the requirements
+          for LWS Containers [[!LWS-PROTOCOL]]. The response SHOULD support LWS Paging.
+        </p>
+
+        <p>
+          Each subscription resource listed in this container MUST support <code>GET</code>
+          and <code>DELETE</code> operations. A <code>GET</code> request returns the current
+          state of the subscription. A <code>DELETE</code> request cancels the subscription.
+        </p>
+      </section>
+
+      <section id="webhook-delivery">
+        <h3>Notification Delivery</h3>
+
+        <p>
+          The server sends an HTTP <code>POST</code> request to the registered
+          <a>webhook endpoint</a> with the notification envelope as the request body. The
+          request body MUST conform to the <code>application/lws+json</code> media type.
+        </p>
+
+        <ul>
+          <li>
+            <strong>Acknowledgment</strong>: A 2xx response indicates successful receipt.
+          </li>
+          <li>
+            <strong>Retry</strong>: On failure, the server MAY retry delivery.
+          </li>
+          <li>
+            <strong>Expiration</strong>: After repeated failures, the server MAY deactivate
+            the subscription.
+          </li>
+        </ul>
+      </section>
+    </section>
+
+    <section id="security-considerations" class="informative">
+      <h2>Security Considerations</h2>
+
+      <ul>
+        <li>
+          <strong>Token Leakage</strong>: <a>Capability URLs</a> used with SSE and WebSocket
+          channels might be visible in server logs and a browser's history. Mitigations include
+          using short-lived and single-use URLs.
+        </li>
+        <li>
+          <strong>Webhook Verification</strong>: Without proper authentication on webhook
+          deliveries, an attacker could spoof notifications. Webhook receivers are strongly
+          encouraged to validate HTTP Message Signatures on all incoming notification requests
+          using the public key published in the associated storage description resource.
+        </li>
+        <li>
+          <strong>Subscription Abuse</strong>: Rate limiting and endpoint verification are
+          suggested to prevent abuse of the subscription mechanism.
+        </li>
+        <li>
+          <strong>Signature Replay</strong>: A signed webhook request could be captured and
+          replayed by an attacker. Webhook receivers are encouraged to check the
+          <code>created</code> parameter in the <code>Signature-Input</code> field and reject
+          signatures whose timestamp falls outside a reasonable clock-skew window.
+        </li>
+        <li>
+          <strong>Information Disclosure</strong>: Notifications may reveal the existence or
+          modification patterns of resources. It is strongly recommended that access control on
+          subscriptions be consistent with access control on the underlying resources.
+        </li>
+        <li>
+          <strong>Phase Security</strong>: The <code>phase</code> property is defined with only
+          the <code>post-commit</code> value in this specification. Future specifications
+          defining additional lifecycle phases (such as pre-commit interception) MUST define
+          their own security requirements, particularly for synchronous request-response
+          patterns where a subscriber can influence resource persistence.
+        </li>
+      </ul>
+    </section>
+
+    <section id="privacy-considerations" class="informative">
+      <h2>Privacy Considerations</h2>
+
+      <ul>
+        <li>
+          <strong>Activity Tracking</strong>: Notifications inherently reveal when resources
+          change. Subscribers SHOULD only receive notifications for resources they are
+          authorized to access.
+        </li>
+        <li>
+          <strong>Actor Disclosure</strong>: Including the <code>actor</code> property in
+          notifications reveals who made changes. This may be inappropriate in some contexts.
+          The <code>actor</code> property SHOULD be omitted by default. Servers MAY make
+          its inclusion configurable.
+        </li>
+        <li>
+          <strong>Timing Analysis</strong>: The timing of notifications can reveal usage
+          patterns even when content is not disclosed.
+        </li>
+      </ul>
+    </section>
+
+    <section id="vocabulary">
+      <h2>Vocabulary</h2>
+
+      <p>
+        This document defines the following terms in the
+        <code>https://www.w3.org/ns/lws#</code> namespace:
+      </p>
+
+      <table class="simple">
+        <thead>
+          <tr>
+            <th>Term</th>
+            <th>URI</th>
+            <th>Description</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><code>Notification</code></td>
+            <td><code>lws:Notification</code></td>
+            <td>Notification envelope type</td>
+          </tr>
+          <tr>
+            <td><code>NotificationService</code></td>
+            <td><code>lws:NotificationService</code></td>
+            <td>Service type for notification discovery</td>
+          </tr>
+          <tr>
+            <td><code>WebSocketSubscription</code></td>
+            <td><code>lws:WebSocketSubscription</code></td>
+            <td>WebSocket subscription type</td>
+          </tr>
+          <tr>
+            <td><code>EventSourceSubscription</code></td>
+            <td><code>lws:EventSourceSubscription</code></td>
+            <td>Server-Sent Event subscription type</td>
+          </tr>
+          <tr>
+            <td><code>WebhookSubscription</code></td>
+            <td><code>lws:WebhookSubscription</code></td>
+            <td>Webhook subscription type</td>
+          </tr>
+          <tr>
+            <td><code>subscriptionType</code></td>
+            <td><code>lws:subscriptionType</code></td>
+            <td>Supported subscription types on a notification service</td>
+          </tr>
+          <tr>
+            <td><code>subscription</code></td>
+            <td><code>lws:subscription</code></td>
+            <td>URL of the subscription resource</td>
+          </tr>
+          <tr>
+            <td><code>phase</code></td>
+            <td><code>lws:phase</code></td>
+            <td>Lifecycle phase of the notification</td>
+          </tr>
+          <tr>
+            <td><code>activity</code></td>
+            <td><code>lws:activity</code></td>
+            <td>Activity Streams 2.0 payload within a notification</td>
+          </tr>
+          <tr>
+            <td><code>topic</code></td>
+            <td><code>lws:topic</code></td>
+            <td>Array of resource URIs included in a subscription</td>
+          </tr>
+          <tr>
+            <td><code>storage</code></td>
+            <td><code>lws:storage</code></td>
+            <td>URI identifying the LWS storage</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <p>
+        This document uses the following terms from external vocabularies, which should be
+        added to the LWS JSON-LD context:
+      </p>
+
+      <table class="simple">
+        <thead>
+          <tr>
+            <th>Term</th>
+            <th>URI</th>
+            <th>Source</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><code>verificationMethod</code></td>
+            <td><code>https://w3id.org/security#verificationMethod</code></td>
+            <td>Security Vocabulary</td>
+          </tr>
+          <tr>
+            <td><code>controller</code></td>
+            <td><code>https://w3id.org/security#controller</code></td>
+            <td>Security Vocabulary</td>
+          </tr>
+          <tr>
+            <td><code>publicKeyJwk</code></td>
+            <td><code>https://w3id.org/security#publicKeyJwk</code></td>
+            <td>Security Vocabulary</td>
+          </tr>
+          <tr>
+            <td><code>inbox</code></td>
+            <td><code>http://www.w3.org/ns/ldp#inbox</code></td>
+            <td>Linked Data Platform</td>
+          </tr>
+          <tr>
+            <td><code>expires</code></td>
+            <td><code>https://schema.org/expires</code></td>
+            <td>Schema.org</td>
+          </tr>
+        </tbody>
+      </table>
+    </section>
+  </body>
+</html>
