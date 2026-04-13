@@ -14,9 +14,10 @@ Location: Open Data Institute, London, UK
   * Interaction with Solid CG and external stakeholders
   * Charter process and timeline
 * Recommendation Track documents - open work items that need attention
-  * Access Requests
-  * Type Index
-  * Notifications
+  * Access Requests (not too late)
+  * Notifications (not too late)
+  * Terminology (After lunch)
+  * Type Index (After lunch)
   * Test Suite and example implementation
 
 ### Tuesday, April 28
@@ -24,7 +25,6 @@ Location: Open Data Institute, London, UK
 [W3C Calendar](https://www.w3.org/events/meetings/10c363c4-c825-4d24-b2cb-bf70af152298/)
 
 * Recommendation Track documents - items missing from specification documents
-  * Terminology
   * Metadata resources
 * Non-recommendation Track documents
   * Use cases and requirements
