@@ -143,12 +143,14 @@
           receives the resulting notifications.
         </li>
         <li>
-          <dfn>Capability URL</dfn> &mdash; a URL that encodes a subscription scope and
-          serves as the credential for establishing a notification connection.
+          <dfn>Inbox</dfn> &mdash; a URL controlled by a <a>subscriber</a> or other agent
+          to which a server delivers notifications via HTTP <code>POST</code>. An inbox is
+          used whenever the recipient of a notification is a server rather than a client
+          holding an open connection.
         </li>
         <li>
-          <dfn>Webhook Endpoint</dfn> &mdash; a URL controlled by a <a>subscriber</a> to
-          which the server delivers notifications via HTTP.
+          <dfn>Capability URL</dfn> &mdash; a URL that encodes a subscription scope and
+          serves as the credential for establishing a notification connection.
         </li>
       </ul>
     </section>
@@ -650,8 +652,8 @@ source.onmessage = (event) => {
 
       <p>
         Webhooks enable server-to-server notification delivery. After a webhook subscription is
-        created, the LWS storage server delivers notifications to the registered
-        <a>webhook endpoint</a> of the <a>subscriber</a> when relevant changes occur.
+        created, the LWS storage server delivers notifications to the <a>subscriber</a>'s
+        registered <a>inbox</a> when relevant changes occur.
       </p>
 
       <section id="webhook-subscription">
@@ -665,8 +667,8 @@ source.onmessage = (event) => {
 
         <ul>
           <li>
-            <code>inbox</code> &mdash; REQUIRED. The URI of the endpoint to which notification
-            messages are sent.
+            <code>inbox</code> &mdash; REQUIRED. The URI of the <a>inbox</a> to which
+            notification messages are delivered.
           </li>
           <li>
             <code>expires</code> &mdash; OPTIONAL. A datetime value indicating when the
@@ -730,13 +732,13 @@ Location: https://notification.example/subscriptions/9e8d7c6b5a4f
         <h3>Webhook Authentication</h3>
 
         <p>
-          When a server delivers a notification to a <a>webhook endpoint</a>, the
+          When a server delivers a notification to an <a>inbox</a>, the
           <a>subscriber</a> needs to verify that the request is authentic.
         </p>
 
         <p>
           A server SHOULD sign each outbound request using HTTP Message Signatures
-          [[!RFC9421]]. When a <a>webhook endpoint</a> receives a signed message, it MUST
+          [[!RFC9421]]. When an <a>inbox</a> receives a signed message, it MUST
           verify the signature using the notification server's public key, discoverable via
           the storage description resource.
         </p>
@@ -788,11 +790,11 @@ Location: https://notification.example/subscriptions/9e8d7c6b5a4f
             <li><code>@method</code> &mdash; the HTTP method of the request (always POST).</li>
             <li><code>@scheme</code> &mdash; prevents downgrade from https to http.</li>
             <li>
-              <code>@authority</code> &mdash; the host of the <a>webhook endpoint</a>,
+              <code>@authority</code> &mdash; the host of the <a>inbox</a>,
               preventing delivery to an unintended endpoint.
             </li>
             <li>
-              <code>@path</code> &mdash; the path component of the <a>webhook endpoint</a> URL.
+              <code>@path</code> &mdash; the path component of the <a>inbox</a> URL.
             </li>
             <li>
               <code>content-type</code> &mdash; the media type of the request body.
@@ -867,7 +869,7 @@ Location: https://notification.example/subscriptions/9e8d7c6b5a4f
 
         <p>
           The server sends an HTTP <code>POST</code> request to the registered
-          <a>webhook endpoint</a> with the notification envelope as the request body. The
+          <a>inbox</a> with the notification envelope as the request body. The
           request body MUST conform to the <code>application/lws+json</code> media type.
         </p>
 
