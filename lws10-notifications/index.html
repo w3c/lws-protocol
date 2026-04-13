@@ -202,6 +202,13 @@
         <h3>Envelope Properties</h3>
 
         <p>
+          The notification envelope carries metadata about the delivery context alongside
+          the activity payload. This includes the originating storage, the subscription
+          type, and an optional phase indicating at which point in the resource lifecycle
+          the notification was emitted.
+        </p>
+
+        <p>
           A notification envelope has the following properties:
         </p>
 
@@ -211,9 +218,10 @@
             <code>Notification</code>.
           </li>
           <li>
-            <code>phase</code> &mdash; OPTIONAL. A string indicating the lifecycle phase
-            of the notification. This specification defines the value
-            <code>PostCommit</code>.
+            <code>phase</code> &mdash; OPTIONAL. A string indicating at which point in
+            the resource lifecycle the notification was emitted. This specification defines
+            the value <code>PostCommit</code>, which indicates that the described change
+            has already been persisted.
           </li>
           <li>
             <code>storage</code> &mdash; REQUIRED. A URI identifying the LWS storage with
