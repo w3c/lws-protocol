@@ -17,7 +17,7 @@ Location: Open Data Institute, London, UK
   * Access Requests
   * Type Index
   * Notifications
-  * Test Suite and reference implementation
+  * Test Suite and example implementation
 
 ### Tuesday, April 28
 
@@ -30,6 +30,7 @@ Location: Open Data Institute, London, UK
   * Use cases and requirements
   * LWS Primer
   * LWS Best Practices
+  * Solid Compatability Document
 * Editorial - identify areas of inconsistency across documents
 * Clarify and/or resolve open issues in GitHub repository
 
