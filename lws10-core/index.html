@@ -2,18 +2,25 @@
 <html lang="en">
   <head>
     <meta charset="utf-8">
-    <title>LWS Protocol</title>
+    <title>Linked Web Storage Protocol 1.0</title>
     <script src="https://www.w3.org/Tools/respec/respec-w3c" class="remove"></script>
     <link rel="stylesheet" href="local.css"/>
     <script class='remove'>
       // See https://respec.org/docs/ for how to configure ReSpec
       var respecConfig = {
         specStatus: "ED",
-        shortName: "lws-protocol",
+        shortName: "lws10-core",
+        edDraftURI: "https://w3c.github.io/lws-protocol/lws10-core/",
         editors: [{
-          name: "Jesse Wright"
+          name: "Jesse Wright",
+          w3cid: "132252",
+          company: "University of Oxford",
+          companyURL: "https://www.ox.ac.uk/",
         }, {
-          name: "Erich Bremer"
+          name: "Erich Bremer",
+          w3cid: "45759",
+          company: "Stony Brook University",
+          companyURL: "https://www.stonybrook.edu/",
         }],
         formerEditors: [{
           name: "Sarven Capadisli",
@@ -29,22 +36,42 @@
           name: "Kjetil Kjernsmo",
         }],
         github: "w3c/lws-protocol",
-        shortName: "@@",
         xref: ["web-platform"],
         group: "lws",
+        doJsonLd: true,
+        preProcess: [allowUnusedDfnInWd],
+        postProcess: [cleanEditorsDraft],
+        lint: { "no-unused-dfns": true},
       };
+
+      function allowUnusedDfnInWd(cfg) {
+        // It is OK to have unused definition in a Working Draft
+        // In the editors' draft we keep these warnings for awareness.
+        // And of course, we keep them in more mature state, as we don't want them to exist in the end.
+        if (cfg.specStatus === "FPWD" || cfg.specSTatus === "WD") {
+          respecConfig.lint['no-unused-dfns'] = false;
+        }
+      }
+
+      function cleanEditorsDraft(cfg) {
+        if (cfg.specStatus !== "ED") {
+          for (elt of document.querySelectorAll(".editors-notes")) {
+            elt.remove();
+          }
+        }
+      }
     </script>
   </head>
   <body>
     <section id="abstract">
-      <p>
+      <p class="editors-notes">
         [@@ from <a href="https://www.w3.org/2024/09/linked-web-storage-wg-charter#lws-protocol">charter</a>]
       </p>
       <p>
         The Linked Web Storage Protocol specification aims to provide applications with secure and permissioned access to externally stored data in an interoperable way.
       </p>
 
-      <p>
+      <p class="editors-notes">
         The Linked Web Storage Protocol <span class="TODO">does/does not</span> include protocol details for integration with identity layers and mechanisms; access management and data integrity; notifications about resource changes; and authorization mechanisms.
       </p>
     </section>
@@ -54,7 +81,7 @@
       </p>
     </section>
 
-    <section id="editors-notes" class="informative notoc">
+    <section class="informative notoc editors-notes">
       <h2>For Editors</h2>
       <p>
         List of <span class="TODO">TODO</span>s and ideas in flux to enable editors to communicate asynchronously.
@@ -106,7 +133,7 @@
       <section id="resource-access">
         <h2>Resource Access</h2>
         <p>
-          The LWS Protocol defines standard interactions by which a some party can make some resources available to some agents.
+          The LWS Protocol defines standard interactions by which some party can make some resources available to some agents.
         </p>
 
         <ul>
@@ -121,7 +148,7 @@
       <section id="security-privacy">
         <h2>Security and Privacy</h2>
         <p>
-          A <a>resource manager</a> may keep a <a>served resource</a> private, may make it publicly available to anyone, or may limited its visibility to a constrained set of <a>requesting agents</a>.
+          A <a>resource manager</a> may keep a <a>served resource</a> private, may make it publicly available to anyone, or may limit its visibility to a constrained set of <a>requesting agents</a>.
         </p>
 
         <ul>
@@ -137,11 +164,11 @@
       <section id="conformance">
         <!-- Respec automagically adds the heading. -->
         <p>
-          A <dfn>LWS REST Server</dfn> is an HTTP server [[!rfc9112]] that complies with all of the relevant "MUST" statements in this specification. Specifically, the relevant normative "MUST" statements in Sections <span class="TODO">999</span> <a href="#rest-binding">REST Binding</a> of this document MUST be respected.
+          A <dfn>LWS Server</dfn> is an HTTP server [[!rfc9112]] that complies with all of the relevant "MUST" statements in this specification. Specifically, the relevant normative "MUST" statements in <a href="#operations"></a> of this document MUST be respected.
         </p>
 
         <p>
-          A <dfn>LWS REST Client</dfn> is an HTTP client [[!rfc9112]] that complies with all of the relevant "MUST" statements in this specification. Specifically, the relevant normative "MUST" statements in Sections <span class="TODO">999</span> <a href="#rest-binding">REST Binding</a> of this document MUST be respected.
+          A <dfn>LWS Client</dfn> is an HTTP client [[!rfc9112]] that complies with all of the relevant "MUST" statements in this specification. Specifically, the relevant normative "MUST" statements in <a href="#operations"></a> of this document MUST be respected.
         </p>
       </section>
     </section>
@@ -156,7 +183,7 @@
       </p>
 
       <p>
-        This specificaiton defines the following terms:
+        This specification defines the following terms:
       </p>
       <ul>
         <li><dfn>authentication credential</dfn> &mdash; a security token that asserts claims about an agent or end-user. This token is secured with a cryptographic proof.
@@ -174,7 +201,7 @@
       </ul>
 
       <p>
-        This specification defines <a>operations</a> on <a>served resources</a>, the resulting change of state, and a <a>response</a> indended to give the <a>requesting agent</a> requested infomation or inform them of the outcome of the <a>operation</a>.
+        This specification defines <a>operations</a> on <a>served resources</a>, the resulting change of state, and a <a>response</a> intended to give the <a>requesting agent</a> requested infomation or inform them of the outcome of the <a>operation</a>.
         An <dfn>operation</dfn> is any of the following actions that can be performed on a <a>served resource</a>:
       </p>
       <ul>
@@ -188,10 +215,10 @@
         The folowing section will describe the semantics and <dfn>responses</dfn> of these operations but the following <dfn>core responses</dfn> apply to any operation:
       </p>
       <ul>
-        <li><dfn>success</dfn> - the operation is believe to have completed. This may be accompanied by a <dfn>resource representation</dfn> conveying the contents of a <a>served resource</a>. A <a>success</a> response is not defined for the <a>create resource</a> operation. See instead <a>created</a>.</li>
+        <li><dfn>success</dfn> - the operation is believed to have completed. This may be accompanied by a <dfn>resource representation</dfn> conveying the contents of a <a>served resource</a>. A <a>success</a> response is not defined for the <a>create resource</a> operation. See instead <a href="#dfn-created">created</a>.</li>
         <li><dfn>not permitted</dfn></li>
         <li><dfn>unknown requester</dfn></li>
-        <li><dfn>unknown error</dfn> - reserved for error conditions that arrise that are not anticipated by the specification</li>
+        <li><dfn>unknown error</dfn> - reserved for error conditions that arise that are not anticipated by the specification</li>
       </ul>
     </section>
 
