@@ -31,6 +31,14 @@ jobs:
           npm ci
           npm run build
 
+      - name: Convert README to HTML
+        run: >
+          pandoc README.md -s
+          --metadata title="LWS Protocol"
+          --css https://cdn.jsdelivr.net/npm/@picocss/pico@2/css/pico.min.css
+          --template .github/pandoc/template.html
+          -o index.html
+
       - uses: actions/upload-pages-artifact@v3
         with:
           path: .
