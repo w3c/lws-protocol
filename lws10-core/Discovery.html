@@ -160,11 +160,19 @@ Servers MAY additionally derive types from the resource representation itself wh
   </p>
   <pre class="example" title="Services advertised in storage description">
 {
-  "@context": "https://www.w3.org/ns/lws/v1",
-  "id": "https://example.org/storage/alice/",
-  "type": "StorageDescription",
-  "typeIndexService": "https://example.org/types/index",
-  "typeSearchService": "https://example.org/types/search"
+  "@context": "https://www.w3.org/ns/lws/v1",
+  "id": "https://example.org/storage/alice/",
+  "type": "StorageDescription",
+  "service": [
+    {
+      "type": "TypeIndexService",
+      "serviceEndpoint": "https://example.org/types/index"
+    },
+    {
+      "type": "TypeSearchService",
+      "serviceEndpoint": "https://example.org/types/search"
+    }
+  ]
 }
   </pre>
   
