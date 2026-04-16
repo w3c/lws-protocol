@@ -92,12 +92,12 @@
 
       <ul>
         <li>
-          <dfn>Access Request</dfn> &mdash; a JSON-LD object submitted by an agent, expressing a
+          <dfn>Access Request</dfn> &mdash; a data object submitted by an agent, expressing a
           request to perform specific actions on storage resources, including the desired scope,
           purposes, and constraints.
         </li>
         <li>
-          <dfn>Access Grant</dfn> &mdash; a JSON-LD object created by a storage manager, expressing
+          <dfn>Access Grant</dfn> &mdash; a data object created by a storage manager, expressing
           an ability for an agent to perform specific actions on storage resources within certain
           defined constraints and for specific purposes.
         </li>
@@ -152,15 +152,15 @@
       <h2>Data Model</h2>
 
       <p>
-        An <a>access request</a> or <a>access grant</a> is a [[!JSON-LD11|JSON-LD]] document with a limited set
-        of top-level properties for identity and routing, and an <code>access</code> object that
-        describes the requested or permitted operations. A profile that describes
-        <a>access requests</a> using ODRL
-        concepts is described in <a href="#odrl-access-policy-profile"></a>.
+        An <a>access request</a> or <a>access grant</a> is a data object that expresses properties
+        for identity and routing, as well as an <code>access</code> object that describes the
+        requested or permitted operations. A profile that describes <a>access requests</a> using
+        ODRL concepts is described in <a href="#odrl-access-policy-profile"></a>.
       </p>
 
       <p>
-        The following example illustrates an <a>access request</a>:
+        The following example illustrates an <a>access request</a>. The example is shown
+        using the JSON-LD serialization defined in <a href="#json-ld-serialization"></a>.
       </p>
 
       <pre class="example" title="Access Request">
@@ -192,7 +192,8 @@
       </pre>
 
       <p>
-        The following example illustrates an <a>access grant</a>:
+        The following example illustrates an <a>access grant</a>. The example is shown
+        using the JSON-LD serialization defined in <a href="#json-ld-serialization"></a>.
       </p>
 
       <pre class="example" title="Access Grant">
@@ -226,32 +227,6 @@
         Other properties MAY be present on <a>access requests</a> and <a>access grants</a>.
       </p>
 
-      <section id="context-property">
-        <h3>Contexts</h3>
-
-        <p>
-          The <code>@context</code> property provides the JSON-LD context for the document.
-        </p>
-
-        <p>
-          The value of the <code>@context</code> property MUST be an ordered set that includes
-          <code>https://www.w3.org/ns/lws/v1</code>. Additional context entries MAY be included
-          to define extension terms.
-        </p>
-
-        <p>
-          This property is REQUIRED.
-        </p>
-
-        <pre class="example" title="@context property">
-{
-  "@context": [
-    "https://www.w3.org/ns/lws/v1"
-  ]
-}
-        </pre>
-      </section>
-
       <section id="type-property">
         <h3>Types</h3>
 
@@ -260,10 +235,12 @@
         </p>
 
         <p>
-          The value of the <code>type</code> property MUST be an array of strings. For an
-          <a>access request</a>, the array MUST contain <code>AccessRequest</code>. For an
-          <a>access grant</a>, the array MUST contain <code>AccessGrant</code>. Additional type
-          values MAY be included.
+          The value of the <code>type</code> property MUST be one or more
+          <a data-cite="!JSON-LD11#dfn-term">terms</a> and
+          <a data-cite="!URL#absolute-url-string">absolute URL strings</a>. For an
+          <a>access request</a>, the value MUST include the term <code>AccessRequest</code>.
+          For an <a>access grant</a>, the value MUST include the term
+          <code>AccessGrant</code>. Additional type values MAY be included.
         </p>
 
         <p>
@@ -351,7 +328,7 @@
         </p>
 
         <p>
-          The value of the <code>access</code> property MUST be a JSON object.
+          The value of the <code>access</code> property MUST be an object.
         </p>
 
         <p>
@@ -383,8 +360,10 @@
         </p>
 
         <p>
-          The value of the <code>type</code> property MUST be an array of strings that includes
-          <code>ODRLAccessPolicy</code>. Additional type values MAY be included.
+          The value of the <code>type</code> property MUST be one or more
+          <a data-cite="!JSON-LD11#dfn-term">terms</a> and
+          <a data-cite="!URL#absolute-url-string">absolute URL strings</a>, and MUST include
+          the term <code>ODRLAccessPolicy</code>. Additional type values MAY be included.
         </p>
 
         <p>
@@ -409,12 +388,13 @@
         </p>
 
         <p>
-          The value of the <code>action</code> property MUST be a non-empty array of strings.
-          Each value MUST correspond to an operation recognized by the server. The following
-          values MUST be supported: <code>read</code>, <code>modify</code>, <code>create</code>,
-          and <code>delete</code>. The <code>read</code>, <code>modify</code>, and
-          <code>delete</code> values are defined by the [[!ODRL-VOCAB|ODRL Vocabulary]]. The
-          <code>create</code> value is defined by this specification.
+          The value of the <code>action</code> property MUST be a collection of one or more
+          strings. Each value MUST correspond to an operation recognized by the server. The
+          following values MUST be supported: <code>read</code>, <code>modify</code>,
+          <code>create</code>, and <code>delete</code>. The <code>read</code>,
+          <code>modify</code>, and <code>delete</code> values are defined by the
+          [[!ODRL-VOCAB|ODRL Vocabulary]]. The <code>create</code> value is defined by this
+          specification.
         </p>
 
         <p>
@@ -485,10 +465,12 @@
 
         <ul>
           <li>
-            <code>type</code> &mdash; a string or URI identifying the type of target matcher.
+            <code>type</code> &mdash; a <a data-cite="!JSON-LD11#dfn-term">term</a> or
+            <a data-cite="!URL#absolute-url-string">absolute URL string</a> identifying the
+            type of target matcher.
           </li>
           <li>
-            <code>value</code> &mdash; a non-empty array of strings used to identify
+            <code>value</code> &mdash; a collection of one or more strings used to identify
             the target resources.
           </li>
         </ul>
@@ -563,8 +545,8 @@
         </p>
 
         <p>
-          The value of the <code>hasPurpose</code> property MUST be an array. Each element MUST
-          be a URI identifying a purpose.
+          The value of the <code>hasPurpose</code> property, if present, MUST be a collection
+          of URIs, each identifying a purpose.
         </p>
 
         <p>
@@ -590,8 +572,8 @@
         </p>
 
         <p>
-          The value of the <code>constraint</code> property MUST be an array of constraint
-          objects. Each constraint object MUST include the following properties:
+          The value of the <code>constraint</code> property, if present, MUST be a collection
+          of constraint objects. Each constraint object MUST include the following properties:
         </p>
 
         <ul>
@@ -804,6 +786,39 @@ Link: &lt;https://type.example/Playlist&gt;; rel="type"
       </section>
     </section>
 
+    <section id="serialization">
+      <h2>Serialization</h2>
+
+      <p>
+        The data model defined in this specification is independent of any particular
+        serialization.
+      </p>
+
+      <section id="json-ld-serialization">
+        <h3>JSON-LD Serialization</h3>
+
+        <p>
+          This specification defines a JSON-LD serialization for <a>access requests</a> and
+          <a>access grants</a>. Documents using this serialization MUST include an
+          <code>@context</code> property whose value is an ordered set that includes
+          <code>https://www.w3.org/ns/lws/v1</code>. Additional context entries MAY be
+          included to define extension terms.
+        </p>
+
+        <p>
+          The media type associated with this serialization is <code>application/lws+json</code>.
+        </p>
+
+        <pre class="example" title="JSON-LD @context">
+{
+  "@context": [
+    "https://www.w3.org/ns/lws/v1"
+  ]
+}
+        </pre>
+      </section>
+    </section>
+
     <section id="protocol">
       <h2>Protocol</h2>
 
@@ -815,6 +830,12 @@ Link: &lt;https://type.example/Playlist&gt;; rel="type"
       <p>
         These endpoints minimally require support for GET and POST operations. The DELETE operation
         is RECOMMENDED. Other operations MAY be supported.
+      </p>
+
+      <p>
+        These endpoints MUST support the JSON-LD serialization defined in
+        <a href="#json-ld-serialization"></a> for both request and response payloads. Servers
+        MAY support additional serializations.
       </p>
 
       <p>
