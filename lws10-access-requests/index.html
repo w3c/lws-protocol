@@ -104,8 +104,9 @@
         <li>
           <dfn data-lt="access policy profiles">Access Policy Profile</dfn> &mdash; an access policy profile describes the
           requirements for expressing a valid access policy. Every access policy profile is identified
-          with a URI, and a server indicates support for an access control policy profile by
-          referencing it with a <code>conformsTo</code> property in a Storage Description resource.
+          with a URI, and a server indicates support for one or more access policy profiles by
+          referencing them in the <code>conformsTo</code> property of a service object in its
+          Storage Description resource.
         </li>
       </ul>
     </section>
@@ -120,9 +121,10 @@
         <a>access requests</a> MUST have a <code>type</code> equal to the string
         <code>AccessRequestService</code>. A service object describing an endpoint for
         <a>access grants</a> MUST have a <code>type</code> equal to the string
-        <code>AccessGrantService</code>. A service
-        object SHOULD include a <code>conformsTo</code> property to indicate supported profiles for access
-        policies. Additional properties MAY be included:
+        <code>AccessGrantService</code>. A service object SHOULD include a
+        <code>conformsTo</code> property whose value is a collection of one or more URIs
+        identifying the <a>access policy profiles</a> supported at that endpoint. Additional
+        properties MAY be included:
       </p>
 
       <pre class="example" title="Storage Description with access request and grant services">
@@ -136,12 +138,12 @@
     {
       "type": "AccessRequestService",
       "serviceEndpoint": "https://access.example/request/",
-      "conformsTo": "https://www.w3.org/ns/lws#ODRLAccessProfile"
+      "conformsTo": ["https://www.w3.org/ns/lws#ODRLAccessProfile"]
     },
     {
       "type": "AccessGrantService",
       "serviceEndpoint": "https://access.example/grant/",
-      "conformsTo": "https://www.w3.org/ns/lws#ODRLAccessProfile"
+      "conformsTo": ["https://www.w3.org/ns/lws#ODRLAccessProfile"]
     }
   ]
 }
