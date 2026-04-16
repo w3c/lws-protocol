@@ -347,11 +347,6 @@
         <code>https://www.w3.org/ns/lws#ODRLAccessProfile</code>.
       </p>
 
-      <p>
-        Servers that support this profile MUST validate the following properties on the
-        <code>access</code> object of an <a>access request</a> and <a>access grant</a>.
-      </p>
-
       <section id="odrl-type">
         <h3>Types</h3>
 
@@ -845,9 +840,8 @@ Link: &lt;https://type.example/Playlist&gt;; rel="type"
       </p>
 
       <p>
-        For POST operations, a server MUST validate the request body, rejecting any invalid
-        requests with an error response. A successful POST operation MUST respond with a
-        <code>Location</code> header set to the URL of the new resource.
+        A successful POST operation MUST respond with a <code>Location</code> header set to
+        the URL of the new resource.
       </p>
 
       <p class="note">
@@ -877,17 +871,6 @@ Link: &lt;https://type.example/Playlist&gt;; rel="type"
           <li><code>GET /:id</code> &mdash; Retrieve a specific access grant.</li>
           <li><code>DELETE /:id</code> &mdash; Revoke an access grant.</li>
         </ul>
-      </section>
-
-      <section id="data-validation">
-        <h3>Data Validation</h3>
-
-        <p>
-          A server that advertises an <a>access policy profile</a> MUST validate
-          <a>access requests</a> and <a>access grants</a> according to the requirements of that
-          profile. A server MUST reject any
-          payload that cannot be represented fully in its underlying access policy layer.
-        </p>
       </section>
     </section>
 
