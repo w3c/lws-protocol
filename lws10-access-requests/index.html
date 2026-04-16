@@ -879,14 +879,6 @@ Link: &lt;https://type.example/Playlist&gt;; rel="type"
         </ul>
       </section>
 
-      <section id="endpoint-authorization">
-        <h3>Endpoint Authorization</h3>
-
-        <p>
-          A server MUST require authorization for access to these endpoints.
-        </p>
-      </section>
-
       <section id="data-validation">
         <h3>Data Validation</h3>
 
@@ -961,8 +953,10 @@ Link: &lt;https://type.example/Playlist&gt;; rel="type"
 
       <ul>
         <li>
-          Servers are encouraged to restrict write access to the <a>access grant</a> endpoint
-          to authorized storage managers and to specific clients.
+          Servers are strongly encouraged to apply authorization rules to both the
+          <a>access request</a> and <a>access grant</a> endpoints. Write access to the
+          <a>access grant</a> endpoint, in particular, should be restricted to authorized
+          storage managers and specific clients.
         </li>
         <li>
           When an agent creates an <a>access request</a>, the server is encouraged to verify
