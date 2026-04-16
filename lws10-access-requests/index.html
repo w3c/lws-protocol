@@ -102,7 +102,7 @@
           defined constraints and for specific purposes.
         </li>
         <li>
-          <dfn>Access Policy Profile</dfn> &mdash; an access policy profile describes the
+          <dfn data-lt="access policy profiles">Access Policy Profile</dfn> &mdash; an access policy profile describes the
           requirements for expressing a valid access policy. Every access policy profile is identified
           with a URI, and a server indicates support for an access control policy profile by
           referencing it with a <code>conformsTo</code> property in a Storage Description resource.
@@ -171,7 +171,7 @@
   "type": ["AccessRequest"],
   "inbox": "https://id.example/agent/inbox/",
   "storage": "https://storage.example/",
-  "access": {
+  "access": [{
     "type": ["ODRLAccessPolicy"],
     "action": ["read", "create"],
     "assignee": "https://id.example/agent",
@@ -187,7 +187,7 @@
         "rightOperand": "2026-06-09T10:00:00Z"
       }
     ]
-  }
+  }]
 }
       </pre>
 
@@ -203,7 +203,7 @@
   ],
   "type": ["AccessGrant"],
   "storage": "https://storage.example/",
-  "access": {
+  "access": [{
     "type": ["ODRLAccessPolicy"],
     "action": ["read"],
     "assignee": "https://id.example/agent",
@@ -219,7 +219,7 @@
         "rightOperand": "2026-06-09T10:00:00Z"
       }
     ]
-  }
+  }]
 }
       </pre>
 
@@ -320,15 +320,16 @@
         <h3>Access</h3>
 
         <p>
-          The <code>access</code> property describes the characteristics of an
-          <a>access policy profile</a>, based on the profile supported by a server. A profile
-          based on the
-          <a href="https://www.w3.org/TR/odrl-model/">ODRL Information Model</a> is described in
-          <a href="#odrl-access-policy-profile"></a>.
+          The <code>access</code> property describes the characteristics of one or more
+          <a>access policy profiles</a>, based on the profiles supported by a server. A
+          profile based on the
+          <a href="https://www.w3.org/TR/odrl-model/">ODRL Information Model</a> is described
+          in <a href="#odrl-access-policy-profile"></a>.
         </p>
 
         <p>
-          The value of the <code>access</code> property MUST be an object.
+          The value of the <code>access</code> property MUST be a collection of one or more
+          objects.
         </p>
 
         <p>
@@ -367,9 +368,9 @@
 
         <pre class="example" title="ODRL access policy type">
 {
-  "access": {
+  "access": [{
     "type": ["ODRLAccessPolicy"]
-  }
+  }]
 }
         </pre>
       </section>
@@ -411,9 +412,9 @@
 
         <pre class="example" title="action property">
 {
-  "access": {
+  "access": [{
     "action": ["read", "create"]
-  }
+  }]
 }
         </pre>
       </section>
@@ -438,9 +439,9 @@
 
         <pre class="example" title="assignee property">
 {
-  "access": {
+  "access": [{
     "assignee": "https://id.example/agent"
-  }
+  }]
 }
         </pre>
       </section>
@@ -504,7 +505,7 @@
 
         <pre class="example" title="target property with Resource type">
 {
-  "access": {
+  "access": [{
     "target": {
       "type": "StorageResource",
       "value": [
@@ -512,13 +513,13 @@
         "https://storage.example/data/2026"
       ]
     }
-  }
+  }]
 }
         </pre>
 
         <pre class="example" title="target property with TypeIndex type">
 {
-  "access": {
+  "access": [{
     "target": {
       "type": "TypeIndex",
       "value": [
@@ -526,7 +527,7 @@
         "https://index.example/?type=http%3A%2F%2Ftype.example%2FPhotoAlbum"
       ]
     }
-  }
+  }]
 }
         </pre>
       </section>
@@ -550,9 +551,9 @@
 
         <pre class="example" title="hasPurpose property">
 {
-  "access": {
+  "access": [{
     "hasPurpose": ["https://purpose.example/collaboration"]
-  }
+  }]
 }
         </pre>
       </section>
@@ -630,7 +631,7 @@
 
           <pre class="example" title="Client constraint">
 {
-  "access": {
+  "access": [{
     "constraint": [
       {
         "leftOperand": "client",
@@ -638,7 +639,7 @@
         "rightOperand": "https://app.example/client-id"
       }
     ]
-  }
+  }]
 }
           </pre>
         </section>
@@ -659,7 +660,7 @@
 
           <pre class="example" title="Media type constraint">
 {
-  "access": {
+  "access": [{
     "constraint": [
       {
         "leftOperand": "mediaType",
@@ -667,7 +668,7 @@
         "rightOperand": ["image/jpeg", "image/png"]
       }
     ]
-  }
+  }]
 }
           </pre>
         </section>
@@ -696,7 +697,7 @@ Link: &lt;https://type.example/Playlist&gt;; rel="type"
 
           <pre class="example" title="Resource type constraint">
 {
-  "access": {
+  "access": [{
     "constraint": [
       {
         "leftOperand": "type",
@@ -707,7 +708,7 @@ Link: &lt;https://type.example/Playlist&gt;; rel="type"
         ]
       }
     ]
-  }
+  }]
 }
           </pre>
         </section>
@@ -726,7 +727,7 @@ Link: &lt;https://type.example/Playlist&gt;; rel="type"
 
           <pre class="example" title="Temporal constraint">
 {
-  "access": {
+  "access": [{
     "constraint": [
       {
         "leftOperand": "dateTime",
@@ -739,7 +740,7 @@ Link: &lt;https://type.example/Playlist&gt;; rel="type"
         "rightOperand": "2026-06-09T10:00:00Z"
       }
     ]
-  }
+  }]
 }
           </pre>
         </section>
@@ -755,7 +756,7 @@ Link: &lt;https://type.example/Playlist&gt;; rel="type"
 
           <pre class="example" title="Combined constraints">
 {
-  "access": {
+  "access": [{
     "action": ["read"],
     "assignee": "https://id.example/agent",
     "target": {
@@ -774,7 +775,7 @@ Link: &lt;https://type.example/Playlist&gt;; rel="type"
         "rightOperand": "https://app.example/client-id"
       }
     ]
-  }
+  }]
 }
           </pre>
         </section>
