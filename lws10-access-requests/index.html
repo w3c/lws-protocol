@@ -115,16 +115,15 @@
       <h2>Discovery</h2>
 
       <p>
-        A storage that supports <a>access requests</a> and <a>access grants</a> MUST advertise the
-        associated service
-        endpoints in its Storage Description resource. A service object describing an endpoint for
-        <a>access requests</a> MUST have a <code>type</code> equal to the string
-        <code>AccessRequestService</code>. A service object describing an endpoint for
-        <a>access grants</a> MUST have a <code>type</code> equal to the string
-        <code>AccessGrantService</code>. A service object SHOULD include a
-        <code>conformsTo</code> property whose value is a collection of one or more URIs
-        identifying the <a>access policy profiles</a> supported at that endpoint. Additional
-        properties MAY be included:
+        A storage MAY advertise support for <a>access requests</a> and <a>access grants</a>
+        in its Storage Description resource. When such support is advertised, a service
+        object describing an endpoint for <a>access requests</a> MUST have a
+        <code>type</code> equal to the string <code>AccessRequestService</code>, and a
+        service object describing an endpoint for <a>access grants</a> MUST have a
+        <code>type</code> equal to the string <code>AccessGrantService</code>. A service
+        object SHOULD include a <code>conformsTo</code> property whose value is a collection
+        of one or more URIs identifying the <a>access policy profiles</a> supported at that
+        endpoint. Additional properties MAY be included:
       </p>
 
       <pre class="example" title="Storage Description with access request and grant services">
