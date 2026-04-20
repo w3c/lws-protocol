@@ -43,7 +43,7 @@
     <section id="abstract">
       <p>
         This document extends Linked Web Storage (LWS) with a mechanism for an agent to request access to
-        resources and for a storage manager to grant access with defined constraints. The access policy
+        resources and for a storage manager to grant access with defined constraints. The access
         profile defined in this document is based on concepts from the
         <a href="https://www.w3.org/TR/odrl-model/">Open Digital Rights Language</a> (ODRL), including
         actions, constraints, and assignees.
@@ -75,7 +75,7 @@
       </p>
 
       <p>
-        The <a>access policy profile</a> defined in this document is based on concepts from the
+        The <a>access profile</a> defined in this document is based on concepts from the
         <a href="https://www.w3.org/TR/odrl-model/">Open Digital Rights Language</a> (ODRL), including
         actions, constraints, and assignees. Other profiles could use a different conceptual framework.
       </p>
@@ -102,9 +102,9 @@
           defined constraints and for specific purposes.
         </li>
         <li>
-          <dfn data-lt="access policy profiles">Access Policy Profile</dfn> &mdash; an access policy profile describes the
-          requirements for expressing a valid access policy. Every access policy profile is identified
-          with a URI, and a server indicates support for one or more access policy profiles by
+          <dfn data-lt="access profiles">Access Profile</dfn> &mdash; an access profile describes the
+          requirements for expressing a valid access policy. Every access profile is identified
+          with a URI, and a server indicates support for one or more access profiles by
           referencing them in the <code>conformsTo</code> property of a service object in its
           Storage Description resource.
         </li>
@@ -122,7 +122,7 @@
         service object describing an endpoint for <a>access grants</a> MUST have a
         <code>type</code> equal to the string <code>AccessGrantService</code>. A service
         object SHOULD include a <code>conformsTo</code> property whose value is a collection
-        of one or more URIs identifying the <a>access policy profiles</a> supported at that
+        of one or more URIs identifying the <a>access profiles</a> supported at that
         endpoint. Additional properties MAY be included:
       </p>
 
@@ -137,12 +137,12 @@
     {
       "type": "AccessRequestService",
       "serviceEndpoint": "https://access.example/request/",
-      "conformsTo": ["https://www.w3.org/ns/lws#ODRLAccessProfile"]
+      "conformsTo": ["https://www.w3.org/ns/lws#AccessProfile"]
     },
     {
       "type": "AccessGrantService",
       "serviceEndpoint": "https://access.example/grant/",
-      "conformsTo": ["https://www.w3.org/ns/lws#ODRLAccessProfile"]
+      "conformsTo": ["https://www.w3.org/ns/lws#AccessProfile"]
     }
   ]
 }
@@ -156,7 +156,7 @@
         An <a>access request</a> or <a>access grant</a> is a data object that expresses properties
         for identity and routing, as well as an <code>access</code> object that describes the
         requested or permitted operations. A profile that describes <a>access requests</a> using
-        ODRL concepts is described in <a href="#odrl-access-policy-profile"></a>.
+        ODRL concepts is described in <a href="#access-profile"></a>.
       </p>
 
       <p>
@@ -173,7 +173,7 @@
   "inbox": "https://id.example/agent/inbox/",
   "storage": "https://storage.example/",
   "access": [{
-    "type": ["ODRLAccessPolicy"],
+    "type": ["AccessPolicy"],
     "action": ["read", "create"],
     "assignee": "https://id.example/agent",
     "target": {
@@ -205,7 +205,7 @@
   "type": ["AccessGrant"],
   "storage": "https://storage.example/",
   "access": [{
-    "type": ["ODRLAccessPolicy"],
+    "type": ["AccessPolicy"],
     "action": ["read"],
     "assignee": "https://id.example/agent",
     "target": {
@@ -322,10 +322,10 @@
 
         <p>
           The <code>access</code> property describes the characteristics of one or more
-          <a>access policy profiles</a>, based on the profiles supported by a server. A
+          <a>access profiles</a>, based on the profiles supported by a server. A
           profile based on the
           <a href="https://www.w3.org/TR/odrl-model/">ODRL Information Model</a> is described
-          in <a href="#odrl-access-policy-profile"></a>.
+          in <a href="#access-profile"></a>.
         </p>
 
         <p>
@@ -339,14 +339,14 @@
       </section>
     </section>
 
-    <section id="odrl-access-policy-profile">
-      <h2>ODRL Access Policy Profile</h2>
+    <section id="access-profile">
+      <h2>Access Profile</h2>
 
       <p>
-        This specification defines an Access Policy profile based on the
+        This specification defines an Access Profile based on the
         [[!ODRL-MODEL|ODRL Information Model]] and [[!ODRL-VOCAB|ODRL Vocabulary]], identified
         with the URL:
-        <code>https://www.w3.org/ns/lws#ODRLAccessProfile</code>.
+        <code>https://www.w3.org/ns/lws#AccessProfile</code>.
       </p>
 
       <section id="odrl-type">
@@ -360,17 +360,17 @@
           The value of the <code>type</code> property MUST be one or more
           <a data-cite="!JSON-LD11#dfn-term">terms</a> and
           <a data-cite="!URL#absolute-url-string">absolute URL strings</a>, and MUST include
-          the term <code>ODRLAccessPolicy</code>. Additional type values MAY be included.
+          the term <code>AccessPolicy</code>. Additional type values MAY be included.
         </p>
 
         <p>
           The property is REQUIRED.
         </p>
 
-        <pre class="example" title="ODRL access policy type">
+        <pre class="example" title="Access policy type">
 {
   "access": [{
-    "type": ["ODRLAccessPolicy"]
+    "type": ["AccessPolicy"]
   }]
 }
         </pre>
