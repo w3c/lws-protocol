@@ -490,10 +490,6 @@
             <code>https://www.w3.org/ns/lws#StorageResource</code> &mdash; matches
             any resource managed by a storage.
           </li>
-          <li>
-            <code>https://www.w3.org/ns/lws#TypeIndex</code> &mdash; matches
-            resources via a type index lookup.
-          </li>
         </ul>
 
         <p>
@@ -512,20 +508,6 @@
       "value": [
         "https://storage.example/data/2025",
         "https://storage.example/data/2026"
-      ]
-    }
-  }]
-}
-        </pre>
-
-        <pre class="example" title="target property with TypeIndex type">
-{
-  "access": [{
-    "target": {
-      "type": "TypeIndex",
-      "value": [
-        "https://index.example/?type=http%3A%2F%2Ftype.example%2FImage",
-        "https://index.example/?type=http%3A%2F%2Ftype.example%2FPhotoAlbum"
       ]
     }
   }]
