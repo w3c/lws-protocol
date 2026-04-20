@@ -19,7 +19,6 @@ Location: Open Data Institute, London, UK
   * Containers (after lunch)
   * Terminology (after lunch)
   * Type Index (after lunch)
-  * Test Suite and example implementation
 
 ### Tuesday, April 28
 
@@ -27,6 +26,7 @@ Location: Open Data Institute, London, UK
 
 * Recommendation Track documents
   * Metadata resources
+* Test Suite and example implementation
 * Non-recommendation Track documents
   * Use cases and requirements
   * LWS Primer
