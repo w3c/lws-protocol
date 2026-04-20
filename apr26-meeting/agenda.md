@@ -13,25 +13,25 @@ Location: Open Data Institute, London, UK
   * Goals and strategy
   * Interaction with Solid CG and external stakeholders
   * Charter process and timeline
-* Recommendation Track documents - open work items that need attention
+* Recommendation Track documents
   * Access Requests (not too late)
   * Notifications (not too late)
-  * Terminology (After lunch)
-  * Type Index (After lunch)
+  * Containers (after lunch)
+  * Terminology (after lunch)
+  * Type Index (after lunch)
   * Test Suite and example implementation
 
 ### Tuesday, April 28
 
 [W3C Calendar](https://www.w3.org/events/meetings/10c363c4-c825-4d24-b2cb-bf70af152298/)
 
-* Recommendation Track documents - items missing from specification documents
+* Recommendation Track documents
   * Metadata resources
 * Non-recommendation Track documents
   * Use cases and requirements
   * LWS Primer
   * LWS Best Practices
   * Solid Compatability Document
-* Editorial - identify areas of inconsistency across documents
-* Clarify and/or resolve open issues in GitHub repository
+
 
 
