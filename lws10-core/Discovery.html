@@ -139,5 +139,169 @@
 }
     </pre>
   </section>
+
 </section>
 
+<section id="type-index-service">
+  <h3>Search and Type Index Services</h3>
+  <p>The <code>TypeIndexService</code> provides a server-managed discovery mechanism to query the distinct resource types available within a storage, while the <code>TypeSearchService</code> allows clients to retrieve the specific resource or container URIs matching those types.
+  </p>
+<p>
+To prevent inadvertent or malicious corruption by clients, these services are strictly populated and managed by the server. To mitigate security and performance risks associated with deep-parsing arbitrary resource bodies, servers are not required to parse resource content to discover types. Instead, servers SHOULD derive resource types from HTTP Link headers provided by the client during resource creation or modification, combined with the server's intrinsic knowledge of the resource's state (such as native LWS classes like <code>https://www.w3.org/ns/lws#Container)</code>.
+  </p><p>
+Servers MAY additionally derive types from the resource representation itself when they are able to parse it. Implementations are encouraged to do so where feasible, as richer type discovery improves the utility of the Type Index and Type Search services for Linked Data clients. When a server enriches the type index from resource content, the types it surfaces MUST be treated identically to those derived from Link headers for the purposes of indexing, search, and authorization filtering.
+</p>
+  <p class="note">Because servers are not required to parse the resource body, the Type Search Service relies heavily on the types explicitly declared via HTTP headers or managed by the server. If a client includes a type exclusively within a resource's internal graph but fails to provide the corresponding <code>Link</code> header, that type may not be discoverable via these services.
+  </p>
+  <p>A server that implements these services MUST advertise the endpoints in the storage description resource using the <code>typeIndexService</code> and <code>typeSearchService</code> properties.
+  </p>
+  <pre class="example" title="Services advertised in storage description">
+{
+  "@context": "https://www.w3.org/ns/lws/v1",
+  "id": "https://example.org/storage/alice/",
+  "type": "StorageDescription",
+  "service": [
+    {
+      "type": "TypeIndexService",
+      "serviceEndpoint": "https://example.org/types/index"
+    },
+    {
+      "type": "TypeSearchService",
+      "serviceEndpoint": "https://example.org/types/search"
+    }
+  ]
+}
+  </pre>
+  
+  <section>
+    <h4>GET [typeIndexService]</h4>
+    <p>Returns <code>application/lws+json</code>:</p>
+    <pre class="example">
+{
+  "@context": "https://www.w3.org/ns/lws/v1",
+  "type": "TypeIndex",
+  "totalItems": 142,
+  "items": [
+    { "type": "https://schema.org/Person" },
+    { "type": "https://schema.org/Event" },
+    { "type": "https://schema.org/Message" }
+  ],
+  "next": "..."
+}
+    </pre>
+    <p>Returns a paginated <code>TypeIndex</code> following standard LWS pagination. It lists the unique types of resources that currently exist within the storage and that the authenticated user is authorized to see. This endpoint accepts no query parameters.</p>
+  </section>
+  
+  <section>
+    <h4>GET [typeSearchService]</h4>
+    <p>Supports query parameters (all optional): <code>?type=&lt;URI&gt;</code> (repeatable, AND).</p>
+    <p class="note">Clients MUST URL-encode query parameter keys/values.</p>
+    <p>Returns <code>application/lws+json</code>: A paginated <code>ContainerPage</code> of matching LWS Resource URIs. No other parameters.</p>
+    <p>If a resource declares multiple types, it MUST be discoverable when querying for any of its declared types.</p>
+    <p>Clients MAY use the native LWS classes <code>https://www.w3.org/ns/lws#DataResource</code> or <code>https://www.w3.org/ns/lws#Container</code> as <code>type</code> filters to restrict the search results exclusively to resource instances or containers, respectively.</p>
+  </section>
+  
+  <section>
+    <h4>POST [typeSearchService]</h4>
+    <p>MUST support <code>application/lws+json</code> body:</p>
+    <pre class="example">
+{
+  "@context": "https://www.w3.org/ns/lws/v1",
+  "type": ["https://schema.org/Person"]
+}
+    </pre>
+    <p>
+      <code>type</code>: array of URIs (AND).
+    </p>
+    <p>Returns paginated ContainerPage of matching LWS Resource URIs. No other parameters.</p>
+  </section>
+  
+  <section>
+    <h4>Security and Authorization</h4>
+    <p>
+      Servers MUST enforce authorization per access grants. Responses to GET/POST on <code>typeIndexService</code> or <code>typeSearchService</code> include only types and resource URIs that the authenticated client is explicitly authorized to read. 
+    </p>
+    <p>
+      Unauthorized entries MUST be omitted entirely. A client must not be able to discover the existence of a specific resource instance, or that a specific type exists in the storage at all, if they do not have the required access grants. This implicit filtering yields a dynamically generated, client-specific type index and search result.
+    </p>
+  </section>
+  
+  <section>
+    <h4>Non-Normative Examples</h4>
+    <pre class="example" title="Example 1: GET TypeIndex (Discovering available types)">
+Request
+GET /types/index
+
+Response
+{
+  "@context": "https://www.w3.org/ns/lws/v1",
+  "type": "TypeIndex",
+  "totalItems": 142,
+  "items": [
+    { "type": "https://schema.org/Person" },
+    { "type": "https://schema.org/Event" }
+  ],
+  "next": "https://example.org/types/index?page=2"
+}
+    </pre>
+    
+    <pre class="example" title="Example 2: GET Search for Instances (Using DataResource filter)">
+Request
+GET /types/search?type=https://schema.org/Person&amp;type=https://www.w3.org/ns/lws#DataResource
+
+Response
+{
+  "@context": "https://www.w3.org/ns/lws/v1",
+  "type": "ContainerPage",
+  "totalItems": 27,
+  "items": [
+    "https://example.org/data/person-4872",
+    "https://example.org/data/person-4873",
+    "https://example.org/data/person-5882"
+  ],
+  "next": "https://example.org/types/search?type=https://schema.org/Person&amp;type=https://www.w3.org/ns/lws#DataResource&amp;page=2"
+}
+    </pre>
+    
+    <pre class="example" title="Example 3: GET Search for Containers (Using Container filter)">
+Request
+GET /types/search?type=https://schema.org/Person&amp;type=https://www.w3.org/ns/lws#Container
+
+Response
+{
+  "@context": "https://www.w3.org/ns/lws/v1",
+  "type": "ContainerPage",
+  "totalItems": 2,
+  "items": [
+    "https://example.org/data/people/",
+    "https://example.org/data/contacts/"
+  ]
+}
+    </pre>
+    
+    <pre class="example" title="Example 4: POST Search with Multiple Type Filters">
+Request
+POST /types/search
+Request Body
+{
+  "@context": "https://www.w3.org/ns/lws/v1",
+  "type": [
+    "https://schema.org/Person",
+    "https://www.w3.org/ns/lws#DataResource"
+  ]
+}
+
+Response
+{
+  "@context": "https://www.w3.org/ns/lws/v1",
+  "type": "ContainerPage",
+  "totalItems": 3,
+  "items": [
+    "https://example.org/data/person-4872",
+    "https://example.org/data/person-9341",
+    "https://example.org/data/person-1123"
+  ]
+}
+    </pre>
+  </section>
+</section>
