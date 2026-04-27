@@ -201,6 +201,15 @@
       When a <a href="#Server">Server</a> receives an HTTP request targeting an <a href="#agent-identifier">agent identifier</a> that does not include a fragment, the <a href="#Server">Server</a> MUST respond with a redirect and provide the corresponding <a href="#Agent-Document">Web-CID Agent Document</a> identifier in the response's <code>Location</code> header field.
     </p>
 
+    <div class="issue" title="CID Fragment Identifiers">
+      <p>
+        The current [[CID-1.0]] does not strictly forbid fragment identifiers but defines its algorithms in such a way that fragment identifiers cannot effectively be used.
+      </p>
+      <p>
+        A <a href="https://github.com/w3c/cid/issues/164">corresponding issue</a> and a <a href="https://github.com/w3c/cid/pull/168">corresponding pull request</a> are already opened.
+      </p>
+    </div>
+
   </section>
 
   <section id="agent-document" class="normative">
