@@ -1,0 +1,89 @@
+{
+  "@context": [
+    { "@base": "https://raw.githubusercontent.com/w3c/lws-protocol/main/tests/auth/did-key/" },
+    "../../context.jsonld"
+  ],
+  "@graph": [
+    {
+      "@id": "",
+      "@type": "Manifest",
+      "label": "LWS Authentication: Self-signed Identity using did:key",
+      "comment": "Tests for the LWS 1.0 Authentication Suite: Self-signed Identity using did:key (https://www.w3.org/TR/lws10-authn-ssi-did-key/)",
+      "entries": [
+        {
+          "@id": "#authn-didkey-valid-credential",
+          "@type": "ValidationTest",
+          "name": "authn-didkey-valid-credential",
+          "traits": ["Authn"],
+          "status": "Proposed",
+          "comment": "A valid did:key authentication credential is accepted by the authorization server.",
+          "prereqs": {
+            "authentication": "did:key:z6MkhaXgBZDvotDkL5257faiztiGiC2QtKLGpbnnEGta2doK",
+            "hierarchy": []
+          },
+          "request": {
+            "method": "POST",
+            "url": "https://authorization.example/token",
+            "contentType": "application/x-www-form-urlencoded",
+            "body": "grant_type=urn%3Aietf%3Aparams%3Aoauth%3Agrant-type%3Atoken-exchange&resource=https%3A%2F%2Fstorage.example%2Falice%2F&subject_token_type=urn%3Aietf%3Aparams%3Aoauth%3Atoken-type%3Aid_token&subject_token=<did-key-signed-jwt>",
+            "linkHeaders": [],
+            "otherHeaders": []
+          },
+          "response": {
+            "statusCode": 200,
+            "contentType": "application/json",
+            "bodyURL": "../../resources/token-response-200.json"
+          }
+        },
+        {
+          "@id": "#authn-didkey-invalid-signature",
+          "@type": "NegativeTest",
+          "name": "authn-didkey-invalid-signature",
+          "traits": ["Authn"],
+          "status": "Proposed",
+          "comment": "A did:key credential with an invalid signature is rejected.",
+          "prereqs": {
+            "authentication": "did:key:z6MkhaXgBZDvotDkL5257faiztiGiC2QtKLGpbnnEGta2doK",
+            "hierarchy": []
+          },
+          "request": {
+            "method": "POST",
+            "url": "https://authorization.example/token",
+            "contentType": "application/x-www-form-urlencoded",
+            "body": "grant_type=urn%3Aietf%3Aparams%3Aoauth%3Agrant-type%3Atoken-exchange&resource=https%3A%2F%2Fstorage.example%2Falice%2F&subject_token_type=urn%3Aietf%3Aparams%3Aoauth%3Atoken-type%3Aid_token&subject_token=<did-key-bad-signature-jwt>",
+            "linkHeaders": [],
+            "otherHeaders": []
+          },
+          "response": {
+            "statusCode": 400,
+            "bodyURL": "../../resources/token-response-400.json"
+          }
+        },
+        {
+          "@id": "#authn-didkey-missing-credential",
+          "@type": "NegativeTest",
+          "name": "authn-didkey-missing-credential",
+          "traits": ["Authn"],
+          "status": "Proposed",
+          "comment": "A token exchange request with no subject_token is rejected.",
+          "prereqs": {
+            "authentication": null,
+            "hierarchy": []
+          },
+          "request": {
+            "method": "POST",
+            "url": "https://authorization.example/token",
+            "contentType": "application/x-www-form-urlencoded",
+            "body": "grant_type=urn%3Aietf%3Aparams%3Aoauth%3Agrant-type%3Atoken-exchange&resource=https%3A%2F%2Fstorage.example%2Falice%2F",
+            "linkHeaders": [],
+            "otherHeaders": []
+          },
+          "response": {
+            "statusCode": 400,
+            "bodyURL": "../../resources/token-response-400.json"
+          }
+        }
+      ]
+    }
+  ]
+}

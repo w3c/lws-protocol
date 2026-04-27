@@ -1,0 +1,810 @@
+{
+  "@context": [
+    { "@base": "https://raw.githubusercontent.com/w3c/lws-protocol/main/lws10-test-suite/" },
+    "./context.jsonld"
+  ],
+  "@graph": [
+    {
+      "@type": "Manifest",
+      "@id": "",
+      "label": "LWS Protocol 1.0 Test Suite",
+      "comment": "Tests for Linked Web Storage Protocol 1.0 (https://www.w3.org/TR/lws10-core/). Tests cover container operations, data resource operations, discovery, authentication, and authorization.",
+      "authSuites": [
+        "https://www.w3.org/TR/lws10-authn-ssi-did-key/",
+        "https://www.w3.org/TR/lws10-authn-openid/",
+        "https://www.w3.org/TR/lws10-authn-saml/"
+      ],
+      "include": [
+        "auth/did-key/manifest.jsonld",
+        "auth/oidc/manifest.jsonld",
+        "auth/saml/manifest.jsonld"
+      ],
+      "entries": [
+
+        {
+          "@type": "ValidationTest",
+          "@id": "#discovery-unauthorized-response-headers",
+          "name": "discovery-unauthorized-response-headers",
+          "traits": ["Get", "Discovery", "Private"],
+          "status": "Proposed",
+          "comment": "unauthorized GET -> 401 { WWW-Authenticate: [Bearer, as_uri, realm], Link }",
+          "source": "https://w3c.github.io/lws-protocol/lws10-core/#authorization-server-discovery",
+          "prereqs": {
+            "hierarchy": [
+              {
+                "url": "/storage_1/metadata/",
+                "authorization": {
+                  "read": "Role-Owner",
+                  "write": "Role-Owner"
+                }
+              }
+            ],
+            "authentication": null
+          },
+          "request": {
+            "method": "GET",
+            "url": "/storage_1/metadata/",
+            "authentication": null,
+            "authorization": null,
+            "linkHeaders": [],
+            "otherHeaders": []
+          },
+          "response": {
+            "statusCode": 401,
+            "authenticationChallenge": {
+              "wwwAuthenticate": "Bearer",
+              "asUri": "https://authorization.example",
+              "realm": "https://storage.example/storage_1"
+            },
+            "linkHeaders": [
+              {
+                "rel": "storageDescription",
+                "hrefTemplate": "https://storage.example/storage_1/metadata"
+              }
+            ],
+            "otherHeaders": []
+          }
+        },
+
+        {
+          "@type": "ValidationTest",
+          "@id": "#discovery-storage-description",
+          "name": "discovery-storage-description",
+          "traits": ["Get", "Discovery", "Public"],
+          "status": "Proposed",
+          "comment": "public GET [Accept: lws+json] -> 200 lws+json { Link: [storageDescription], body: {@type: Storage, service: storageDescription} }",
+          "source": "https://w3c.github.io/lws-protocol/lws10-core/#discovery",
+          "prereqs": {
+            "hierarchy": [
+              {
+                "url": "/alice/",
+                "authorization": {
+                  "read": "Role-Public",
+                  "write": "Role-Owner"
+                }
+              }
+            ],
+            "authentication": null
+          },
+          "request": {
+            "method": "GET",
+            "url": "/alice/description",
+            "authentication": null,
+            "authorization": null,
+            "linkHeaders": [],
+            "otherHeaders": [
+              { "headerName": "Accept", "headerValue": "application/lws+json" }
+            ]
+          },
+          "response": {
+            "statusCode": 200,
+            "contentType": "application/lws+json",
+            "linkHeaders": [
+              {
+                "rel": "storageDescription",
+                "hrefTemplate": "/alice/description"
+              }
+            ],
+            "bodyURL": "resources/storage-description.json"
+          }
+        },
+
+        {
+          "@type": "ValidationTest",
+          "@id": "#discovery-get-links-storageDescription",
+          "name": "discovery-get-links-storageDescription",
+          "traits": ["Get", "Discovery", "Public"],
+          "status": "Proposed",
+          "comment": "public GET container -> 200 { Link: [storageDescription] }",
+          "source": "https://w3c.github.io/lws-protocol/lws10-core/#discovery",
+          "prereqs": {
+            "hierarchy": [
+              {
+                "url": "/alice/notes/",
+                "authorization": {
+                  "read": "Role-Public",
+                  "write": "Role-Owner"
+                }
+              }
+            ],
+            "authentication": null
+          },
+          "request": {
+            "method": "GET",
+            "url": "/alice/notes/",
+            "authentication": null,
+            "authorization": null,
+            "linkHeaders": [],
+            "otherHeaders": []
+          },
+          "response": {
+            "statusCode": 200,
+            "linkHeaders": [
+              {
+                "rel": "storageDescription",
+                "hrefTemplate": "/alice/description"
+              }
+            ]
+          }
+        },
+
+        {
+          "@type": "ValidationTest",
+          "@id": "#getContainer",
+          "name": "getContainer",
+          "traits": ["Get", "Public", "Container"],
+          "status": "Proposed",
+          "comment": "public GET container [Accept: lws+json] -> 200 lws+json { Link: [linkset, up, type=Container, storageDescription] }",
+          "source": "https://w3c.github.io/lws-protocol/lws10-core/#read-resource",
+          "prereqs": {
+            "hierarchy": [
+              {
+                "url": "/alice/notes/",
+                "authorization": {
+                  "read": "Role-Public",
+                  "write": "Role-Owner"
+                }
+              }
+            ],
+            "authentication": null
+          },
+          "request": {
+            "method": "GET",
+            "url": "/alice/notes/",
+            "authentication": null,
+            "authorization": null,
+            "linkHeaders": [],
+            "otherHeaders": [
+              { "headerName": "Accept", "headerValue": "application/lws+json" }
+            ]
+          },
+          "response": {
+            "statusCode": 200,
+            "contentType": "application/lws+json",
+            "authenticationChallenge": null,
+            "authorizationHint": null,
+            "linkHeaders": [
+              {
+                "rel": "linkset",
+                "hrefTemplate": "/alice/notes/.meta",
+                "mediaType": "application/linkset+json"
+              },
+              {
+                "rel": "up",
+                "hrefTemplate": "/alice/"
+              },
+              {
+                "rel": "type",
+                "href": "https://www.w3.org/ns/lws#Container"
+              },
+              {
+                "rel": "storageDescription",
+                "hrefTemplate": "/alice/description"
+              }
+            ],
+            "otherHeaders": [],
+            "bodyURL": "containers/alice-notes.json"
+          }
+        },
+
+        {
+          "@type": "NegativeTest",
+          "@id": "#getContainer-private-unauthorized",
+          "name": "getContainer-private-unauthorized",
+          "traits": ["Get", "Private", "Container", "Authz"],
+          "status": "Proposed",
+          "comment": "unauthn GET private-container -> 401 { WWW-Authenticate: [Bearer, as_uri, realm] }",
+          "source": "https://w3c.github.io/lws-protocol/lws10-core/#authorization",
+          "prereqs": {
+            "hierarchy": [
+              {
+                "url": "/alice/notes/",
+                "authorization": {
+                  "read": "Role-Owner",
+                  "write": "Role-Owner"
+                }
+              }
+            ],
+            "authentication": null
+          },
+          "request": {
+            "method": "GET",
+            "url": "/alice/notes/",
+            "authentication": null,
+            "authorization": null,
+            "linkHeaders": [],
+            "otherHeaders": []
+          },
+          "response": {
+            "statusCode": 401,
+            "authenticationChallenge": {
+              "wwwAuthenticate": "Bearer",
+              "asUri": "https://authorization.example",
+              "realm": "https://storage.example/alice/"
+            }
+          }
+        },
+
+        {
+          "@type": "ValidationTest",
+          "@id": "#getContainer-authenticated-owner",
+          "name": "getContainer-authenticated-owner",
+          "traits": ["Get", "Private", "Container", "Authn", "Authz"],
+          "status": "Proposed",
+          "comment": "owner GET private-container [Accept: lws+json] -> 200 lws+json { Link: [linkset, up, type=Container] }",
+          "source": "https://w3c.github.io/lws-protocol/lws10-core/#read-resource",
+          "prereqs": {
+            "hierarchy": [
+              {
+                "url": "/alice/notes/",
+                "authorization": {
+                  "read": "Role-Owner",
+                  "write": "Role-Owner"
+                }
+              }
+            ],
+            "authentication": "https://id.example/alice"
+          },
+          "request": {
+            "method": "GET",
+            "url": "/alice/notes/",
+            "authentication": "https://id.example/alice",
+            "authorization": "Role-Owner",
+            "linkHeaders": [],
+            "otherHeaders": [
+              { "headerName": "Accept", "headerValue": "application/lws+json" }
+            ]
+          },
+          "response": {
+            "statusCode": 200,
+            "contentType": "application/lws+json",
+            "linkHeaders": [
+              {
+                "rel": "linkset",
+                "hrefTemplate": "/alice/notes/.meta",
+                "mediaType": "application/linkset+json"
+              },
+              { "rel": "up",   "hrefTemplate": "/alice/" },
+              { "rel": "type", "href": "https://www.w3.org/ns/lws#Container" }
+            ],
+            "bodyURL": "containers/alice-notes.json"
+          }
+        },
+
+        {
+          "@type": "ValidationTest",
+          "@id": "#createDataResource",
+          "name": "createDataResource",
+          "traits": ["Post", "Authn", "Authz", "Container", "DataResource"],
+          "status": "Proposed",
+          "comment": "owner POST container [Content-Type: text/plain, Slug: shoppinglist.txt] -> 201 { Location, Link: [linkset, up, type=DataResource] }",
+          "source": "https://w3c.github.io/lws-protocol/lws10-core/#create-resource",
+          "prereqs": {
+            "hierarchy": [
+              {
+                "url": "/alice/notes/",
+                "authorization": {
+                  "read": "Role-Public",
+                  "write": "Role-Owner"
+                }
+              }
+            ],
+            "authentication": "https://id.example/alice"
+          },
+          "request": {
+            "method": "POST",
+            "url": "/alice/notes/",
+            "authentication": "https://id.example/alice",
+            "authorization": "Role-Owner",
+            "contentType": "text/plain",
+            "slug": "shoppinglist.txt",
+            "linkHeaders": [],
+            "otherHeaders": [
+              { "headerName": "Content-Length", "headerValue": "47" }
+            ],
+            "bodyURL": "resources/shoppinglist.txt"
+          },
+          "response": {
+            "statusCode": 201,
+            "locationURL": "/alice/notes/shoppinglist.txt",
+            "linkHeaders": [
+              {
+                "rel": "linkset",
+                "hrefTemplate": "/alice/notes/shoppinglist.txt.meta",
+                "mediaType": "application/linkset+json"
+              },
+              { "rel": "up",   "hrefTemplate": "/alice/notes/" },
+              { "rel": "type", "href": "https://www.w3.org/ns/lws#DataResource" }
+            ],
+            "otherHeaders": [
+              { "headerName": "Content-Length", "headerValue": "0" }
+            ]
+          }
+        },
+
+        {
+          "@type": "NegativeTest",
+          "@id": "#createDataResource-unauthorized",
+          "name": "createDataResource-unauthorized",
+          "traits": ["Post", "Authz", "Container"],
+          "status": "Proposed",
+          "comment": "unauthn POST container -> 401 { WWW-Authenticate: [Bearer, as_uri, realm] }",
+          "source": "https://w3c.github.io/lws-protocol/lws10-core/#authorization",
+          "prereqs": {
+            "hierarchy": [
+              {
+                "url": "/alice/notes/",
+                "authorization": {
+                  "read": "Role-Public",
+                  "write": "Role-Owner"
+                }
+              }
+            ],
+            "authentication": null
+          },
+          "request": {
+            "method": "POST",
+            "url": "/alice/notes/",
+            "authentication": null,
+            "authorization": null,
+            "contentType": "text/plain",
+            "linkHeaders": [],
+            "otherHeaders": [],
+            "body": "some content"
+          },
+          "response": {
+            "statusCode": 401,
+            "authenticationChallenge": {
+              "wwwAuthenticate": "Bearer",
+              "asUri": "https://authorization.example",
+              "realm": "https://storage.example/alice/"
+            }
+          }
+        },
+
+        {
+          "@type": "ValidationTest",
+          "@id": "#readDataResource",
+          "name": "readDataResource",
+          "traits": ["Get", "Public", "DataResource"],
+          "status": "Proposed",
+          "comment": "public GET resource -> 200 text/plain { Link: [linkset, up, type=DataResource, storageDescription] }",
+          "source": "https://w3c.github.io/lws-protocol/lws10-core/#read-resource",
+          "prereqs": {
+            "hierarchy": [
+              {
+                "url": "/alice/notes/shoppinglist.txt",
+                "authorization": {
+                  "read": "Role-Public",
+                  "write": "Role-Owner"
+                }
+              }
+            ],
+            "authentication": null
+          },
+          "request": {
+            "method": "GET",
+            "url": "/alice/notes/shoppinglist.txt",
+            "authentication": null,
+            "authorization": null,
+            "linkHeaders": [],
+            "otherHeaders": []
+          },
+          "response": {
+            "statusCode": 200,
+            "contentType": "text/plain",
+            "linkHeaders": [
+              {
+                "rel": "linkset",
+                "hrefTemplate": "/alice/notes/shoppinglist.txt.meta",
+                "mediaType": "application/linkset+json"
+              },
+              { "rel": "up",   "hrefTemplate": "/alice/notes/" },
+              { "rel": "type", "href": "https://www.w3.org/ns/lws#DataResource" },
+              {
+                "rel": "storageDescription",
+                "hrefTemplate": "/alice/description"
+              }
+            ],
+            "bodyURL": "resources/shoppinglist.txt"
+          }
+        },
+
+        {
+          "@type": "ValidationTest",
+          "@id": "#updateDataResource",
+          "name": "updateDataResource",
+          "traits": ["Put", "Authn", "Authz", "DataResource"],
+          "status": "Proposed",
+          "comment": "owner PUT resource [Content-Type: text/plain] -> 200 { Link: [up] }",
+          "source": "https://w3c.github.io/lws-protocol/lws10-core/#update-resource",
+          "prereqs": {
+            "hierarchy": [
+              {
+                "url": "/alice/notes/shoppinglist.txt",
+                "authorization": {
+                  "read": "Role-Public",
+                  "write": "Role-Owner"
+                }
+              }
+            ],
+            "authentication": "https://id.example/alice"
+          },
+          "request": {
+            "method": "PUT",
+            "url": "/alice/notes/shoppinglist.txt",
+            "authentication": "https://id.example/alice",
+            "authorization": "Role-Owner",
+            "contentType": "text/plain",
+            "linkHeaders": [],
+            "otherHeaders": [],
+            "body": "milk\neggs\nbread\n"
+          },
+          "response": {
+            "statusCode": 200,
+            "linkHeaders": [
+              { "rel": "up", "hrefTemplate": "/alice/notes/" }
+            ],
+            "otherHeaders": []
+          }
+        },
+
+        {
+          "@type": "ValidationTest",
+          "@id": "#deleteDataResource",
+          "name": "deleteDataResource",
+          "traits": ["Delete", "Authn", "Authz", "DataResource"],
+          "status": "Proposed",
+          "comment": "owner DELETE resource -> 200",
+          "source": "https://w3c.github.io/lws-protocol/lws10-core/#delete-resource",
+          "prereqs": {
+            "hierarchy": [
+              {
+                "url": "/alice/notes/shoppinglist.txt",
+                "authorization": {
+                  "read": "Role-Public",
+                  "write": "Role-Owner"
+                }
+              }
+            ],
+            "authentication": "https://id.example/alice"
+          },
+          "request": {
+            "method": "DELETE",
+            "url": "/alice/notes/shoppinglist.txt",
+            "authentication": "https://id.example/alice",
+            "authorization": "Role-Owner",
+            "linkHeaders": [],
+            "otherHeaders": []
+          },
+          "response": {
+            "statusCode": 200,
+            "otherHeaders": []
+          }
+        },
+
+        {
+          "@type": "NegativeTest",
+          "@id": "#deleteDataResource-unauthorized",
+          "name": "deleteDataResource-unauthorized",
+          "traits": ["Delete", "Authz", "DataResource"],
+          "status": "Proposed",
+          "comment": "unauthn DELETE resource -> 401 { WWW-Authenticate: [Bearer, as_uri, realm] }",
+          "source": "https://w3c.github.io/lws-protocol/lws10-core/#authorization",
+          "prereqs": {
+            "hierarchy": [
+              {
+                "url": "/alice/notes/shoppinglist.txt",
+                "authorization": {
+                  "read": "Role-Public",
+                  "write": "Role-Owner"
+                }
+              }
+            ],
+            "authentication": null
+          },
+          "request": {
+            "method": "DELETE",
+            "url": "/alice/notes/shoppinglist.txt",
+            "authentication": null,
+            "authorization": null,
+            "linkHeaders": [],
+            "otherHeaders": []
+          },
+          "response": {
+            "statusCode": 401,
+            "authenticationChallenge": {
+              "wwwAuthenticate": "Bearer",
+              "asUri": "https://authorization.example",
+              "realm": "https://storage.example/alice/"
+            }
+          }
+        },
+
+        {
+          "@type": "ValidationTest",
+          "@id": "#getLinkset",
+          "name": "getLinkset",
+          "traits": ["Get", "Public", "Container"],
+          "status": "Proposed",
+          "comment": "public GET /.meta [Accept: linkset+json] -> 200 linkset+json",
+          "source": "https://w3c.github.io/lws-protocol/lws10-core/#logical-resource-organization",
+          "prereqs": {
+            "hierarchy": [
+              {
+                "url": "/alice/notes/",
+                "authorization": {
+                  "read": "Role-Public",
+                  "write": "Role-Owner"
+                }
+              }
+            ],
+            "authentication": null
+          },
+          "request": {
+            "method": "GET",
+            "url": "/alice/notes/.meta",
+            "authentication": null,
+            "authorization": null,
+            "linkHeaders": [],
+            "otherHeaders": [
+              { "headerName": "Accept", "headerValue": "application/linkset+json" }
+            ]
+          },
+          "response": {
+            "statusCode": 200,
+            "contentType": "application/linkset+json",
+            "bodyURL": "linksets/alice-notes.meta.json"
+          }
+        },
+
+        {
+          "@type": "ValidationTest",
+          "@id": "#getContainer-containmentIntegrity",
+          "name": "getContainer-containmentIntegrity",
+          "traits": ["Get", "Public", "Container"],
+          "status": "Proposed",
+          "comment": "public GET container [Accept: lws+json] -> 200 lws+json { body.items ∋ member-resource }",
+          "source": "https://w3c.github.io/lws-protocol/lws10-core/#container-representation",
+          "prereqs": {
+            "hierarchy": [
+              {
+                "url": "/alice/notes/",
+                "authorization": {
+                  "read": "Role-Public",
+                  "write": "Role-Owner"
+                }
+              },
+              {
+                "url": "/alice/notes/shoppinglist.txt",
+                "authorization": {
+                  "read": "Role-Public",
+                  "write": "Role-Owner"
+                }
+              }
+            ],
+            "authentication": null
+          },
+          "request": {
+            "method": "GET",
+            "url": "/alice/notes/",
+            "authentication": null,
+            "authorization": null,
+            "linkHeaders": [],
+            "otherHeaders": [
+              { "headerName": "Accept", "headerValue": "application/lws+json" }
+            ]
+          },
+          "response": {
+            "statusCode": 200,
+            "contentType": "application/lws+json",
+            "comment": "The response body MUST include shoppinglist.txt in items.",
+            "bodyURL": "containers/alice-notes.json"
+          }
+        },
+
+        {
+          "@type": "ValidationTest",
+          "@id": "#authz-server-metadata-well-known",
+          "name": "authz-server-metadata-well-known",
+          "traits": ["Get", "Discovery", "Public"],
+          "status": "Proposed",
+          "comment": "public GET AS:/.well-known/lws-configuration [Accept: json] -> 200 json",
+          "source": "https://w3c.github.io/lws-protocol/lws10-core/#authorization-server-discovery",
+          "prereqs": {
+            "hierarchy": [],
+            "authentication": null
+          },
+          "request": {
+            "method": "GET",
+            "url": "https://authorization.example/.well-known/lws-configuration",
+            "authentication": null,
+            "authorization": null,
+            "linkHeaders": [],
+            "otherHeaders": [
+              { "headerName": "Accept", "headerValue": "application/json" }
+            ]
+          },
+          "response": {
+            "statusCode": 200,
+            "contentType": "application/json",
+            "bodyURL": "resources/authorization-server-metadata.json"
+          }
+        },
+
+        {
+          "@type": "ValidationTest",
+          "@id": "#authz-token-exchange-valid",
+          "name": "authz-token-exchange-valid",
+          "traits": ["Post", "Authn", "Authz"],
+          "status": "Proposed",
+          "comment": "POST AS:/token [grant_type=token-exchange, subject_token_type=id_token, valid subject_token] -> 200 json { access_token }",
+          "source": "https://w3c.github.io/lws-protocol/lws10-core/#authorization",
+          "prereqs": {
+            "hierarchy": [],
+            "authentication": "https://id.example/alice"
+          },
+          "request": {
+            "method": "POST",
+            "url": "https://authorization.example/token",
+            "contentType": "application/x-www-form-urlencoded",
+            "authentication": null,
+            "authorization": null,
+            "linkHeaders": [],
+            "otherHeaders": [],
+            "body": "grant_type=urn%3Aietf%3Aparams%3Aoauth%3Agrant-type%3Atoken-exchange&resource=https%3A%2F%2Fstorage.example%2Falice%2F&subject_token_type=urn%3Aietf%3Aparams%3Aoauth%3Atoken-type%3Aid_token&subject_token=<subject-token>"
+          },
+          "response": {
+            "statusCode": 200,
+            "contentType": "application/json",
+            "bodyURL": "resources/token-response-200.json"
+          }
+        },
+
+        {
+          "@type": "NegativeTest",
+          "@id": "#authz-token-exchange-invalid-resource",
+          "name": "authz-token-exchange-invalid-resource",
+          "traits": ["Post", "Authz"],
+          "status": "Proposed",
+          "comment": "POST AS:/token [grant_type=token-exchange, resource=unknown] -> 400 json { error }",
+          "source": "https://w3c.github.io/lws-protocol/lws10-core/#authorization",
+          "prereqs": {
+            "hierarchy": [],
+            "authentication": null
+          },
+          "request": {
+            "method": "POST",
+            "url": "https://authorization.example/token",
+            "contentType": "application/x-www-form-urlencoded",
+            "linkHeaders": [],
+            "otherHeaders": [],
+            "body": "grant_type=urn%3Aietf%3Aparams%3Aoauth%3Agrant-type%3Atoken-exchange&resource=https%3A%2F%2Funknown.example%2F&subject_token_type=urn%3Aietf%3Aparams%3Aoauth%3Atoken-type%3Aid_token&subject_token=<subject-token>"
+          },
+          "response": {
+            "statusCode": 400,
+            "bodyURL": "resources/token-response-400.json"
+          }
+        },
+
+        {
+          "@type": "NegativeTest",
+          "@id": "#authz-expired-token-rejected",
+          "name": "authz-expired-token-rejected",
+          "traits": ["Get", "Authz", "Private"],
+          "status": "Proposed",
+          "comment": "GET [Authorization: Bearer <expired>] -> 401 { WWW-Authenticate: [Bearer, as_uri, realm, error=invalid_token] }",
+          "source": "https://w3c.github.io/lws-protocol/lws10-core/#authorization",
+          "prereqs": {
+            "hierarchy": [
+              {
+                "url": "/alice/notes/",
+                "authorization": {
+                  "read": "Role-Owner",
+                  "write": "Role-Owner"
+                }
+              }
+            ],
+            "authentication": "https://id.example/alice"
+          },
+          "request": {
+            "method": "GET",
+            "url": "/alice/notes/",
+            "authentication": "https://id.example/alice",
+            "authorization": "Role-Owner",
+            "comment": "The Bearer token in the Authorization header is expired.",
+            "linkHeaders": [],
+            "otherHeaders": [
+              {
+                "headerName": "Authorization",
+                "headerValue": "Bearer <expired-token>"
+              }
+            ]
+          },
+          "response": {
+            "statusCode": 401,
+            "authenticationChallenge": {
+              "wwwAuthenticate": "Bearer",
+              "asUri": "https://authorization.example",
+              "realm": "https://storage.example/alice/",
+              "error": "invalid_token"
+            }
+          }
+        },
+
+        {
+          "@type": "ValidationTest",
+          "@id": "#createContainer",
+          "name": "createContainer",
+          "traits": ["Post", "Authn", "Authz", "Container"],
+          "status": "Proposed",
+          "comment": "owner POST container [Content-Type: lws+json, Link: type=Container, Slug: notes] -> 201 { Location, Link: [linkset, up, type=Container] }",
+          "source": "https://w3c.github.io/lws-protocol/lws10-core/#create-resource",
+          "prereqs": {
+            "hierarchy": [
+              {
+                "url": "/alice/",
+                "authorization": {
+                  "read": "Role-Public",
+                  "write": "Role-Owner"
+                }
+              }
+            ],
+            "authentication": "https://id.example/alice"
+          },
+          "request": {
+            "method": "POST",
+            "url": "/alice/",
+            "authentication": "https://id.example/alice",
+            "authorization": "Role-Owner",
+            "contentType": "application/lws+json",
+            "slug": "notes",
+            "linkHeaders": [
+              {
+                "rel": "type",
+                "href": "https://www.w3.org/ns/lws#Container"
+              }
+            ],
+            "otherHeaders": [],
+            "body": ""
+          },
+          "response": {
+            "statusCode": 201,
+            "locationURL": "/alice/notes/",
+            "linkHeaders": [
+              {
+                "rel": "linkset",
+                "hrefTemplate": "/alice/notes/.meta",
+                "mediaType": "application/linkset+json"
+              },
+              { "rel": "up",   "hrefTemplate": "/alice/" },
+              { "rel": "type", "href": "https://www.w3.org/ns/lws#Container" }
+            ],
+            "otherHeaders": []
+          }
+        }
+
+      ]
+    }
+  ]
+}

@@ -1,0 +1,22 @@
+{
+  "linkset": [
+    {
+      "anchor": "https://storage.example/alice/notes/shoppinglist.txt",
+      "https://www.w3.org/ns/lws#storageDescription": [
+        { "href": "https://storage.example/alice/description" }
+      ],
+      "up": [
+        { "href": "https://storage.example/alice/notes/" }
+      ],
+      "type": [
+        { "href": "https://www.w3.org/ns/lws#DataResource" }
+      ],
+      "linkset": [
+        {
+          "href": "https://storage.example/alice/notes/shoppinglist.txt.meta",
+          "type": "application/linkset+json"
+        }
+      ]
+    }
+  ]
+}

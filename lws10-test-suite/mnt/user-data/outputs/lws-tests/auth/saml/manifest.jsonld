@@ -1,0 +1,74 @@
+{
+  "@context": [
+    { "@base": "https://raw.githubusercontent.com/w3c/lws-protocol/main/tests/auth/saml/" },
+    "../../context.jsonld"
+  ],
+  "@graph": [
+    {
+      "@id": "",
+      "@type": "Manifest",
+      "label": "LWS Authentication: SAML 2.0",
+      "comment": "Tests for the LWS 1.0 Authentication Suite: SAML 2.0 (https://www.w3.org/TR/lws10-authn-saml/)",
+      "entries": [
+        {
+          "@id": "#authn-saml-valid-assertion",
+          "@type": "ValidationTest",
+          "name": "authn-saml-valid-assertion",
+          "traits": ["Authn"],
+          "status": "Proposed",
+          "comment": "A valid SAML 2.0 assertion is accepted at the token exchange endpoint.",
+          "prereqs": {
+            "authentication": {
+              "type": "SAML2Assertion",
+              "issuer": "https://idp.example",
+              "subject": "https://idp.example/users/alice"
+            },
+            "hierarchy": []
+          },
+          "request": {
+            "method": "POST",
+            "url": "https://authorization.example/token",
+            "contentType": "application/x-www-form-urlencoded",
+            "body": "grant_type=urn%3Aietf%3Aparams%3Aoauth%3Agrant-type%3Atoken-exchange&resource=https%3A%2F%2Fstorage.example%2Falice%2F&subject_token_type=urn%3Aietf%3Aparams%3Aoauth%3Atoken-type%3Asaml2&subject_token=<base64-saml2-assertion>",
+            "linkHeaders": [],
+            "otherHeaders": []
+          },
+          "response": {
+            "statusCode": 200,
+            "contentType": "application/json",
+            "bodyURL": "../../resources/token-response-200.json"
+          }
+        },
+        {
+          "@id": "#authn-saml-invalid-signature",
+          "@type": "NegativeTest",
+          "name": "authn-saml-invalid-signature",
+          "traits": ["Authn"],
+          "status": "Proposed",
+          "comment": "A SAML 2.0 assertion with a tampered signature is rejected.",
+          "prereqs": {
+            "authentication": {
+              "type": "SAML2Assertion",
+              "issuer": "https://idp.example",
+              "subject": "https://idp.example/users/alice",
+              "tampered": true
+            },
+            "hierarchy": []
+          },
+          "request": {
+            "method": "POST",
+            "url": "https://authorization.example/token",
+            "contentType": "application/x-www-form-urlencoded",
+            "body": "grant_type=urn%3Aietf%3Aparams%3Aoauth%3Agrant-type%3Atoken-exchange&resource=https%3A%2F%2Fstorage.example%2Falice%2F&subject_token_type=urn%3Aietf%3Aparams%3Aoauth%3Atoken-type%3Asaml2&subject_token=<tampered-saml2-assertion>",
+            "linkHeaders": [],
+            "otherHeaders": []
+          },
+          "response": {
+            "statusCode": 400,
+            "bodyURL": "../../resources/token-response-400.json"
+          }
+        }
+      ]
+    }
+  ]
+}
