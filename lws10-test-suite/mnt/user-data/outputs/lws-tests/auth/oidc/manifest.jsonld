@@ -1,0 +1,116 @@
+{
+  "@context": [
+    { "@base": "https://raw.githubusercontent.com/w3c/lws-protocol/main/tests/auth/oidc/" },
+    "../../context.jsonld"
+  ],
+  "@graph": [
+    {
+      "@id": "",
+      "@type": "Manifest",
+      "label": "LWS Authentication: OpenID Connect",
+      "comment": "Tests for the LWS 1.0 Authentication Suite: OpenID Connect (https://www.w3.org/TR/lws10-authn-openid/)",
+      "entries": [
+        {
+          "@id": "#authn-oidc-valid-id-token",
+          "@type": "ValidationTest",
+          "name": "authn-oidc-valid-id-token",
+          "traits": ["Authn"],
+          "status": "Proposed",
+          "comment": "A valid OIDC ID token is accepted by the authorization server at the token exchange endpoint.",
+          "prereqs": {
+            "authentication": {
+              "type": "OIDCIdToken",
+              "issuer": "https://identity.example",
+              "subject": "https://identity.example/users/alice"
+            },
+            "hierarchy": []
+          },
+          "request": {
+            "method": "POST",
+            "url": "https://authorization.example/token",
+            "contentType": "application/x-www-form-urlencoded",
+            "body": "grant_type=urn%3Aietf%3Aparams%3Aoauth%3Agrant-type%3Atoken-exchange&resource=https%3A%2F%2Fstorage.example%2Falice%2F&subject_token_type=urn%3Aietf%3Aparams%3Aoauth%3Atoken-type%3Aid_token&subject_token=<oidc-id-token>",
+            "linkHeaders": [],
+            "otherHeaders": []
+          },
+          "response": {
+            "statusCode": 200,
+            "contentType": "application/json",
+            "bodyURL": "../../resources/token-response-200.json"
+          }
+        },
+        {
+          "@id": "#authn-oidc-expired-id-token",
+          "@type": "NegativeTest",
+          "name": "authn-oidc-expired-id-token",
+          "traits": ["Authn"],
+          "status": "Proposed",
+          "comment": "An expired OIDC ID token is rejected by the authorization server.",
+          "prereqs": {
+            "authentication": {
+              "type": "OIDCIdToken",
+              "issuer": "https://identity.example",
+              "subject": "https://identity.example/users/alice",
+              "expired": true
+            },
+            "hierarchy": []
+          },
+          "request": {
+            "method": "POST",
+            "url": "https://authorization.example/token",
+            "contentType": "application/x-www-form-urlencoded",
+            "body": "grant_type=urn%3Aietf%3Aparams%3Aoauth%3Agrant-type%3Atoken-exchange&resource=https%3A%2F%2Fstorage.example%2Falice%2F&subject_token_type=urn%3Aietf%3Aparams%3Aoauth%3Atoken-type%3Aid_token&subject_token=<oidc-expired-id-token>",
+            "linkHeaders": [],
+            "otherHeaders": []
+          },
+          "response": {
+            "statusCode": 400,
+            "bodyURL": "../../resources/token-response-400.json"
+          }
+        },
+        {
+          "@id": "#authn-oidc-server-metadata-discovery",
+          "@type": "ValidationTest",
+          "name": "authn-oidc-server-metadata-discovery",
+          "traits": ["Authn", "Discovery"],
+          "status": "Proposed",
+          "comment": "A 401 response from a storage server includes WWW-Authenticate with as_uri and realm, enabling OIDC-based auth server discovery.",
+          "prereqs": {
+            "authentication": null,
+            "hierarchy": [
+              {
+                "url": "/alice/notes/",
+                "authorization": {
+                  "read": "Role-Owner",
+                  "write": "Role-Owner"
+                }
+              }
+            ]
+          },
+          "request": {
+            "method": "GET",
+            "url": "/alice/notes/",
+            "authentication": null,
+            "authorization": null,
+            "linkHeaders": [],
+            "otherHeaders": []
+          },
+          "response": {
+            "statusCode": 401,
+            "authenticationChallenge": {
+              "wwwAuthenticate": "Bearer",
+              "asUri": "https://authorization.example",
+              "realm": "https://storage.example/alice/"
+            },
+            "linkHeaders": [
+              {
+                "rel": "https://www.w3.org/ns/lws#storageDescription",
+                "href": "/alice/description"
+              }
+            ]
+          }
+        }
+      ]
+    }
+  ]
+}

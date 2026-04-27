@@ -1,0 +1,22 @@
+{
+  "linkset": [
+    {
+      "anchor": "https://storage.example/alice/notes/",
+      "https://www.w3.org/ns/lws#storageDescription": [
+        { "href": "https://storage.example/alice/description" }
+      ],
+      "up": [
+        { "href": "https://storage.example/alice/" }
+      ],
+      "type": [
+        { "href": "https://www.w3.org/ns/lws#Container" }
+      ],
+      "linkset": [
+        {
+          "href": "https://storage.example/alice/notes/.meta",
+          "type": "application/linkset+json"
+        }
+      ]
+    }
+  ]
+}
