@@ -11,23 +11,23 @@ and its authentication suite specifications:
 
 ```
 tests/
-├── context.jsonld                  # Shared JSON-LD context for all manifests
-├── manifest.jsonld                 # Root manifest (core protocol tests)
+├── context.jsonld                          # Shared JSON-LD context for all manifests
+├── manifest.jsonld                         # Root manifest (core protocol tests)
 ├── auth/
-│   ├── did-key/manifest.jsonld    # did:key authentication suite tests
-│   ├── oidc/manifest.jsonld       # OpenID Connect authentication suite tests
-│   └── saml/manifest.jsonld       # SAML 2.0 authentication suite tests
+│   ├── did-key/manifest.jsonld             # did:key authentication suite tests
+│   ├── oidc/manifest.jsonld                # OpenID Connect authentication suite tests
+│   └── saml/manifest.jsonld                # SAML 2.0 authentication suite tests
 ├── containers/
-│   └── alice-notes.json           # Example container representation body
+│   └── alice-notes.json                    # Example container representation body
 ├── linksets/
-│   ├── alice-notes.meta.json      # Linkset for /alice/notes/
-│   └── shoppinglist.meta.json     # Linkset for /alice/notes/shoppinglist.txt
+│   ├── alice-notes.meta.json               # Linkset for /alice/notes/
+│   └── shoppinglist.meta.json              # Linkset for /alice/notes/shoppinglist.txt
 └── resources/
-    ├── storage-description.json        # Storage description resource body
+    ├── storage-description.json            # Storage description resource body
     ├── authorization-server-metadata.json  # AS metadata body
-    ├── shoppinglist.txt                # Data resource body
-    ├── token-response-200.json         # Successful token exchange response
-    └── token-response-400.json         # Failed token exchange response
+    ├── shoppinglist.txt                    # Data resource body
+    ├── token-response-200.json             # Successful token exchange response
+    └── token-response-400.json             # Failed token exchange response
 ```
 
 ## Conventions
