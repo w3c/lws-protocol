@@ -1,0 +1,17 @@
+{
+  "@context": "https://www.w3.org/ns/lws/v1",
+  "id": "https://storage.example/alice/notes/",
+  "type": "Container",
+  "items": [
+    {
+      "id": "https://storage.example/alice/notes/shoppinglist.txt",
+      "type": "DataResource",
+      "contentType": "text/plain",
+      "size": 47
+    },
+    {
+      "id": "https://storage.example/alice/notes/ideas/",
+      "type": "Container"
+    }
+  ]
+}

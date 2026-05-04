@@ -1,0 +1,19 @@
+{
+  "@context": "https://www.w3.org/ns/lws/v1",
+  "id": "https://storage.example/alice/",
+  "type": "Storage",
+  "service": [
+    {
+      "type": "StorageDescription",
+      "serviceEndpoint": "https://storage.example/alice/description"
+    },
+    {
+      "type": "AuthorizationServer",
+      "serviceEndpoint": "https://authorization.example"
+    }
+  ],
+  "capability": [
+    { "type": "Notifications" },
+    { "type": "ProfileNegotiation" }
+  ]
+}
