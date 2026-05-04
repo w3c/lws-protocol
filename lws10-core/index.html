@@ -177,7 +177,7 @@
       <h2>Terminology</h2>
       <p>
         The terms "authorization server" and "client" are defined by the OAuth 2.0 Authorization Framework [[!RFC6749]].
-      <p>
+      </p>
       <p>
         The terms "end-user" and "issuer" are defined by OpenID Connect Core 1.0 [[!OPENID-CONNECT-CORE]].
       </p>
@@ -186,39 +186,23 @@
         This specification defines the following terms:
       </p>
       <ul>
-        <li><dfn>authentication credential</dfn> &mdash; a security token that asserts claims about an agent or end-user. This token is secured with a cryptographic proof.
-          Examples of an authentication credentials include assertions of identity such as OpenID Connect ID Tokens and SAML-based assertions as well as assertions of
+        <li><dfn>agent</dfn> &mdash; a person, social entity, or software identified by a URI.</li>
+        <li><dfn>authentication credential</dfn> &mdash; a security token that asserts claims about an <a>agent</a> or end-user. This token is secured with a cryptographic proof.
+          Examples of authentication credentials include assertions of identity such as OpenID Connect ID Tokens and SAML-based assertions as well as assertions of
           capability such as a ZCAP.
         </li>
-        <li><dfn>authentication suite</dfn> &mdash; a defined validation mechanism for a concrete serialization of an authentication credential.</li>
-        <li><dfn>LWS resource</dfn> &mdash; An LWS Resource is an <a href="https://www.w3.org/TR/webarch/#def-information-resource">information resource</a> whose lifecycle is managed by the LWS storage.</li>
-        <li><dfn>container</dfn> &mdash; An LWS resource that maintains links to a set of contained resources whose lifecycle is governed by the same LWS server. Containers serve as organizational units enabling clients to group, discover, and navigate resources.</li>
-        <li><dfn>data resource</dfn> &mdash; a data-bearing resource such as a document, image, or structured data file.</li>
-        <li><dfn>contained resource</dfn> &mdash; A LWS resource, either a <a>container</a> or a <a>data resource</a>, that is referenced by one or more containers through a containment relationship.</li>
-        <li><dfn>root container</dfn> &mdash; a top-level container in an LWS storage. A root container has no parent and acts as the entry point for the storage hierarchy.</li>
-        <li><dfn>containment</dfn> &mdash; the relationship between a container and its member resources, expressed via the <code>items</code> property in container representations and the <code>rel="up"</code> link relation in HTTP headers.</li>
-        <li><dfn>linkset</dfn> &mdash; A separate resource associated with each LWS resource that contains the complete set of typed links (metadata) for that resource, as defined in [[RFC9264]]. The linkset is discovered via a rel="linkset" link relation and can be modified to manage resource relationships, including containment.</li>
-      </ul>
-
-      <p>
-        This specification defines <a>operations</a> on <a>served resources</a>, the resulting change of state, and a <a>response</a> intended to give the <a>requesting agent</a> requested infomation or inform them of the outcome of the <a>operation</a>.
-        An <dfn>operation</dfn> is any of the following actions that can be performed on a <a>served resource</a>:
-      </p>
-      <ul>
-        <li><dfn data-lt="creation">create resource</dfn> - </li>
-        <li><dfn data-lt="retrieval">read resource</dfn> - </li>
-        <li><dfn>update resource</dfn> - </li>
-        <li><dfn data-lt="deletion">delete resource</dfn> - </li>
-      </ul>
-
-      <p>
-        The folowing section will describe the semantics and <dfn>responses</dfn> of these operations but the following <dfn>core responses</dfn> apply to any operation:
-      </p>
-      <ul>
-        <li><dfn>success</dfn> - the operation is believed to have completed. This may be accompanied by a <dfn>resource representation</dfn> conveying the contents of a <a>served resource</a>. A <a>success</a> response is not defined for the <a>create resource</a> operation. See instead <a href="#dfn-created">created</a>.</li>
-        <li><dfn>not permitted</dfn></li>
-        <li><dfn>unknown requester</dfn></li>
-        <li><dfn>unknown error</dfn> - reserved for error conditions that arise that are not anticipated by the specification</li>
+        <li><dfn>authentication suite</dfn> &mdash; a defined validation mechanism for a concrete serialization of an <a>authentication credential</a>.</li>
+        <li><dfn>auxiliary resource</dfn> &mdash; an <a>LWS resource</a> whose lifecycle is bound to another <a>LWS resource</a>.</li>
+        <li><dfn>containment</dfn> &mdash; the relationship between a <a>container</a> and the <a>LWS resources</a> whose lifecycle the <a>container</a> manages.</li>
+        <li><dfn>container</dfn> &mdash; an <a>LWS resource</a> that is able to enumerate a collection of <a>LWS resources</a>, conforming to the conventions described in <a href="#container-representation">Section 8. Containers</a>. The ability to create new resources in a container or to delete an existing container follows the requirements outlined in <a href="#operations">Section 9. Operations</a>.</li>
+        <li><dfn>data resource</dfn> &mdash; a data-bearing <a>LWS resource</a> such as a document, image, or structured information whose support for update and delete operations follows the requirements outlined in <a href="#operations">Section 9. Operations</a>.</li>
+        <li><dfn>linkset resource</dfn> &mdash; a type of <a>auxiliary resource</a> whose representation conforms to [[[RFC9264]]]. Update operations for linkset resources follow the requirements outlined in <a href="#operations">Section 9. Operations</a>.</li>
+        <li><dfn data-lt="LWS resources">LWS resource</dfn> &mdash; an HTTP resource as defined in [[[RFC9110]]] which supports the read operations defined by the Linked Web Storage Protocol.</li>
+        <li><dfn>metadata resource</dfn> &mdash; an <a>auxiliary resource</a>, managed by a <a>storage</a>, that describes another <a>LWS resource</a> and conforms to the conventions described in <span class="TODO">TBD</span>. The lifecycle of a metadata resource is bound to the <a>LWS resource</a> it describes.</li>
+        <li><dfn>storage</dfn> &mdash; a set of hierarchically organized HTTP resources whose lifecycle is managed by the conventions described by the Linked Web Storage Protocol. A storage is described by a <a>storage description resource</a> which references a collection of services that provide affordances over those resources.</li>
+        <li><dfn>storage controller</dfn> &mdash; an <a>agent</a> that controls all resources in a <a>storage</a>.</li>
+        <li><dfn data-lt="storage description resource">storage description</dfn> &mdash; an <a>LWS resource</a> that enumerates and describes the <a>storage root</a> along with services and capabilities of a <a>storage</a>. Its representation conforms to the storage description data model.</li>
+        <li><dfn>storage root</dfn> &mdash; a <a>container</a> at the root of a <a>containment</a> hierarchy. The storage root is the only <a>LWS resource</a> that does not have a parent in the LWS <a>containment</a> hierarchy.</li>
       </ul>
     </section>
 
