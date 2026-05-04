@@ -8,6 +8,10 @@ prefix:
     value: https://www.w3.org/ns/activitystreams#
   - id: schema
     value: https://schema.org/
+  - id: sec
+    value: https://w3id.org/security#
+  - id: ldp
+    value: http://www.w3.org/ns/ldp#
 
 ontology:
   - property: dc:title
@@ -40,6 +44,36 @@ class:
     label: OpenID Provider
     comment: An OpenID Connect identity provider service.
     defined_by: https://www.w3.org/TR/lws-authn-openid/
+
+  - id: Notification
+    label: Notification
+    comment: A notification envelope describing an event that occurred on a resource.
+    defined_by: https://www.w3.org/TR/lws-notifications/
+
+  - id: NotificationService
+    label: Notification Service
+    comment: A service through which clients subscribe to resource change notifications.
+    defined_by: https://www.w3.org/TR/lws-notifications/
+
+  - id: WebSocketSubscription
+    label: WebSocket Subscription
+    comment: A subscription type that delivers notifications over a WebSocket connection.
+    defined_by: https://www.w3.org/TR/lws-notifications/
+
+  - id: EventSourceSubscription
+    label: EventSource Subscription
+    comment: A subscription type that delivers notifications over a Server-Sent Events connection.
+    defined_by: https://www.w3.org/TR/lws-notifications/
+
+  - id: WebhookSubscription
+    label: Webhook Subscription
+    comment: A subscription type that delivers notifications via HTTP POST to a subscriber-provided inbox URL.
+    defined_by: https://www.w3.org/TR/lws-notifications/
+
+  - id: PostCommit
+    label: Post Commit
+    comment: A notification phase indicating the event occurred after the resource change was persisted.
+    defined_by: https://www.w3.org/TR/lws-notifications/
 
 property:
   - id: items
@@ -92,6 +126,101 @@ property:
   - id: PreferLinkRelations
     label: Prefer Link Relations
     comment: A preference URI for including or omitting specific link relations in responses.
+
+  - id: subscriptionType
+    label: subscription type
+    domain: lws:NotificationService
+    comment: The subscription types supported by a notification service.
+    defined_by: https://www.w3.org/TR/lws-notifications/
+
+  - id: subscription
+    label: subscription
+    range: xsd:anyURI
+    comment: The URL of the subscription resource or connection endpoint.
+    defined_by: https://www.w3.org/TR/lws-notifications/
+
+  - id: phase
+    label: phase
+    domain: lws:Notification
+    comment: The lifecycle phase at which the notification was emitted.
+    defined_by: https://www.w3.org/TR/lws-notifications/
+
+  - id: activity
+    label: activity
+    domain: lws:Notification
+    comment: The Activity Streams 2.0 activity payload within a notification.
+    defined_by: https://www.w3.org/TR/lws-notifications/
+
+  - id: topic
+    label: topic
+    range: xsd:anyURI
+    comment: An array of resource URIs covered by a subscription.
+    defined_by: https://www.w3.org/TR/lws-notifications/
+
+  - id: storage
+    label: storage
+    range: xsd:anyURI
+    comment: The URI identifying the LWS storage that emitted the notification.
+    defined_by: https://www.w3.org/TR/lws-notifications/
+
+  - id: as:Create
+    label: Create
+    comment: An activity representing the creation of a resource.
+
+  - id: as:Update
+    label: Update
+    comment: An activity representing the update of a resource.
+
+  - id: as:Delete
+    label: Delete
+    comment: An activity representing the deletion of a resource.
+
+  - id: as:object
+    label: object
+    comment: The primary object of an activity.
+
+  - id: as:actor
+    label: actor
+    comment: The agent that performed the activity.
+
+  - id: as:target
+    label: target
+    comment: The target of the activity.
+
+  - id: as:origin
+    label: origin
+    comment: The origin of a Move activity.
+
+  - id: as:published
+    label: published
+    range: xsd:dateTime
+    comment: The date and time the activity was published.
+
+  - id: sec:verificationMethod
+    label: verification method
+    comment: A verification method associated with a key or identity.
+
+  - id: sec:authentication
+    label: authentication
+    comment: An authentication method associated with an identity.
+
+  - id: sec:controller
+    label: controller
+    comment: The entity that controls a verification method.
+
+  - id: sec:publicKeyJwk
+    label: public key JWK
+    comment: A public key expressed as a JSON Web Key.
+
+  - id: ldp:inbox
+    label: inbox
+    range: xsd:anyURI
+    comment: A URL to which notifications are delivered via HTTP POST.
+
+  - id: schema:expires
+    label: expires
+    range: xsd:dateTime
+    comment: The date and time at which a subscription expires.
 
 json_ld:
   alias:
