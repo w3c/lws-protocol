@@ -203,7 +203,7 @@
 
     <div class="issue" title="CID Fragment Identifiers">
       <p>
-        The current [[CID-1.0]] does not strictly forbid fragment identifiers but defines its algorithms in such a way that fragment identifiers cannot effectively be used.
+        The current [[CID-1.0]] does not strictly forbid fragment identifiers but defines its algorithms in such a way that fragment identifiers effectively cannot be used.
       </p>
       <p>
         A <a href="https://github.com/w3c/cid/issues/164">corresponding issue</a> and a <a href="https://github.com/w3c/cid/pull/168">corresponding pull request</a> are already opened.
@@ -244,7 +244,7 @@
     </aside>
 
     <p>
-      Using distinct identifiers for the agent and their Web-CID Agent Document respectively allows expressing additional document-related meta data without ambiguity between the two.
+      Using distinct identifiers for the agent and their Web-CID Agent Document allows expressing additional document-related meta data without ambiguity between the two.
     </p>
     <aside class="example" title="Web-CID Agent Document with document-related meta data.">
       <p>Let the following Web-CID Agent Document be available at: <code>https://example.org/doc01</code></p>
@@ -284,8 +284,8 @@
       </p>
 
       <p>
-        Concretely, a <a href="#Agent-Document">Web-CID Agent Document</a> <span>MUST</span> at least include the JSON-LD context defined in [[CID-1.0]].
-        When a Web-CID Agent Document includes additional terms recommended by this specification, the Web-CID Agent Document <span>MUST</span> at least also include the corresponding JSON-LD context defined by in this specification.
+        Concretely, a <a href="#Agent-Document">Web-CID Agent Document</a> <span>MUST</span> include at least the JSON-LD context defined in [[CID-1.0]].
+        When a Web-CID Agent Document includes additional terms recommended by this specification, the Web-CID Agent Document <span>MUST</span> also include at least the corresponding JSON-LD context defined by in this specification.
       </p>
 
       <span>Let the following JSON-LD context be available at: <code>https://www.w3.org/ns/web-cid/v1</code>.</span>
@@ -322,7 +322,7 @@
     <section id="isPrimaryTopicOf">
       <h2>Document ID</h2>
       <p>
-        A <a href="#Agent-Document">Web-CID Agent Document</a> <span>SHOULD</span> include a <code>isPrimaryTopicOf</code> property to indicate its own identifier [[!FOAF]].
+        A <a href="#Agent-Document">Web-CID Agent Document</a> <span>SHOULD</span> include an <code>isPrimaryTopicOf</code> property to indicate its own identifier [[!FOAF]].
       </p>
 
       <p>
@@ -335,9 +335,9 @@
 
       <p>
         The CID specification [[!CID-1.0]] specifies the <code>controller</code> property such that
-        it is possible to express that a CID document is controlled by a particular agent or that a certain verification method is controlled by a particular agent.
-        In general, an agent might also be controlled by another agent, which is increasingly common with highly automized software agents.
-        Using distinct identifiers for the agent and their Web-CID Agent Document respectively prevents additional ambiguity to arise.
+        it is possible to express that a CID document or a certain verification method is controlled by a particular agent.
+        An agent might also be controlled by another agent, which is increasingly common with highly automated software agents.
+        Using distinct identifiers for the agent and their Web-CID Agent Document prevents additional ambiguity.
       </p>
 
       <p>
@@ -346,10 +346,10 @@
 
       <div class="example">
         A <a href="#controller">controller</a> of a <a href="#cid-document">CID document</a> is capable of modifying the document's contents.
-        Examples of controllers include:
+        Examples of controllers include the following:
         <ul>
           <li>the agent that is the subject of the CID document</li>
-          <li>an agent acting as a guardian of another agent agent, e.g., a parent of a child</li>
+          <li>an agent acting as a guardian of another agent, e.g., a parent of a child</li>
           <li>a third party controlling the CID document, e.g., an Identity Provider</li>
           <li>the entity exerting <a href="https://www.w3.org/TR/webarch/#uri-ownership">URI ownership</a> [[WEBARCH]] of the CID</li>
         </ul>
@@ -361,11 +361,11 @@
     <section id="verification-method" class="informative">
       <h2>Verification Method</h2>
       <p>
-        A <a href="#Agent-Document">Web-CID Agent Document</a> might include one or more <a href="#verificationMethod">verification methods</a> of an agent, e.g., for authentication or claim assertion, the choice of which depends on the particular protocols the <a href="#agent">agent</a> takes part in.
+        A <a href="#Agent-Document">Web-CID Agent Document</a> might include one or more <a href="#verificationMethod">verification methods</a> of an agent, e.g., for authentication or claim assertion, the choice of which depends on the particular protocols in which the <a href="#agent">agent</a> takes part.
         See [[CID-1.0]] for more details on <a href="https://www.w3.org/TR/cid/#verification-relationships">verification relationships</a>.
       </p>
       <aside class="example" title="A Web-CID Agent Document providing a verification method for authentication.">
-        <p>Let the following Web-CID Agent Document be available at: <code>https://example.org/doc01</code></p>
+        <p>Let the following Web-CID Agent Document be available at &lt;<code>https://example.org/doc01</code>&gt;</p>
         <pre class="json">
 {
   "@context": [ 
@@ -391,12 +391,12 @@
     <section id="service" class="informative">
       <h2>Service</h2>
       <p>
-        A <a href="#Agent-Document">Web-CID Agent Document</a> might include one or more <a href="#service">services</a> of an agent, e.g., to express ways of communicating with the <a href="#controller">controller</a>, or associated entities.
+        A <a href="#Agent-Document">Web-CID Agent Document</a> might include one or more <a href="#service">services</a> of an agent, e.g., to express ways of communicating with the <a href="#controller">controller</a> or associated entities.
         A service can be any type of <a href="#service">service</a> the <a href="#controller">controller</a> wants to advertise for further discovery, authentication, authorization, or interaction.
       </p>
 
       <aside class="example" title="A Web-CID Agent Document that (a) lists authentication via an OpenID Provider and (b) is controlled by a different agent than the primary topic, presumably the OpenID Provider.">
-        <p>Let the following Web-CID Agent Document be available at: <code>https://example.org/doc01</code></p>
+        <p>Let the following Web-CID Agent Document be available at &lt;<code>https://example.org/doc01</code>&gt;</p>
         <pre class="json">
 {
   "@context": [ 
@@ -496,7 +496,7 @@
 
     <div class="note" title="Following redirects is an implementation's choice.">
       <p>
-        Whether or not a <a href="#Client">Client</a> allows following redirects depends on the trust model assumed by the implementation. Examples include but are not limited to:
+        Whether or not a <a href="#Client">Client</a> allows following redirects depends on the trust model assumed by the implementation. Examples include but are not limited to the following:
       <ul>
         <li>Some <a href="#Client">Clients</a> might trust the <a href="#controller">controller</a> of a <a href="#Agent-Document">Web-CID Agent Document</a> to configure their <a href="#Server">Servers</a> correctly and thus follow any redirect.</li>
         <li>Some <a href="#Client">Clients</a> might enforce stricter trust boundaries and thus follow only redirects that point to the same origin as the <a href="#agent-identifier">agent identifier's</a> origin.</li>
@@ -549,7 +549,7 @@
         This risk can be addressed by mechanisms presented in [[RFC4033]].
       </li>
       <li>
-        <strong>Authoritative Binding Validation:</strong> The security of this profile relies entirely on the <a href="#Client">Client</a> successfully executing the validation steps. <a href="#Client">Clients</a> strictly verifying the <code>id</code> property as defined by [[CID-1.0]] is a security critical control to prevent cryptographic material substitution.
+        <strong>Authoritative Binding Validation:</strong> The security of this profile relies entirely on the <a href="#Client">Client</a> successfully executing the validation steps. <a href="#Client">Clients</a> strictly verifying the <code>id</code> property as defined by [[CID-1.0]] is a critical security control for the prevention of substitution of cryptographic material.
       </li>
     </ul>
 
