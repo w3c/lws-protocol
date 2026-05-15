@@ -121,14 +121,36 @@
     <section id="conventions" class="informative">
       <h2>Document Conventions</h2>
       <dl>
-        <dt></dt><dd><dd/>
+        <dt></dt><dd></dd>
       </dl>
     </section>
 
     <section id="introduction">
       <h2>Introduction</h2>
       <p>
+        This specification defines the Linked Web Storage (LWS) Protocol, which enables client applications to access and manage web resources stored externally, based on the identity and permissions of the user.
       </p>
+      <p>
+        By standardising how a LWS server manages and provides access to a hierarchy of linked resources, the protocol enables users to use different LWS client applications to interact with the same stored data. These linked resources are defined through containers and containment relationships that describe where things are located, and metadata that describes how the resources relate to each other.
+      </p>
+      <p>
+        The protocol defines standard operations on these resources to create, read, update, and delete. Resources, their containment and metadata are managed by the server as a set of JSON-LD documents. Each resource is identified by a URI. A client navigates the resource hierarchy from a root container, discovering contained resources and their relations through links provided in server responses.
+      </p>
+      <p>
+        A user&rsquo;s identity is confirmed through an identity provider external to the Linked Web Storage server. This separation means the server does not manage credentials directly, it receives and validates a signed authentication credential as a token issued by a trusted identity provider. A user can therefore present their existing identity to any compliant server, without needing a separate account on that server. User authentication is defined in companion specifications for OpenID Connect, SAML 2.0, and self-signed controlled identifiers.
+      </p>
+      <p>
+        Authorization determines whether a requesting user has permission to access a resource or perform an operation on it. A compliant LWS server designates a resource manager for each resource that determines whether a resource is publicly available, private, or restricted to a defined set of users. The server enforces the access decisions of the resource manager when handling each client request.
+      </p>
+      <p>This specification is intended to be used by:</p>
+      <ul>
+        <li>Developers building client applications that access a user&rsquo;s linked web storage resources</li>
+        <li>Server implementors building compliant LWS servers that mediate access to a user&rsquo;s external web resources</li>
+      </ul>
+      <p>
+        Different compliant servers each maintain their own hierarchy of linked resources. A user can navigate across servers using the same identity, with access to each server&rsquo;s resources determined by the permissions that server&rsquo;s resource managers have granted them.
+      </p>
+
       
       <section id="resource-access">
         <h2>Resource Access</h2>
@@ -177,7 +199,7 @@
       <h2>Terminology</h2>
       <p>
         The terms "authorization server" and "client" are defined by the OAuth 2.0 Authorization Framework [[!RFC6749]].
-      <p>
+      </p>
       <p>
         The terms "end-user" and "issuer" are defined by OpenID Connect Core 1.0 [[!OPENID-CONNECT-CORE]].
       </p>
@@ -201,7 +223,7 @@
       </ul>
 
       <p>
-        This specification defines <a>operations</a> on <a>served resources</a>, the resulting change of state, and a <a>response</a> intended to give the <a>requesting agent</a> requested infomation or inform them of the outcome of the <a>operation</a>.
+        This specification defines <a>operations</a> on <a>served resources</a>, the resulting change of state, and a <a>response</a> intended to give the <a>requesting agent</a> requested information or inform them of the outcome of the <a>operation</a>.
         An <dfn>operation</dfn> is any of the following actions that can be performed on a <a>served resource</a>:
       </p>
       <ul>
@@ -212,7 +234,7 @@
       </ul>
 
       <p>
-        The folowing section will describe the semantics and <dfn>responses</dfn> of these operations but the following <dfn>core responses</dfn> apply to any operation:
+        The following section will describe the semantics and <dfn>responses</dfn> of these operations but the following <dfn>core responses</dfn> apply to any operation:
       </p>
       <ul>
         <li><dfn>success</dfn> - the operation is believed to have completed. This may be accompanied by a <dfn>resource representation</dfn> conveying the contents of a <a>served resource</a>. A <a>success</a> response is not defined for the <a>create resource</a> operation. See instead <a href="#dfn-created">created</a>.</li>
