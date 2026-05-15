@@ -193,13 +193,13 @@
         </li>
         <li><dfn>authentication suite</dfn> &mdash; a defined validation mechanism for a concrete serialization of an <a>authentication credential</a>.</li>
         <li><dfn>auxiliary resource</dfn> &mdash; an <a>LWS resource</a> whose lifecycle is bound to another <a>LWS resource</a>, called its <dfn>principal resource</dfn>.</li>
-        <li><dfn>containment</dfn> &mdash; the relationship between a <a>container</a> and the <a>LWS resources</a> whose lifecycle the <a>container</a> manages.</li>
-        <li><dfn>container</dfn> &mdash; an <a>LWS resource</a> that is able to enumerate a collection of <a>LWS resources</a>, conforming to the conventions described in <a href="#container-representation">Section 8. Containers</a>. The ability to create new resources in a container or to delete an existing container follows the requirements outlined in <a href="#operations">Section 9. Operations</a>.</li>
-        <li><dfn>data resource</dfn> &mdash; a data-bearing <a>LWS resource</a> such as a document, image, or structured information whose support for update and delete operations follows the requirements outlined in <a href="#operations">Section 9. Operations</a>.</li>
-        <li><dfn>linkset resource</dfn> &mdash; a type of <a>auxiliary resource</a> whose representation conforms to [[[RFC9264]]]. Update operations for linkset resources follow the requirements outlined in <a href="#operations">Section 9. Operations</a>.</li>
         <li><dfn data-lt="LWS resources">LWS resource</dfn> &mdash; an HTTP <a>resource</a> as defined in [[[RFC9110]]] which supports the read operations defined by the Linked Web Storage Protocol.
         Following [[[RFC9110]]], this specification "does not limit the nature of a [LWS] resource; it merely defines an interface that might be used to interact with [LWS] resources." [[RFC9110]]
         </li>
+        <li><dfn>container</dfn> &mdash; an <a>LWS resource</a> that is able to enumerate a collection of <a>LWS resources</a>, conforming to the conventions described in <a href="#container-representation">Section 8. Containers</a>. The ability to create new resources in a container or to delete an existing container follows the requirements outlined in <a href="#operations">Section 9. Operations</a>.</li>
+        <li><dfn>data resource</dfn> &mdash; a data-bearing <a>LWS resource</a> such as a document, image, or structured information whose support for update and delete operations follows the requirements outlined in <a href="#operations">Section 9. Operations</a>.</li>
+        <li><dfn>containment</dfn> &mdash; the relationship between a <a>container</a> and the <a>LWS resources</a> whose lifecycle the <a>container</a> manages.</li>
+        <li><dfn>linkset resource</dfn> &mdash; a type of <a>auxiliary resource</a> whose representation conforms to [[[RFC9264]]]. Update operations for linkset resources follow the requirements outlined in <a href="#operations">Section 9. Operations</a>.</li>
         <li><dfn>metadata resource</dfn> &mdash; an <a>auxiliary resource</a>, managed by a <a>storage</a>, that describes an <a>LWS resource</a> and conforms to the conventions described in <a href="todo-metadata-resource">TBD</a>. The lifecycle of a metadata resource is bound to the <a>LWS resource</a> it describes.</li>
         <li><dfn data-cite="webarch#def-resource">resource</dfn> &mdash; a resource is, as described by [[WebArch]] and [[RFC3986]], “whatever might be identified by a URI”. Resources whose essential characteristics can be conveyed in a message (such as web pages, images, structured data objects...) are called <dfn data-cite="webarch#def-information-resource">information resources</dfn> [[WebArch]].
         <li><dfn>storage</dfn> &mdash; a set of hierarchically organized HTTP resources whose lifecycle is managed by the conventions described by the Linked Web Storage Protocol. A storage is described by a <a>storage description resource</a> which references a collection of services that provide affordances over those resources.</li>
@@ -207,6 +207,29 @@
         <li><dfn data-lt="storage description resource">storage description</dfn> &mdash; an <a>LWS resource</a> that enumerates and describes the <a>storage root</a> along with services and capabilities of a <a>storage</a>. Its representation conforms to the storage description data model.</li>
         <li><dfn>storage root</dfn> &mdash; a <a>container</a> at the root of a <a>containment</a> hierarchy of a <a>storage</a>. The storage root is the only <a>LWS resource</a> that does not have a parent in the LWS <a>containment</a> hierarchy nor a <a>principal resource</a>.</li>
       </ul>
+
+      <div class="issue atrisk" title="Section may be removed">
+      <p>
+        This specification defines <a>operations</a> on <a>served resources</a>, the resulting change of state, and a <a>response</a> intended to give the <a>requesting agent</a> requested infomation or inform them of the outcome of the <a>operation</a>.
+        An <dfn>operation</dfn> is any of the following actions that can be performed on a <a>served resource</a>:
+      </p>
+      <ul>
+        <li><dfn data-lt="creation">create resource</dfn> - </li>
+        <li><dfn data-lt="retrieval">read resource</dfn> - </li>
+        <li><dfn>update resource</dfn> - </li>
+        <li><dfn data-lt="deletion">delete resource</dfn> - </li>
+      </ul>
+
+      <p>
+        The folowing section will describe the semantics and <dfn>responses</dfn> of these operations but the following <dfn>core responses</dfn> apply to any operation:
+      </p>
+      <ul>
+        <li><dfn>success</dfn> - the operation is believed to have completed. This may be accompanied by a <dfn>resource representation</dfn> conveying the contents of a <a>served resource</a>. A <a>success</a> response is not defined for the <a>create resource</a> operation. See instead <a href="#dfn-created">created</a>.</li>
+        <li><dfn>not permitted</dfn></li>
+        <li><dfn>unknown requester</dfn></li>
+        <li><dfn>unknown error</dfn> - reserved for error conditions that arise that are not anticipated by the specification</li>
+      </ul>
+      </div>
     </section>
 
     <section id="authentication">
