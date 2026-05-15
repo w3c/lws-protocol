@@ -180,8 +180,12 @@
       "type": "StorageResource",
       "value": ["https://storage.example/projects/"]
     },
-    "hasPurpose": ["https://purpose.example/collaboration"],
     "constraint": [
+      {
+        "leftOperand": "purpose",
+        "operator": "eq",
+        "rightOperand": "https://purpose.example/collaboration"
+      },
       {
         "leftOperand": "dateTime",
         "operator": "lteq",
@@ -212,8 +216,12 @@
       "type": "StorageResource",
       "value": ["https://storage.example/projects/"]
     },
-    "hasPurpose": ["https://purpose.example/collaboration"],
     "constraint": [
+      {
+        "leftOperand": "purpose",
+        "operator": "eq",
+        "rightOperand": "https://purpose.example/collaboration"
+      },
       {
         "leftOperand": "dateTime",
         "operator": "lteq",
@@ -515,32 +523,6 @@
         </pre>
       </section>
 
-      <section id="odrl-hasPurpose">
-        <h3>Purposes</h3>
-
-        <p>
-          The <code>hasPurpose</code> property describes the intended use of the access being
-          requested or granted.
-        </p>
-
-        <p>
-          The value of the <code>hasPurpose</code> property, if present, MUST be a collection
-          of URIs, each identifying a purpose.
-        </p>
-
-        <p>
-          This property is OPTIONAL.
-        </p>
-
-        <pre class="example" title="hasPurpose property">
-{
-  "access": [{
-    "hasPurpose": ["https://purpose.example/collaboration"]
-  }]
-}
-        </pre>
-      </section>
-
       <section id="odrl-constraint">
         <h3>Constraints</h3>
 
@@ -590,6 +572,10 @@
             headers
           </li>
           <li>
+            <code>purpose</code> &mdash; representing the intended use of the access being
+            requested or granted
+          </li>
+          <li>
             <code>dateTime</code> &mdash; representing the current date time
           </li>
         </ul>
@@ -601,6 +587,37 @@
         <p>
           The following examples illustrate the use of these constraints:
         </p>
+
+        <section id="constraint-purpose">
+          <h4>Purpose Constraints</h4>
+
+          <p>
+            The following example uses a <code>leftOperand</code> value of
+            <code>purpose</code> to describe the intended
+            use of the access being requested or granted. When the <code>eq</code> operator
+            is used, the <code>rightOperand</code> value is a URI identifying a purpose.
+            When the <code>isAnyOf</code> operator is used, the <code>rightOperand</code>
+            value is an array of purpose URIs, and the constraint is satisfied if the
+            stated purpose matches any of the listed values:
+          </p>
+
+          <pre class="example" title="Purpose constraint">
+{
+  "access": [{
+    "constraint": [
+      {
+        "leftOperand": "purpose",
+        "operator": "isAnyOf",
+        "rightOperand": [
+          "https://purpose.example/collaboration",
+          "https://purpose.example/research"
+        ]
+      }
+    ]
+  }]
+}
+          </pre>
+        </section>
 
         <section id="constraint-client">
           <h4>Client Constraints</h4>
