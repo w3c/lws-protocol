@@ -43,7 +43,7 @@
     <section id="abstract">
       <p>
         This document extends Linked Web Storage (LWS) with a mechanism for an agent to request access to
-        resources and for a storage manager to grant access with defined constraints. The access
+        resources and for a storage controller to grant access with defined constraints. The access
         profile defined in this document is based on concepts from the
         <a href="https://www.w3.org/TR/odrl-model/">Open Digital Rights Language</a> (ODRL), including
         actions, constraints, and assignees.
@@ -59,7 +59,7 @@
       <h2>Introduction</h2>
       <p>
         Linked Web Storage (LWS) defines a protocol for storing and managing data. This document extends
-        LWS with a mechanism for an agent to request access to resources and for a storage manager to
+        LWS with a mechanism for an agent to request access to resources and for a storage controller to
         grant access with defined constraints. The endpoints for requesting and granting access act as a
         type of specialized inbox.
       </p>
@@ -97,7 +97,7 @@
           purposes, and constraints.
         </li>
         <li>
-          <dfn>Access Grant</dfn> &mdash; a data object created by a storage manager, expressing
+          <dfn>Access Grant</dfn> &mdash; a data object created by a storage controller, expressing
           an ability for an agent to perform specific actions on storage resources within certain
           defined constraints and for specific purposes.
         </li>
@@ -258,7 +258,7 @@
             <code>AccessRequest</code> &mdash; a request by an agent for access to resources.
           </li>
           <li>
-            <code>AccessGrant</code> &mdash; an authorization by a storage manager granting
+            <code>AccessGrant</code> &mdash; an authorization by a storage controller granting
             access to resources.
           </li>
         </ul>
@@ -819,7 +819,7 @@ Link: &lt;https://type.example/Playlist&gt;; rel="type"
 
       <p>
         An agent creates an <a>access request</a> by submitting a <code>POST</code> request to the
-        <a>access request</a> endpoint. A storage manager creates an <a>access grant</a> by
+        <a>access request</a> endpoint. A storage controller creates an <a>access grant</a> by
         submitting a <code>POST</code> request to the <a>access grant</a> endpoint.
       </p>
 
@@ -859,7 +859,7 @@ Link: &lt;https://type.example/Playlist&gt;; rel="type"
       </p>
 
       <p>
-        Notifications provide a mechanism for informing agents and storage managers about changes to
+        Notifications provide a mechanism for informing agents and storage controllers about changes to
         <a>access requests</a> and <a>access grants</a>. When an <code>inbox</code> property is
         present on an <a>access request</a> or <a>access grant</a>, the server SHOULD deliver
         notifications to that endpoint, informing an
@@ -893,7 +893,7 @@ Link: &lt;https://type.example/Playlist&gt;; rel="type"
         <ul>
           <li>
             <strong>Access Request creation</strong>: When a new <a>access request</a> is
-            submitted, the storage manager SHOULD be notified.
+            submitted, the storage controller SHOULD be notified.
           </li>
           <li>
             <strong>Access Grant creation</strong>: When a new <a>access grant</a> is created,
@@ -916,7 +916,7 @@ Link: &lt;https://type.example/Playlist&gt;; rel="type"
           Servers are strongly encouraged to apply authorization rules to both the
           <a>access request</a> and <a>access grant</a> endpoints. Write access to the
           <a>access grant</a> endpoint, in particular, should be restricted to authorized
-          storage managers and specific clients.
+          storage controllers and specific clients.
         </li>
         <li>
           When an agent creates an <a>access request</a>, the server is encouraged to verify
@@ -940,8 +940,8 @@ Link: &lt;https://type.example/Playlist&gt;; rel="type"
         <li>
           An <a>access request</a> or <a>access grant</a> can reveal sensitive information
           about the resources, agents, and purposes involved. Servers are encouraged to limit
-          the visibility of these resources to authorized parties, such as the storage manager
-          and the assignee identified in the document. For example, a storage manager might
+          the visibility of these resources to authorized parties, such as the storage controller
+          and the assignee identified in the document. For example, a storage controller might
           have the ability to read and delete all resources while other agents would only have
           access to the resources for which they are the assignee.
         </li>
