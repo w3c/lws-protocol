@@ -153,7 +153,7 @@ Servers MAY additionally derive types from the resource representation itself wh
 </p>
   <p class="note">Because servers are not required to parse the resource body, the Type Search Service relies heavily on the types explicitly declared via HTTP headers or managed by the server. If a client includes a type exclusively within a resource's internal graph but fails to provide the corresponding <code>Link</code> header, that type may not be discoverable via these services.
   </p>
-  <p>A server that implements these services MUST advertise the endpoints in the storage description resource using the <code>TypeIndexService</code> and <code>typeSearchService</code> properties.
+  <p>A server that implements these services MUST advertise the endpoints in the storage description resource using the <code>TypeIndexService</code> and <code>TypeSearchService</code> properties.
   </p>
   <pre class="example" title="Services advertised in storage description">
 {
@@ -193,7 +193,7 @@ Servers MAY additionally derive types from the resource representation itself wh
   </section>
   
   <section>
-    <h4>GET [typeSearchService]</h4>
+    <h4>GET [TypeSearchService]</h4>
     <p>Supports query parameters (all optional): <code>?type=&lt;URI&gt;</code> (repeatable, AND).</p>
     <p class="note">Clients MUST URL-encode query parameter keys/values.</p>
     <p>Returns <code>application/lws+json</code>: A paginated <code>ContainerPage</code> of matching LWS Resource URIs. No other parameters.</p>
@@ -202,7 +202,7 @@ Servers MAY additionally derive types from the resource representation itself wh
   </section>
   
   <section>
-    <h4>POST [typeSearchService]</h4>
+    <h4>POST [TypeSearchService]</h4>
     <p>MUST support <code>application/lws+json</code> body:</p>
     <pre class="example">
 {
