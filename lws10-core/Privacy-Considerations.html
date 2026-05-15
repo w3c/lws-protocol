@@ -20,3 +20,24 @@
   to correlate requests. When using pseudonymous identifiers, the authorization server will need to be careful not to issue the same identifier more than once.
 </p>
 
+<section id="privacy-access-requests" class="informative">
+  <h4>Access Requests and Grants</h4>
+
+  <ul>
+    <li>
+      An <a>access request</a> or <a>access grant</a> can reveal sensitive information
+      about the resources, agents, and purposes involved. Servers are encouraged to limit
+      the visibility of these resources to authorized parties, such as the storage controller
+      and the assignee identified in the document. For example, a storage controller might
+      have the ability to read and delete all resources while other agents would only have
+      access to the resources for which they are the assignee.
+    </li>
+    <li>
+      When an <a>access grant</a> includes a client constraint, it is advisable for a
+      server to filter that grant from responses to requests made by other clients. For
+      example, if an agent is granted access to a resource only when using a specific
+      client, that grant would not be visible when the agent uses a different client.
+    </li>
+  </ul>
+</section>
+
