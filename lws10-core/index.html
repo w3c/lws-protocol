@@ -129,7 +129,7 @@
       <h2>Introduction</h2>
       <p>
       </p>
-      
+
       <section id="resource-access">
         <h2>Resource Access</h2>
         <p>
@@ -144,7 +144,7 @@
         <p>
         </p>
       </section>
-      
+
       <section id="security-privacy">
         <h2>Security and Privacy</h2>
         <p>
@@ -192,15 +192,16 @@
           capability such as ZCAPs.
         </li>
         <li><dfn>authentication suite</dfn> &mdash; a defined validation mechanism for a concrete serialization of an <a>authentication credential</a>.</li>
-        <li><dfn>auxiliary resource</dfn> &mdash; an <a>LWS resource</a> whose lifecycle is bound to another <a>LWS resource</a>, called its <dfn>principal resource</dfn>.</li>
+        <li><dfn>auxiliary resource</dfn> &mdash; an <a>LWS resource</a> whose lifecycle is bound to another -- non-auxiliary -- <a>LWS resource</a>, called its <dfn>primary resource</dfn>. One type of auxiliary resources are <a>metadata resources</a>, as defined in this specification, but <a>LWS Servers</a> are free to manage additional kinds of auxiliary resources (e.g., access control resources, notification inboxes).</li>
         <li><dfn data-lt="LWS resources">LWS resource</dfn> &mdash; an HTTP <a>resource</a> as defined in [[[RFC9110]]] which supports the read operations defined by the Linked Web Storage Protocol.
         Following [[[RFC9110]]], this specification "does not limit the nature of a [LWS] resource; it merely defines an interface that might be used to interact with [LWS] resources." [[RFC9110]]
         </li>
         <li><dfn>container</dfn> &mdash; an <a>LWS resource</a> that is able to enumerate a collection of <a>LWS resources</a>, conforming to the conventions described in <a href="#container-representation">Section 8. Containers</a>. The ability to create new resources in a container or to delete an existing container follows the requirements outlined in <a href="#operations">Section 9. Operations</a>.</li>
         <li><dfn>data resource</dfn> &mdash; a data-bearing <a>LWS resource</a> such as a document, image, or structured information whose support for update and delete operations follows the requirements outlined in <a href="#operations">Section 9. Operations</a>.</li>
         <li><dfn>containment</dfn> &mdash; the relationship between a <a>container</a> and the <a>LWS resources</a> whose lifecycle the <a>container</a> manages.</li>
-        <li><dfn>linkset resource</dfn> &mdash; a type of <a>auxiliary resource</a> whose representation conforms to [[[RFC9264]]]. Update operations for linkset resources follow the requirements outlined in <a href="#operations">Section 9. Operations</a>.</li>
-        <li><dfn>metadata resource</dfn> &mdash; an <a>auxiliary resource</a>, managed by a <a>storage</a>, that describes an <a>LWS resource</a> and conforms to the conventions described in <a href="todo-metadata-resource">TBD</a>. The lifecycle of a metadata resource is bound to the <a>LWS resource</a> it describes.</li>
+        <li><dfn>linkset representation</dfn> &mdash; a <a>metadata representation</a> containing the linkset of an <a>LWS resource</a>, conforming to [[[RFC9264]]]. The <a>metadata resource</a> exposing this representation is called the <dfn>linkset document</dfn> of the <a>primary resource</a>. Updates of linkset representations follow the requirements outlined in <a href="#operations">Section 9. Operations</a>.</li>
+        <li><dfn>metadata representation</dfn> &mdash; a representation of an <a>LWS resource</a>, that provides additional information describing the resource.</li>
+        <li><dfn>metadata resource</dfn> &mdash; an <a>auxiliary resource</a> that exposes a specific <a>metadata representation</a> of its <a>primary resource</a>, and conforms to the conventions described in <a href="todo-metadata-resource">TBD</a>.</li>
         <li><dfn data-cite="webarch#def-resource">resource</dfn> &mdash; a resource is, as described by [[WebArch]] and [[RFC3986]], “whatever might be identified by a URI”. Resources whose essential characteristics can be conveyed in a message (such as web pages, images, structured data objects...) are called <dfn data-cite="webarch#def-information-resource">information resources</dfn> [[WebArch]].
         <li><dfn>storage</dfn> &mdash; a set of hierarchically organized HTTP resources whose lifecycle is managed by the conventions described by the Linked Web Storage Protocol. A storage is described by a <a>storage description resource</a> which references a collection of services that provide affordances over those resources.</li>
         <li><dfn>storage controller</dfn> &mdash; an <a>agent</a> that controls all resources in a <a>storage</a>.</li>
@@ -260,13 +261,13 @@
     <section id="operations">
       <h2>Operations</h2>
 	  <div data-include="operations.md" data-include-format="markdown" data-include-replace="true"></div>
-	  
+
 	  <div data-include="Operations/restbinding.md" data-include-format="markdown" data-include-replace="true"></div>
 	  <div data-include="Operations/metadata.md" data-include-format="markdown" data-include-replace="true"></div>
 
       <section id="create-resource">
         <h2>Create resource</h2>
-		<div data-include="Operations/create-resource.md" data-include-format="markdown" data-include-replace="true"></div>		
+		<div data-include="Operations/create-resource.md" data-include-format="markdown" data-include-replace="true"></div>
       </section>
 
       <section id="read-resource">
@@ -315,7 +316,7 @@
           <li>Lack of implementation of those features</li>
         </ul>
       </div>
-	  
+
 	  <div data-include="Unstable-Features.md" data-include-format="markdown" data-include-replace="true"></div>
 
       <section id="profile-negotiation">
