@@ -55,24 +55,9 @@ class:
     comment: A service through which clients subscribe to resource change notifications.
     defined_by: https://www.w3.org/TR/lws-notifications/
 
-  - id: WebSocketSubscription
-    label: WebSocket Subscription
-    comment: A subscription type that delivers notifications over a WebSocket connection.
-    defined_by: https://www.w3.org/TR/lws-notifications/
-
-  - id: EventSourceSubscription
-    label: EventSource Subscription
-    comment: A subscription type that delivers notifications over a Server-Sent Events connection.
-    defined_by: https://www.w3.org/TR/lws-notifications/
-
   - id: WebhookSubscription
     label: Webhook Subscription
     comment: A subscription type that delivers notifications via HTTP POST to a subscriber-provided inbox URL.
-    defined_by: https://www.w3.org/TR/lws-notifications/
-
-  - id: PostCommit
-    label: Post Commit
-    comment: A notification phase indicating the event occurred after the resource change was persisted.
     defined_by: https://www.w3.org/TR/lws-notifications/
 
 property:
@@ -137,12 +122,6 @@ property:
     label: subscription
     range: xsd:anyURI
     comment: The URL of the subscription resource or connection endpoint.
-    defined_by: https://www.w3.org/TR/lws-notifications/
-
-  - id: phase
-    label: phase
-    domain: lws:Notification
-    comment: The lifecycle phase at which the notification was emitted.
     defined_by: https://www.w3.org/TR/lws-notifications/
 
   - id: activity
