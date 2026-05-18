@@ -63,9 +63,9 @@
     <section id="abstract">
       <p>
         This document extends the Linked Web Storage (LWS) protocol with a mechanism for clients
-        to receive timely updates about changes to resources via Webhooks. The specification
-        defines a common notification data model and is discoverable via the storage description
-        resource.
+        to receive timely updates about changes to resources. Three notification channels are
+        defined: Server-Sent Events, WebSocket, and Webhooks. All channels share a common
+        notification data model and are discoverable via the storage description resource.
       </p>
     </section>
     <section id="sotd">
@@ -86,9 +86,27 @@
 
       <p>
         This specification extends LWS with a <a>notification</a> mechanism that allows clients
-        to subscribe to resource changes and receive updates via Webhooks &mdash; a
-        server-to-server mechanism whereby the LWS storage server delivers change events to a
-        registered endpoint via HTTP POST.
+        to subscribe to resource changes and receive updates through one of three channels:
+      </p>
+
+      <ul>
+        <li>
+          <strong>Server-Sent Events (SSE)</strong>: A client opens a persistent HTTP connection
+          and receives real-time change events as a stream of server-sent events.
+        </li>
+        <li>
+          <strong>WebSocket</strong>: A client opens a persistent WebSocket connection and receives
+          real-time change events as WebSocket messages.
+        </li>
+        <li>
+          <strong>Webhooks</strong>: A server-to-server mechanism whereby the LWS storage server
+          delivers change events to a registered endpoint via HTTP POST.
+        </li>
+      </ul>
+
+      <p>
+        All three channels share a common notification envelope and are discoverable
+        via the storage description resource.
       </p>
     </section>
 
@@ -166,7 +184,9 @@
     "type": "NotificationService",
     "serviceEndpoint": "https://notification.example/subscriptions",
     "subscriptionType": [
-      "WebhookSubscription"
+      "WebhookSubscription",
+      "WebSocketSubscription",
+      "EventSourceSubscription"
     ]
   }]
 }
@@ -477,6 +497,136 @@ Content-Type: application/lws+json
       </section>
     </section>
 
+    <section id="websocket-notifications">
+      <h2>WebSocket Notifications</h2>
+
+      <p>
+        The WebSocket notification channel allows a <a>subscriber</a> to receive notifications
+        over a persistent WebSocket connection.
+      </p>
+
+      <section id="websocket-subscription">
+        <h3>Creating a WebSocket Subscription</h3>
+
+        <p>
+          When a client creates a WebSocket notification subscription, the subscription body
+          MUST include a <code>type</code> field equal to <code>WebSocketSubscription</code>.
+        </p>
+
+        <p>
+          A successful response body has these additional requirements:
+        </p>
+
+        <ul>
+          <li>
+            <code>type</code> &mdash; the value of this property MUST be a string equal to
+            <code>WebSocketSubscription</code>.
+          </li>
+          <li>
+            <code>subscription</code> &mdash; the value of this property MUST be a
+            <a>capability URL</a> that can be used by the WebSocket API.
+          </li>
+        </ul>
+
+        <pre class="example" title="WebSocket subscription response">
+{
+  "@context": ["https://www.w3.org/ns/lws/v1"],
+  "type": "WebSocketSubscription",
+  "subscription": "wss://notification.example/ws/1c2d3e4f5a6b"
+}
+        </pre>
+      </section>
+
+      <section id="websocket-connection">
+        <h3>Establishing a WebSocket Connection</h3>
+
+        <p>
+          After obtaining a <a>capability URL</a>, the <a>subscriber</a> opens a WebSocket
+          connection to that URL. The server sends notification envelopes as WebSocket text
+          messages, serialized as JSON.
+        </p>
+
+        <pre class="example" title="WebSocket client">
+const ws = new WebSocket(capabilityUrl);
+ws.onmessage = (event) => {
+  const notification = JSON.parse(event.data);
+  // handle notification
+};
+        </pre>
+
+        <p>
+          The lifecycle of a WebSocket <a>subscription</a> is tied to the connection. When the
+          WebSocket connection is closed, the subscription is terminated.
+        </p>
+      </section>
+    </section>
+
+    <section id="eventsource-notifications">
+      <h2>Server-Sent Event Notifications</h2>
+
+      <p>
+        The Server-Sent Event (SSE) notification channel allows a <a>subscriber</a> to receive
+        notifications over a persistent HTTP connection using the EventSource API.
+      </p>
+
+      <section id="eventsource-subscription">
+        <h3>Creating an EventSource Subscription</h3>
+
+        <p>
+          When a client creates an EventSource notification subscription, the subscription body
+          MUST include a <code>type</code> field equal to <code>EventSourceSubscription</code>.
+        </p>
+
+        <p>
+          A successful response body has these additional requirements:
+        </p>
+
+        <ul>
+          <li>
+            <code>type</code> &mdash; the value of this property MUST be a string equal to
+            <code>EventSourceSubscription</code>.
+          </li>
+          <li>
+            <code>subscription</code> &mdash; the value of this property MUST be a
+            <a>capability URL</a> that can be used by the EventSource API.
+          </li>
+        </ul>
+
+        <pre class="example" title="EventSource subscription response">
+{
+  "@context": ["https://www.w3.org/ns/lws/v1"],
+  "type": "EventSourceSubscription",
+  "subscription": "https://notification.example/sse/0d8b4c2e1a3f"
+}
+        </pre>
+      </section>
+
+      <section id="eventsource-connection">
+        <h3>Establishing an EventSource Connection</h3>
+
+        <p>
+          After obtaining a <a>capability URL</a>, the <a>subscriber</a> establishes a
+          persistent SSE connection to that URL. The server responds with <code>Content-Type:
+          text/event-stream</code> and pushes notification envelopes as events. Each event
+          MUST include an <code>id</code> field to support reconnection via the
+          <code>Last-Event-ID</code> header.
+        </p>
+
+        <pre class="example" title="EventSource client">
+const source = new EventSource(capabilityUrl);
+source.onmessage = (event) => {
+  const notification = JSON.parse(event.data);
+  // handle notification
+};
+        </pre>
+
+        <p>
+          The lifecycle of an EventSource <a>subscription</a> is tied to the connection. When
+          the connection is closed, the subscription is terminated.
+        </p>
+      </section>
+    </section>
+
     <section id="webhook-notifications">
       <h2>Webhook Notifications</h2>
 
@@ -722,6 +872,11 @@ Location: https://notification.example/subscriptions/9e8d7c6b5a4f
 
       <ul>
         <li>
+          <strong>Token Leakage</strong>: <a>Capability URLs</a> used with SSE and WebSocket
+          channels might be visible in server logs and a browser's history. Mitigations include
+          using short-lived and single-use URLs.
+        </li>
+        <li>
           <strong>Webhook Verification</strong>: Without proper authentication on webhook
           deliveries, an attacker could spoof notifications. <a>Subscribers</a> are strongly
           encouraged to validate HTTP Message Signatures on all incoming notification requests
@@ -794,6 +949,16 @@ Location: https://notification.example/subscriptions/9e8d7c6b5a4f
             <td><code>NotificationService</code></td>
             <td><code>lws:NotificationService</code></td>
             <td>Service type for notification discovery</td>
+          </tr>
+          <tr>
+            <td><code>WebSocketSubscription</code></td>
+            <td><code>lws:WebSocketSubscription</code></td>
+            <td>WebSocket subscription type</td>
+          </tr>
+          <tr>
+            <td><code>EventSourceSubscription</code></td>
+            <td><code>lws:EventSourceSubscription</code></td>
+            <td>Server-Sent Event subscription type</td>
           </tr>
           <tr>
             <td><code>WebhookSubscription</code></td>
