@@ -51,8 +51,7 @@ Link headers that the client follows to retrieve subsequent pages. Servers MAY a
 direct access to specific pages via the pagination URIs obtained during a previous scan.
 
 When a paginated response is returned, the server MUST respond with 200 OK. The `totalItems`
-property in the response body MUST reflect the total number of items across all pages, not just the
-current page.
+property in the response body SHOULD reflect the total number of items across all pages, not just the current page.
 
 ##### Example: Paginated Container
 
