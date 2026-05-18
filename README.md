@@ -9,6 +9,7 @@ To see the most recent HTML rendered version of the specification from this repo
 ## (1.0) Specs:
 
 - [`core`](lws10-core/): Core protocol
+- [`vocab`](lws10-vocab/): Vocabulary
 - [`authn-openid`](lws10-authn-openid/): OpenID Connect Authentication Suite
 - [`authn-saml`](lws10-authn-saml/): SAML 2.0 Authentication Suite
 - [`authn-ssi-cid`](lws10-authn-ssi-cid): Self-signed Controlled Identifier Authentication Suite

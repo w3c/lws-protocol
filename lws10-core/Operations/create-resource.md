@@ -1,4 +1,4 @@
-The **create resource** operation adds a new [served resource](#dfn-served-resource) to an existing [container](#dfn-container). This operation handles both the creation of data resources (files) and sub-containers.
+The **create resource** operation adds a new [served resource](#dfn-served-resource) to an existing [container](#dfn-container). This operation handles both the creation of data resources and sub-containers.
 
 **Inputs:**
 
