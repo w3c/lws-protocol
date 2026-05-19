@@ -238,11 +238,10 @@ Servers MAY additionally derive types from the resource representation itself wh
       error; empty or duplicate groups MUST be ignored.
     </p>
     <p>
-      The <code>type</code> parameter (the <code>rel="type"</code> relation, i.e. <code>rdf:type</code>)
-      is the mandatory baseline and MUST be supported by every server that implements the
+      The <code>type</code> parameter is the mandatory baseline and MUST be supported by every server that implements the
       <code>TypeSearchService</code>. A server MAY additionally index other <em>descriptive</em> link
       relations. Such a relation is filtered by using the relation itself as the query-parameter name
-      &mdash; a registered relation name per [[!RFC8288]] (e.g. <code>describedby</code>) or, for an
+      &mdash; a registered relation name per [[!RFC8288]] or, for an
       extension relation, its URI &mdash; with exactly the same conjunctive-normal-form semantics as
       <code>type</code> (comma = OR group, repeated parameter = AND group, target values matched against
       the link targets the resource declares for that relation). Groups belonging to different relations
@@ -255,10 +254,7 @@ Servers MAY additionally derive types from the resource representation itself wh
       the storage description nor elsewhere &mdash; so that it cannot serve as a discovery oracle. A
       relation the server does not index, like a target value that matches nothing, simply yields no
       results for that constraint; it MUST NOT be treated as an error, and the two cases MUST be
-      indistinguishable to the client (consistent with the type-matching rule above). Servers MUST NOT
-      index structural or protocol relations (for example pagination relations,
-      <code>storageDescription</code>, or access-control relations); only descriptive relations are
-      eligible.
+      indistinguishable to the client (consistent with the type-matching rule above). Servers MUST NOT index structural or protocol relations, only descriptive relations are eligible.
     </p>
     <p class="note">Clients MUST URL-encode query parameter keys/values.</p>
     <p>Returns <code>application/lws+json</code>: A paginated <code>ContainerPage</code> of matching LWS Resource URIs. Aside from <code>type</code> and any additional relation parameters described above, no other parameters are defined.</p>
