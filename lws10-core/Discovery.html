@@ -46,6 +46,12 @@
   "service": [{
     "type": "StorageDescription",
     "serviceEndpoint": "https://storage.example/description"
+  }, {
+    "type": "TypeIndexService",
+    "serviceEndpoint": "https://storage.example/types/index"
+  }, {
+    "type": "TypeSearchService",
+    "serviceEndpoint": "https://storage.example/types/search"
   }]
 }
     </pre>
@@ -64,7 +70,9 @@
       When dereferenced, the storage description MUST contain an <code>id</code> property that identifies the
       storage. In addition, the <code>service</code> property MUST contain a service description whose type equals
       <code>StorageDescription</code> and whose <code>serviceEndpoint</code> equals the URL of the
-      storage description.
+      storage description. The <code>service</code> property MUST also contain
+      <code>TypeIndexService</code> and <code>TypeSearchService</code> entries; see
+      <a href="#type-index-services">Search and Type Index Services</a>.
     </p>
 
     <p class="note">
@@ -152,11 +160,20 @@
 <p>
 To prevent inadvertent or malicious corruption by clients, these services are strictly populated and managed by the server. To mitigate security and performance risks associated with deep-parsing arbitrary resource bodies, servers are not required to parse resource content to discover types. Instead, servers SHOULD derive resource types from HTTP Link headers provided by the client during resource creation or modification, combined with the server's intrinsic knowledge of the resource's state (such as native LWS classes like <code>https://www.w3.org/ns/lws#Container</code>).
   </p><p>
-Servers MAY additionally derive types from the resource representation itself when they are able to parse it. Implementations are encouraged to do so where feasible, as richer type discovery improves the utility of the Type Index and Type Search services. When a server enriches the type index from resource content, the types it surfaces MUST be treated identically to those derived from Link headers for the purposes of indexing, search, and authorization filtering. A resource MAY also be excluded from these services entirely, regardless of its other declared types; see <a href="#unlisted-resources">Unlisted Resources</a>.
+Servers MAY additionally derive types from the resource representation itself when they are able to parse it. Implementations are encouraged to do so where feasible, as richer type discovery improves the utility of the Type Index and Type Search services. When a server enriches the type index from resource content, the types it surfaces MUST be treated identically to those derived from Link headers for the purposes of indexing, search, and authorization filtering.
 </p>
+  <p>
+    Type and indexed-relation membership in these services MAY be eventually consistent. Following a write
+    that changes a resource's derivable types or relation targets (creation, update, or deletion), a server
+    SHOULD reflect the change within a bounded, implementation-defined interval; until it does, a response
+    MAY omit a newly matching resource or briefly retain one that no longer matches. Clients MUST NOT assume
+    read-your-writes consistency and SHOULD tolerate transient staleness. This allowance applies only to
+    derivation and MUST NOT be applied to authorization filtering (see the Security and Authorization
+    requirements below).
+  </p>
   <p class="note">Because servers are not required to parse the resource body, the Type Search Service relies heavily on the types explicitly declared via HTTP headers or managed by the server. If a client includes a type exclusively within a resource's internal graph but fails to provide the corresponding <code>Link</code> header, that type may not be discoverable via these services.
   </p>
-  <p>A server that implements these services MUST advertise the endpoints in the storage description resource using the <code>TypeIndexService</code> and <code>TypeSearchService</code> properties.
+  <p>A conformant storage MUST implement both the Type Index and Type Search services, and MUST advertise their endpoints in the storage description resource using the <code>TypeIndexService</code> and <code>TypeSearchService</code> service entries, respectively.
   </p>
   <pre class="example" title="Services advertised in storage description">
 {
@@ -220,10 +237,35 @@ Servers MAY additionally derive types from the resource representation itself wh
       matching. A type URI that matches no resource yields no results and MUST NOT be treated as an
       error; empty or duplicate groups MUST be ignored.
     </p>
+    <p>
+      The <code>type</code> parameter (the <code>rel="type"</code> relation, i.e. <code>rdf:type</code>)
+      is the mandatory baseline and MUST be supported by every server that implements the
+      <code>TypeSearchService</code>. A server MAY additionally index other <em>descriptive</em> link
+      relations. Such a relation is filtered by using the relation itself as the query-parameter name
+      &mdash; a registered relation name per [[!RFC8288]] (e.g. <code>describedby</code>) or, for an
+      extension relation, its URI &mdash; with exactly the same conjunctive-normal-form semantics as
+      <code>type</code> (comma = OR group, repeated parameter = AND group, target values matched against
+      the link targets the resource declares for that relation). Groups belonging to different relations
+      are combined with logical AND. Relation targets are derived by the server in the same way as types
+      (HTTP <code>Link</code> headers, server-intrinsic state, or parsed content) and all sources MUST be
+      treated identically.
+    </p>
+    <p class="note">
+      The set of additional indexed relations is deliberately NOT enumerated by the server &mdash; not in
+      the storage description nor elsewhere &mdash; so that it cannot serve as a discovery oracle. A
+      relation the server does not index, like a target value that matches nothing, simply yields no
+      results for that constraint; it MUST NOT be treated as an error, and the two cases MUST be
+      indistinguishable to the client (consistent with the type-matching rule above). Servers MUST NOT
+      index structural or protocol relations (for example pagination relations,
+      <code>storageDescription</code>, or access-control relations); only descriptive relations are
+      eligible.
+    </p>
     <p class="note">Clients MUST URL-encode query parameter keys/values.</p>
-    <p>Returns <code>application/lws+json</code>: A paginated <code>ContainerPage</code> of matching LWS Resource URIs. No other parameters.</p>
+    <p>Returns <code>application/lws+json</code>: A paginated <code>ContainerPage</code> of matching LWS Resource URIs. Aside from <code>type</code> and any additional relation parameters described above, no other parameters are defined.</p>
+    <p class="note">A <code>ContainerPage</code> returned by the <code>TypeSearchService</code> is a <em>synthetic</em> result set, not a representation of a container resource. The <code>ContainerPage</code> media type and pagination model are reused only for client convenience; the response does not identify a container, has no containment relationship to its members, is not retrievable or mutable as a resource, and its membership reflects the query rather than any stored hierarchy. The same applies to the <code>POST</code> form.</p>
     <p>A single-type query (one URI, no comma) matches a resource that declares that type, even if the resource also declares other types.</p>
-    <p>Clients MAY use the native LWS classes <code>https://www.w3.org/ns/lws#DataResource</code> or <code>https://www.w3.org/ns/lws#Container</code> as <code>type</code> filters to restrict the search results exclusively to resource instances or containers, respectively. To restrict results, the native class MUST be supplied as its own AND group (a separate, comma-free <code>type</code> parameter), e.g. <code>?type=https://schema.org/Person&amp;type=https://www.w3.org/ns/lws#Container</code>. Placing it in a comma-separated OR group instead broadens, rather than restricts, the result set.</p>
+    <p>A <code>type</code> filter always denotes the <code>rdf:type</code> the matched resource itself bears; it never denotes the types of a container's members. The native LWS classes <code>https://www.w3.org/ns/lws#DataResource</code> and <code>https://www.w3.org/ns/lws#Container</code> are ordinary <code>rdf:type</code> values: filtering on them selects resources that are themselves data resources or containers, respectively (for example <code>?type=https://www.w3.org/ns/lws#Container</code> matches container resources, and <code>?type=https://schema.org/Person&amp;type=https://www.w3.org/ns/lws#DataResource</code> matches data resources that are also <code>schema:Person</code>).</p>
+    <p class="note">Discovering which containers <em>hold</em> instances of a given type is explicitly out of scope for this service. The service answers "which resources are of type X", not "which containers contain things of type X"; a client that needs the latter derives it from the instance results or from container listings.</p>
   </section>
   
   <section>
@@ -241,77 +283,81 @@ Servers MAY additionally derive types from the resource representation itself wh
     <p>
       <code>type</code>: an array whose elements are combined with <strong>AND</strong>. Each element is either a single type URI or an array of type URIs combined with <strong>OR</strong>. The example above selects resources matching <code>(schema:Person OR foaf:Person) AND lws:DataResource</code>. This is the same conjunctive-normal-form filter as the GET form, with the same expressiveness ceiling: servers MUST NOT be required to support nesting, negation, comparison, ordering, or text matching.
     </p>
-    <p>Returns paginated ContainerPage of matching LWS Resource URIs. No other parameters.</p>
+    <p>
+      The body MAY also include, alongside <code>type</code>, a key for any other descriptive relation
+      (a registered relation name per [[!RFC8288]] or an extension relation URI). Each such key takes the
+      same value form as <code>type</code> and the keys are combined with logical AND, exactly as in the
+      GET form. A relation the server does not index yields no results for that constraint and is
+      indistinguishable from a target value that matches nothing; it MUST NOT be treated as an error.
+    </p>
+    <p>Returns a paginated <code>ContainerPage</code> of matching LWS Resource URIs. Aside from <code>type</code> and additional relation keys, no other parameters are defined.</p>
   </section>
-  
+
+  <section>
+    <h4>Request Equivalence and Errors</h4>
+    <p>
+      A server implementing the <code>TypeSearchService</code> MUST support both the <code>GET</code> and
+      <code>POST</code> forms. The two forms are equivalent: any filter expressible in one MUST be
+      expressible in the other, and equivalent <code>GET</code> and <code>POST</code> requests MUST return
+      the same result set. A server MUST NOT impose different expressiveness limits on the two forms,
+      except that <code>GET</code> requests are additionally bounded by practical request-URI length
+      limits.
+    </p>
+    <p>
+      Servers indicate request outcomes using standard HTTP status codes. In particular:
+    </p>
+    <ul>
+      <li>
+        A <code>POST</code> body that is not well-formed <code>application/lws+json</code>, or whose
+        <code>type</code> is not an array, or any of whose elements is neither a string nor an array of
+        strings, MUST be rejected with <code>400</code> (Bad Request).
+      </li>
+      <li>
+        A <code>POST</code> request whose entity uses a media type other than
+        <code>application/lws+json</code> MUST be rejected with <code>415</code> (Unsupported Media Type).
+      </li>
+      <li>
+        A <code>type</code> value, or any relation target value, that is not a syntactically valid
+        absolute URI MUST be rejected with <code>400</code> (Bad Request). This is distinct from a
+        well-formed URI that matches no resource, and from a relation the server does not index, both of
+        which yield no results and are not errors (see above).
+      </li>
+      <li>
+        A pagination reference (a previously issued <code>next</code> link) that the server no longer
+        recognizes or that has expired MUST result in <code>404</code> (Not Found) or <code>410</code>
+        (Gone); clients SHOULD restart the query from the first page.
+      </li>
+      <li>
+        A filter that exceeds the complexity a server chooses to support (consistent with the
+        expressiveness ceiling above) MUST be rejected with <code>400</code> (Bad Request). A server MUST
+        NOT silently truncate or otherwise narrow such a filter, as doing so could return a superset of
+        the intended results.
+      </li>
+    </ul>
+    <p class="note">
+      Error responses MAY include a representation describing the problem; this specification does not
+      define its format.
+    </p>
+  </section>
+
   <section>
     <h4>Security and Authorization</h4>
     <p>
       Servers MUST enforce authorization per access grants. Responses to GET/POST on <code>TypeIndexService</code> or <code>TypeSearchService</code> include only types and resource URIs that the authenticated client is explicitly authorized to read. 
     </p>
     <p>
-      Unauthorized entries MUST be omitted entirely. A client must not be able to discover the existence of a specific resource instance, or that a specific type exists in the storage at all, if they do not have the required access grants. This implicit filtering yields a dynamically generated, client-specific type index and search result. Independently of authorization, a resource MAY be explicitly excluded from enumeration; see <a href="#unlisted-resources">Unlisted Resources</a>.
+      Unauthorized entries MUST be omitted entirely. A client must not be able to discover the existence of a specific resource instance, or that a specific type exists in the storage at all, if they do not have the required access grants. This implicit filtering yields a dynamically generated, client-specific type index and search result.
+    </p>
+    <p>
+      Authorization filtering MUST be evaluated against the requesting client's <em>current</em> access at
+      the time the request is served, not against any cached or precomputed view. Once an access grant is
+      revoked or narrowed, the affected types and resource URIs MUST NOT appear in any subsequent response;
+      the eventual-consistency allowance for type and relation derivation MUST NOT be extended to
+      authorization. A server MAY maintain a derived index for performance, but it MUST apply current
+      authorization as a filter over that index on every request.
     </p>
   </section>
 
-  <section id="unlisted-resources">
-    <h4>Unlisted Resources</h4>
-    <p>
-      A resource MAY be marked as <dfn data-lt="unlisted resource">unlisted</dfn> by associating it with the
-      type <code>https://www.w3.org/ns/lws#UnlistedResource</code>. This type is declared via an HTTP
-      <code>Link</code> header with <code>rel="type"</code> when the resource is created or modified, or
-      surfaced by the server from the resource representation where it parses content (see above). This
-      mechanism allows resources shared out-of-band &mdash; for example via a capability URI &mdash; to remain
-      retrievable while staying absent from discovery.
-    </p>
-    <p>
-      Marking a resource unlisted controls <em>enumeration only</em>; it does not affect read authorization.
-      A client that is otherwise authorized to read the resource, including a client holding a capability
-      URI, MUST still be able to retrieve it directly with a <code>GET</code> request.
-    </p>
-    <p>
-      <code>https://www.w3.org/ns/lws#UnlistedResource</code> acts as a suppressor rather than an additive
-      type assertion. If a resource is associated with this type, then regardless of any other types it
-      declares:
-    </p>
-    <ul>
-      <li>It MUST NOT appear in any <code>TypeSearchService</code> result.</li>
-      <li>
-        It MUST NOT contribute any of its types to <code>TypeIndexService</code> output, and MUST NOT be
-        counted in <code>totalItems</code> for either service.
-      </li>
-    </ul>
-    <p>
-      <code>https://www.w3.org/ns/lws#UnlistedResource</code> is a control value, not discoverable content.
-      It MUST NOT appear as an entry in <code>TypeIndexService</code> output and MUST NOT be treated as a
-      meaningful <code>type</code> filter in <code>TypeSearchService</code> requests.
-    </p>
-    <p>
-      Although it is conveyed through the same <code>rel="type"</code> <code>Link</code> header (or content
-      assertion) as ordinary classes, <code>https://www.w3.org/ns/lws#UnlistedResource</code> is a
-      processing directive, not a class-membership assertion about the resource's nature. Consumers MUST
-      NOT interpret its presence as semantic typing of the resource &mdash; for example, a generic
-      Linked Data client MUST NOT treat the resource as a meaningful instance of this class when reasoning
-      over the resource's <code>rdf:type</code> assertions.
-    </p>
-    <p>
-      A type MUST NOT appear in <code>TypeIndexService</code> output unless at least one resource of that
-      type is both authorized for the requesting client and not unlisted. If every resource of a given type
-      within a storage is unlisted or unauthorized for the client, that type MUST NOT be surfaced, so that
-      the existence of the type itself is not leaked.
-    </p>
-    <p>
-      Where a server derives types from resource content as well as from <code>Link</code> headers, the
-      unlisted suppressor takes precedence whenever it is present through either channel. Content-derived
-      types MUST NOT cause an otherwise-unlisted resource to become discoverable.
-    </p>
-    <p class="note">
-      The unlisted marker applies only to the resource it is associated with. Marking a container unlisted
-      suppresses the container itself from indexing and search but does not affect its members; each member
-      carries its own listing status.
-    </p>
-  </section>
-  
   <section>
     <h4>Non-Normative Examples</h4>
     <pre class="example" title="Example 1: GET TypeIndex (Discovering available types)">
@@ -349,9 +395,13 @@ Response
 }
     </pre>
     
-    <pre class="example" title="Example 3: GET Search for Containers (Using Container filter)">
+    <pre class="example" title="Example 3: GET Search for container resources (is-a, not containment)">
 Request
-GET /types/search?type=https://schema.org/Person&amp;type=https://www.w3.org/ns/lws#Container
+GET /types/search?type=https://www.w3.org/ns/lws#Container
+
+Matches resources whose own rdf:type includes lws:Container. This does NOT mean
+"containers that contain something" - the service has no containment query.
+The returned URIs are container resources because each is itself a lws:Container.
 
 Response
 {
@@ -415,6 +465,35 @@ Response
   "items": [
     "https://example.org/data/person-4872",
     "https://example.org/data/contact-2208"
+  ]
+}
+    </pre>
+
+    <pre class="example" title="Example 6: Filtering on an indexed relation (describedby)">
+Request (GET: type AND a 'describedby' relation; relation name used as the parameter)
+GET /types/search?type=https://schema.org/Person&amp;describedby=https://shapes.example/PersonShape
+
+Equivalent Request (POST)
+POST /types/search
+Request Body
+{
+  "@context": "https://www.w3.org/ns/lws/v1",
+  "type": ["https://schema.org/Person"],
+  "describedby": ["https://shapes.example/PersonShape"]
+}
+
+Selects resources that are schema:Person AND declare a 'describedby' link to the given shape.
+If the server does not index 'describedby', the constraint yields no results (not an error,
+and indistinguishable from no resource declaring that link).
+
+Response
+{
+  "@context": "https://www.w3.org/ns/lws/v1",
+  "type": "ContainerPage",
+  "totalItems": 2,
+  "items": [
+    "https://example.org/data/person-4872",
+    "https://example.org/data/person-5012"
   ]
 }
     </pre>
