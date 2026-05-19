@@ -227,10 +227,6 @@ Servers MAY additionally derive types from the resource representation itself wh
       <code>?type=A,B&amp;type=C</code> selects resources matching <code>(A OR B) AND C</code>. A
       request with no <code>type</code> parameter matches all resources visible to the client.
     </p>
-    <p class="note">
-      A literal comma occurring within a type URI MUST be percent-encoded (<code>%2C</code>) so that
-      the comma delimiter is unambiguous.
-    </p>
     <p>
       This conjunctive-normal-form filter is the complete query expressiveness of the service.
       Servers MUST NOT be required to support nesting, negation, comparison, ordering, or text
