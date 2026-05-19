@@ -280,10 +280,7 @@ Servers MAY additionally derive types from the resource representation itself wh
     </p>
     <p>
       The body MAY also include, alongside <code>type</code>, a key for any other descriptive relation
-      (a registered relation name per [[!RFC8288]] or an extension relation URI). Each such key takes the
-      same value form as <code>type</code> and the keys are combined with logical AND, exactly as in the
-      GET form. A relation the server does not index yields no results for that constraint and is
-      indistinguishable from a target value that matches nothing; it MUST NOT be treated as an error.
+      (a registered relation name per [[!RFC8288]] or an extension relation URI). Each such key takes the same value form as <code>type</code> and the keys are combined with logical AND, exactly as in the GET form. A relation the server does not index yields no results for that constraint and is indistinguishable from a target value that matches nothing; it MUST NOT be treated as an error.
     </p>
     <p>Returns a paginated <code>ContainerPage</code> of matching LWS Resource URIs. Aside from <code>type</code> and additional relation keys, no other parameters are defined.</p>
   </section>
@@ -293,10 +290,7 @@ Servers MAY additionally derive types from the resource representation itself wh
     <p>
       A server implementing the <code>TypeSearchService</code> MUST support both the <code>GET</code> and
       <code>POST</code> forms. The two forms are equivalent: any filter expressible in one MUST be
-      expressible in the other, and equivalent <code>GET</code> and <code>POST</code> requests MUST return
-      the same result set. A server MUST NOT impose different expressiveness limits on the two forms,
-      except that <code>GET</code> requests are additionally bounded by practical request-URI length
-      limits.
+      expressible in the other, and equivalent <code>GET</code> and <code>POST</code> requests MUST return the same result set. A server MUST NOT impose different expressiveness limits on the two forms, except that <code>GET</code> requests are additionally bounded by practical request-URI length limits.
     </p>
     <p>
       Servers indicate request outcomes using standard HTTP status codes. In particular:
@@ -304,29 +298,22 @@ Servers MAY additionally derive types from the resource representation itself wh
     <ul>
       <li>
         A <code>POST</code> body that is not well-formed <code>application/lws+json</code>, or whose
-        <code>type</code> is not an array, or any of whose elements is neither a string nor an array of
-        strings, MUST be rejected with <code>400</code> (Bad Request).
+        <code>type</code> is not an array, or any of whose elements is neither a string nor an array of strings, MUST be rejected with <code>400</code> (Bad Request).
       </li>
       <li>
-        A <code>POST</code> request whose entity uses a media type other than
-        <code>application/lws+json</code> MUST be rejected with <code>415</code> (Unsupported Media Type).
+        A <code>POST</code> request whose entity uses a media type other than <code>application/lws+json</code> MUST be rejected with <code>415</code> (Unsupported Media Type).
       </li>
       <li>
         A <code>type</code> value, or any relation target value, that is not a syntactically valid
         absolute URI MUST be rejected with <code>400</code> (Bad Request). This is distinct from a
-        well-formed URI that matches no resource, and from a relation the server does not index, both of
-        which yield no results and are not errors (see above).
+        well-formed URI that matches no resource, and from a relation the server does not index, both of which yield no results and are not errors (see above).
       </li>
       <li>
-        A pagination reference (a previously issued <code>next</code> link) that the server no longer
-        recognizes or that has expired MUST result in <code>404</code> (Not Found) or <code>410</code>
-        (Gone); clients SHOULD restart the query from the first page.
+        A pagination reference (a previously issued <code>next</code> link) that the server no longer recognizes or that has expired MUST result in <code>404</code> (Not Found) or <code>410</code> (Gone); clients SHOULD restart the query from the first page.
       </li>
       <li>
         A filter that exceeds the complexity a server chooses to support (consistent with the
-        expressiveness ceiling above) MUST be rejected with <code>400</code> (Bad Request). A server MUST
-        NOT silently truncate or otherwise narrow such a filter, as doing so could return a superset of
-        the intended results.
+        expressiveness ceiling above) MUST be rejected with <code>400</code> (Bad Request). A server MUST NOT silently truncate or otherwise narrow such a filter, as doing so could return a superset of the intended results.
       </li>
     </ul>
     <p class="note">
@@ -344,12 +331,14 @@ Servers MAY additionally derive types from the resource representation itself wh
       Unauthorized entries MUST be omitted entirely. A client must not be able to discover the existence of a specific resource instance, or that a specific type exists in the storage at all, if they do not have the required access grants. This implicit filtering yields a dynamically generated, client-specific type index and search result.
     </p>
     <p>
-      Authorization filtering MUST be evaluated against the requesting client's <em>current</em> access at
-      the time the request is served, not against any cached or precomputed view. Once an access grant is
-      revoked or narrowed, the affected types and resource URIs MUST NOT appear in any subsequent response;
-      the eventual-consistency allowance for type and relation derivation MUST NOT be extended to
-      authorization. A server MAY maintain a derived index for performance, but it MUST apply current
-      authorization as a filter over that index on every request.
+      Any count a response exposes, including <code>totalItems</code>, MUST be computed over this
+      client-specific, authorization-filtered view: it is the number of entries the requesting client
+      is authorized to see, never a count of the types or resources present in the storage as a whole.
+      A count that included unauthorized entries would itself reveal their existence and is therefore
+      prohibited.
+    </p>
+    <p>
+      Authorization filtering MUST be evaluated against the requesting client's <em>current</em> access at the time the request is served, not against any cached or precomputed view. Once an access grant is revoked or narrowed, the affected types and resource URIs MUST NOT appear in any subsequent response; the eventual-consistency allowance for type and relation derivation MUST NOT be extended to authorization. A server MAY maintain a derived index for performance, but it MUST apply current authorization as a filter over that index on every request.
     </p>
   </section>
 
