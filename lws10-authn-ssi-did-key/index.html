@@ -58,8 +58,8 @@
       <p>
         Self-issued identity is important for cases where applications act on their own behalf.
         This includes autonomous bots as well as server-side scripts, among others.
-        In these cases, the agent is able to securely manage the private portion of a keypair, which it uses to generate signed JSON Web Tokens (JWT).
-        This specification describes how this class of agents can generate authentication credentials that can be used with a Linked Web Storage while using agent identifiers with the `did:key:` method.
+        In these cases, the <a data-cite="LWS-PROTOCOL#dfn-agent">agent</a> is able to securely manage the private portion of a keypair, which it uses to generate signed JSON Web Tokens (JWT).
+        This specification describes how this class of <a data-cite="LWS-PROTOCOL#dfn-agent">agents</a> can generate <a data-cite="LWS-PROTOCOL#dfn-authentication-credential">authentication credentials</a> that can be used with a Linked Web Storage while using <a data-cite="LWS-PROTOCOL#dfn-agent">agent</a> identifiers with the `did:key:` method.
       </p>
     </section>
 
@@ -77,7 +77,7 @@
       </p>
 
       <p>
-        The terms "authentication credential" and "authentication suite" are defined by Linked Web Storage Protocol [[!LWS-PROTOCOL]]
+        The terms "<a data-cite="LWS-PROTOCOL#dfn-authentication-credential">authentication credential</a>" and "<a data-cite="LWS-PROTOCOL#dfn-authentication-suite">authentication suite</a>" are defined by Linked Web Storage Protocol [[!LWS-PROTOCOL]]
       </p>
     </section>
 
@@ -85,7 +85,7 @@
       <h2>Authentication Credential Serialization</h2>
 
       <p>
-        A self-issued authentication credential is serialized as a signed JSON Web Token (JWT). In order to use a JWT as an LWS authentication credential, the following additional requirements apply.
+        A self-issued <a data-cite="LWS-PROTOCOL#dfn-authentication-credential">authentication credential</a> is serialized as a signed JSON Web Token (JWT). In order to use a JWT as an LWS <a data-cite="LWS-PROTOCOL#dfn-authentication-credential">authentication credential</a>, the following additional requirements apply.
       </p>
 
       <ul>
@@ -123,7 +123,7 @@
       </ul>
 
       <p>
-        An example JWT that is also an LWS authentication credential is included below.
+        An example JWT that is also an LWS <a data-cite="LWS-PROTOCOL#dfn-authentication-credential">authentication credential</a> is included below.
       </p>
 
       <pre id="example-authentication-token" class="example">
@@ -155,7 +155,7 @@ signature
       </p>
 
       <p>
-        A verifier MUST validate all claims described by the authentication credential data model.
+        A verifier MUST validate all claims described by the <a data-cite="LWS-PROTOCOL#dfn-authentication-credential">authentication credential</a> data model.
       </p>
 
       <p>
@@ -167,7 +167,7 @@ signature
       <h2>Token Type Identifier</h2>
 
       <p>
-        A self-issued JSON Web Token used as an authentication credential MUST use the <code>urn:ietf:params:oauth:token-type:jwt</code> URI when interacting with an authorization server.
+        A self-issued JSON Web Token used as an <a data-cite="LWS-PROTOCOL#dfn-authentication-credential">authentication credential</a> MUST use the <code>urn:ietf:params:oauth:token-type:jwt</code> URI when interacting with an authorization server.
       </p>
     </section>
 

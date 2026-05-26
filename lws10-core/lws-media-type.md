@@ -17,9 +17,9 @@ In all three cases, the response body is the same JSON-LD document conforming to
 
 #### Pagination
 
-Certain composite resources, like containers, may hold a large number of resources. 
+Certain composite resources, like <a>containers</a>, may hold a large number of resources. 
 To allow clients to retrieve listings incrementally, servers SHOULD support
-pagination for containers whose membership exceeds a server-determined threshold.
+pagination for <a>containers</a> whose membership exceeds a server-determined threshold.
 
 ##### Pagination Model
 

@@ -2,8 +2,8 @@
   <h3>Storage Description Resource</h3>
 
   <p>
-    A <dfn>storage description resource</dfn> provides information a client can use
-    when interacting with a storage, including descriptions of capabilities and
+    A <a>storage description resource</a> provides information a client can use
+    when interacting with a <a>storage</a>, including descriptions of capabilities and
     service endpoints.
   </p>
 
@@ -12,7 +12,7 @@
 
     <ul>
       <li>
-        <strong>`id`</strong> - the <code>id</code> property is REQUIRED. Its value MUST be a URI that identifies the storage.
+        <strong>`id`</strong> - the <code>id</code> property is REQUIRED. Its value MUST be a URI that identifies the <a>storage</a>.
       </li>
       <li>
         <strong>`type`</strong> - the <code>type</code> property is REQUIRED. Its value MUST be a string that equals
@@ -55,21 +55,21 @@
     <h4>Discovery and Binding</h4>
 
     <p>
-      All responses to <code>GET</code> and <code>HEAD</code> requests targeting storage resources MUST include a
-      <code>Link</code> header whose target is the URI of the storage description resource, including a relation
+      All responses to <code>GET</code> and <code>HEAD</code> requests targeting <a>storage</a> resources MUST include a
+      <code>Link</code> header whose target is the URI of the <a>storage description resource</a>, including a relation
       (<code>rel</code>) parameter whose value equals <code>https://www.w3.org/ns/lws#storageDescription</code>.
     </p>
 
     <p>
-      When dereferenced, the storage description MUST contain an <code>id</code> property that identifies the
-      storage. In addition, the <code>service</code> property MUST contain a service description whose type equals
+      When dereferenced, the <a>storage description</a> MUST contain an <code>id</code> property that identifies the
+      <a>storage</a>. In addition, the <code>service</code> property MUST contain a service description whose type equals
       <code>StorageDescription</code> and whose <code>serviceEndpoint</code> equals the URL of the
-      storage description.
+      <a>storage description</a>.
     </p>
 
     <p class="note">
-      The URI for a storage description can be distinct from the URI identifying a storage, which can be distinct
-      from the storage's root container. These URIs can also be identical, provided that the resulting representation
+      The URI for a <a>storage description</a> can be distinct from the URI identifying a <a>storage</a>, which can be distinct
+      from the <a>storage root</a>. These URIs can also be identical, provided that the resulting representation
       conforms to the requirements outlined in this document.
     </p>
   </section>
@@ -78,7 +78,7 @@
     <h4>Storage Capabilities</h4>
 
     <p>
-      A storage description may contain descriptions of additional capabilities supported by the storage.
+      A <a>storage description</a> may contain descriptions of additional capabilities supported by the <a>storage</a>.
     </p>
   </section>
 
@@ -86,8 +86,8 @@
     <h4>Storage Services</h4>
 
     <p>
-      In addition to a <code>StorageDescription</code> service, a storage description resource may contain links
-      to other services connected to a storage. The API definition of these services are outside the scope of
+      In addition to a <code>StorageDescription</code> service, a <a>storage description resource</a> may contain links
+      to other services connected to a <a>storage</a>. The API definition of these services are outside the scope of
       this specification.
     </p>
   </section>
@@ -96,7 +96,7 @@
     <h4>Storage Description Representation</h4>
 
     <p>
-      A storage description resource MUST be serializable with the media type <code>application/lws+json</code>.
+      A <a>storage description resource</a> MUST be serializable with the media type <code>application/lws+json</code>.
       Other representations MAY be available via content negotiation.
     </p>
 
