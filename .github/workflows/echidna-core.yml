@@ -1,0 +1,24 @@
+name: Echidna lws-core
+on:
+  pull_request:
+    paths: 
+      - "lws10-core/**"
+  push:
+    branches: [main]
+    paths: 
+      - "lws10-core/**"
+jobs:
+  main:
+    name: Build, validate and publish
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - uses: w3c/spec-prod@v2
+        with:
+          SOURCE: lws10-core/index.html
+          TOOLCHAIN: respec
+          W3C_ECHIDNA_TOKEN: ${{ secrets.ECHIDNA_CORE }}
+          W3C_WG_DECISION_URL: https://www.w3.org/2026/04/28-lws-minutes.html#0c16
+          W3C_BUILD_OVERRIDE: |
+             shortName: lws10-core
+             specStatus: WD
