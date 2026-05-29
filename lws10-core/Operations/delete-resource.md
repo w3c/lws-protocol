@@ -11,7 +11,7 @@ The delete resource operation is implemented using the HTTP DELETE method, as de
 The DELETE request targets the URI of the resource or container to remove. Clients MAY include an `If-Match` header with an ETag for concurrency checks.
 
 **Deletion and Containment:**
-When a resource is deleted, the server MUST atomically remove it from its parent container's `items` list. The parent container's `totalItems` count and ETag MUST be updated accordingly.
+When a resource is deleted, the server MUST atomically remove it from its parent container's `items` list. The parent container's `totalItems` count SHOULD be updated accordingly, and its ETag MUST be updated to reflect the change.
 
 For non-container resources, the server removes the resource content, its associated metadata (linkset), and the containment reference in the parent container.
 

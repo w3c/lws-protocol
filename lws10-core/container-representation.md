@@ -8,11 +8,19 @@ A container representation MUST include the following properties:
 
 - **`id`**: The URI of the container.
 - **`type`**: The value `"Container"`.
-- **`totalItems`**: An integer indicating the total number of resources
- contained in the container which can be disclosed to the client.
+- **`totalItems`**: An integer indicating the total number of resources contained in the container which can be disclosed to the client. This count SHOULD be accurate but MAY be approximate.
 - **`items`**: An array of contained resource descriptions (see below). If the 
   container is empty, this MUST be an empty array. When the container listing is
   paginated, `items` contains only the current page of resources; see [Pagination](#pagination) for details.
+
+<!--
+  AUTHOR NOTE (not for publication): The accuracy requirement for `totalItems`
+  was relaxed from MUST to SHOULD. Maintaining an exact count can be expensive
+  or infeasible for very large or rapidly changing containers. The relaxed
+  requirement lets a server return an approximate value in such cases rather
+  than omitting the property or failing the request, while still encouraging an
+  exact count wherever it is practical to compute one.
+-->
 
 #### Contained Resource Description
 
