@@ -46,12 +46,6 @@
   "service": [{
     "type": "StorageDescription",
     "serviceEndpoint": "https://storage.example/description"
-  }, {
-    "type": "TypeIndexService",
-    "serviceEndpoint": "https://storage.example/types/index"
-  }, {
-    "type": "TypeSearchService",
-    "serviceEndpoint": "https://storage.example/types/search"
   }]
 }
     </pre>
@@ -70,9 +64,7 @@
       When dereferenced, the storage description MUST contain an <code>id</code> property that identifies the
       storage. In addition, the <code>service</code> property MUST contain a service description whose type equals
       <code>StorageDescription</code> and whose <code>serviceEndpoint</code> equals the URL of the
-      storage description. The <code>service</code> property MUST also contain
-      <code>TypeIndexService</code> and <code>TypeSearchService</code> entries; see
-      <a href="#type-index-services">Search and Type Index Services</a>.
+      storage description.
     </p>
 
     <p class="note">
@@ -173,7 +165,7 @@ Servers MAY additionally derive types from the resource representation itself wh
   </p>
   <p class="note">Because servers are not required to parse the resource body, the Type Search Service relies heavily on the types explicitly declared via HTTP headers or managed by the server. If a client includes a type exclusively within a resource's internal graph but fails to provide the corresponding <code>Link</code> header, that type may not be discoverable via these services.
   </p>
-  <p>A conformant storage MUST implement both the Type Index and Type Search services, and MUST advertise their endpoints in the storage description resource using the <code>TypeIndexService</code> and <code>TypeSearchService</code> service entries, respectively.
+  <p>In the storage description resource, the <code>TypeIndexService</code> and <code>TypeSearchService</code> service entries advertise the endpoints of the Type Index and Type Search services, respectively.
   </p>
   <pre class="example" title="Services advertised in storage description">
 {
