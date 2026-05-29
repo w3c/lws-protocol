@@ -261,8 +261,8 @@ Link: &lt;https://example.org/types/index?page=4&gt;; rel="last"
       indistinguishable to the client (consistent with the type-matching rule above). Servers MUST NOT index structural or protocol relations, only descriptive relations are eligible.
     </p>
     <p class="note">Clients MUST URL-encode query parameter keys/values.</p>
-    <p>Returns <code>application/lws+json</code>: A paginated <code>ContainerPage</code> of matching LWS Resource URIs. Aside from <code>type</code> and any additional relation parameters described above, no other parameters are defined.</p>
-    <p class="note">A <code>ContainerPage</code> returned by the <code>TypeSearchService</code> is a <em>synthetic</em> result set, not a representation of a container resource. The <code>ContainerPage</code> media type and pagination model are reused only for client convenience; the response does not identify a container, has no containment relationship to its members, is not retrievable or mutable as a resource, and its membership reflects the query rather than any stored hierarchy. The same applies to the <code>POST</code> form.</p>
+    <p>Returns <code>application/lws+json</code>: A paginated <code>ContainerPage</code> whose items describe the matching LWS resources. Aside from <code>type</code> and any additional relation parameters described above, no other parameters are defined.</p>
+    <p class="note">A <code>ContainerPage</code> returned by the <code>TypeSearchService</code> is a <em>synthetic</em> result set, not a representation of a container resource. The <code>ContainerPage</code> media type and pagination model are reused only for client convenience; the response does not identify a container, has no containment relationship to its members, is not retrievable or mutable as a resource, and its membership reflects the query rather than any stored hierarchy. Each item is a resource description carrying at least <code>id</code> and <code>type</code>, mirroring a container member; a server MAY include additional descriptive metadata (such as <code>mediaType</code>, <code>size</code>, or <code>modified</code>) but is not required to. The same applies to the <code>POST</code> form.</p>
     <p>A single-type query (one URI, no comma) matches a resource that declares that type, even if the resource also declares other types.</p>
     <p>A <code>type</code> filter always denotes the <code>rdf:type</code> the matched resource itself bears; it never denotes the types of a container's members. The native LWS classes <code>https://www.w3.org/ns/lws#DataResource</code> and <code>https://www.w3.org/ns/lws#Container</code> are ordinary <code>rdf:type</code> values: filtering on them selects resources that are themselves data resources or containers, respectively (for example <code>?type=https://www.w3.org/ns/lws#Container</code> matches container resources, and <code>?type=https://schema.org/Person&amp;type=https://www.w3.org/ns/lws#DataResource</code> matches data resources that are also <code>schema:Person</code>).</p>
   </section>
@@ -286,7 +286,7 @@ Link: &lt;https://example.org/types/index?page=4&gt;; rel="last"
       The body MAY also include, alongside <code>type</code>, a key for any other descriptive relation
       (a registered relation name per [[!RFC8288]] or an extension relation URI). Each such key takes the same value form as <code>type</code> and the keys are combined with logical AND, exactly as in the GET form. A relation the server does not index yields no results for that constraint and is indistinguishable from a target value that matches nothing; it MUST NOT be treated as an error.
     </p>
-    <p>Returns a paginated <code>ContainerPage</code> of matching LWS Resource URIs. Aside from <code>type</code> and additional relation keys, no other parameters are defined.</p>
+    <p>Returns a paginated <code>ContainerPage</code> whose items describe the matching LWS resources. Aside from <code>type</code> and additional relation keys, no other parameters are defined.</p>
   </section>
 
   <section>
@@ -385,9 +385,9 @@ Link: &lt;https://example.org/types/search?type=https://schema.org/Person&amp;ty
   "type": "ContainerPage",
   "totalItems": 27,
   "items": [
-    "https://example.org/data/person-4872",
-    "https://example.org/data/person-4873",
-    "https://example.org/data/person-5882"
+    { "type": ["DataResource", "https://schema.org/Person"], "id": "https://example.org/data/person-4872" },
+    { "type": ["DataResource", "https://schema.org/Person"], "id": "https://example.org/data/person-4873" },
+    { "type": ["DataResource", "https://schema.org/Person"], "id": "https://example.org/data/person-5882" }
   ]
 }
     </pre>
@@ -406,8 +406,8 @@ Response
   "type": "ContainerPage",
   "totalItems": 2,
   "items": [
-    "https://example.org/data/people/",
-    "https://example.org/data/contacts/"
+    { "type": "Container", "id": "https://example.org/data/people/" },
+    { "type": "Container", "id": "https://example.org/data/contacts/" }
   ]
 }
     </pre>
@@ -430,9 +430,9 @@ Response
   "type": "ContainerPage",
   "totalItems": 3,
   "items": [
-    "https://example.org/data/person-4872",
-    "https://example.org/data/person-9341",
-    "https://example.org/data/person-1123"
+    { "type": ["DataResource", "https://schema.org/Person"], "id": "https://example.org/data/person-4872" },
+    { "type": ["DataResource", "https://schema.org/Person"], "id": "https://example.org/data/person-9341" },
+    { "type": ["DataResource", "https://schema.org/Person"], "id": "https://example.org/data/person-1123" }
   ]
 }
     </pre>
@@ -460,8 +460,8 @@ Response
   "type": "ContainerPage",
   "totalItems": 2,
   "items": [
-    "https://example.org/data/person-4872",
-    "https://example.org/data/contact-2208"
+    { "type": ["DataResource", "https://schema.org/Person"], "id": "https://example.org/data/person-4872" },
+    { "type": ["DataResource", "http://xmlns.com/foaf/0.1/Person"], "id": "https://example.org/data/contact-2208" }
   ]
 }
     </pre>
@@ -489,8 +489,8 @@ Response
   "type": "ContainerPage",
   "totalItems": 2,
   "items": [
-    "https://example.org/data/person-4872",
-    "https://example.org/data/person-5012"
+    { "type": ["DataResource", "https://schema.org/Person"], "id": "https://example.org/data/person-4872" },
+    { "type": ["DataResource", "https://schema.org/Person"], "id": "https://example.org/data/person-5012" }
   ]
 }
     </pre>
