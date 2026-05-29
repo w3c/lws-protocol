@@ -195,8 +195,18 @@ Servers MAY additionally derive types from the resource representation itself wh
   
   <section>
     <h4>GET [TypeIndexService]</h4>
-    <p>Returns <code>application/lws+json</code>:</p>
+    <p>Returns a paginated <code>TypeIndex</code> as <code>application/lws+json</code>, following the
+      standard LWS pagination model (see <a href="#pagination">Pagination</a>): page URIs are conveyed
+      in <code>Link</code> headers&mdash;not in the response body&mdash;and are opaque to the client.
+      The body lists the unique types of resources that currently exist within the storage and that the
+      authenticated user is authorized to see. This endpoint accepts no query parameters.</p>
     <pre class="example">
+HTTP/1.1 200 OK
+Content-Type: application/lws+json
+Link: &lt;https://example.org/types/index?page=1&gt;; rel="first"
+Link: &lt;https://example.org/types/index?page=2&gt;; rel="next"
+Link: &lt;https://example.org/types/index?page=4&gt;; rel="last"
+
 {
   "@context": "https://www.w3.org/ns/lws/v1",
   "type": "TypeIndex",
@@ -205,11 +215,9 @@ Servers MAY additionally derive types from the resource representation itself wh
     { "type": "https://schema.org/Person" },
     { "type": "https://schema.org/Event" },
     { "type": "https://schema.org/Message" }
-  ],
-  "next": "..."
+  ]
 }
     </pre>
-    <p>Returns a paginated <code>TypeIndex</code> following standard LWS pagination. It lists the unique types of resources that currently exist within the storage and that the authenticated user is authorized to see. This endpoint accepts no query parameters.</p>
   </section>
   
   <section>
@@ -345,6 +353,12 @@ Request
 GET /types/index
 
 Response
+HTTP/1.1 200 OK
+Content-Type: application/lws+json
+Link: &lt;https://example.org/types/index?page=1&gt;; rel="first"
+Link: &lt;https://example.org/types/index?page=2&gt;; rel="next"
+Link: &lt;https://example.org/types/index?page=4&gt;; rel="last"
+
 {
   "@context": "https://www.w3.org/ns/lws/v1",
   "type": "TypeIndex",
@@ -352,8 +366,7 @@ Response
   "items": [
     { "type": "https://schema.org/Person" },
     { "type": "https://schema.org/Event" }
-  ],
-  "next": "https://example.org/types/index?page=2"
+  ]
 }
     </pre>
     
@@ -362,6 +375,11 @@ Request
 GET /types/search?type=https://schema.org/Person&amp;type=https://www.w3.org/ns/lws#DataResource
 
 Response
+HTTP/1.1 200 OK
+Content-Type: application/lws+json
+Link: &lt;https://example.org/types/search?type=https://schema.org/Person&amp;type=https://www.w3.org/ns/lws#DataResource&amp;page=1&gt;; rel="first"
+Link: &lt;https://example.org/types/search?type=https://schema.org/Person&amp;type=https://www.w3.org/ns/lws#DataResource&amp;page=2&gt;; rel="next"
+
 {
   "@context": "https://www.w3.org/ns/lws/v1",
   "type": "ContainerPage",
@@ -370,8 +388,7 @@ Response
     "https://example.org/data/person-4872",
     "https://example.org/data/person-4873",
     "https://example.org/data/person-5882"
-  ],
-  "next": "https://example.org/types/search?type=https://schema.org/Person&amp;type=https://www.w3.org/ns/lws#DataResource&amp;page=2"
+  ]
 }
     </pre>
     
