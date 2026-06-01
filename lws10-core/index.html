@@ -179,7 +179,13 @@
           capability such as ZCAPs.
         </li>
         <li><dfn data-lt="authentication suites">authentication suite</dfn> &mdash; a defined validation mechanism for a concrete serialization of an <a>authentication credential</a>.</li>
-        <li><dfn>auxiliary resource</dfn> &mdash; an <a>LWS resource</a> whose lifecycle is bound to an <a>LWS resource</a>, called its <dfn>principal resource</dfn>.</li>
+        <li><dfn>auxiliary resource</dfn> &mdash; an <a>LWS resource</a> that plays a particular role with respect to a <a>LWS resource</a>, called its <dfn>primary resource</dfn>,
+        and whose lifetime is bound to the primary resource.
+        This specification defines <a>linkset resource</a> and <a>metadata resource</a> as types of auxiliary resources,
+        but <a>LWS Servers</a> are free to manage additional kinds of auxiliary resources (e.g. access control resources, notification inboxes).
+        Auxiliary resources are discovered using links of a specific type (see Section <a href="#metadata"></a>).
+        Some auxiliary resources may, in some implementations, be identical to their primary resource.
+        </li>
         <li><dfn data-lt="LWS resources">LWS resource</dfn> &mdash; an HTTP <a>resource</a> as defined in [[[RFC9110]]] which supports the read operations defined by the Linked Web Storage Protocol.
         Following [[[RFC9110]]], this specification "does not limit the nature of a [LWS] resource; it merely defines an interface that might be used to interact with [LWS] resources." [[RFC9110]]
         </li>
