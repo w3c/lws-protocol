@@ -340,7 +340,7 @@ Link: &lt;https://example.org/types/index?page=4&gt;; rel="last"
 
   <section>
     <h4>Non-Normative Examples</h4>
-    <pre class="example" title="Example 1: GET TypeIndex (Discovering available types)">
+    <pre class="example" title="GET TypeIndex (Discovering available types)">
 Request
 GET /types/index
 
@@ -362,7 +362,7 @@ Link: &lt;https://example.org/types/index?page=4&gt;; rel="last"
 }
     </pre>
     
-    <pre class="example" title="Example 2: GET Search for Instances (Using DataResource filter)">
+    <pre class="example" title="GET Search for Instances (Using DataResource filter)">
 Request
 GET /types/search?type=https://schema.org/Person&amp;type=https://www.w3.org/ns/lws#DataResource
 
@@ -384,7 +384,7 @@ Link: &lt;https://example.org/types/search?type=https://schema.org/Person&amp;ty
 }
     </pre>
     
-    <pre class="example" title="Example 3: GET Search for container resources (is-a)">
+    <pre class="example" title="GET Search for container resources (is-a)">
 Request
 GET /types/search?type=https://www.w3.org/ns/lws#Container
 
@@ -404,7 +404,7 @@ Response
 }
     </pre>
     
-    <pre class="example" title="Example 4: POST Search with Multiple Type Filters">
+    <pre class="example" title="POST Search with Multiple Type Filters">
 Request
 POST /types/search
 Request Body
@@ -429,7 +429,7 @@ Response
 }
     </pre>
     
-    <pre class="example" title="Example 5: CNF Filter (OR within a group, AND across groups)">
+    <pre class="example" title="CNF Filter (OR within a group, AND across groups)">
 Request (GET form: comma = OR, repeated parameter = AND)
 GET /types/search?type=https://schema.org/Person,http://xmlns.com/foaf/0.1/Person&amp;type=https://www.w3.org/ns/lws#DataResource
 
@@ -458,7 +458,7 @@ Response
 }
     </pre>
 
-    <pre class="example" title="Example 6: Filtering on an indexed relation (describedby)">
+    <pre class="example" title="Filtering on an indexed relation (describedby)">
 Request (GET: type AND a 'describedby' relation; relation name used as the parameter)
 GET /types/search?type=https://schema.org/Person&amp;describedby=https://shapes.example/PersonShape
 
