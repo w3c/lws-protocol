@@ -31,6 +31,9 @@ jobs:
           npm ci
           npm run build
 
+      - name: Clean up node_modules
+        run: rm -rf lws10-vocab/node_modules
+
       - name: Convert README to HTML
         uses: docker://pandoc/core:3.8
         with:
