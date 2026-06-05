@@ -22,19 +22,6 @@
           company: "Stony Brook University",
           companyURL: "https://www.stonybrook.edu/",
         }],
-        formerEditors: [{
-          name: "Sarven Capadisli",
-        }, {
-          name: "Justin Bingham",
-        }, {
-          name: "Dmitri Zagidulin",
-        }, {
-          name: "Ruben Verborgh",
-        }, {
-          name: "Tim Berners-Lee",
-        }, {
-          name: "Kjetil Kjernsmo",
-        }],
         github: "w3c/lws-protocol",
         xref: ["web-platform"],
         group: "lws",
@@ -121,7 +108,7 @@
     <section id="conventions" class="informative">
       <h2>Document Conventions</h2>
       <dl>
-        <dt></dt><dd><dd/>
+        <dt></dt><dd></dd>
       </dl>
     </section>
 
@@ -286,6 +273,11 @@
 	  <div data-include="Operations/rest-table.md" data-include-format="markdown" data-include-replace="true"></div>
     </section>
 
+    <section id="access-requests-and-grants">
+      <h2>Access Requests and Grants</h2>
+      <div data-include="lws-access-requests.html" data-include-replace="true"></div>
+    </section>
+
     <section id="lws-media-type">
       <h2>LWS Media Type</h2>
 	  <div data-include="lws-media-type.md" data-include-format="markdown" data-include-replace="true"></div>
@@ -370,6 +362,13 @@
     <section id="iana-considerations" class="informative">
       <h2>IANA Considerations</h2>
       <div data-include="IANA-Considerations.html" data-include-replace="true"></div>
+    </section>
+
+    <section id="acknowledgements" class="appendix informative">
+      <h2>Acknowledgements</h2>
+      <p>This specification draws heavily from the Solid Protocol [[Solid-Protocol]], which was edited, over time, by
+         Sarven Capadisli, Tim Berners-Lee, Kjetil Kjernsmo, Ruben Verborgh, Justin Bingham, Dmitri Zagidulin.
+      </p>
     </section>
   </body>
 </html>

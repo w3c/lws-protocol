@@ -31,3 +31,28 @@
   </ul>
 </section>
 
+<section id="security-access-requests" class="informative">
+  <h4>Access Requests and Grants</h4>
+
+  <ul>
+    <li>
+      Servers are strongly encouraged to apply authorization rules to both the
+      <a>access request</a> and <a>access grant</a> endpoints. Write access to the
+      <a>access grant</a> endpoint, in particular, should be restricted to authorized
+      storage controllers and specific clients.
+    </li>
+    <li>
+      When an agent creates an <a>access request</a>, the server is encouraged to verify
+      that the <code>assignee</code> value in the request is associated with the
+      authenticated identity of the requesting agent.
+    </li>
+    <li>
+      Because the <a>access request</a> endpoint accepts content from external agents,
+      servers are encouraged to implement measures to prevent abuse, such as rate limiting,
+      payload size restrictions, or requiring authentication before accepting submissions.
+      Without such protections, the endpoint may be vulnerable to spam, resource exhaustion,
+      or other forms of unwanted content.
+    </li>
+  </ul>
+</section>
+
