@@ -52,8 +52,8 @@
       <h2>Introduction</h2>
       <p>
         Self-issued identity is important for cases where applications act on their own behalf. This includes autonomous bots as well as server-side scripts, among others.
-        In these cases, the <a data-cite="LWS-PROTOCOL#dfn-agent">agent</a> is able to securely manage the private portion of a keypair, which it uses to generate signed JSON Web Tokens (JWT).
-        This specification describes how this class of <a data-cite="LWS-PROTOCOL#dfn-agent">agents</a> can generate <a data-cite="LWS-PROTOCOL#dfn-authentication-credential">authentication credentials</a> that can be used with a Linked Web Storage.
+        In these cases, the <a>agent</a> is able to securely manage the private portion of a keypair, which it uses to generate signed JSON Web Tokens (JWT).
+        This specification describes how this class of <a>agents</a> can generate <a>authentication credentials</a> that can be used with a Linked Web Storage.
       </p>
     </section>
     <section id="conformance"></section>
@@ -74,7 +74,7 @@
       </p>
 
       <p>
-        The terms "<a data-cite="LWS-PROTOCOL#dfn-authentication-credential">authentication credential</a>" and "<a data-cite="LWS-PROTOCOL#dfn-authentication-suite">authentication suite</a>" are defined by Linked Web Storage Protocol [[!LWS-PROTOCOL]]
+        The terms "<dfn data-cite="LWS-PROTOCOL#dfn-agent">agent</dfn>", "<dfn data-cite="LWS-PROTOCOL#dfn-authentication-credential">authentication credential</dfn>", and "<dfn data-cite="LWS-PROTOCOL#dfn-authentication-suite">authentication suite</dfn>" are defined by Linked Web Storage Protocol [[!LWS-PROTOCOL]]
       </p>
     </section>
 
@@ -82,7 +82,7 @@
       <h2>Authentication Credential Serialization</h2>
 
       <p>
-        A self-issued <a data-cite="LWS-PROTOCOL#dfn-authentication-credential">authentication credential</a> is serialized as a signed JSON Web Token (JWT). In order to use a JWT as an LWS <a data-cite="LWS-PROTOCOL#dfn-authentication-credential">authentication credential</a>, the following additional requirements apply.
+        A self-issued <a>authentication credential</a> is serialized as a signed JSON Web Token (JWT). In order to use a JWT as an LWS <a>authentication credential</a>, the following additional requirements apply.
       </p>
 
       <p>
@@ -118,7 +118,7 @@
       </p>
 
       <p>
-        An example JWT that is also an LWS <a data-cite="LWS-PROTOCOL#dfn-authentication-credential">authentication credential</a> is included below.
+        An example JWT that is also an LWS <a>authentication credential</a> is included below.
       </p>
 
       <pre id="example-authentication-token" class="example">
@@ -147,11 +147,11 @@ signature
       <h2>Authentication Credential Validation</h2>
 
       <p>
-        In order to validate a JWT as an LWS <a data-cite="LWS-PROTOCOL#dfn-authentication-credential">authentication credential</a>, there must be a trust relationship between the verifier and the issuing party.
+        In order to validate a JWT as an LWS <a>authentication credential</a>, there must be a trust relationship between the verifier and the issuing party.
       </p>
 
       <p>
-        In the absence of a pre-existing trust relationship, the verifier MUST dereference the <code>sub</code> (subject) claim in the <a data-cite="LWS-PROTOCOL#dfn-authentication-credential">authentication credential</a>.
+        In the absence of a pre-existing trust relationship, the verifier MUST dereference the <code>sub</code> (subject) claim in the <a>authentication credential</a>.
         The resulting resource MUST be formatted as a valid controlled identifier document [[!CID-1.0]] with an <code>id</code> value equal to the subject identifier.
       </p>
 
@@ -160,7 +160,7 @@ signature
       </p>
 
       <p>
-        A verifier MUST validate all claims described by the <a data-cite="LWS-PROTOCOL#dfn-authentication-credential">authentication credential</a> data model.
+        A verifier MUST validate all claims described by the <a>authentication credential</a> data model.
       </p>
 
       <p>
@@ -203,7 +203,7 @@ signature
       <h2>Token Type Identifier</h2>
 
       <p>
-        A self-issued JSON Web Token used as an <a data-cite="LWS-PROTOCOL#dfn-authentication-credential">authentication credential</a> MUST use the <code>urn:ietf:params:oauth:token-type:jwt</code> URI when interacting with an authorization server.
+        A self-issued JSON Web Token used as an <a>authentication credential</a> MUST use the <code>urn:ietf:params:oauth:token-type:jwt</code> URI when interacting with an authorization server.
       </p>
 
     </section>
