@@ -1,11 +1,11 @@
 <p>
-  Access Requests and Grants provide a mechanism for an agent to request access to
-  resources and for a <a>resource manager</a> to grant access with defined constraints.
+  Access Requests and Grants provide a mechanism for an <a>agent</a> to request access to
+  resources and for a <a>storage controller</a> to grant access with defined constraints.
   The endpoints for requesting and granting access act as a type of specialized inbox.
 </p>
 
 <p>
-  An agent does not present an <a>access grant</a> to a server as an authorization token.
+  An <a>agent</a> does not present an <a>access grant</a> to a server as an authorization token.
   Rather, the <a>access grant</a> serves as a record of what was authorized, to whom,
   and under what constraints. When an <a>access grant</a> is created or revoked (deleted), it
   is the responsibility of the server to adjust any underlying access policy to account for the
@@ -26,13 +26,13 @@
 
 <ul>
   <li>
-    <dfn>Access Request</dfn> &mdash; a data object submitted by an agent, expressing a
+    <dfn>Access Request</dfn> &mdash; a data object submitted by an <a>agent</a>, expressing a
     request to perform specific actions on storage resources, including the desired scope
     and constraints.
   </li>
   <li>
-    <dfn>Access Grant</dfn> &mdash; a data object created by a storage controller, expressing
-    an ability for an agent to perform specific actions on storage resources within certain
+    <dfn>Access Grant</dfn> &mdash; a data object created by a <a>storage controller</a>, expressing
+    an ability for an <a>agent</a> to perform specific actions on <a>storage</a> resources within certain
     defined constraints.
   </li>
   <li>
@@ -40,7 +40,7 @@
     requirements for expressing a valid access policy. Every access profile is identified
     with a URI, and a server indicates support for one or more access profiles by
     referencing them in the <code>conformsTo</code> property of a service object in its
-    Storage Description resource.
+    <a>storage description</a> resource.
   </li>
 </ul>
 </div>
@@ -197,10 +197,10 @@
 
     <ul>
       <li>
-        <code>AccessRequest</code> &mdash; a request by an agent for access to resources.
+        <code>AccessRequest</code> &mdash; a request by an <a>agent</a> for access to resources.
       </li>
       <li>
-        <code>AccessGrant</code> &mdash; an authorization by a storage controller granting
+        <code>AccessGrant</code> &mdash; an authorization by a <a>storage controller</a> granting
         access to resources.
       </li>
     </ul>
@@ -322,7 +322,7 @@
     <h4>Actions</h4>
 
     <p>
-      The <code>action</code> property describes the operations that the agent wishes to
+      The <code>action</code> property describes the <a>operations</a> that the <a>agent</a> wishes to
       perform (in the case of a request) or is authorized to perform (in the case of a grant).
     </p>
 
@@ -430,7 +430,7 @@
       </li>
       <li>
         <code>https://www.w3.org/ns/lws#StorageResource</code> &mdash; matches
-        any resource managed by a storage.
+        any resource managed by a <a>storage</a>.
       </li>
     </ul>
 
@@ -769,8 +769,8 @@ Link: &lt;https://type.example/Playlist&gt;; rel="type"
   </p>
 
   <p>
-    An agent creates an <a>access request</a> by submitting a <code>POST</code> request to the
-    <a>access request</a> endpoint. A storage controller creates an <a>access grant</a> by
+    An <a>agent</a> creates an <a>access request</a> by submitting a <code>POST</code> request to the
+    <a>access request</a> endpoint. A <a>storage controller</a> creates an <a>access grant</a> by
     submitting a <code>POST</code> request to the <a>access grant</a> endpoint.
   </p>
 
@@ -810,7 +810,7 @@ Link: &lt;https://type.example/Playlist&gt;; rel="type"
   </p>
 
   <p>
-    Notifications provide a mechanism for informing agents and storage controllers about changes to
+    Notifications provide a mechanism for informing <a>agents</a> and <a>storage controllers</a> about changes to
     <a>access requests</a> and <a>access grants</a>. When an <code>inbox</code> property is
     present on an <a>access request</a> or <a>access grant</a>, the server SHOULD deliver
     notifications to that endpoint, informing an
@@ -844,11 +844,11 @@ Link: &lt;https://type.example/Playlist&gt;; rel="type"
     <ul>
       <li>
         <strong>Access Request creation</strong>: When a new <a>access request</a> is
-        submitted, the storage controller SHOULD be notified.
+        submitted, the <a>storage controller</a> SHOULD be notified.
       </li>
       <li>
         <strong>Access Grant creation</strong>: When a new <a>access grant</a> is created,
-        the requesting agent SHOULD be notified at the <code>inbox</code> specified in
+        the requesting <a>agent</a> SHOULD be notified at the <code>inbox</code> specified in
         the associated <a>access request</a>.
       </li>
     </ul>
