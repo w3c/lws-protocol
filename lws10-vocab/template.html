@@ -1,0 +1,220 @@
+<html lang="en">
+
+<head>
+  <meta charset='utf-8' />
+  <title></title>
+  <script class="remove" src="https://www.w3.org/Tools/respec/respec-w3c"></script>
+  <script>
+    function remove_status_remark() {
+      const sotd = document.getElementById("sotd");
+      const p = sotd.getElementsByTagName('p')[0];
+      sotd.removeChild(p);
+    }
+  </script>
+  <script class='remove'>
+    // See https://respec.org/docs/ for how to configure ReSpec
+    var respecConfig = {
+      specStatus: "ED",
+      shortName: "lws-vocab",
+      editors: [{
+        name: "Jesse Wright",
+        w3cid: "132252",
+        company: "University of Oxford",
+        companyURL: "https://www.ox.ac.uk/"
+      }, {
+        name: "Erich Bremer",
+        w3cid: "45759",
+        company: "Stony Brook University",
+        companyURL: "https://www.stonybrook.edu/"
+      }],
+      authors: [{
+        name: "Laurens Debackere",
+        w3cid: "136298",
+        company: "Digitaal Vlaanderen",
+        companyURL: "https://www.digitaalvlaanderen.be"
+      }],
+      github: "w3c/lws-protocol",
+      shortName: "@@",
+      xref: ["web-platform"],
+      group: "lws",
+      localBiblio: {
+        "lws-protocol": {
+          title: "LWS Protocol",
+          href: "https://w3c.github.io/lws-protocol/lws10-core/",
+          publisher: "W3C",
+        },
+      }
+    };
+  </script>
+  <style type="text/css">
+    dl.terms dt {
+      float: left;
+      clear: left;
+      width: 10vw;
+    }
+
+    dl.terms dd {
+      margin-left: 15vw;
+    }
+
+    dl.terms dd:after {
+      content: '';
+      display: block;
+      clear: both;
+      margin-bottom: 5px;
+    }
+
+    table.rdfs-definition td {
+      vertical-align: top;
+      margin-right: 2em;
+    }
+
+    .bold {
+      font-weight: bold;
+    }
+
+    /* code {
+        color: red;
+      } */
+
+    .term_definitions section {
+      border-bottom-style: solid;
+      border-bottom-width: 1px;
+      border-bottom-color: darkgrey;
+    }
+
+    .annoy {
+      background: hsla(40, 100%, 50%, 0.95);
+      color: black;
+      padding: .75em 1em;
+      border: red;
+      border-style: solid none;
+      box-shadow: 0 2px 8px black;
+      text-align: center;
+    }
+
+    summary {
+      font-weight: normal !important;
+    }
+  </style>
+</head>
+
+<body typeof="owl:Ontology">
+  <section id="abstract">
+    <p>This document describes the <span property="dc:title" id="title"></span>, i.e.,
+      the <span property="dc:description" id="description"></span>.
+    </p>
+    <p>Alternate versions of the vocabulary definition exist in
+      <a rel="alternate" href="vocabulary.ttl">Turtle</a> and
+      <a rel="alternate" href="vocabulary.jsonld">JSON-LD</a>.
+    </p>
+    <dl>
+      <dt>Published:</dt>
+      <dd><time property="dc:date" id="time"></time></dd>
+      <dt>Version Info:</dt>
+      <dd>1.0</dd>
+      <dt id="see_also">See Also: </dt>
+    </dl>
+  </section>
+  <section id="sotd">
+    <p>
+      This vocabulary has been defined by the <a href="https://www.w3.org/groups/wg/lws/">W3C Linked Web Storage Working
+        Group</a> and provides
+      the official RDFS vocabulary for <a href="https://w3c.github.io/lws-protocol/lws10-core/">the Linked Web Storage
+        Protocol</a>.
+      Comments regarding this document are welcome. Please file issues
+      directly on <a href="https://github.com/w3c/lws-protocol/issues">GitHub</a>.
+    </p>
+  </section>
+
+  <section id="conformance"></section>
+  <section>
+    <h2>Namespaces</h2>
+    <p>This specification makes use of the following namespaces:</p>
+    <dl class="terms" id="namespaces">
+    </dl>
+  </section>
+
+  <section>
+    <h2><code>@context</code> files</h2>
+    <p>The following <code>@context</code> files make use of the terms defined in this specification:</p>
+    <ul id="contexts">
+    </ul>
+  </section>
+
+  <section id="term_definitions">
+    <h2>Term definitions</h2>
+
+    <section id="property_definitions" class="term_definitions">
+      <h3>Property definitions</h3>
+    </section>
+
+    <section id="class_definitions" class="term_definitions">
+      <h2>Class definitions</h2>
+    </section>
+
+    <section id="datatype_definitions" class="term_definitions">
+      <h2>Datatype definitions</h2>
+    </section>
+
+    <section id="individual_definitions" class="term_definitions">
+      <h3>Definitions for individuals</h3>
+    </section>
+  </section>
+
+  <section id="reserved_term_definitions">
+    <h1>Reserved term definitions</h1>
+
+    <p>All terms in this section are
+      <a
+        href="https://www.w3.org/TR/vc-data-model-2.0/#reserved-extension-points"><em><strong>reserved</strong></em></a>.
+      Implementers may use these terms, but should expect them and/or their meanings to change during the process
+      to normatively specify them. Implementers should not use these terms without a publicly disclosed
+      specification describing their implementation.
+    </p>
+
+    <section id="reserved_property_definitions" class="term_definitions">
+      <h2>Reserved properties</h2>
+    </section>
+
+    <section id="reserved_class_definitions" class="term_definitions">
+      <h2>Reserved classes</h2>
+    </section>
+
+    <section id="reserved_datatype_definitions" class="term_definitions">
+      <h2>Reserved datatype definitions</h2>
+    </section>
+
+    <section id="reserved_individual_definitions" class="term_definitions">
+      <h2>Reserved individuals</h2>
+    </section>
+  </section>
+
+  <section id="deprecated_term_definitions">
+    <h2>Deprecated term definitions</h2>
+
+    <p class="annoy">All terms in this section are <em><strong>deprecated</strong></em>, and are only kept in this
+      vocabulary for backward compatibility.
+      <br>New applications should not use them.
+    </p>
+
+    <section id="deprecated_property_definitions" class="term_definitions">
+      <h3>Deprecated property definitions</h3>
+    </section>
+
+    <section id="deprecated_class_definitions" class="term_definitions">
+      <h3>Deprecated class definitions</h3>
+    </section>
+
+    <section id="deprecated_datatype_definitions" class="term_definitions">
+      <h2>Deprecated datatype definitions</h2>
+    </section>
+
+    <section id="deprecated_individual_definitions" class="term_definitions">
+      <h3>Deprecated definitions for individuals</h3>
+    </section>
+  </section>
+
+</body>
+
+</html>

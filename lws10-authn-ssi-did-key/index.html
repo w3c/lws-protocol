@@ -2,23 +2,42 @@
 <html lang="en">
   <head>
     <meta charset="utf-8">
-    <title>LWS Authentication Suite: Self-signed Identity using did:key</title>
+    <title>LWS 1.0 Authentication Suite: Self-signed Identity using did:key</title>
     <script src="https://www.w3.org/Tools/respec/respec-w3c" class="remove"></script>
     <link rel="stylesheet" href="local.css"/>
     <script class='remove'>
       // See https://respec.org/docs/ for how to configure ReSpec
       var respecConfig = {
         specStatus: "ED",
-        shortName: "lws-authn-ssi-did-key",
+        shortName: "lws10-authn-ssi-did-key",
+        edDraftURI: "https://w3c.github.io/lws-protocol/lws10-authn-ssi-did-key/",
         editors: [{
-          name: "Jesse Wright"
+          name: "Jesse Wright",
+          w3cid: "132252",
+          company: "University of Oxford",
+          companyURL: "https://www.ox.ac.uk/"
         }],
         authors: [{
-          name: "Aaron Coburn"
+          name: "Aaron Coburn",
+          company: "Inrupt Inc.",
+          companyURL: "https://www.inrupt.com/"
         }],
         github: "w3c/lws-protocol",
         xref: ["web-platform"],
         group: "lws",
+        localBiblio: {
+          "did-key": {
+            title: "The did:key Method v0.9",
+            href: "https://w3c-ccg.github.io/did-key-spec/",
+            publisher: "W3C",
+          },
+          "LWS-PROTOCOL": {
+            title: "LWS Protocol",
+            href: "https://www.w3.org/TR/lws-core/",
+            publisher: "W3C",
+            status: "FPWD",
+          },
+        },
       };
     </script>
   </head>
@@ -40,7 +59,7 @@
         Self-issued identity is important for cases where applications act on their own behalf.
         This includes autonomous bots as well as server-side scripts, among others.
         In these cases, the agent is able to securely manage the private portion of a keypair, which it uses to generate signed JSON Web Tokens (JWT).
-        This specification describes how this class of agents can generate authentication credentials that can be used with a Linked Web Storage while using agent identifers with the `did:key:` method.
+        This specification describes how this class of agents can generate authentication credentials that can be used with a Linked Web Storage while using agent identifiers with the `did:key:` method.
       </p>
     </section>
 
@@ -157,6 +176,13 @@ signature
 
       <p>
         All security considerations described in "Best Current Practice for OAuth 2.0 Security" [[RFC9700]] and "OpenID Connect Core 1.0" Section 16 [[OPENID-CONNECT-CORE]] apply to this specification.
+      </p>
+    </section>
+    <section id="privacy-considerations" class="informative">
+      <h2>Privacy Considerations</h2>
+
+      <p class="issue" data-number="119">
+        This section needs to be completed.
       </p>
     </section>
   </body>
