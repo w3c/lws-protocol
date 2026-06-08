@@ -60,6 +60,16 @@ class:
     comment: A subscription type that delivers notifications via HTTP POST to a subscriber-provided inbox URL.
     defined_by: https://www.w3.org/TR/lws-notifications/
 
+  - id: WebSocketSubscription
+    label: WebSocket Subscription
+    comment: A subscription type that delivers notifications over a WebSocket connection.
+    defined_by: https://www.w3.org/TR/lws-notifications/
+
+  - id: EventSourceSubscription
+    label: EventSource Subscription
+    comment: A subscription type that delivers notifications over a Server-Sent Events connection.
+    defined_by: https://www.w3.org/TR/lws-notifications/
+
 property:
   - id: items
     label: items
