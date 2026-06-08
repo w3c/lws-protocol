@@ -321,7 +321,7 @@ Link: &lt;https://example.org/types/index?page=4&gt;; rel="last"
   <section>
     <h4>Security and Authorization</h4>
     <p>
-      Servers MUST enforce authorization per access grants. Responses to GET/POST on <code>TypeIndexService</code> or <code>TypeSearchService</code> include only types and resource URIs that the authenticated client is explicitly authorized to read. 
+      Servers MUST enforce authorization. Responses to GET/POST on <code>TypeIndexService</code> or <code>TypeSearchService</code> include only types and resource URIs that the authenticated client is explicitly authorized to read. 
     </p>
     <p>
       Unauthorized entries MUST be omitted entirely. A client must not be able to discover the existence of a specific resource instance, or that a specific type exists in the storage at all, if they do not have the required authorization. This implicit filtering yields a dynamically generated, client-specific type index and search result.
