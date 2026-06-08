@@ -431,7 +431,7 @@ Response
     
     <pre class="example" title="CNF Filter (OR within a group, AND across groups)">
 Request (GET form: comma = OR, repeated parameter = AND)
-GET /types/search?type=https://schema.org/Person,http://xmlns.com/foaf/0.1/Person&amp;type=https://www.w3.org/ns/lws#DataResource
+GET /types/search?type=https://schema.org/Person,http://xmlns.com/foaf/0.1/Person&amp;type=https://www.w3.org/ns/lws%23DataResource
 
 Equivalent Request (POST form: nested array = OR group, outer array = AND)
 POST /types/search
