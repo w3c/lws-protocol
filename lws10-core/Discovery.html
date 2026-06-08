@@ -334,7 +334,7 @@ Link: &lt;https://example.org/types/index?page=4&gt;; rel="last"
       prohibited.
     </p>
     <p>
-      Authorization filtering MUST be evaluated against the requesting client's <em>current</em> access at the time the request is served, not against any cached or precomputed view. Once an access grant is revoked or narrowed, the affected types and resource URIs MUST NOT appear in any subsequent response; the eventual-consistency allowance for type and relation derivation MUST NOT be extended to authorization. A server MAY maintain a derived index for performance, but it MUST apply current authorization as a filter over that index on every request.
+      Authorization filtering MUST be evaluated against the requesting client's <em>current</em> access at the time the request is served, not against any cached or precomputed view. Once an authorization (such as an access grant) is revoked or narrowed, the affected types and resource URIs MUST NOT appear in any subsequent response; the eventual-consistency allowance for type and relation derivation MUST NOT be extended to authorization. A server MAY maintain a derived index for performance, but it MUST apply current authorization as a filter over that index on every request.
     </p>
   </section>
 
