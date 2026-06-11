@@ -140,7 +140,7 @@
         A user&rsquo;s identity is confirmed through an identity provider external to the Linked Web Storage server. This separation means the server does not manage credentials directly, it receives and validates a signed authentication credential as a token issued by a trusted identity provider. A user can therefore present their existing identity to any compliant server, without needing a separate account on that server. User authentication is defined in companion specifications for OpenID Connect, SAML 2.0, and self-signed controlled identifiers.
       </p>
       <p>
-        Authorization determines whether a requesting user has permission to access a resource or perform an operation on it. A compliant LWS server designates a resource manager for each resource that determines whether a resource is publicly available, private, or restricted to a defined set of users. The server enforces the access decisions of the resource manager when handling each client request.
+        Authorization determines whether a requesting user has permission to access a resource or perform an operation on it. A compliant LWS server designates a resource manager for each resource that determines whether a resource is private (i.e., available only to its owner), restricted (i.e., available to a defined set of users), or public (i.e., available to any user). The server enforces the access decisions of the resource manager when handling each client request.
       </p>
       <p>This specification is intended to be used by:</p>
       <ul>
