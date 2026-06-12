@@ -120,7 +120,7 @@
       <section id="resource-access">
         <h2>Resource Access</h2>
         <p>
-          The LWS Protocol defines standard interactions by which some party can make some resources available to some agents.
+          The LWS Protocol defines standard interactions by which some party can make some resources available to some <a>agents</a>.
         </p>
 
         <ul>
@@ -139,9 +139,9 @@
         </p>
 
         <ul>
-          <li><dfn>authentication</dfn> - the process of verifying the identity of an agent executing a request.</li>
-          <li><dfn>authorization</dfn> - the process of determining whether an agent has permission to access a specific resource or perform one of a set of <a>operations</a>.</li>
-          <li><dfn>resource manager</dfn> - (<a href="https://w3c.github.io/lws-ucs/spec/#dfn-controller">controller</a> in UCS) An agent that has permission to control access to a <a>served resource</a>.</li>
+          <li><dfn>authentication</dfn> - the process of verifying the identity of an <a>agent</a> executing a request.</li>
+          <li><dfn>authorization</dfn> - the process of determining whether an <a>agent</a> has permission to access a specific resource or perform one of a set of <a>operations</a>.</li>
+          <li><dfn>resource manager</dfn> - (<a href="https://w3c.github.io/lws-ucs/spec/#dfn-controller">controller</a> in UCS) An <a>agent</a> that has permission to control access to a <a>served resource</a>.</li>
         </ul>
 
         <p>
@@ -173,18 +173,18 @@
         This specification defines the following terms:
       </p>
       <ul>
-        <li><dfn>agent</dfn> &mdash; a person, social entity, or software identified by a URI.</li>
-        <li><dfn>authentication credential</dfn> &mdash; a security token that asserts claims about an <a>agent</a> or end-user. This token is secured with a cryptographic proof.
+        <li><dfn data-lt="agents">agent</dfn> &mdash; a person, social entity, or software identified by a URI.</li>
+        <li><dfn data-lt="authentication credentials">authentication credential</dfn> &mdash; a security token that asserts claims about an <a>agent</a> or end-user. This token is secured with a cryptographic proof.
           Examples of authentication credentials include assertions of identity such as OpenID Connect ID Tokens and SAML-based assertions as well as assertions of
           capability such as ZCAPs.
         </li>
-        <li><dfn>authentication suite</dfn> &mdash; a defined validation mechanism for a concrete serialization of an <a>authentication credential</a>.</li>
+        <li><dfn data-lt="authentication suites">authentication suite</dfn> &mdash; a defined validation mechanism for a concrete serialization of an <a>authentication credential</a>.</li>
         <li><dfn>auxiliary resource</dfn> &mdash; an <a>LWS resource</a> whose lifecycle is bound to an <a>LWS resource</a>, called its <dfn>principal resource</dfn>.</li>
         <li><dfn data-lt="LWS resources">LWS resource</dfn> &mdash; an HTTP <a>resource</a> as defined in [[[RFC9110]]] which supports the read operations defined by the Linked Web Storage Protocol.
         Following [[[RFC9110]]], this specification "does not limit the nature of a [LWS] resource; it merely defines an interface that might be used to interact with [LWS] resources." [[RFC9110]]
         </li>
-        <li><dfn>container</dfn> &mdash; an <a>LWS resource</a> that is able to enumerate a collection of <a>LWS resources</a>, conforming to the conventions described in <a href="#container-representation">Section 8. Containers</a>. The ability to create new resources in a container or to delete an existing container follows the requirements outlined in <a href="#operations">Section 9. Operations</a>.</li>
-        <li><dfn>data resource</dfn> &mdash; a data-bearing <a>LWS resource</a> such as a document, image, or structured information whose support for update and delete operations follows the requirements outlined in <a href="#operations">Section 9. Operations</a>.</li>
+        <li><dfn data-lt="containers">container</dfn> &mdash; an <a>LWS resource</a> that is able to enumerate a collection of <a>LWS resources</a>, conforming to the conventions described in <a href="#container-representation">Section 8. Containers</a>. The ability to create new resources in a container or to delete an existing container follows the requirements outlined in <a href="#operations">Section 9. Operations</a>.</li>
+        <li><dfn data-lt="data resources">data resource</dfn> &mdash; a data-bearing <a>LWS resource</a> such as a document, image, or structured information whose support for update and delete operations follows the requirements outlined in <a href="#operations">Section 9. Operations</a>.</li>
         <li><dfn>containment</dfn> &mdash; the relationship between a <a>container</a> and the <a>LWS resources</a> whose lifecycle the <a>container</a> manages.</li>
         <li><dfn>linkset resource</dfn> &mdash; a type of <a>auxiliary resource</a> whose representation conforms to [[[RFC9264]]]. Update operations for linkset resources follow the requirements outlined in <a href="#operations">Section 9. Operations</a>.</li>
         <li><dfn>metadata resource</dfn> &mdash; an <a>auxiliary resource</a>, managed by a <a>storage</a>, that describes an <a>LWS resource</a> and conforms to the conventions described in <a href="todo-metadata-resource">TBD</a>. The lifecycle of a metadata resource is bound to the <a>LWS resource</a> it describes.</li>
@@ -271,6 +271,11 @@
 		<div data-include="Operations/delete-resource.md" data-include-format="markdown" data-include-replace="true"></div>
       </section>
 	  <div data-include="Operations/rest-table.md" data-include-format="markdown" data-include-replace="true"></div>
+    </section>
+
+    <section id="access-requests-and-grants">
+      <h2>Access Requests and Grants</h2>
+      <div data-include="lws-access-requests.html" data-include-replace="true"></div>
     </section>
 
     <section id="lws-media-type">

@@ -8,7 +8,7 @@ Container representations MUST include the following `@context` value:
 "@context": "https://www.w3.org/ns/lws/v1"
 ```
 
-The normative JSON-LD context document defines the mapping between the short property names used in container representations and their full URIs in the LWS and related vocabularies. The context is defined as follows:
+The normative JSON-LD context document defines the mapping between the short property names used in <a>container</a> representations and their full URIs in the LWS and related vocabularies. The context is defined as follows:
 
 ```json
 {
@@ -42,7 +42,7 @@ The context is `@protected`, ensuring that the term definitions cannot be overri
 
 #### Vocabulary
 
-The LWS vocabulary defines the following types and properties used in container representations:
+The LWS vocabulary defines the following types and properties used in <a>container</a> representations:
 
 **Types:**
 
