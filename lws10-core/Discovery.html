@@ -122,14 +122,17 @@
     "type": "https://feature.example/ContentNegotiation",
     "source": "image/jpeg",
     "target": ["image/png"]
-  ],
+  }],
   "service": [{
     "type": "NotificationService",
     "serviceEndpoint": "https://storage.example/notification/api",
     "subscriptionType": ["WebhookSubscription"]
   }, {
     "type": "TypeIndexService",
-    "serviceEndpoint": "https://storage.example/types/api"
+    "serviceEndpoint": "https://storage.example/types/index"
+  }, {
+    "type": "TypeSearchService",
+    "serviceEndpoint": "https://storage.example/types/search"
   }, {
     "type": "DataSharingService",
     "serviceEndpoint": "https://storage.example/sharing/api"
