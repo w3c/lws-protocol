@@ -1,6 +1,6 @@
 <p>
   Linked Web Storage describes a mechanism for persisting and managing protected data on the Web. Authorization is the mechanism
-  by which agents request and present access tokens in order to access this protected data.
+  by which <a>agents</a> request and present access tokens in order to access this protected data.
 </p>
 
 <p>
@@ -144,7 +144,7 @@ WWW-Authenticate: Bearer as_uri="https://authorization.example",
         <li>The <code>resource</code> parameter is REQUIRED. The value of this parameter MUST be a URI and will be used to populate the
         <code>aud</code> (audience) claim in the resulting access token. The supplied value will be the same as the
         <code>realm</code> parameter response in a <code>WWW-Authenticate</code> challenge. The authorization server
-        MUST reject any request in which the resource parameter identifies an unknown or untrusted storage.
+        MUST reject any request in which the resource parameter identifies an unknown or untrusted <a>storage</a>.
         </li>
 
         <li>
@@ -188,7 +188,7 @@ grant_type=urn%3Aietf%3Aparams%3Aoauth%3Agrant-type%3Atoken-exchange
 
       <ul>
         <li>
-          <code>sub</code> (subject) — <strong>REQUIRED</strong>. This claim MUST be a URI identifying the agent performing the operation
+          <code>sub</code> (subject) — <strong>REQUIRED</strong>. This claim MUST be a URI identifying the <a>agent</a> performing the operation
         </li>
         <li>
           <code>iss</code> (issuer) — <strong>REQUIRED</strong>. This claim MUST be the URI of the authorization server

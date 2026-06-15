@@ -1,16 +1,16 @@
 ### Container Representation
 
-When a client retrieves a container, the server returns a structured <dfn>container representation</dfn> describing the container and its contents. This section defines the required and optional properties of a container representation.
+When a client retrieves a <a>container</a>, the server returns a structured <dfn>container representation</dfn> describing the <a>container</a> and its contents. This section defines the required and optional properties of a container representation.
 
 #### Container Properties
 
 A container representation MUST include the following properties:
 
-- **`id`**: The URI of the container.
+- **`id`**: The URI of the <a>container</a>.
 - **`type`**: The value `"Container"`.
-- **`totalItems`**: An integer indicating the total number of resources contained in the container which can be disclosed to the client. This count SHOULD be accurate but MAY be approximate.
+- **`totalItems`**: An integer indicating the total number of resources contained in the <a>container</a> which can be disclosed to the client. This count SHOULD be accurate but MAY be approximate.
 - **`items`**: An array of contained resource descriptions (see below). If the 
-  container is empty, this MUST be an empty array. When the container listing is
+  <a>container</a> is empty, this MUST be an empty array. When the <a>container</a> listing is
   paginated, `items` contains only the current page of resources; see [Pagination](#pagination) for details.
 
 <!--
@@ -24,7 +24,7 @@ A container representation MUST include the following properties:
 
 #### Contained Resource Description
 
-Each entry in the `items` array describes a resource contained in the container. A contained resource description MUST include:
+Each entry in the `items` array describes a resource contained in the <a>container</a>. A contained resource description MUST include:
 
 - **`id`**: The URI of the contained resource.
 - **`type`**: The type of the resource. MUST be `"DataResource"` or `"Container"`, or an array containing at least one of these two strings. Servers MAY include additional user-defined types as URIs (e.g., `["DataResource", "http://example.org/customType"]`).
@@ -37,7 +37,7 @@ A contained resource description SHOULD include:
 
 #### Example Container Representation
 
-The following example shows a container at `/alice/notes/` containing two resources:
+The following example shows a <a>container</a> at `/alice/notes/` containing two resources:
 
 ```json
 {
