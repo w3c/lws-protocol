@@ -179,7 +179,13 @@
           capability such as ZCAPs.
         </li>
         <li><dfn data-lt="authentication suites">authentication suite</dfn> &mdash; a defined validation mechanism for a concrete serialization of an <a>authentication credential</a>.</li>
-        <li><dfn>auxiliary resource</dfn> &mdash; an <a>LWS resource</a> whose lifecycle is bound to an <a>LWS resource</a>, called its <dfn>principal resource</dfn>.</li>
+        <li><dfn>auxiliary resource</dfn> &mdash; an <a>LWS resource</a> that plays a particular role with respect to a <a>LWS resource</a>, called its <dfn>primary resource</dfn>,
+        and whose lifetime is bound to the primary resource.
+        This specification defines <a>linkset resource</a> and <a>metadata resource</a> as types of auxiliary resources,
+        but <a>LWS Servers</a> are free to manage additional kinds of auxiliary resources (e.g. access control resources, notification inboxes).
+        Auxiliary resources are discovered using web links [[RFC8288]] of a specific type (see Section <a href="#metadata"></a>).
+        Some auxiliary resources may, in some implementations, be identical to their primary resource.
+        </li>
         <li><dfn data-lt="LWS resources">LWS resource</dfn> &mdash; an HTTP <a>resource</a> as defined in [[[RFC9110]]] which supports the read operations defined by the Linked Web Storage Protocol.
         Following [[[RFC9110]]], this specification "does not limit the nature of a [LWS] resource; it merely defines an interface that might be used to interact with [LWS] resources." [[RFC9110]]
         </li>
@@ -192,7 +198,7 @@
         <li><dfn>storage</dfn> &mdash; a set of hierarchically organized HTTP resources whose lifecycle is managed by the conventions described by the Linked Web Storage Protocol. A storage is described by a <a>storage description resource</a> which references a collection of services that provide affordances over those resources.</li>
         <li><dfn>storage controller</dfn> &mdash; an <a>agent</a> that controls all resources in a <a>storage</a>.</li>
         <li><dfn data-lt="storage description resource">storage description</dfn> &mdash; an <a>LWS resource</a> that enumerates and describes the <a>storage root</a> along with services and capabilities of a <a>storage</a>. Its representation conforms to the storage description data model.</li>
-        <li><dfn>storage root</dfn> &mdash; a <a>container</a> at the root of a <a>containment</a> hierarchy of a <a>storage</a>. The storage root is the only <a>LWS resource</a> that does not have a parent in the LWS <a>containment</a> hierarchy nor a <a>principal resource</a>.</li>
+        <li><dfn>storage root</dfn> &mdash; a <a>container</a> at the root of a <a>containment</a> hierarchy of a <a>storage</a>. The storage root is the only <a>LWS resource</a> that does not have a parent in the LWS <a>containment</a> hierarchy nor a <a>primary resource</a>.</li>
       </ul>
 
       <div class="issue atrisk" title="Section may be removed">
