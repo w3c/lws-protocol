@@ -1,0 +1,94 @@
+{
+  "@context": {
+    "@vocab": "https://www.w3.org/ns/lws-tests/v1#",
+
+    "lws":   "https://www.w3.org/ns/lws/v1#",
+    "lwst":  "https://www.w3.org/ns/lws-tests/v1#",
+    "mf":    "https://www.w3.org/ns/test-manifest#",
+    "rdf":   "http://www.w3.org/1999/02/22-rdf-syntax-ns#",
+    "rdfs":  "http://www.w3.org/2000/01/rdf-schema#",
+    "xsd":   "http://www.w3.org/2001/XMLSchema#",
+    "odrl":  "http://www.w3.org/ns/odrl/2/",
+
+    "id":      "@id",
+    "type":    "@type",
+    "comment": "rdfs:comment",
+    "label":   "rdfs:label",
+
+    "name":    {"@id": "mf:name",   "@type": "xsd:string"},
+    "entries": {"@id": "mf:entries","@container": "@list", "@type": "@id"},
+    "status":  {"@id": "mf:status", "@type": "@vocab"},
+    "include": {"@id": "mf:include","@type": "@id", "@container": "@list"},
+
+    "traits":  {"@id": "lwst:traits", "@type": "@vocab", "@container": "@set"},
+
+    "prereqs":         {"@id": "lwst:prereqs"},
+    "hierarchy":       {"@id": "lwst:hierarchy", "@container": "@list"},
+    "authentication":  {"@id": "lwst:authentication"},
+    "authorization":   {"@id": "lwst:authorization"},
+
+    "url":             {"@id": "lwst:url",    "@type": "@id"},
+    "urlTemplate":     {"@id": "lwst:url",    "@type": "xsd:string"},
+
+    "read":    {"@id": "odrl:read",  "@type": "@vocab"},
+    "write":   {"@id": "odrl:write", "@type": "@vocab"},
+    "append":  {"@id": "odrl:use",   "@type": "@vocab"},
+    "control": {"@id": "odrl:modify","@type": "@vocab"},
+
+    "request": {"@id": "lwst:request"},
+    "method":  {"@id": "lwst:method", "@type": "xsd:string"},
+    "slug":    {"@id": "lwst:slug",   "@type": "xsd:string"},
+    "contentType": {"@id": "lwst:contentType", "@type": "xsd:string"},
+
+    "linkHeaders":  {"@id": "lwst:linkHeaders",  "@container": "@list"},
+    "otherHeaders": {"@id": "lwst:otherHeaders", "@container": "@list"},
+    "rel":          {"@id": "lwst:rel",    "@type": "xsd:string"},
+    "href":         {"@id": "lwst:href",   "@type": "@id"},
+    "hrefTemplate": {"@id": "lwst:href",   "@type": "xsd:string"},
+    "mediaType":    {"@id": "lwst:mediaType", "@type": "xsd:string"},
+    "headerName":   {"@id": "lwst:headerName", "@type": "xsd:string"},
+    "headerValue":  {"@id": "lwst:headerValue", "@type": "xsd:string"},
+
+    "body":    {"@id": "lwst:body", "@type": "xsd:string"},
+    "bodyURL": {"@id": "lwst:body", "@type": "@id"},
+
+    "response":     {"@id": "lwst:response"},
+    "statusCode":   {"@id": "lwst:statusCode", "@type": "xsd:integer"},
+    "authenticationChallenge": {"@id": "lwst:authenticationChallenge"},
+    "authorizationHint":       {"@id": "lwst:authorizationHint"},
+
+    "wwwAuthenticate": {"@id": "lwst:wwwAuthenticate", "@type": "xsd:string"},
+    "asUri":           {"@id": "lwst:asUri",  "@type": "@id"},
+    "realm":           {"@id": "lwst:realm",  "@type": "@id"},
+
+    "locationURL":  {"@id": "lwst:location", "@type": "@id"},
+
+    "authSuites":   {"@id": "lwst:authSuites", "@type": "@id", "@container": "@set"},
+    "facets":       {"@id": "lwst:facets",     "@type": "@id", "@container": "@set"},
+
+    "Role-Public": "lwst:Role-Public",
+    "Role-Owner":  "lwst:Role-Owner",
+    "Role-Authenticated": "lwst:Role-Authenticated",
+
+    "Proposed": "mf:Proposed",
+    "Approved":  "mf:Approved",
+    "Pending":   "mf:Pending",
+
+    "ValidationTest": "lwst:ValidationTest",
+    "NegativeTest":   "lwst:NegativeTest",
+    "Manifest":       "mf:Manifest",
+
+    "Get":     "lwst:Get",
+    "Post":    "lwst:Post",
+    "Put":     "lwst:Put",
+    "Delete":  "lwst:Delete",
+    "Patch":   "lwst:Patch",
+    "Public":  "lwst:Public",
+    "Private": "lwst:Private",
+    "Authn":   "lwst:Authn",
+    "Authz":   "lwst:Authz",
+    "Container":     "lwst:Container",
+    "DataResource":  "lwst:DataResource",
+    "Discovery":     "lwst:Discovery"
+  }
+}
