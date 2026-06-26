@@ -260,11 +260,14 @@ Link: &lt;https://example.org/types/index?page=4&gt;; rel="last"
 
         <p>
           A client searches by sending an HTTP <code>QUERY</code> request [[!RFC10008]] to the
-          service endpoint, carrying the filter in the request body as
-          <code>application/lws+json</code>. The request MUST include a <code>Content-Type</code> of
-          <code>application/lws+json</code>; per [[!RFC10008]] a server fails the request if the
-          <code>Content-Type</code> is missing or inconsistent with the body (see
-          <a href="#type-search-errors"></a>). Because <code>QUERY</code> is both safe and idempotent
+          service endpoint, carrying the filter in the request body. The query format is identified
+          by the request's <code>Content-Type</code> header field, which MUST be present; per
+          [[!RFC10008]] a server fails the request if the <code>Content-Type</code> is missing or
+          inconsistent with the body (see <a href="#type-search-errors"></a>). Every server MUST
+          support the <code>application/lws+json</code> filter defined here as its baseline query
+          format; a server MAY additionally accept other query formats, each identified by its own
+          media type, and the authorization requirements of <a href="#security-authorization"></a>
+          apply regardless of the format used. Because <code>QUERY</code> is both safe and idempotent
           [[!RFC10008]], a search never alters server state and MAY be repeated, retried, or cached.
           Because the filter travels in the body rather than the request URI, it is not subject to the
           request-URI length limits that constrain a query string.
@@ -353,7 +356,7 @@ Link: &lt;https://example.org/types/index?page=4&gt;; rel="last"
             <code>type</code> is not an array, or any of whose elements is neither a string nor an array of strings, MUST be rejected with <code>400</code> (Bad Request).
           </li>
           <li>
-            A request whose entity uses a media type other than <code>application/lws+json</code> MUST be rejected with <code>415</code> (Unsupported Media Type); a request that omits the <code>Content-Type</code> header field, which [[!RFC10008]] requires a server to reject, MUST be rejected with <code>400</code> (Bad Request).
+            A request whose <code>Content-Type</code> identifies a query format the server does not support MUST be rejected with <code>415</code> (Unsupported Media Type); every server supports at least <code>application/lws+json</code> (see <a href="#type-search-query"></a>). A request that omits the <code>Content-Type</code> header field, which [[!RFC10008]] requires a server to reject, MUST be rejected with <code>400</code> (Bad Request).
           </li>
           <li>
             A <code>type</code> value, or any relation target value, that is not a syntactically valid
