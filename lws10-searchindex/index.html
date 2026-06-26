@@ -399,10 +399,14 @@ Link: &lt;https://example.org/types/index?page=4&gt;; rel="last"
           not define its format.
         </p>
         <p class="note">
-          A <code>QUERY</code> response is cacheable [[!RFC10008]], and its cache key incorporates the
-          request body. Because every result set is authorization-filtered and therefore
-          client-specific, the cross-client caching requirements in
-          <a href="#security-authorization"></a> apply.
+          A <code>QUERY</code> response is cacheable [[!RFC10008]]. Because the filter travels in the
+          request body, it forms part of the cache key itself ([[!RFC10008]], Section 2.7) and cannot
+          be conveyed through the <code>Vary</code> header field, which names only request header
+          fields. A server that negotiates the response representation on <code>Accept</code> (see
+          <a href="#type-search-query"></a>) MUST list <code>Accept</code> in <code>Vary</code> so that
+          caches do not reuse a representation across response formats. Because every result set is
+          authorization-filtered and therefore client-specific, the cross-client caching requirements
+          in <a href="#security-authorization"></a> also apply.
         </p>
       </section>
     </section>
