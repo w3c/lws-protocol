@@ -335,13 +335,21 @@ Link: &lt;https://example.org/types/index?page=4&gt;; rel="last"
           indistinguishable to the client (consistent with the type-matching rule above). Servers MUST NOT index structural or protocol relations, only descriptive relations are eligible.
         </p>
         <p>
-          A successful search returns <code>200</code> (OK) with an
+          A successful search returns <code>200</code> (OK). The default response is an
           <code>application/lws+json</code> <code>ContainerPage</code> whose items describe the
-          matching LWS resources. The result set is paginated following the standard LWS pagination
-          model defined by [[!LWS-PROTOCOL]]: page URIs are conveyed in <code>Link</code> headers
-          &mdash; not in the response body &mdash; are opaque to the client, and are dereferenced to
-          retrieve subsequent pages. Aside from <code>type</code> and any additional relation keys
-          described above, no other filter inputs are defined.
+          matching LWS resources, and every server MUST be able to produce it: a request that sends
+          no <code>Accept</code> header field, or one that admits <code>application/lws+json</code>,
+          receives this representation. A server MAY honor an <code>Accept</code> header field that
+          requests a different response media type and return the result set in that format instead
+          [[!RFC10008]]; if it can satisfy none of the media types the request finds acceptable, it
+          responds <code>406</code> (Not Acceptable) (see <a href="#type-search-errors"></a>).
+        </p>
+        <p>
+          Whatever the response format, the result set is paginated following the standard LWS
+          pagination model defined by [[!LWS-PROTOCOL]]: page URIs are conveyed in <code>Link</code>
+          headers &mdash; not in the response body &mdash; are opaque to the client, and are
+          dereferenced to retrieve subsequent pages. Aside from <code>type</code> and any additional
+          relation keys described above, no other filter inputs are defined.
         </p>
         <p class="note">A <code>ContainerPage</code> returned by the <code>TypeSearchService</code> is a <em>synthetic</em> result set, not a representation of a container resource. The <code>ContainerPage</code> media type and pagination model are reused only for client convenience; the response does not identify a container, has no containment relationship to its members, is not retrievable or mutable as a resource, and its membership reflects the query rather than any stored hierarchy. Each item is a resource description carrying at least <code>id</code> and <code>type</code>, mirroring a container member; a server MAY include additional descriptive metadata (such as <code>mediaType</code>, <code>size</code>, or <code>modified</code>) but is not required to.</p>
         <p class="note">
@@ -369,6 +377,9 @@ Link: &lt;https://example.org/types/index?page=4&gt;; rel="last"
           </li>
           <li>
             A request whose <code>Content-Type</code> identifies a query format the server does not support MUST be rejected with <code>415</code> (Unsupported Media Type), and such a response SHOULD include an <code>Accept-Query</code> header field [[!RFC10008]] listing the query formats the server does accept; every server supports at least <code>application/lws+json</code> (see <a href="#type-search-query"></a>). A request that omits the <code>Content-Type</code> header field, which [[!RFC10008]] requires a server to reject, MUST be rejected with <code>400</code> (Bad Request).
+          </li>
+          <li>
+            A request whose <code>Accept</code> header field excludes every response media type the server can produce for the result set MUST be rejected with <code>406</code> (Not Acceptable) [[!RFC10008]]. Because every server can produce the <code>application/lws+json</code> <code>ContainerPage</code>, a request that omits <code>Accept</code> or admits that media type never results in <code>406</code>.
           </li>
           <li>
             A <code>type</code> value, or any relation target value, that is not a syntactically valid
