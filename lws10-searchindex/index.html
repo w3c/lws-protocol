@@ -413,6 +413,13 @@ Link: &lt;https://example.org/types/index?page=4&gt;; rel="last"
         <code>Cache-Control: private</code> or <code>no-store</code>) and MUST vary any cached entry on
         the credential that scopes the result.
       </p>
+      <p>
+        Any extension query mechanism a server exposes over the storage &mdash; for example an
+        alternative query format accepted by the <code>TypeSearchService</code>, or a separate query
+        service &mdash; MUST uphold these authorization-filtering requirements and the
+        indistinguishability requirements of this specification, so that no extension can become a
+        discovery oracle for resources or types the client is not authorized to read.
+      </p>
     </section>
 
     <section id="examples" class="informative">
