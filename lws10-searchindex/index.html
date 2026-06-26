@@ -267,8 +267,9 @@ Link: &lt;https://example.org/types/index?page=4&gt;; rel="last"
           support the <code>application/lws+json</code> filter defined here as its baseline query
           format; a server MAY additionally accept other query formats, each identified by its own
           media type, and the authorization requirements of <a href="#security-authorization"></a>
-          apply regardless of the format used. Because <code>QUERY</code> is both safe and idempotent
-          [[!RFC10008]], a search never alters server state and MAY be repeated, retried, or cached.
+          apply regardless of the format used. Because the <code>QUERY</code> method is both safe and
+          idempotent [[!RFC9110]], a property [[!RFC10008]] requires of every <code>QUERY</code>
+          request, a search never alters server state and MAY be repeated, retried, or cached.
           Because the filter travels in the body rather than the request URI, it is not subject to the
           request-URI length limits that constrain a query string.
         </p>
@@ -368,7 +369,7 @@ Link: &lt;https://example.org/types/index?page=4&gt;; rel="last"
         <h3>Errors</h3>
 
         <p>
-          Servers indicate request outcomes using standard HTTP status codes. In particular:
+          Servers indicate request outcomes using standard HTTP status codes [[!RFC9110]]. In particular:
         </p>
         <ul>
           <li>
