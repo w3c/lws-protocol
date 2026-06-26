@@ -273,6 +273,18 @@ Link: &lt;https://example.org/types/index?page=4&gt;; rel="last"
           request-URI length limits that constrain a query string.
         </p>
 
+        <p>
+          A server SHOULD advertise the query formats it accepts using the
+          <code>Accept-Query</code> response header field [[!RFC10008]] &mdash; for example in
+          response to an <code>OPTIONS</code> request on the service endpoint, whose <code>Allow</code>
+          header also signals that the <code>QUERY</code> method is supported. <code>Accept-Query</code>
+          enumerates only the query-format media types the server understands; it MUST NOT be used to
+          disclose which <a>indexed relations</a> or filter capabilities a server supports, which
+          remain deliberately unobservable (see <a href="#security-authorization"></a>). A client that
+          receives a <code>415</code> (Unsupported Media Type) response MAY consult its
+          <code>Accept-Query</code> value to select a supported format.
+        </p>
+
         <pre class="example" title="QUERY request body">
 {
   "@context": "https://www.w3.org/ns/lws/v1",
@@ -356,7 +368,7 @@ Link: &lt;https://example.org/types/index?page=4&gt;; rel="last"
             <code>type</code> is not an array, or any of whose elements is neither a string nor an array of strings, MUST be rejected with <code>400</code> (Bad Request).
           </li>
           <li>
-            A request whose <code>Content-Type</code> identifies a query format the server does not support MUST be rejected with <code>415</code> (Unsupported Media Type); every server supports at least <code>application/lws+json</code> (see <a href="#type-search-query"></a>). A request that omits the <code>Content-Type</code> header field, which [[!RFC10008]] requires a server to reject, MUST be rejected with <code>400</code> (Bad Request).
+            A request whose <code>Content-Type</code> identifies a query format the server does not support MUST be rejected with <code>415</code> (Unsupported Media Type), and such a response SHOULD include an <code>Accept-Query</code> header field [[!RFC10008]] listing the query formats the server does accept; every server supports at least <code>application/lws+json</code> (see <a href="#type-search-query"></a>). A request that omits the <code>Content-Type</code> header field, which [[!RFC10008]] requires a server to reject, MUST be rejected with <code>400</code> (Bad Request).
           </li>
           <li>
             A <code>type</code> value, or any relation target value, that is not a syntactically valid
@@ -445,6 +457,19 @@ Link: &lt;https://example.org/types/index?page=4&gt;; rel="last"
     { "id": "https://schema.org/Event" }
   ]
 }
+      </pre>
+
+      <pre class="example" title="Discovering QUERY support and accepted formats (OPTIONS)">
+Request
+OPTIONS /types/search
+
+Response
+HTTP/1.1 204 No Content
+Allow: OPTIONS, QUERY
+Accept-Query: application/lws+json
+
+A server that also accepted other query formats would list them in Accept-Query,
+for example: Accept-Query: application/lws+json, application/sparql-query
       </pre>
 
       <pre class="example" title="QUERY Search for instances (schema:Person AND lws:DataResource)">
