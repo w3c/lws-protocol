@@ -268,7 +268,7 @@ Link: &lt;https://example.org/types/index?page=4&gt;; rel="last"
           format; a server MAY additionally accept other query formats, each identified by its own
           media type, and the authorization requirements of <a href="#security-authorization"></a>
           apply regardless of the format used. Because the <code>QUERY</code> method is both safe and
-          idempotent [[!RFC9110]], a property [[!RFC10008]] requires of every <code>QUERY</code>
+          idempotent [[!RFC9110]], a property [[!RFC10008]] required of every <code>QUERY</code>
           request, a search never alters server state and MAY be repeated, retried, or cached.
           Because the filter travels in the body rather than the request URI, it is not subject to the
           request-URI length limits that constrain a query string.
