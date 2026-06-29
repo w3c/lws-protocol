@@ -23,7 +23,7 @@ HTTP/1.1 200 OK
 Content-Type: text/plain; charset=UTF-8
 Content-Length: 34
 ETag: "abc123456"
-Link: </alice/notes/shoppinglist.txt.meta>; rel="linkset"; type="application/linkset+json"
+Link: </alice/notes/shoppinglist.txt.meta>; rel="linkset"; type="application/linkset+json; profile="lws-meta"
 Link: </alice/notes/>; rel="up"
 Link: <https://www.w3.org/ns/lws#DataResource>; rel="type"
 
@@ -52,7 +52,7 @@ Assuming the container exists and the client has access:
 HTTP/1.1 200 OK
 Content-Type: application/lws+json
 ETag: "container-etag-789"
-Link: </alice/notes/.meta>; rel="linkset"; type="application/linkset+json"
+Link: </alice/notes/.meta>; rel="linkset"; type="application/linkset+json; profile="lws-meta"
 Link: </alice/>; rel="up"
 Link: <https://www.w3.org/ns/lws#Container>; rel="type"
 
