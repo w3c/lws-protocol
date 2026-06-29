@@ -8,8 +8,6 @@ prefix:
     value: https://www.w3.org/ns/activitystreams#
   - id: schema
     value: https://schema.org/
-  - id: sec
-    value: https://w3id.org/security#
   - id: ldp
     value: http://www.w3.org/ns/ldp#
 
@@ -93,16 +91,6 @@ property:
     domain: lws:Storage
     comment: A capability supported by the storage.
 
-  - id: service
-    label: service
-    domain: lws:Storage
-    comment: A service associated with the storage.
-
-  - id: serviceEndpoint
-    label: service endpoint
-    range: xsd:anyURI
-    comment: The URI of a service endpoint.
-
   - id: storageDescription
     label: storage description
     range: xsd:anyURI
@@ -174,22 +162,6 @@ property:
     label: published
     range: xsd:dateTime
     comment: The date and time the activity was published.
-
-  - id: sec:verificationMethod
-    label: verification method
-    comment: A verification method associated with a key or identity.
-
-  - id: sec:authentication
-    label: authentication
-    comment: An authentication method associated with an identity.
-
-  - id: sec:controller
-    label: controller
-    comment: The entity that controls a verification method.
-
-  - id: sec:publicKeyJwk
-    label: public key JWK
-    comment: A public key expressed as a JSON Web Key.
 
   - id: ldp:inbox
     label: inbox
