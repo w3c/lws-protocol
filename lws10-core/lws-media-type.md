@@ -67,7 +67,7 @@ Response (first page):
 HTTP/1.1 200 OK
 Content-Type: application/lws+json
 ETag: "photos-page1-etag"
-Link: </alice/photos/.meta>; rel="linkset"; type="application/linkset+json"
+Link: </alice/photos/.meta>; rel="linkset"; type="application/linkset+json"; profile="lws-meta"
 Link: </alice/>; rel="up"
 Link: </alice/photos/.acl>; rel="acl"
 Link: <https://www.w3.org/ns/lws#Container>; rel="type"
@@ -111,7 +111,7 @@ Response (middle page):
 HTTP/1.1 200 OK
 Content-Type: application/lws+json
 ETag: "photos-page2-etag"
-Link: </alice/photos/.meta>; rel="linkset"; type="application/linkset+json"
+Link: </alice/photos/.meta>; rel="linkset"; type="application/linkset+json"; profile="lws-meta"
 Link: </alice/>; rel="up"
 Link: </alice/photos/.acl>; rel="acl"
 Link: <https://www.w3.org/ns/lws#Container>; rel="type"
