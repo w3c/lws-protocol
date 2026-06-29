@@ -12,7 +12,7 @@ Metadata distinguishes between resources and their representations, allowing for
 **The <a>Linkset Resource</a>**
 For each resource in <a>storage</a>, a server MUST make metadata links available as a linkset, according to [[!RFC9264]].
 - Discovery: A resource's linkset is discoverable via a Link header with the relation `rel="linkset"`.
-- Media Type: A <a>linkset resource</a> MUST be available as `application/linkset+json`.
+- Media Type: A <a>linkset resource</a> MUST be available as `application/linkset+json; profile="lws-meta"`. The `lws-meta` profile allows the server to distinguish between linksets as auxiliary resource and linksets as data resource.
 - Integrity: The 'linkset' link MUST point to an <a>LWS resource</a> in the same <a>storage</a>. Updates to the linkset MUST be atomic with associated resource operations to maintain consistency.
 
 **Discovering Metadata**
