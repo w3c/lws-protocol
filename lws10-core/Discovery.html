@@ -40,7 +40,10 @@
 
     <pre id="example-storage-description-minimal" class="example" title="Minimum storage description resource">
 {
-  "@context": "https://www.w3.org/ns/lws/v1",
+  "@context": [
+    "https://www.w3.org/ns/cid/v1",
+    "https://www.w3.org/ns/lws/v1"
+  ],
   "id": "https://storage.example/",
   "type": "Storage",
   "service": [{
@@ -96,13 +99,19 @@
     <h4>Storage Description Representation</h4>
 
     <p>
-      A <a>storage description resource</a> MUST be serializable with the media type <code>application/lws+json</code>.
+      A <a>storage description resource</a> is a specialization of a W3C Controlled Identifier document [[!CID-1.0]].
+      It MUST be serializable with the media type <code>application/lws+cid</code>.
+      The <code>@context</code> property MUST be an array containing the URIs <code>https://www.w3.org/ns/cid/v1</code>
+      and <code>https://www.w3.org/ns/lws/v1</code>.
       Other representations MAY be available via content negotiation.
     </p>
 
     <pre id="example-storage-description-resource" class="example" title="Storage description resource">
 {
-  "@context": "https://www.w3.org/ns/lws/v1",
+  "@context": [
+    "https://www.w3.org/ns/cid/v1",
+    "https://www.w3.org/ns/lws/v1"
+  ],
   "id": "https://storage.example/",
   "type": "Storage",
   "capability": [{

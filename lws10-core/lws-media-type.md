@@ -1,6 +1,9 @@
 ### LWS Media Type
 
-LWS <a>container representation</a> and <a>storage description resource</a> MUST use the media type `application/lws+json`.
+An LWS <a>storage description resource</a> MUST support the media type `application/lws+cid`.
+The `application/lws+cid` media type identifies a document that is a specialization of a W3C Controlled Identifier document [[!CID-1.0]], extended with the LWS vocabulary.
+
+An LWS <a>container representation</a> MUST support the media type `application/lws+json`.
 
 While LWS container representations use JSON-LD conventions, the constraints and requirements for LWS justify the use of a specific media type. Because LWS containers can be considered a restricted profile of JSON-LD, implementations SHOULD consider the `application/ld+json; profile="https://www.w3.org/ns/lws/v1"` media type as equivalent to `application/lws+json`.
 
