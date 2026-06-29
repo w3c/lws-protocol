@@ -54,7 +54,7 @@ In this example, the client is posting to the <a>container</a> `/alice/notes/`. 
 HTTP/1.1 201 Created
 Location: /alice/notes/shoppinglist.txt
 Content-Type: text/plain; charset=UTF-8
-Link: </alice/notes/shoppinglist.txt.meta>; rel="linkset"; type="application/linkset+json; profile="lws-meta""
+Link: </alice/notes/shoppinglist.txt.meta>; rel="linkset"; type="application/linkset+json; profile="lws-meta"
 Link: </alice/notes/>; rel="up"
 Link: <https://www.w3.org/ns/lws#DataResource>; rel="type"
 Content-Length: 0
@@ -76,7 +76,7 @@ Link: <https://www.w3.org/ns/lws#Container>; rel="type"
 ```
 HTTP/1.1 201 Created
 Location: /alice/notes/
-Link: </alice/notes/.meta>; rel="linkset"; type="application/linkset+json; profile="lws-meta""
+Link: </alice/notes/.meta>; rel="linkset"; type="application/linkset+json; profile="lws-meta"
 Link: </alice/>; rel="up"
 Link: <https://www.w3.org/ns/lws#Container>; rel="type"
 Content-Length: 0
