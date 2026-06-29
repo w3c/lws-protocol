@@ -54,9 +54,9 @@ A client first fetches the linkset and receives its ETag.
 ```
 GET /alice/personalinfo.json.meta HTTP/1.1
 Authorization: Bearer <token>
-Accept: application/linkset+json
+Accept: application/linkset+json; profile="lws-meta"
 HTTP/1.1 200 OK
-Content-Type: application/linkset+json
+Content-Type: application/linkset+json; profile="lws-meta"
 ETag: "meta-v1"
 {
   "linkset": [
@@ -71,7 +71,7 @@ The client now wants to add a license. It constructs a new, complete linkset doc
 ```
 PUT /alice/personalinfo.json.meta HTTP/1.1
 Authorization: Bearer <token>
-Content-Type: application/linkset+json
+Content-Type: application/linkset+json; profile="lws-meta"
 If-Match: "meta-v1"
 {
   "linkset": [

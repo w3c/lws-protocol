@@ -9,12 +9,11 @@ All metadata in LWS is expressed as a set of typed links originating from a reso
 
 Metadata distinguishes between resources and their representations, allowing for multiple media types where applicable. For <a>data resources</a>, metadata includes representations, each with mediaType and optional sizeInBytes. For <a>containers</a> and <a>data resources</a> we consider the link to its parent <a>container</a> resource to be part of the metadata of the resource.
 
-
 **The <a>Linkset Resource</a>**
-For each resource in <a>storage</a>, a server MUST make metadata links available as a standalone resource according to [[!RFC9264]].
+For each resource in <a>storage</a>, a server MUST make metadata links available as a linkset, according to [[!RFC9264]].
 - Discovery: A resource's linkset is discoverable via a Link header with the relation `rel="linkset"`.
-- Media Type: A <a>linkset resource</a> MUST be available as `application/linkset+json`.
-- Integrity: The 'linkset' link MUST point to a server-managed resource. Updates to the linkset MUST be atomic with associated resource operations to maintain consistency.
+- Media Type: A <a>linkset resource</a> MUST be available as `application/linkset+json; profile="lws-meta"`. The `lws-meta` profile allows the server to distinguish between linksets as auxiliary resource and linksets as data resource.
+- Integrity: The 'linkset' link MUST point to an <a>LWS resource</a> in the same <a>storage</a>. Updates to the linkset MUST be atomic with associated resource operations to maintain consistency.
 
 **Discovering Metadata**
 Clients discover metadata primarily through Link headers in response to GET or HEAD requests.
