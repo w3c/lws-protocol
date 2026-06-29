@@ -1,0 +1,779 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>LWS Protocol Test Suite</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; }
+
+    body {
+      font-family: system-ui, -apple-system, sans-serif;
+      margin: 0; padding: 0;
+      background: #f0f2f5; color: #222;
+      line-height: 1.5;
+    }
+
+    /* ── Link colour conventions ─────────────────────────────────── */
+    /*  Blue  = human-facing (spec sections, vocabulary definitions)  */
+    /*  Green = machine-facing (API endpoints, resource files)        */
+
+    a { text-decoration: none; }
+    a:hover { text-decoration: underline; }
+
+    a.human-link  { color: #1565c0; }
+    a.machine-link { color: #2e7d32; font-family: monospace; font-size: 0.92em; }
+
+    .legend {
+      display: inline-flex; gap: 1.25rem; font-size: 0.82rem; margin-top: 0.6rem;
+    }
+    .legend span { display: flex; align-items: center; gap: 0.35rem; }
+    .dot { width: 10px; height: 10px; border-radius: 50%; flex-shrink: 0; }
+    .dot-human   { background: #1565c0; }
+    .dot-machine { background: #2e7d32; }
+
+    /* ── Page header ─────────────────────────────────────────────── */
+    #page-header {
+      background: linear-gradient(135deg, #1a237e 0%, #283593 100%);
+      color: #fff; padding: 1.5rem 2rem 1.2rem;
+    }
+    #page-header h1 { margin: 0; font-size: 1.5rem; font-weight: 600; }
+    #page-header .subtitle { margin: 0.3rem 0 0; opacity: 0.82; font-size: 0.95rem; }
+    #page-header .meta-row {
+      display: flex; flex-wrap: wrap; gap: 0.6rem 1.5rem;
+      margin-top: 0.8rem; font-size: 0.85rem; opacity: 0.9;
+    }
+    #page-header a { color: #90caf9; }
+    #page-header a:hover { color: #fff; }
+
+    /* ── Filters ─────────────────────────────────────────────────── */
+    #controls {
+      background: #fff; border-bottom: 1px solid #ddd;
+      padding: 0.65rem 2rem; display: flex; flex-wrap: wrap;
+      gap: 0.5rem 1.25rem; align-items: center; font-size: 0.88rem;
+    }
+    #search {
+      padding: 0.3rem 0.6rem; border: 1px solid #bbb; border-radius: 4px;
+      font-size: 0.88rem; width: 220px;
+    }
+    #trait-filters { display: flex; flex-wrap: wrap; gap: 0.3rem; }
+    #trait-filters label {
+      display: flex; align-items: center; gap: 0.2rem;
+      background: #ede7f6; color: #4527a0;
+      padding: 0.1em 0.5em; border-radius: 3px; cursor: pointer;
+      user-select: none; font-size: 0.8rem;
+    }
+    #trait-filters label input { margin: 0; }
+    #test-count { color: #888; font-size: 0.82rem; }
+
+    /* ── Main layout ─────────────────────────────────────────────── */
+    main { max-width: 1100px; margin: 1.5rem auto; padding: 0 1rem 3rem; }
+
+    .section-heading {
+      font-size: 1.1rem; font-weight: 600; color: #555;
+      border-bottom: 2px solid #c5cae9; padding-bottom: 0.3rem;
+      margin: 1.75rem 0 0.9rem;
+      display: flex; align-items: baseline; gap: 0.6rem;
+    }
+    .section-count { color: #888; font-size: 0.82rem; font-weight: 400; }
+
+    /* ── Test cards ──────────────────────────────────────────────── */
+    .test-card {
+      background: #fff; border-radius: 6px;
+      box-shadow: 0 1px 3px rgba(0,0,0,.12);
+      margin-bottom: 1rem; overflow: hidden;
+    }
+    .test-card.hidden { display: none; }
+
+    .card-header {
+      display: flex; flex-wrap: wrap; align-items: baseline;
+      gap: 0.5rem 0.75rem;
+      padding: 0.75rem 1.1rem; background: #fafafa;
+      border-bottom: 1px solid #e8e8e8;
+    }
+    .test-name {
+      font-family: monospace; font-weight: 700; font-size: 1rem;
+      color: #1a237e;
+    }
+    .card-header a.test-anchor { color: inherit; }
+
+    .badge {
+      display: inline-block; padding: 0.1em 0.5em; border-radius: 3px;
+      font-size: 0.72rem; font-weight: 700; text-transform: uppercase;
+      letter-spacing: 0.03em;
+    }
+    .badge-validation { background: #e3f2fd; color: #0d47a1; }
+    .badge-negative   { background: #fce4ec; color: #880e4f; }
+    .badge-proposed   { background: #fff9c4; color: #f57f17; }
+    .badge-approved   { background: #e8f5e9; color: #1b5e20; }
+    .badge-pending    { background: #f3e5f5; color: #4a148c; }
+
+    .card-body { padding: 0.85rem 1.1rem; }
+
+    .comment { color: #555; margin-bottom: 0.65rem; font-size: 0.93rem; }
+    .source-row { font-size: 0.83rem; margin-bottom: 0.5rem; color: #777; }
+    .source-row strong { color: #555; }
+
+    .traits { display: flex; flex-wrap: wrap; gap: 0.3rem; margin-bottom: 0.65rem; }
+    .trait {
+      background: #ede7f6; color: #4527a0;
+      padding: 0.1em 0.45em; border-radius: 3px; font-size: 0.78rem;
+    }
+
+    /* ── Two-column request/response grid ───────────────────────── */
+    .req-resp-grid {
+      display: grid; grid-template-columns: 1fr 1fr; gap: 0.75rem;
+      margin-top: 0.75rem;
+    }
+    @media (max-width: 680px) { .req-resp-grid { grid-template-columns: 1fr; } }
+
+    .block {
+      border: 1px solid #e0e0e0; border-radius: 5px; overflow: hidden;
+    }
+    .block          { --accent: #777; }
+    .block.s2xx     { --accent: #2e7d32; }
+    .block.s4xx     { --accent: #b71c1c; }
+    .block.s5xx     { --accent: #e65100; }
+    .block-title {
+      background: #f5f5f5; border-bottom: 1px solid #e0e0e0;
+      padding: 0.3rem 0.65rem; font-size: 0.78rem; font-weight: 700;
+      text-transform: uppercase; letter-spacing: 0.04em; color: var(--accent);
+    }
+    .block-body { padding: 0.55rem 0.65rem; font-size: 0.88rem; }
+
+    /* ── HTTP method + URL line ──────────────────────────────────── */
+    .http-line { font-family: monospace; margin-bottom: 0.4rem; }
+    .method { font-weight: 700; color: #1a237e; margin-right: 0.4rem; }
+
+    /* ── Status code ─────────────────────────────────────────────── */
+    .status-line { font-family: monospace; font-weight: 700; margin-bottom: 0.4rem; }
+
+    /* ── Header tables ───────────────────────────────────────────── */
+    .hdr-table { width: 100%; border-collapse: collapse; margin: 0.3rem 0; }
+    .hdr-table td {
+      padding: 0.2rem 0.4rem; border: 1px solid #ececec;
+      vertical-align: top; font-size: 0.85rem;
+    }
+    .hdr-table tr:nth-child(odd) td { background: #fafafa; }
+    .hdr-name { color: #5d4037; font-weight: 600; white-space: nowrap; }
+    .hdr-value { font-family: monospace; word-break: break-all; }
+
+    /* ── Link headers ────────────────────────────────────────────── */
+    .link-hdr-row { margin: 0.25rem 0; display: flex; flex-wrap: wrap; gap: 0.3rem; align-items: baseline; }
+    .rel-chip {
+      background: #e8eaf6; color: #283593;
+      padding: 0.05em 0.4em; border-radius: 3px;
+      font-family: monospace; font-size: 0.82em;
+    }
+    .media-chip {
+      background: #e0f2f1; color: #00695c;
+      padding: 0.05em 0.4em; border-radius: 3px;
+      font-size: 0.78em;
+    }
+
+    /* ── Auth challenge box ──────────────────────────────────────── */
+    .auth-box {
+      background: #fff3e0; border: 1px solid #ffe0b2;
+      border-radius: 4px; padding: 0.45rem 0.65rem;
+      margin: 0.3rem 0; font-size: 0.86rem;
+    }
+    .auth-box .auth-scheme { font-weight: 700; color: #e65100; margin-bottom: 0.2rem; }
+    .auth-param { display: flex; gap: 0.4rem; margin: 0.1rem 0; }
+    .auth-key { color: #bf360c; font-weight: 600; min-width: 5rem; }
+
+    /* ── Prerequisites ───────────────────────────────────────────── */
+    .prereqs-block { margin-top: 0.65rem; }
+    .prereqs-block summary {
+      cursor: pointer; color: #555; font-size: 0.83rem;
+      font-weight: 600; text-transform: uppercase; letter-spacing: 0.03em;
+      list-style: none; display: flex; align-items: center; gap: 0.35rem;
+    }
+    .prereqs-block summary::before { content: "▶"; font-size: 0.65em; transition: transform 0.15s; }
+    .prereqs-block[open] summary::before { transform: rotate(90deg); }
+    .prereq-resource {
+      font-family: monospace; font-size: 0.85rem;
+      display: flex; align-items: baseline; gap: 0.5rem;
+      margin: 0.2rem 0;
+    }
+    .acl-badge {
+      font-size: 0.72rem; padding: 0.05em 0.35em; border-radius: 3px;
+      font-weight: 600;
+    }
+    .acl-public  { background: #e8f5e9; color: #1b5e20; }
+    .acl-owner   { background: #ffebee; color: #b71c1c; }
+    .acl-authn   { background: #fff3e0; color: #e65100; }
+
+    /* ── Body resource link ──────────────────────────────────────── */
+    .body-ref { margin-top: 0.3rem; font-size: 0.85rem; }
+
+    /* ── Loading / error states ──────────────────────────────────── */
+    #loading { text-align: center; padding: 4rem 1rem; color: #999; font-size: 1.1rem; }
+    #error-msg {
+      background: #ffebee; color: #b71c1c; padding: 1rem; border-radius: 5px;
+      margin: 1rem 0; display: none;
+    }
+  </style>
+</head>
+<body>
+
+<div id="page-header">
+  <h1 id="manifest-title">LWS Protocol Test Suite</h1>
+  <p class="subtitle" id="manifest-comment"></p>
+  <div class="meta-row" id="manifest-meta"></div>
+  <div class="legend">
+    <span><span class="dot dot-human"></span> human-facing link</span>
+    <span><span class="dot dot-machine"></span> machine-facing link</span>
+  </div>
+</div>
+
+<div id="controls">
+  <input id="search" type="search" placeholder="Filter by name or comment…">
+  <div id="trait-filters"></div>
+  <span id="test-count"></span>
+</div>
+
+<main>
+  <div id="error-msg"></div>
+  <div id="loading">Loading manifest…</div>
+  <div id="content"></div>
+</main>
+
+<script>
+'use strict';
+
+// ── Link classification ───────────────────────────────────────────────────────
+// Human-facing: spec sections, vocabulary/ontology IRIs
+// Machine-facing: API paths, resource files, AS endpoints
+
+function linkClass(url) {
+  if (!url) return 'machine-link';
+  if (
+    url.startsWith('https://w3c.github.io/') ||
+    url.startsWith('https://www.w3.org/TR/') ||
+    url.startsWith('https://www.w3.org/ns/') ||
+    url.startsWith('https://www.iana.org/assignments/link-relations') ||
+    url.startsWith('https://www.rfc-editor.org/') ||
+    url.startsWith('https://datatracker.ietf.org/')
+  ) return 'human-link';
+  return 'machine-link';
+}
+
+function mkLink(url, text, forceClass) {
+  if (!url) return document.createTextNode(text || '');
+  const a = document.createElement('a');
+  a.href = url;
+  a.textContent = text || url;
+  // a.target = '_blank';
+  // a.rel = 'noopener noreferrer';
+  a.className = forceClass || linkClass(url);
+  return a;
+}
+
+function el(tag, cls, text) {
+  const e = document.createElement(tag);
+  if (cls) e.className = cls;
+  if (text !== undefined) e.textContent = text;
+  return e;
+}
+
+function append(parent, ...children) {
+  for (const c of children) {
+    parent.appendChild(typeof c === 'string' ? document.createTextNode(c) : c);
+  }
+  return parent;
+}
+
+// ── Badge helpers ─────────────────────────────────────────────────────────────
+
+function typeBadge(type) {
+  const label = type === 'ValidationTest' ? 'Validation' :
+                type === 'NegativeTest'   ? 'Negative'   : type;
+  const cls   = type === 'ValidationTest' ? 'badge-validation' : 'badge-negative';
+  return el('span', `badge ${cls}`, label);
+}
+
+function statusBadge(status) {
+  const s = (status || '').replace(/^.*#/, '');
+  const cls = s === 'Proposed' ? 'badge-proposed' :
+              s === 'Approved' ? 'badge-approved'  : 'badge-pending';
+  return el('span', `badge ${cls}`, s);
+}
+
+function aclBadge(role) {
+  const r = (role || '').replace(/^.*#/, '').replace('Role-', '');
+  const cls = r === 'Public' ? 'acl-public' :
+              r === 'Owner'  ? 'acl-owner'  : 'acl-authn';
+  return el('span', `acl-badge ${cls}`, r);
+}
+
+// ── Link header rendering ─────────────────────────────────────────────────────
+
+function renderLinkHeaders(headers) {
+  if (!headers || headers.length === 0) return null;
+  const frag = document.createDocumentFragment();
+  for (const lh of headers) {
+    const row = el('div', 'link-hdr-row');
+
+    // rel value – full URIs are human-navigable vocab terms
+    const rel = lh.rel || '';
+    if (rel.startsWith('http')) {
+      append(row, mkLink(rel, rel, 'human-link'));
+    } else {
+      row.appendChild(el('span', 'rel-chip', rel));
+    }
+
+    row.appendChild(document.createTextNode(' → '));
+
+    // href (absolute IRI, @type:@id) = vocab/type link → human
+    if (lh.href) {
+      append(row, mkLink(lh.href, lh.href, 'human-link'));
+    }
+    // hrefTemplate (string path) = API path → machine
+    if (lh.hrefTemplate) {
+      append(row, mkLink(lh.hrefTemplate, lh.hrefTemplate, 'machine-link'));
+    }
+
+    if (lh.mediaType) {
+      row.appendChild(el('span', 'media-chip', lh.mediaType));
+    }
+    frag.appendChild(row);
+  }
+  return frag;
+}
+
+// ── Other (name: value) headers ───────────────────────────────────────────────
+
+function renderOtherHeaders(headers) {
+  if (!headers || headers.length === 0) return null;
+  const tbl = el('table', 'hdr-table');
+  for (const h of headers) {
+    const tr = document.createElement('tr');
+    const tdName = el('td', 'hdr-name', h.headerName || '');
+    const tdVal  = el('td', 'hdr-value', h.headerValue || '');
+    tr.append(tdName, tdVal);
+    tbl.appendChild(tr);
+  }
+  return tbl;
+}
+
+// ── Auth challenge box ────────────────────────────────────────────────────────
+
+function renderAuthChallenge(ch) {
+  if (!ch) return null;
+  const box = el('div', 'auth-box');
+  box.appendChild(el('div', 'auth-scheme', `WWW-Authenticate: ${ch.wwwAuthenticate || 'Bearer'}`));
+
+  const params = [];
+  if (ch.asUri) params.push(['as_uri', ch.asUri, 'machine-link']);
+  if (ch.realm) params.push(['realm',  ch.realm,  'machine-link']);
+  if (ch.error) params.push(['error',  ch.error,  null]);
+
+  for (const [k, v, cls] of params) {
+    const row = el('div', 'auth-param');
+    row.appendChild(el('span', 'auth-key', k));
+    row.appendChild(cls ? mkLink(v, v, cls) : document.createTextNode(v));
+    box.appendChild(row);
+  }
+  return box;
+}
+
+// ── Prerequisites ─────────────────────────────────────────────────────────────
+
+function renderPrereqs(prereqs) {
+  if (!prereqs) return null;
+  const details = document.createElement('details');
+  details.className = 'prereqs-block';
+  const summary = document.createElement('summary');
+  summary.textContent = 'Prerequisites';
+  details.appendChild(summary);
+
+  const body = el('div');
+  body.style.marginTop = '0.4rem';
+
+  const { hierarchy = [], authentication } = prereqs;
+
+  if (hierarchy.length > 0) {
+    body.appendChild(el('div', null, '')); // spacer
+    for (const item of hierarchy) {
+      const row = el('div', 'prereq-resource');
+      row.appendChild(mkLink(item.url, item.url, 'machine-link'));
+      const authz = item.authorization || {};
+      if (authz.read)  { row.appendChild(document.createTextNode(' read:')); row.appendChild(aclBadge(authz.read)); }
+      if (authz.write) { row.appendChild(document.createTextNode(' write:')); row.appendChild(aclBadge(authz.write)); }
+      body.appendChild(row);
+    }
+  }
+
+  if (authentication !== null && authentication !== undefined) {
+    const authLine = el('div', 'prereq-resource');
+    authLine.appendChild(document.createTextNode('authentication: '));
+    if (typeof authentication === 'object') {
+      const t = authentication.type || '';
+      authLine.appendChild(el('span', 'rel-chip', t));
+      if (authentication.issuer)  { authLine.appendChild(document.createTextNode(' issuer: ')); authLine.appendChild(mkLink(authentication.issuer, authentication.issuer, 'machine-link')); }
+      if (authentication.subject) { authLine.appendChild(document.createTextNode(' subject: ')); authLine.appendChild(mkLink(authentication.subject, authentication.subject, 'machine-link')); }
+    } else {
+      authLine.appendChild(mkLink(authentication, authentication, 'machine-link'));
+    }
+    body.appendChild(authLine);
+  } else if (authentication === null) {
+    const authLine = el('div', 'prereq-resource');
+    authLine.appendChild(document.createTextNode('authentication: none'));
+    body.appendChild(authLine);
+  }
+
+  details.appendChild(body);
+  return details;
+}
+
+// ── Request block ─────────────────────────────────────────────────────────────
+
+function renderRequest(req) {
+  if (!req) return null;
+  const block = el('div', 'block');
+  block.appendChild(el('div', 'block-title', 'Request'));
+  const body = el('div', 'block-body');
+
+  // Method + URL
+  const httpLine = el('div', 'http-line');
+  httpLine.appendChild(el('span', 'method', req.method || ''));
+  const url = req.url || req.urlTemplate;
+  if (url) httpLine.appendChild(mkLink(url, url, 'machine-link'));
+  body.appendChild(httpLine);
+
+  // Content-Type / Slug
+  if (req.contentType) {
+    const ct = el('div'); ct.style.fontSize = '0.83rem'; ct.style.color = '#555';
+    ct.textContent = `Content-Type: ${req.contentType}`;
+    body.appendChild(ct);
+  }
+  if (req.slug) {
+    const s = el('div'); s.style.fontSize = '0.83rem'; s.style.color = '#555';
+    s.textContent = `Slug: ${req.slug}`;
+    body.appendChild(s);
+  }
+
+  // Link headers
+  const lhFrag = renderLinkHeaders(req.linkHeaders);
+  if (lhFrag) {
+    body.appendChild(el('div', 'block-title', 'Link headers'));
+    body.appendChild(lhFrag);
+  }
+
+  // Other headers
+  const ohTbl = renderOtherHeaders(req.otherHeaders);
+  if (ohTbl) body.appendChild(ohTbl);
+
+  // Body
+  if (req.bodyURL) {
+    const ref = el('div', 'body-ref');
+    ref.appendChild(document.createTextNode('Body: '));
+    ref.appendChild(mkLink(req.bodyURL, req.bodyURL, 'machine-link'));
+    body.appendChild(ref);
+  } else if (req.body) {
+    const pre = document.createElement('pre');
+    pre.style.cssText = 'margin:0.3rem 0;font-size:0.8rem;background:#f5f5f5;padding:0.4rem;border-radius:3px;overflow-x:auto;max-height:8rem;';
+    pre.textContent = req.body;
+    body.appendChild(pre);
+  }
+
+  block.appendChild(body);
+  return block;
+}
+
+// ── Response block ────────────────────────────────────────────────────────────
+
+function renderResponse(resp) {
+  if (!resp) return null;
+  const block = el('div', 'block');
+  block.appendChild(el('div', 'block-title', 'Response'));
+  const body = el('div', 'block-body');
+
+  // Status code
+  if (resp.statusCode !== undefined) {
+    const sc = resp.statusCode;
+    const cls = sc < 300 ? 's2xx' : sc < 500 ? 's4xx' : 's5xx';
+    block.classList.add(cls);
+    body.appendChild(el('div', `status-line`, `${sc}`));
+  }
+
+  // Content-Type
+  if (resp.contentType) {
+    const ct = el('div'); ct.style.fontSize = '0.83rem'; ct.style.color = '#555';
+    ct.textContent = `Content-Type: ${resp.contentType}`;
+    body.appendChild(ct);
+  }
+
+  // Location
+  if (resp.locationURL) {
+    const loc = el('div', 'body-ref');
+    loc.appendChild(document.createTextNode('Location: '));
+    loc.appendChild(mkLink(resp.locationURL, resp.locationURL, 'machine-link'));
+    body.appendChild(loc);
+  }
+
+  // Auth challenge
+  const challenge = renderAuthChallenge(resp.authenticationChallenge);
+  if (challenge) body.appendChild(challenge);
+
+  // Link headers
+  const lhFrag = renderLinkHeaders(resp.linkHeaders);
+  if (lhFrag) {
+    body.appendChild(el('div', 'block-title', 'Link headers'));
+    body.appendChild(lhFrag);
+  }
+
+  // Other headers
+  const ohTbl = renderOtherHeaders(resp.otherHeaders);
+  if (ohTbl) body.appendChild(ohTbl);
+
+  // Body resource
+  if (resp.bodyURL) {
+    const ref = el('div', 'body-ref');
+    ref.appendChild(document.createTextNode('Body: '));
+    ref.appendChild(mkLink(resp.bodyURL, resp.bodyURL, 'machine-link'));
+    body.appendChild(ref);
+  } else if (resp.body) {
+    const pre = document.createElement('pre');
+    pre.style.cssText = 'margin:0.3rem 0;font-size:0.8rem;background:#f5f5f5;padding:0.4rem;border-radius:3px;overflow-x:auto;max-height:8rem;';
+    pre.textContent = resp.body;
+    body.appendChild(pre);
+  }
+
+  block.appendChild(body);
+  return block;
+}
+
+// ── Single test card ──────────────────────────────────────────────────────────
+
+function renderTest(test, baseId) {
+  const card = el('div', 'test-card');
+  const anchor = (test['@id'] || '').replace(/^#/, '');
+  if (anchor) card.id = (baseId ? baseId + '-' : '') + anchor;
+
+  // Collect traits as plain strings for filtering
+  const traits = (test.traits || []).map(t => t.replace(/^.*#/, ''));
+  card.dataset.traits = traits.join(' ');
+  card.dataset.name = (test.name || test['@id'] || '').toLowerCase();
+  card.dataset.comment = (test.comment || '').toLowerCase();
+
+  // ── Card header ──────────────────────────────────────────────────
+  const header = el('div', 'card-header');
+
+  const nameEl = el('span', 'test-name');
+  if (anchor) {
+    const a = document.createElement('a');
+    a.href = '#' + card.id;
+    a.className = 'test-anchor';
+    a.textContent = test.name || anchor;
+    nameEl.appendChild(a);
+  } else {
+    nameEl.textContent = test.name || '';
+  }
+  header.appendChild(nameEl);
+
+  if (test['@type']) header.appendChild(typeBadge(test['@type']));
+  if (test.status)   header.appendChild(statusBadge(test.status));
+  card.appendChild(header);
+
+  // ── Card body ────────────────────────────────────────────────────
+  const body = el('div', 'card-body');
+
+  if (test.comment) body.appendChild(el('p', 'comment', test.comment));
+
+  // Source link (human-facing spec reference)
+  if (test.source) {
+    const row = el('div', 'source-row');
+    row.appendChild(el('strong', null, 'Source: '));
+    row.appendChild(mkLink(test.source, test.source, 'human-link'));
+    body.appendChild(row);
+  }
+
+  // Traits
+  if (traits.length > 0) {
+    const traitRow = el('div', 'traits');
+    for (const t of traits) traitRow.appendChild(el('span', 'trait', t));
+    body.appendChild(traitRow);
+  }
+
+  // Prerequisites (collapsible)
+  const prereqs = renderPrereqs(test.prereqs);
+  if (prereqs) body.appendChild(prereqs);
+
+  // Request + Response side by side
+  const grid = el('div', 'req-resp-grid');
+  const reqBlock = renderRequest(test.request);
+  const respBlock = renderResponse(test.response);
+  if (reqBlock)  grid.appendChild(reqBlock);
+  if (respBlock) grid.appendChild(respBlock);
+  if (reqBlock || respBlock) body.appendChild(grid);
+
+  card.appendChild(body);
+  return card;
+}
+
+// ── Section of tests ──────────────────────────────────────────────────────────
+
+function renderSection(label, entries, baseId, container) {
+  if (!entries || entries.length === 0) return;
+  const group = el('div', 'section-group');
+  const h = el('h2', 'section-heading');
+  h.appendChild(document.createTextNode(label));
+  h.appendChild(el('span', 'section-count'));
+  group.appendChild(h);
+  for (const test of entries) {
+    group.appendChild(renderTest(test, baseId));
+  }
+  container.appendChild(group);
+}
+
+// ── Page header from top-level manifest ──────────────────────────────────────
+
+function populatePageHeader(manifest) {
+  const title = manifest.label || 'LWS Test Suite';
+  document.title = title;
+  document.getElementById('manifest-title').textContent = title;
+
+  const comment = manifest.comment || '';
+  document.getElementById('manifest-comment').textContent = comment;
+
+  const metaRow = document.getElementById('manifest-meta');
+
+  // Auth suites (TR links → human)
+  const suites = manifest.authSuites;
+  if (suites && suites.length) {
+    const span = el('span');
+    span.appendChild(document.createTextNode('Auth suites: '));
+    suites.forEach((s, i) => {
+      if (i > 0) span.appendChild(document.createTextNode(', '));
+      span.appendChild(mkLink(s, s.replace('https://www.w3.org/TR/', '').replace(/\/$/, ''), 'human-link'));
+    });
+    metaRow.appendChild(span);
+  }
+
+  // Included manifests (machine-facing file refs)
+  const includes = manifest.include;
+  if (includes && includes.length) {
+    const span = el('span');
+    span.appendChild(document.createTextNode('Sub-manifests: '));
+    includes.forEach((url, i) => {
+      if (i > 0) span.appendChild(document.createTextNode(', '));
+      span.appendChild(mkLink(url, url, 'machine-link'));
+    });
+    metaRow.appendChild(span);
+  }
+}
+
+// ── Trait filter UI ───────────────────────────────────────────────────────────
+
+function buildTraitFilters(allTraits, applyFilter) {
+  const container = document.getElementById('trait-filters');
+  const sorted = [...allTraits].sort();
+  for (const trait of sorted) {
+    const lbl = document.createElement('label');
+    const cb = document.createElement('input');
+    cb.type = 'checkbox'; cb.value = trait; cb.checked = false;
+    cb.addEventListener('change', applyFilter);
+    lbl.appendChild(cb);
+    lbl.appendChild(document.createTextNode(' ' + trait));
+    container.appendChild(lbl);
+  }
+}
+
+function applyFilters() {
+  const search = document.getElementById('search').value.toLowerCase();
+  const checkedTraits = [...document.querySelectorAll('#trait-filters input:checked')]
+    .map(cb => cb.value);
+
+  let totalVisible = 0, totalAll = 0;
+
+  for (const group of document.querySelectorAll('.section-group')) {
+    const cards = group.querySelectorAll('.test-card');
+    let groupVisible = 0;
+
+    for (const card of cards) {
+      const nameMatch  = !search || card.dataset.name.includes(search) || card.dataset.comment.includes(search);
+      const traitMatch = checkedTraits.length === 0 ||
+        checkedTraits.every(t => card.dataset.traits.split(' ').includes(t));
+      const show = nameMatch && traitMatch;
+      card.classList.toggle('hidden', !show);
+      if (show) groupVisible++;
+    }
+
+    group.querySelector('.section-count').textContent =
+      `${groupVisible} / ${cards.length}`;
+
+    totalVisible += groupVisible;
+    totalAll     += cards.length;
+  }
+
+  document.getElementById('test-count').textContent =
+    `${totalVisible} / ${totalAll} tests`;
+}
+
+// ── Main loader ───────────────────────────────────────────────────────────────
+
+async function loadJSON(url) {
+  const res = await fetch(url);
+  if (!res.ok) throw new Error(`${res.status} ${res.statusText}`);
+  return res.json();
+}
+
+async function init() {
+  const content = document.getElementById('content');
+  const loading = document.getElementById('loading');
+  const errorDiv = document.getElementById('error-msg');
+
+  try {
+    const data = await loadJSON('manifest.jsonld');
+    const graph = data['@graph'] || [];
+    const manifest = graph[0] || {};
+
+    populatePageHeader(manifest);
+
+    // Collect all traits for the filter bar
+    const allTraits = new Set();
+
+    // Core entries
+    const entries = manifest.entries || [];
+    entries.forEach(t => (t.traits || []).forEach(tr => allTraits.add(tr.replace(/^.*#/, ''))));
+    renderSection('Core Tests', entries, 'core', content);
+
+    // Included sub-manifests (best-effort)
+    const includes = manifest.include || [];
+    for (const url of includes) {
+      try {
+        const sub = await loadJSON(url);
+        const subGraph = sub['@graph'] || [];
+        const subManifest = subGraph[0] || {};
+        const subEntries = subManifest.entries || [];
+        const label = subManifest.label || url;
+        subEntries.forEach(t => (t.traits || []).forEach(tr => allTraits.add(tr.replace(/^.*#/, ''))));
+        const baseId = url.replace(/[^a-z0-9]/gi, '-').replace(/-+/g, '-');
+        renderSection(label, subEntries, baseId, content);
+      } catch {
+        const note = el('p');
+        note.style.cssText = 'color:#999;font-size:0.85rem;font-style:italic;';
+        note.textContent = `(Sub-manifest not available: ${url})`;
+        content.appendChild(note);
+      }
+    }
+
+    buildTraitFilters(allTraits, applyFilters);
+    document.getElementById('search').addEventListener('input', applyFilters);
+    applyFilters(); // set initial count
+
+    loading.hidden = true;
+
+  } catch (e) {
+    loading.hidden = true;
+    errorDiv.style.display = 'block';
+    errorDiv.textContent = 'Failed to load manifest.jsonld: ' + e.message +
+      '. Make sure you are serving this file from a local HTTP server, e.g.: python3 -m http.server';
+  }
+}
+
+init();
+</script>
+</body>
+</html>

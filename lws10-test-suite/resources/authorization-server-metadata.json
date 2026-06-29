@@ -1,0 +1,14 @@
+{
+  "issuer": "https://authorization.example",
+  "grant_types_supported": [
+    "urn:ietf:params:oauth:grant-type:token-exchange"
+  ],
+  "token_endpoint": "https://authorization.example/token",
+  "jwks_uri": "https://authorization.example/jwks",
+  "claims_supported": ["sub", "iss", "client_id", "aud"],
+  "response_types_supported": ["token"],
+  "subject_token_types_supported": [
+    "urn:ietf:params:oauth:token-type:jwt",
+    "urn:ietf:params:oauth:token-type:id-token"
+  ]
+}
