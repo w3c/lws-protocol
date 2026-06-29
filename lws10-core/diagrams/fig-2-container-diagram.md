@@ -24,4 +24,4 @@ C4Container
   Rel(rm, era, "resolves resource")
   Rel(era, ext, "accesses")
 ```
-Issue: The internal organisation of container, containment and linkset management within the LWS server is not yet defined in the protocol. This diagram reflects current terminology and is subject to revision.
+Issue: The internal organisation of container, containment, and linkset management within the LWS server is not yet defined in the protocol. This diagram reflects current terminology and is subject to revision.
