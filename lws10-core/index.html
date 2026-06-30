@@ -134,21 +134,21 @@
         By standardising how a LWS server manages and provides access to a hierarchy of linked resources, the protocol enables users to use different LWS client applications to interact with the same stored data. These linked resources are defined through containers and containment relationships that describe where things are located, and metadata that describes how the resources relate to each other.
       </p>
       <p>
-        The protocol defines standard operations on these resources to create, read, update, and delete. Resources, their containment and metadata are managed by the server as a set of JSON-LD documents. Each resource is identified by a URI. A client navigates the resource hierarchy from a root container, discovering contained resources and their relations through links provided in server responses.
+        The protocol defines standard operations on these resources to create, read, update, and delete. Resources, their containment, and their metadata are managed by the server, commonly as a set of JSON-LD documents. Each resource is identified by a URI. A client navigates the resource hierarchy from a root container, discovering contained resources and their relations through links provided in server responses.
       </p>
       <p>
-        A user&rsquo;s identity is confirmed through an identity provider external to the Linked Web Storage server. This separation means the server does not manage credentials directly, it receives and validates a signed authentication credential as a token issued by a trusted identity provider. A user can therefore present their existing identity to any compliant server, without needing a separate account on that server. User authentication is defined in companion specifications for OpenID Connect, SAML 2.0, and self-signed controlled identifiers.
+        A user&rsquo;s identity is confirmed through an identity provider external to the Linked Web Storage server. This separation means the server does not manage credentials directly; rather, it receives and validates a signed authentication credential as a token issued by a trusted identity provider. A user can therefore present their existing identity to any compliant server, without needing a new or existing separate account on that server. User authentication is defined in companion specifications for OpenID Connect, SAML 2.0, and self-signed controlled identifiers (CIDs).
       </p>
       <p>
-        Authorization determines whether a requesting user has permission to access a resource or perform an operation on it. A compliant LWS server designates a resource manager for each resource that determines whether a resource is publicly available, private, or restricted to a defined set of users. The server enforces the access decisions of the resource manager when handling each client request.
+        Authorization determines whether a requesting user has permission to access a resource or perform an operation on it. A compliant LWS server designates a resource manager for each resource that determines whether a resource is private (i.e., available only to its owner), restricted (i.e., available to a defined set of users), or public (i.e., available to any user). The server enforces the access decisions of the resource manager when handling each client request.
       </p>
       <p>This specification is intended to be used by:</p>
       <ul>
-        <li>Developers building client applications that access a user&rsquo;s linked web storage resources</li>
-        <li>Server implementors building compliant LWS servers that mediate access to a user&rsquo;s external web resources</li>
+        <li>Developers building client applications that access a user&rsquo;s LWS resources</li>
+        <li>Server implementers building compliant LWS servers that mediate access to a user&rsquo;s external web resources</li>
       </ul>
       <p>
-        Different compliant servers each maintain their own hierarchy of linked resources. A user can navigate across servers using the same identity, with access to each server&rsquo;s resources determined by the permissions that server&rsquo;s resource managers have granted them.
+        Different compliant servers each maintain their own hierarchy of linked resources. A user can navigate across servers using the same identity, with access to each server&rsquo;s resources determined by the permissions granted by that server&rsquo;s resource managers.
       </p>
 
       
