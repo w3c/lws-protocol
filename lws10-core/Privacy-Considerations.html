@@ -41,3 +41,25 @@
   </ul>
 </section>
 
+<section id="privacy-notifications" class="informative">
+  <h4>Notifications</h4>
+
+  <ul>
+    <li>
+      <strong>Activity Tracking</strong>: Notifications inherently reveal when resources
+      change. <a>Subscribers</a> SHOULD only receive notifications for resources they are
+      authorized to access.
+    </li>
+    <li>
+      <strong>Actor Disclosure</strong>: Including the <code>actor</code> property in
+      notifications reveals who made changes. This may be inappropriate in some contexts.
+      The <code>actor</code> property SHOULD be omitted by default. Servers MAY make
+      its inclusion configurable.
+    </li>
+    <li>
+      <strong>Timing Analysis</strong>: The timing of notifications can reveal usage
+      patterns even when content is not disclosed.
+    </li>
+  </ul>
+</section>
+
