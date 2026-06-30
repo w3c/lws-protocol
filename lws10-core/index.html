@@ -155,11 +155,39 @@
         </p>
 
         <p>
-          A <dfn>LWS Client</dfn> is an HTTP client [[!rfc9112]] that complies with all of the relevant "MUST" statements in this specification. Specifically, the relevant normative "MUST" statements in <a href="#operations"></a> of this document MUST be respected.
+          An <dfn>LWS Client</dfn> is an HTTP client [[!rfc9112]] that complies with all of the relevant "MUST" statements in this specification. Specifically, the relevant normative "MUST" statements in <a href="#operations"></a> of this document MUST be respected.
         </p>
       </section>
-    </section>
 
+      <section id="scope-diagrams">    <!-- becomes 2.4 Scope Diagrams -->
+        <h2>Scope Diagrams</h2>
+        <p>
+          The following diagrams are platform-independent models 
+          to guide implementation.
+        </p>
+        <p>
+          Figure 1 shows the System Context, identifying the user, the systems 
+          that interact with a compliant LWS server, and the external systems on 
+          which the protocol depends.
+        </p>
+        <figure id="fig-1-system-context">
+          <img src="diagrams/fig-1-system-context.svg" 
+              alt="LWS Protocol system context diagram showing the user, client application, LWS server, identity provider, and external resources"/>
+          <figcaption>LWS Protocol &mdash; system context (C4 Level 1)</figcaption>
+        </figure>
+        <p>
+          Figure 2 shows the Container Diagram, describing the protocol-level 
+          responsibilities within a compliant LWS server and the relationships 
+          between them.
+        </p>
+        <figure id="fig-2-container-diagram">
+          <img src="diagrams/fig-2-container-diagram.svg"
+              alt="LWS Protocol container diagram showing authentication, authorization, resource management, and external resource access within the LWS server boundary"/>
+          <figcaption>LWS Protocol &mdash; container diagram (C4 Level 2)</figcaption>
+        </figure>
+     </section>
+
+    </section>
     <section id="terminology">
       <h2>Terminology</h2>
       <p>
