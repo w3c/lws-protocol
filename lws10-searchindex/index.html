@@ -25,9 +25,9 @@
         group: "lws",
         maxTocLevel: 3,
         localBiblio: {
-          "LWS-PROTOCOL": {
-            title: "LWS Protocol",
-            href: "https://www.w3.org/TR/lws-core/",
+          "LWS10-CORE": {
+            title: "Linked Web Storage Protocol 1.0",
+            href: "https://www.w3.org/TR/lws10-core/",
             publisher: "W3C",
             status: "FPWD",
           },
@@ -65,7 +65,7 @@
       <h2>Introduction</h2>
 
       <p>
-        The [[!LWS-PROTOCOL|Linked Web Storage]] protocol defines a resource-centric storage
+        The [[!LWS10-CORE|Linked Web Storage]] protocol defines a resource-centric storage
         system built on HTTP. While the core protocol supports creating, reading, updating,
         and deleting resources, and containers enumerate the resources they contain, it does
         not define a mechanism for a client to learn which kinds of resources exist within a
@@ -89,7 +89,7 @@
 
       <p>
         The terms "storage", "storage description resource", "container", "data resource",
-        "resource manager", and "requesting agent" are defined by [[!LWS-PROTOCOL]].
+        "resource manager", and "requesting agent" are defined by [[!LWS10-CORE]].
       </p>
 
       <p>
@@ -215,7 +215,7 @@
         <h3>GET [TypeIndexService]</h3>
 
         <p>Returns a paginated <code>TypeIndex</code> as <code>application/lws+json</code>,
-          following the standard LWS pagination model defined by [[!LWS-PROTOCOL]]: page URIs
+          following the standard LWS pagination model defined by [[!LWS10-CORE]]: page URIs
           are conveyed in <code>Link</code> headers&mdash;not in the response body&mdash;and
           are opaque to the client. The body lists the unique types of resources that
           currently exist within the storage and that the authenticated user is authorized to
@@ -357,7 +357,7 @@ Link: &lt;https://example.org/types/index?page=4&gt;; rel="last"
         </p>
         <p>
           Whatever the response format, the result set is paginated following the standard LWS
-          pagination model defined by [[!LWS-PROTOCOL]]: page URIs are conveyed in <code>Link</code>
+          pagination model defined by [[!LWS10-CORE]]: page URIs are conveyed in <code>Link</code>
           headers &mdash; not in the response body &mdash; are opaque to the client, and are
           dereferenced to retrieve subsequent pages. Aside from <code>type</code> and any additional
           relation keys described above, no other filter inputs are defined.
@@ -724,7 +724,7 @@ Response
       <p>
         This document also uses the terms <code>Storage</code>, <code>ContainerPage</code>,
         <code>service</code>, <code>serviceEndpoint</code>, <code>totalItems</code>, and
-        <code>items</code> defined by [[!LWS-PROTOCOL]] and the LWS JSON-LD context.
+        <code>items</code> defined by [[!LWS10-CORE]] and the LWS JSON-LD context.
       </p>
     </section>
   </body>
