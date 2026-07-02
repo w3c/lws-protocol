@@ -394,7 +394,7 @@ Link: &lt;https://example.org/types/index?page=4&gt;; rel="last"
           </li>
           <li>
             A filter that is well-formed but exceeds the complexity a server chooses to support
-            (consistent with the expressiveness ceiling above) MUST be rejected with <code>422</code> (Unprocessable Content) &mdash; the status [[!RFC10008]] designates for query content that is understood but cannot be processed. A server MUST NOT silently truncate or otherwise narrow such a filter, as doing so could return a superset of the intended results.
+            (consistent with the expressiveness ceiling above) MUST be rejected with <code>422</code> (Unprocessable Content), the status [[!RFC9110]] defines and [[!RFC10008]] suggests for a query that is understood but cannot be processed due to its actual contents. A server MUST NOT silently truncate or otherwise narrow such a filter, as doing so could return a superset of the intended results.
           </li>
           <li>
             A pagination reference (a previously issued <code>next</code> link) that the server no longer recognizes or that has expired MUST result in <code>404</code> (Not Found) or <code>410</code> (Gone); clients SHOULD restart the query from the first page.
