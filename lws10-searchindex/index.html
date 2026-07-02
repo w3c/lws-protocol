@@ -228,6 +228,7 @@
         <pre class="example">
 HTTP/1.1 200 OK
 Content-Type: application/lws+json
+Cache-Control: private
 Link: &lt;https://example.org/types/index?page=1&gt;; rel="first"
 Link: &lt;https://example.org/types/index?page=2&gt;; rel="next"
 Link: &lt;https://example.org/types/index?page=4&gt;; rel="last"
@@ -434,12 +435,15 @@ Link: &lt;https://example.org/types/index?page=4&gt;; rel="last"
         Authorization filtering MUST be evaluated against the requesting client's <em>current</em> access at the time the request is served, not against any cached or precomputed view. Once an authorization (such as an access grant) is revoked or narrowed, the affected types and resource URIs MUST NOT appear in any subsequent response; the eventual-consistency allowance for type and relation derivation MUST NOT be extended to authorization. A server MAY maintain a derived index for performance, but it MUST apply current authorization as a filter over that index on every request.
       </p>
       <p>
-        Because a <code>QUERY</code> response is cacheable by default [[!RFC10008]] and its cache key
-        is computed over the request body rather than the requesting client, a server MUST ensure that
-        an authorization-filtered response is never served from a shared cache to a different client.
-        A server MUST mark such responses so that they are not reused across clients (for example with
-        <code>Cache-Control: private</code> or <code>no-store</code>) and MUST vary any cached entry on
-        the credential that scopes the result.
+        Responses from both services are authorization-filtered and therefore client-specific, yet
+        both are cacheable by default: a <code>TypeIndexService</code> response under the ordinary
+        HTTP caching rules for <code>GET</code> [[!RFC9110]], and a <code>TypeSearchService</code>
+        response per [[!RFC10008]], whose cache key is computed over the request body rather than
+        the requesting client. A server MUST ensure that an authorization-filtered response from
+        either service is never served from a shared cache to a different client. A server MUST mark
+        such responses so that they are not reused across clients (for example with
+        <code>Cache-Control: private</code> or <code>no-store</code>) and MUST vary any cached entry
+        on the credential that scopes the result.
       </p>
       <p>
         Any extension query mechanism a server exposes over the storage &mdash; for example an
@@ -460,6 +464,7 @@ GET /types/index
 Response
 HTTP/1.1 200 OK
 Content-Type: application/lws+json
+Cache-Control: private
 Link: &lt;https://example.org/types/index?page=1&gt;; rel="first"
 Link: &lt;https://example.org/types/index?page=2&gt;; rel="next"
 Link: &lt;https://example.org/types/index?page=4&gt;; rel="last"
@@ -629,12 +634,14 @@ Response
           <a href="#type-search-errors"></a> rather than narrowing them.
         </li>
         <li>
-          <strong>Shared Caches</strong>: Responses are client-specific by construction, yet a
-          <code>QUERY</code> response is cacheable by default [[RFC10008]] and its cache key is
-          computed over the request body rather than the requesting client. Serving such a response
-          through a shared cache therefore risks delivering one client's authorization-filtered view
-          to another. The cache requirements in <a href="#security-authorization"></a> exist to
-          prevent this, and deserve particular attention when a shared cache sits in front of the
+          <strong>Shared Caches</strong>: Responses from both services are client-specific by
+          construction, yet both are cacheable by default: a <code>TypeIndexService</code>
+          <code>GET</code> response under the ordinary HTTP caching rules [[RFC9110]], and a
+          <code>TypeSearchService</code> <code>QUERY</code> response per [[RFC10008]], whose cache
+          key is computed over the request body rather than the requesting client. Serving either
+          through a shared cache risks delivering one client's authorization-filtered view to
+          another. The cache requirements in <a href="#security-authorization"></a> exist to prevent
+          this, and deserve particular attention when a shared cache sits in front of either
           service.
         </li>
       </ul>
