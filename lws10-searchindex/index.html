@@ -219,7 +219,11 @@
           are conveyed in <code>Link</code> headers&mdash;not in the response body&mdash;and
           are opaque to the client. The body lists the unique types of resources that
           currently exist within the storage and that the authenticated user is authorized to
-          see. This endpoint accepts no query parameters.</p>
+          see. This specification defines no query parameters for the endpoint: a client
+          requests the advertised <code>serviceEndpoint</code> URI as-is, and any parameters
+          appearing in server-issued pagination URIs (such as <code>?page=</code> in the
+          example below) are server-internal parts of those opaque URIs, not part of this
+          interface.</p>
         <p class="note">
           The Type Index takes no filter, so it is retrieved with a <code>GET</code>. The
           <a>Type Search Service</a>, which carries a filter, instead uses the HTTP
