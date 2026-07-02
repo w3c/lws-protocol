@@ -230,6 +230,11 @@
           <code>QUERY</code> method [[!RFC10008]] (see <a href="#type-search-query"></a>).
         </p>
         <pre class="example">
+Request
+GET /types/index
+Authorization: Bearer &lt;token&gt;
+
+Response
 HTTP/1.1 200 OK
 Content-Type: application/lws+json
 Cache-Control: private
@@ -464,6 +469,7 @@ Link: &lt;https://example.org/types/index?page=4&gt;; rel="last"
       <pre class="example" title="GET TypeIndex (Discovering available types)">
 Request
 GET /types/index
+Authorization: Bearer &lt;token&gt;
 
 Response
 HTTP/1.1 200 OK
@@ -500,6 +506,7 @@ for example: Accept-Query: application/lws+json, application/sparql-query
       <pre class="example" title="QUERY Search for instances (schema:Person AND lws:DataResource)">
 Request
 QUERY /types/search
+Authorization: Bearer &lt;token&gt;
 Content-Type: application/lws+json
 
 {
@@ -532,6 +539,7 @@ Link: &lt;https://example.org/types/search?cursor=b71e90&gt;; rel="next"
       <pre class="example" title="QUERY Search for container resources (is-a)">
 Request
 QUERY /types/search
+Authorization: Bearer &lt;token&gt;
 Content-Type: application/lws+json
 
 {
@@ -558,6 +566,7 @@ Response
       <pre class="example" title="CNF Filter (OR within a group, AND across groups)">
 Request (nested array = OR group, outer array = AND)
 QUERY /types/search
+Authorization: Bearer &lt;token&gt;
 Content-Type: application/lws+json
 
 {
@@ -585,6 +594,7 @@ Response
       <pre class="example" title="Filtering on an indexed relation (describedby)">
 Request (type AND a 'describedby' relation, the relation name used as a key)
 QUERY /types/search
+Authorization: Bearer &lt;token&gt;
 Content-Type: application/lws+json
 
 {
