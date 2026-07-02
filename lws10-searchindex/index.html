@@ -274,7 +274,7 @@ Link: &lt;https://example.org/types/index?page=4&gt;; rel="last"
           by the request's <code>Content-Type</code> header field, which MUST be present; per
           [[!RFC10008]] a server fails the request if the <code>Content-Type</code> is missing or
           inconsistent with the body (see <a href="#type-search-errors"></a>). Every server MUST
-          support the <code>application/lws+json</code> filter defined here as its baseline query
+          support the <code>application/lws-query+json</code> filter format defined here as its baseline query
           format; a server MAY additionally accept other query formats, each identified by its own
           media type, and the authorization requirements of <a href="#security-authorization"></a>
           apply regardless of the format used. The <code>QUERY</code> method is both safe and
@@ -282,6 +282,22 @@ Link: &lt;https://example.org/types/index?page=4&gt;; rel="last"
           search never alters server state and MAY be repeated, retried, or cached.
           Because the filter travels in the body rather than the request URI, it is not subject to the
           request-URI length limits that constrain a query string.
+        </p>
+
+        <p>
+          The baseline filter format is identified by the media type
+          <code>application/lws-query+json</code>, registered in
+          <a href="#iana-considerations"></a>. A filter document is a single JSON object
+          [[!RFC8259]] whose members express constraints: the <code>type</code> member and,
+          optionally, one member per filtered link relation, each carrying the
+          conjunctive-normal-form value grammar defined below. Unlike the
+          <code>application/lws+json</code> representations defined by [[!LWS10-CORE]] &mdash;
+          which this service still uses for its <em>responses</em> &mdash; a filter document is
+          plain JSON rather than JSON-LD: it carries no <code>@context</code>, its member names
+          are not JSON-LD terms, and its nested-array groups are not subject to JSON-LD
+          constraints on <code>@type</code> values. A member whose name begins with
+          <code>@</code> (a JSON-LD keyword such as <code>@context</code>) MUST be ignored; it
+          is neither a constraint nor a relation key.
         </p>
 
         <p>
@@ -296,9 +312,8 @@ Link: &lt;https://example.org/types/index?page=4&gt;; rel="last"
           <code>Accept-Query</code> value to select a supported format.
         </p>
 
-        <pre class="example" title="QUERY request body">
+        <pre class="example" title="QUERY request body (application/lws-query+json)">
 {
-  "@context": "https://www.w3.org/ns/lws/v1",
   "type": [
     ["https://schema.org/Person", "http://xmlns.com/foaf/0.1/Person"],
     "https://www.w3.org/ns/lws#DataResource"
@@ -383,11 +398,11 @@ Link: &lt;https://example.org/types/index?page=4&gt;; rel="last"
         </p>
         <ul>
           <li>
-            A request body that is not well-formed <code>application/lws+json</code>, or whose
+            A request body that is not well-formed <code>application/lws-query+json</code>, or whose
             <code>type</code> is not an array, or any of whose elements is neither a string nor an array of strings, MUST be rejected with <code>400</code> (Bad Request).
           </li>
           <li>
-            A request whose <code>Content-Type</code> identifies a query format the server does not support MUST be rejected with <code>415</code> (Unsupported Media Type), and such a response SHOULD include an <code>Accept-Query</code> header field [[!RFC10008]] listing the query formats the server does accept; every server supports at least <code>application/lws+json</code> (see <a href="#type-search-query"></a>). A request that omits the <code>Content-Type</code> header field, which [[!RFC10008]] requires a server to reject, MUST be rejected with <code>400</code> (Bad Request).
+            A request whose <code>Content-Type</code> identifies a query format the server does not support MUST be rejected with <code>415</code> (Unsupported Media Type), and such a response SHOULD include an <code>Accept-Query</code> header field [[!RFC10008]] listing the query formats the server does accept; every server supports at least <code>application/lws-query+json</code> (see <a href="#type-search-query"></a>). A request that omits the <code>Content-Type</code> header field, which [[!RFC10008]] requires a server to reject, MUST be rejected with <code>400</code> (Bad Request).
           </li>
           <li>
             A request whose <code>Accept</code> header field excludes every response media type the server can produce for the result set MUST be rejected with <code>406</code> (Not Acceptable) [[!RFC10008]]. Because every server can produce the <code>application/lws+json</code> <code>ContainerPage</code>, a request that omits <code>Accept</code> or admits that media type never results in <code>406</code>.
@@ -497,20 +512,19 @@ OPTIONS /types/search
 Response
 HTTP/1.1 204 No Content
 Allow: OPTIONS, QUERY
-Accept-Query: application/lws+json
+Accept-Query: application/lws-query+json
 
 A server that also accepted other query formats would list them in Accept-Query,
-for example: Accept-Query: application/lws+json, application/sparql-query
+for example: Accept-Query: application/lws-query+json, application/sparql-query
       </pre>
 
       <pre class="example" title="QUERY Search for instances (schema:Person AND lws:DataResource)">
 Request
 QUERY /types/search
 Authorization: Bearer &lt;token&gt;
-Content-Type: application/lws+json
+Content-Type: application/lws-query+json
 
 {
-  "@context": "https://www.w3.org/ns/lws/v1",
   "type": [
     "https://schema.org/Person",
     "https://www.w3.org/ns/lws#DataResource"
@@ -540,10 +554,9 @@ Link: &lt;https://example.org/types/search?cursor=b71e90&gt;; rel="next"
 Request
 QUERY /types/search
 Authorization: Bearer &lt;token&gt;
-Content-Type: application/lws+json
+Content-Type: application/lws-query+json
 
 {
-  "@context": "https://www.w3.org/ns/lws/v1",
   "type": ["https://www.w3.org/ns/lws#Container"]
 }
 
@@ -567,10 +580,9 @@ Response
 Request (nested array = OR group, outer array = AND)
 QUERY /types/search
 Authorization: Bearer &lt;token&gt;
-Content-Type: application/lws+json
+Content-Type: application/lws-query+json
 
 {
-  "@context": "https://www.w3.org/ns/lws/v1",
   "type": [
     ["https://schema.org/Person", "http://xmlns.com/foaf/0.1/Person"],
     "https://www.w3.org/ns/lws#DataResource"
@@ -595,10 +607,9 @@ Response
 Request (type AND a 'describedby' relation, the relation name used as a key)
 QUERY /types/search
 Authorization: Bearer &lt;token&gt;
-Content-Type: application/lws+json
+Content-Type: application/lws-query+json
 
 {
-  "@context": "https://www.w3.org/ns/lws/v1",
   "type": ["https://schema.org/Person"],
   "describedby": ["https://shapes.example/PersonShape"]
 }
@@ -726,6 +737,55 @@ Response
         <code>service</code>, <code>serviceEndpoint</code>, <code>totalItems</code>, and
         <code>items</code> defined by [[!LWS10-CORE]] and the LWS JSON-LD context.
       </p>
+    </section>
+
+    <section id="iana-considerations" class="informative">
+      <h2>IANA Considerations</h2>
+
+      <section id="media-type-lws-query-json">
+        <h3>The <code>application/lws-query+json</code> Media Type</h3>
+
+        <p>
+          This specification registers the <code>application/lws-query+json</code> media type,
+          identifying the baseline Type Search filter format defined in
+          <a href="#type-search-query"></a>.
+        </p>
+
+        <ul>
+          <li>Type name: application</li>
+          <li>Subtype name: lws-query+json</li>
+          <li>Required parameters: N/A</li>
+          <li>Optional parameters: N/A</li>
+          <li>Encoding considerations: Resources that use the <code>application/lws-query+json</code>
+            media type are required to conform to all of the requirements for the
+            <code>application/json</code> media type and are therefore subject to the same encoding
+            considerations specified in Section 11 of [[RFC8259]].</li>
+          <li>Security considerations: As defined in this specification. A filter document is a
+            declarative constraint expression and contains no executable content; see
+            <a href="#security-authorization"></a> and <a href="#security-considerations"></a>.</li>
+          <li>Interoperability considerations: A filter document is plain JSON, not JSON-LD; members
+            whose names begin with <code>@</code> are ignored (see
+            <a href="#type-search-query"></a>).</li>
+          <li>Published specification: This document.</li>
+          <li>Applications that use this media type: Clients and servers implementing the Linked Web
+            Storage <a>Type Search Service</a>.</li>
+          <li>Fragment identifier considerations: N/A</li>
+          <li>Additional information:
+            <ul>
+              <li>Magic number(s): N/A</li>
+              <li>File extension(s): N/A</li>
+              <li>Macintosh file type code(s): N/A</li>
+            </ul>
+          </li>
+          <li>Person &amp; email address to contact for further information: W3C Linked Web Storage
+            Working Group &lt;public-lws-wg@w3.org&gt;</li>
+          <li>Intended usage: COMMON</li>
+          <li>Restrictions on usage: N/A. This media type is intended for use as the request content
+            of HTTP <code>QUERY</code> messages, but is not restricted to that context.</li>
+          <li>Author: W3C Linked Web Storage Working Group</li>
+          <li>Change controller: W3C</li>
+        </ul>
+      </section>
     </section>
   </body>
 </html>
