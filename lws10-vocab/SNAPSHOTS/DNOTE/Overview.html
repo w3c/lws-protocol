@@ -1,0 +1,1305 @@
+<!DOCTYPE html><html lang="en"><head>
+<meta charset="utf-8">
+<meta name="generator" content="ReSpec 37.1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+<style>
+.issue-label{text-transform:initial}
+.warning>p:first-child{margin-top:0}
+.warning{padding:.5em;border-left-width:.5em;border-left-style:solid}
+span.warning{padding:.1em .5em .15em}
+.issue.closed span.issue-number{text-decoration:line-through}
+.issue.closed span.issue-number::after{content:" (Closed)";font-size:smaller}
+.warning{border-color:#f11;border-color:var(--warning-border,#f11);border-width:.2em;border-style:solid;background:#fbe9e9;background:var(--warning-bg,#fbe9e9);color:#000;color:var(--text,#000)}
+.warning-title:before{content:"⚠";font-size:1.3em;float:left;padding-right:.3em;margin-top:-.3em}
+li.task-list-item{list-style:none}
+input.task-list-item-checkbox{margin:0 .35em .25em -1.6em;vertical-align:middle}
+.issue a.respec-gh-label{padding:5px;margin:0 2px 0 2px;font-size:10px;text-transform:none;text-decoration:none;font-weight:700;border-radius:4px;position:relative;bottom:2px;border:none;display:inline-block}
+</style>
+<style>
+dfn{cursor:pointer}
+.dfn-panel{position:absolute;z-index:35;min-width:300px;max-width:500px;padding:.5em .75em;margin-top:.6em;font-family:"Helvetica Neue",sans-serif;font-size:small;background:#fff;background:var(--indextable-hover-bg,#fff);color:#000;color:var(--text,#000);box-shadow:0 1em 3em -.4em rgba(0,0,0,.3),0 0 1px 1px rgba(0,0,0,.05);box-shadow:0 1em 3em -.4em var(--tocsidebar-shadow,rgba(0,0,0,.3)),0 0 1px 1px var(--tocsidebar-shadow,rgba(0,0,0,.05));border-radius:2px}
+.dfn-panel:not(.docked)>.caret{position:absolute;top:-9px}
+.dfn-panel:not(.docked)>.caret::after,.dfn-panel:not(.docked)>.caret::before{content:"";position:absolute;border:10px solid transparent;border-top:0;border-bottom:10px solid #fff;border-bottom-color:var(--indextable-hover-bg,#fff);top:0}
+.dfn-panel:not(.docked)>.caret::before{border-bottom:9px solid #a2a9b1;border-bottom-color:var(--indextable-hover-bg,#a2a9b1)}
+.dfn-panel *{margin:0}
+.dfn-panel b{display:block;color:#000;color:var(--text,#000);margin-top:.25em}
+.dfn-panel ul a[href]{color:#333;color:var(--text,#333)}
+.dfn-panel>div{display:flex}
+.dfn-panel a.self-link{font-weight:700;margin-right:auto}
+.dfn-panel .marker{padding:.1em;margin-left:.5em;border-radius:.2em;text-align:center;white-space:nowrap;font-size:90%;color:#040b1c}
+.dfn-panel .marker.dfn-exported{background:#d1edfd;box-shadow:0 0 0 .125em #1ca5f940}
+.dfn-panel .marker.idl-block{background:#8ccbf2;box-shadow:0 0 0 .125em #0670b161}
+.dfn-panel .marker.cddl-block{background:#8ccbf2;box-shadow:0 0 0 .125em #0670b161}
+.dfn-panel a:not(:hover){text-decoration:none!important;border-bottom:none!important}
+.dfn-panel a[href]:hover{border-bottom-width:1px}
+.dfn-panel ul{padding:0}
+.dfn-panel li{margin-left:1em}
+.dfn-panel.docked{position:fixed;left:.5em;top:unset;bottom:2em;margin:0 auto;max-width:calc(100vw - .75em * 2 - .5em - .2em * 2);max-height:30vh;overflow:auto}
+</style>
+    
+    
+<title>Linked Web Storage Vocabulary</title>
+    
+<style id="respec-mainstyle">
+@keyframes pop{
+0%{transform:scale(1,1)}
+25%{transform:scale(1.25,1.25);opacity:.75}
+100%{transform:scale(1,1)}
+}
+a.internalDFN{color:inherit;border-bottom:1px solid #99c;text-decoration:none}
+a.externalDFN{color:inherit;border-bottom:1px dotted #ccc;text-decoration:none}
+a.bibref{text-decoration:none}
+.respec-offending-element:target{animation:pop .25s ease-in-out 0s 1}
+.respec-offending-element,a[href].respec-offending-element{text-decoration:red wavy underline}
+@supports not (text-decoration:red wavy underline){
+.respec-offending-element:not(pre){display:inline-block}
+.respec-offending-element{background:url(data:image/gif;base64,R0lGODdhBAADAPEAANv///8AAP///wAAACwAAAAABAADAEACBZQjmIAFADs=) bottom repeat-x}
+}
+#references :target{background:#eaf3ff;animation:pop .4s ease-in-out 0s 1}
+@media (prefers-color-scheme:dark){
+#references :target{background:color-mix(in srgb, #eaf3ff 15%, transparent)}
+}
+body:has(input[name=color-scheme][value=dark]:checked) #references :target{background:color-mix(in srgb, #eaf3ff 15%, transparent)}
+cite .bibref{font-style:italic}
+a[href].orcid{padding-left:4px;padding-right:4px}
+a[href].orcid>svg{margin-bottom:-2px}
+ol.tof,ul.tof{list-style:none outside none}
+.caption{margin-top:.5em;font-style:italic}
+#issue-summary>ul{column-count:2}
+#issue-summary li{list-style:none}
+details.respec-tests-details{margin-left:1em;display:inline-block;vertical-align:top}
+details.respec-tests-details>*{padding-right:2em}
+details.respec-tests-details[open]{z-index:999999;position:absolute;border:thin solid #cad3e2;border-radius:.3em;background-color:#fff;padding-bottom:.5em}
+details.respec-tests-details[open]>summary{border-bottom:thin solid #cad3e2;padding-left:1em;margin-bottom:1em;line-height:2em}
+details.respec-tests-details>ul{width:100%;margin-top:-.3em}
+details.respec-tests-details>li{padding-left:1em}
+.self-link:hover{opacity:1;text-decoration:none;background-color:transparent}
+aside.example .marker>a.self-link{color:inherit}
+.header-wrapper{display:flex;align-items:baseline}
+:is(h2,h3,h4,h5,h6):not(#toc>h2,#abstract>h2,#sotd>h2,.head>h2):has(+a.self-link){position:relative;left:-.5em}
+:is(h2,h3,h4,h5,h6):not(#toch2)+a.self-link{color:inherit;order:-1;position:relative;left:-1.1em;font-size:1rem;opacity:.5}
+:is(h2,h3,h4,h5,h6)+a.self-link::before{content:"§";text-decoration:none;color:var(--heading-text)}
+:is(h2,h3)+a.self-link{top:-.2em}
+:is(h4,h5,h6)+a.self-link::before{color:#000}
+@media (max-width:767px){
+dd{margin-left:0}
+}
+@media print{
+.removeOnSave{display:none}
+}
+body:has(input[name=color-scheme][value=light]:checked),head:not(:has(meta[name=color-scheme][content~=dark]))+body{color-scheme:light}
+body:has(input[name=color-scheme][value=dark]:checked){color-scheme:dark}
+</style>
+    
+<script>
+        function remove_status_remark() {
+            const sotd = document.getElementById("sotd");
+            const p = sotd.getElementsByTagName('p')[0];
+            sotd.removeChild(p);
+        }
+    </script>
+    
+    
+<style type="text/css">
+
+        dl.terms dt {
+            float: left;
+            clear: left;
+            width: 10vw;
+        }
+
+        dl.terms dd {
+            margin-left: 15vw;
+        }
+
+        dl.terms dd:after {
+            content: '';
+            display: block;
+            clear: both;
+            margin-bottom: 5px;
+        }
+
+        table.rdfs-definition td {
+            vertical-align: top;
+            margin-right: 2em;
+        }
+
+        .bold {
+            font-weight: bold;
+        }
+
+        /* code {
+        color: red;
+      } */
+
+        .term_definitions section {
+            border-bottom-style: solid;
+            border-bottom-width: 1px;
+            border-bottom-color: darkgrey;
+        }
+
+        .annoy {
+            background: hsla(40, 100%, 50%, 0.95);
+            color: black;
+            padding: .75em 1em;
+            border: red;
+            border-style: solid none;
+            box-shadow: 0 2px 8px black;
+            text-align: center;
+        }
+
+        summary {
+            font-weight: normal !important;
+        }
+    
+</style>
+    
+<link href="vocabulary.jsonld" rel="alternate" type="application/ld+json">
+    
+<link href="vocabulary.ttl" rel="alternate" type="text/turtle">
+
+<meta name="color-scheme" content="light">
+<meta name="description" content="This document describes the Linked Web Storage Vocabulary, i.e.,
+            the RDFS [RDF-SCHEMA] vocabulary used by the Linked Web Storage Protocol [lws-protocol].">
+<link rel="canonical" href="https://www.w3.org/TR/@@/">
+<style>
+var:hover{text-decoration:underline;cursor:pointer}
+var.respec-hl{color:var(--color,#000);background-color:var(--bg-color);box-shadow:0 0 0 2px var(--bg-color)}
+@media (prefers-color-scheme:dark){
+var.respec-hl{filter:saturate(.9) brightness(.9)}
+}
+var.respec-hl-c1{--bg-color:#f4d200}
+var.respec-hl-c2{--bg-color:#ff87a2}
+var.respec-hl-c3{--bg-color:#96e885}
+var.respec-hl-c4{--bg-color:#3eeed2}
+var.respec-hl-c5{--bg-color:#eacfb6}
+var.respec-hl-c6{--bg-color:#82ddff}
+var.respec-hl-c7{--bg-color:#ffbcf2}
+@media print{
+var.respec-hl{background:0 0;color:#000;box-shadow:unset}
+}
+</style>
+<style>
+var[data-type]{position:relative}
+var[data-type]::after,var[data-type]::before{position:absolute;left:50%;top:-6px;opacity:0;transition:opacity .4s;pointer-events:none}
+var[data-type]::before{content:"";transform:translateX(-50%);border-width:4px 6px 0 6px;border-style:solid;border-color:transparent;border-top-color:#222}
+var[data-type]::after{content:attr(data-type);transform:translateX(-50%) translateY(-100%);background:#222;text-align:center;font-family:"Dank Mono","Fira Code",monospace;font-style:normal;padding:6px;border-radius:3px;color:#daca88;text-indent:0;font-weight:400}
+var[data-type]:hover::after,var[data-type]:hover::before{opacity:1}
+</style>
+<script id="initialUserConfig" type="application/json">{
+  "specStatus": "DNOTE",
+  "shortName": "@@",
+  "editors": [
+    {
+      "name": "Jesse Wright",
+      "w3cid": "132252",
+      "company": "University of Oxford",
+      "companyURL": "https://www.ox.ac.uk/"
+    },
+    {
+      "name": "Erich Bremer",
+      "w3cid": "45759",
+      "company": "Stony Brook University",
+      "companyURL": "https://www.stonybrook.edu/"
+    }
+  ],
+  "authors": [
+    {
+      "name": "Laurens Debackere",
+      "w3cid": "136298",
+      "company": "Digitaal Vlaanderen",
+      "companyURL": "https://www.digitaalvlaanderen.be"
+    }
+  ],
+  "github": "w3c/lws-protocol",
+  "xref": [
+    "web-platform"
+  ],
+  "group": "lws",
+  "localBiblio": {
+    "lws-protocol": {
+      "title": "LWS Protocol",
+      "href": "https://w3c.github.io/lws-protocol/lws10-core/",
+      "publisher": "W3C",
+      "id": "lws-protocol"
+    }
+  },
+  "publishDate": "2026-07-16",
+  "publishISODate": "2026-07-16T00:00:00.000Z",
+  "generatedSubtitle": "W3C Group Note Draft 16 July 2026"
+}</script>
+<link rel="stylesheet" href="https://www.w3.org/StyleSheets/TR/2021/W3C-DNOTE"></head>
+
+<body class="h-entry" data-cite="web-platform"><div class="head">
+    <p class="logos"><a class="logo" href="https://www.w3.org/"><img crossorigin="" alt="W3C" height="48" src="https://www.w3.org/StyleSheets/TR/2021/logos/W3C" width="72">
+  </a></p>
+    <h1 id="title" class="title">Linked Web Storage Vocabulary</h1> 
+    <p id="w3c-state"><a href="https://www.w3.org/standards/types#DNOTE">W3C Group Note Draft</a> <time class="dt-published" datetime="2026-07-16">16 July 2026</time></p>
+    <details open="">
+      <summary>More details about this document</summary>
+      <dl>
+        <dt>This version:</dt><dd>
+                <a class="u-url" href="https://www.w3.org/TR/2026/DNOTE-@@-20260716/">https://www.w3.org/TR/2026/DNOTE-@@-20260716/</a>
+              </dd>
+        <dt>Latest published version:</dt><dd>
+                <a href="https://www.w3.org/TR/@@/">https://www.w3.org/TR/@@/</a>
+              </dd>
+        <dt>Latest editor's draft:</dt><dd><a href="https://w3c.github.io/lws-protocol/">https://w3c.github.io/lws-protocol/</a></dd>
+        <dt>History:</dt><dd>
+                    <a href="https://www.w3.org/standards/history/@@/">https://www.w3.org/standards/history/@@/</a>
+                  </dd><dd>
+                    <a href="https://github.com/w3c/lws-protocol/commits/">Commit history</a>
+                  </dd>
+        
+        
+        
+        
+        
+        <dt>
+                Editors:
+              </dt><dd class="editor p-author h-card vcard" data-editor-id="132252">
+    <span class="p-name fn">Jesse Wright</span> (<a class="p-org org h-org" href="https://www.ox.ac.uk/">University of Oxford</a>)
+  </dd><dd class="editor p-author h-card vcard" data-editor-id="45759">
+    <span class="p-name fn">Erich Bremer</span> (<a class="p-org org h-org" href="https://www.stonybrook.edu/">Stony Brook University</a>)
+  </dd>
+        
+        <dt>
+                Author:
+              </dt><dd class="editor p-author h-card vcard" data-editor-id="136298">
+    <span class="p-name fn">Laurens Debackere</span> (<a class="p-org org h-org" href="https://www.digitaalvlaanderen.be">Digitaal Vlaanderen</a>)
+  </dd>
+        <dt>Feedback:</dt><dd>
+        <a href="https://github.com/w3c/lws-protocol/">GitHub w3c/lws-protocol</a>
+        (<a href="https://github.com/w3c/lws-protocol/pulls/">pull requests</a>,
+        <a href="https://github.com/w3c/lws-protocol/issues/new/choose">new issue</a>,
+        <a href="https://github.com/w3c/lws-protocol/issues/">open issues</a>)
+      </dd>
+        
+        
+      </dl>
+    </details>
+    
+    
+    <p class="copyright">
+    <a href="https://www.w3.org/policies/#copyright">Copyright</a>
+    ©
+    2026
+    
+    <a href="https://www.w3.org/">World Wide Web Consortium</a>.
+    <abbr title="World Wide Web Consortium">W3C</abbr><sup>®</sup>
+    <a href="https://www.w3.org/policies/#Legal_Disclaimer">liability</a>,
+    <a href="https://www.w3.org/policies/#W3C_Trademarks">trademark</a> and
+    <a rel="license" href="https://www.w3.org/copyright/software-license-2023/" title="W3C Software and Document Notice and License">permissive document license</a> rules apply.
+  </p>
+    <hr title="Separator for header">
+  </div>
+    <section id="abstract" class="introductory"><h2>Abstract</h2>
+        <p>This document describes the <span property="dc:title" id="title">Linked Web Storage Vocabulary</span>, i.e.,
+            the <span property="dc:description" id="description">RDFS [<cite><a class="bibref" data-link-type="biblio" href="#bib-rdf-schema" title="RDF Schema 1.1">RDF-SCHEMA</a></cite>] vocabulary used by the Linked Web Storage Protocol [<cite><a class="bibref" data-link-type="biblio" href="#bib-lws-protocol" title="LWS Protocol">lws-protocol</a></cite>]</span>.
+        </p>
+        <p>Alternate versions of the vocabulary definition exist in
+            <a rel="alternate" href="vocabulary.ttl">Turtle</a> and
+            <a rel="alternate" href="vocabulary.jsonld">JSON-LD</a>.
+        </p>
+        <dl>
+            <dt>Published:</dt>
+            <dd><time property="dc:date" id="time">2026-06-22</time></dd>
+            <dt>Version Info:</dt>
+            <dd>1.0</dd>
+            <dt id="see_also">See Also: <a href="https://www.w3.org/TR/lws-protocol/">https://www.w3.org/TR/lws-protocol/</a></dt>
+        </dl>
+    </section>
+    <section id="sotd" class="introductory"><h2>Status of This Document</h2><p><em>This section describes the status of this
+      document at the time of its publication. A list of current <abbr title="World Wide Web Consortium">W3C</abbr>
+      publications and the latest revision of this technical report can be found
+      in the
+      <a href="https://www.w3.org/TR/"><abbr title="World Wide Web Consortium">W3C</abbr> standards and drafts index</a>.</em></p>
+        <p>
+            This vocabulary has been defined by the <a href="https://www.w3.org/groups/wg/lws/"><abbr title="World Wide Web Consortium">W3C</abbr> Linked Web Storage Working
+                Group</a> and provides
+            the official RDFS vocabulary for <a href="https://w3c.github.io/lws-protocol/lws10-core/">the Linked Web Storage
+                Protocol</a>.
+            Comments regarding this document are welcome. Please file issues
+            directly on <a href="https://github.com/w3c/lws-protocol/issues">GitHub</a>.
+        </p>
+    <p>
+    This document was published by the <a href="https://www.w3.org/groups/wg/lws">Linked Web Storage Working Group</a> as
+    a Group Note Draft using the
+        <a href="https://www.w3.org/policies/process/20250818/#recs-and-notes">Note
+          track</a>. 
+  </p><p>Group Note Drafts are not endorsed by
+        <abbr title="World Wide Web Consortium">W3C</abbr> nor its Members. </p><p>
+    This is a draft document and may be updated, replaced, or obsoleted by other
+    documents at any time. It is inappropriate to cite this document as other
+    than a work in progress.
+    
+  </p><p data-deliverer="159634">
+    
+        The
+        <a href="https://www.w3.org/policies/patent-policy/"><abbr title="World Wide Web Consortium">W3C</abbr> Patent
+          Policy</a>
+        does not carry any licensing requirements or commitments on this
+        document.
+      
+    
+  </p><p>
+                      This document is governed by the
+                      <a id="w3c_process_revision" href="https://www.w3.org/policies/process/20250818/">18 August 2025 <abbr title="World Wide Web Consortium">W3C</abbr> Process Document</a>.
+                    </p></section><nav id="toc"><h2 class="introductory" id="table-of-contents">Table of Contents</h2><ol class="toc"><li class="tocline"><a class="tocxref" href="#abstract">Abstract</a></li><li class="tocline"><a class="tocxref" href="#sotd">Status of This Document</a></li><li class="tocline"><a class="tocxref" href="#conformance"><bdi class="secno">1. </bdi>Conformance</a></li><li class="tocline"><a class="tocxref" href="#namespaces-0"><bdi class="secno">2. </bdi>Namespaces</a></li><li class="tocline"><a class="tocxref" href="#context-files"><bdi class="secno">3. </bdi><code>@context</code> files</a></li><li class="tocline"><a class="tocxref" href="#term_definitions"><bdi class="secno">4. </bdi>Term definitions</a><ol class="toc"><li class="tocline"><a class="tocxref" href="#property_definitions"><bdi class="secno">4.1 </bdi>Property definitions</a><ol class="toc"><li class="tocline"><a class="tocxref" href="#items"><bdi class="secno">4.1.1 </bdi><code>items</code></a></li><li class="tocline"><a class="tocxref" href="#7705770160b173ebe124d6db3ffe6c2af9967bcaa2bdf1c9a30b260f3fd8cadd"><bdi class="secno">4.1.2 </bdi><code>totalItems</code></a></li><li class="tocline"><a class="tocxref" href="#8821fe640fb97946823030bc45b4fd56e0e7b8a05d36284295acc670761ed10a"><bdi class="secno">4.1.3 </bdi><code>mediaType</code></a></li><li class="tocline"><a class="tocxref" href="#266f3ae3210ec2185154dcc2f3311ba1ec77706d2a2669280046a8fb659caa4d"><bdi class="secno">4.1.4 </bdi><code>updated</code></a></li><li class="tocline"><a class="tocxref" href="#459c0585b8f621976577328df8c114b4e6e790c022a95add3d952e0e767c753c"><bdi class="secno">4.1.5 </bdi><code>size</code></a></li><li class="tocline"><a class="tocxref" href="#capability"><bdi class="secno">4.1.6 </bdi><code>capability</code></a></li><li class="tocline"><a class="tocxref" href="#service"><bdi class="secno">4.1.7 </bdi><code>service</code></a></li><li class="tocline"><a class="tocxref" href="#serviceEndpoint"><bdi class="secno">4.1.8 </bdi><code>serviceEndpoint</code></a></li><li class="tocline"><a class="tocxref" href="#storageDescription"><bdi class="secno">4.1.9 </bdi><code>storageDescription</code></a></li><li class="tocline"><a class="tocxref" href="#PreferLinkRelations"><bdi class="secno">4.1.10 </bdi><code>PreferLinkRelations</code></a></li><li class="tocline"><a class="tocxref" href="#subscriptionType"><bdi class="secno">4.1.11 </bdi><code>subscriptionType</code></a></li><li class="tocline"><a class="tocxref" href="#subscription"><bdi class="secno">4.1.12 </bdi><code>subscription</code></a></li><li class="tocline"><a class="tocxref" href="#activity"><bdi class="secno">4.1.13 </bdi><code>activity</code></a></li><li class="tocline"><a class="tocxref" href="#topic"><bdi class="secno">4.1.14 </bdi><code>topic</code></a></li><li class="tocline"><a class="tocxref" href="#storage"><bdi class="secno">4.1.15 </bdi><code>storage</code></a></li><li class="tocline"><a class="tocxref" href="#3402e5da4e5885d9460b96d124b7017b1322052c5134d762259a7d39408426e7"><bdi class="secno">4.1.16 </bdi><code>Create</code></a></li><li class="tocline"><a class="tocxref" href="#8a964738c1fd41faf6fef20e6593ad4852ccd95f38e4c4d47bdd78b1cebc1d36"><bdi class="secno">4.1.17 </bdi><code>Update</code></a></li><li class="tocline"><a class="tocxref" href="#90ed75ccabbc35f8fe281b727efb84f253fb62fe16170c7313784659d04bee08"><bdi class="secno">4.1.18 </bdi><code>Delete</code></a></li><li class="tocline"><a class="tocxref" href="#39311eecb418e6dd320f3854f89d76295763948f5a670b83498f25bd439683dc"><bdi class="secno">4.1.19 </bdi><code>object</code></a></li><li class="tocline"><a class="tocxref" href="#8fc24f49482ce6ce4ffd98520aa3e61cde0eed0a5df192190d8947814e2f8f17"><bdi class="secno">4.1.20 </bdi><code>actor</code></a></li><li class="tocline"><a class="tocxref" href="#509d77441ca736fc71f195a705c5b29950a57f9fa967adb9216a671b6ddd3167"><bdi class="secno">4.1.21 </bdi><code>target</code></a></li><li class="tocline"><a class="tocxref" href="#e80e2c11dea74c0081f1ec213ab96901f31d87cf372e5c8e5ebb3d59305e5e09"><bdi class="secno">4.1.22 </bdi><code>origin</code></a></li><li class="tocline"><a class="tocxref" href="#b1274c3a39ffb5419c130c3c877130a9f263e26593dbd57f3020d7ec3328eb98"><bdi class="secno">4.1.23 </bdi><code>published</code></a></li><li class="tocline"><a class="tocxref" href="#845f8cac7281e04d4bc2207f7a85d42507778854a7a4a5e077084a67655739ee"><bdi class="secno">4.1.24 </bdi><code>verificationMethod</code></a></li><li class="tocline"><a class="tocxref" href="#afed65d63e211837b30a28b453fbe4f178a904e31d7951f775ff045d96fdb02a"><bdi class="secno">4.1.25 </bdi><code>authentication</code></a></li><li class="tocline"><a class="tocxref" href="#fa33984b561b2c3989b0776a4d3123f09d9ac86360b74214ed53484a7f8670ca"><bdi class="secno">4.1.26 </bdi><code>controller</code></a></li><li class="tocline"><a class="tocxref" href="#624ce63c5dda3367d3dd53ca3411239ec495ea9045de38f4681608d0133e6fb3"><bdi class="secno">4.1.27 </bdi><code>publicKeyJwk</code></a></li><li class="tocline"><a class="tocxref" href="#52bc57ea041db58ded36632f4f71ddd9ece282d3db60222e047726a5d23bb6d9"><bdi class="secno">4.1.28 </bdi><code>inbox</code></a></li><li class="tocline"><a class="tocxref" href="#efb667ee234b4dff6323cb962c83811135a9126a05a4835ce19b5e1ca7e1200b"><bdi class="secno">4.1.29 </bdi><code>expires</code></a></li></ol></li><li class="tocline"><a class="tocxref" href="#class_definitions"><bdi class="secno">4.2 </bdi>Class definitions</a><ol class="toc"><li class="tocline"><a class="tocxref" href="#Container"><bdi class="secno">4.2.1 </bdi><code>Container</code></a></li><li class="tocline"><a class="tocxref" href="#DataResource"><bdi class="secno">4.2.2 </bdi><code>DataResource</code></a></li><li class="tocline"><a class="tocxref" href="#Storage"><bdi class="secno">4.2.3 </bdi><code>Storage</code></a></li><li class="tocline"><a class="tocxref" href="#StorageDescription"><bdi class="secno">4.2.4 </bdi><code>StorageDescription</code></a></li><li class="tocline"><a class="tocxref" href="#OpenIdProvider"><bdi class="secno">4.2.5 </bdi><code>OpenIdProvider</code></a></li><li class="tocline"><a class="tocxref" href="#Notification"><bdi class="secno">4.2.6 </bdi><code>Notification</code></a></li><li class="tocline"><a class="tocxref" href="#NotificationService"><bdi class="secno">4.2.7 </bdi><code>NotificationService</code></a></li><li class="tocline"><a class="tocxref" href="#WebhookSubscription"><bdi class="secno">4.2.8 </bdi><code>WebhookSubscription</code></a></li></ol></li></ol></li><li class="tocline"><a class="tocxref" href="#references"><bdi class="secno">A. </bdi>References</a><ol class="toc"><li class="tocline"><a class="tocxref" href="#informative-references"><bdi class="secno">A.1 </bdi>Informative references</a></li></ol></li></ol></nav>
+
+    <section id="conformance"><div class="header-wrapper"><h2 id="x1-conformance"><bdi class="secno">1. </bdi>Conformance</h2><a class="self-link" href="#conformance" aria-label="Permalink for Section 1."></a></div><p>As well as sections marked as non-normative, all authoring guidelines, diagrams, examples, and notes in this specification are non-normative. Everything else in this specification is normative.</p></section>
+    <section id="namespaces-0"><div class="header-wrapper"><h2 id="x2-namespaces"><bdi class="secno">2. </bdi>Namespaces</h2><a class="self-link" href="#namespaces-0" aria-label="Permalink for Section 2."></a></div>
+        
+        <p>This specification makes use of the following namespaces:</p>
+        <dl class="terms" id="namespaces">
+            <dt><code>lws</code></dt>
+            <dd><code>https://www.w3.org/ns/lws#</code></dd>
+            <dt><code>as</code></dt>
+            <dd><code>https://www.w3.org/ns/activitystreams#</code></dd>
+            <dt><code>schema</code></dt>
+            <dd><code>http://schema.org/</code></dd>
+            <dt><code>sec</code></dt>
+            <dd><code>https://w3id.org/security#</code></dd>
+            <dt><code>ldp</code></dt>
+            <dd><code>http://www.w3.org/ns/ldp#</code></dd>
+            <dt><code>dc</code></dt>
+            <dd><code>http://purl.org/dc/terms/</code></dd>
+            <dt><code>owl</code></dt>
+            <dd><code>http://www.w3.org/2002/07/owl#</code></dd>
+            <dt><code>rdf</code></dt>
+            <dd><code>http://www.w3.org/1999/02/22-rdf-syntax-ns#</code></dd>
+            <dt><code>rdfs</code></dt>
+            <dd><code>http://www.w3.org/2000/01/rdf-schema#</code></dd>
+            <dt><code>xsd</code></dt>
+            <dd><code>http://www.w3.org/2001/XMLSchema#</code></dd>
+        </dl>
+    </section>
+
+    <section id="context-files"><div class="header-wrapper"><h2 id="x3-context-files"><bdi class="secno">3. </bdi><code>@context</code> files</h2><a class="self-link" href="#context-files" aria-label="Permalink for Section 3."></a></div>
+        
+        <p>The following <code>@context</code> files make use of the terms defined in this specification:</p>
+        <ul id="contexts">
+            <li><a href="https://www.w3.org/ns/lws/v1"><code>https://www.w3.org/ns/lws/v1</code></a>
+                <details>
+                    <summary>term list</summary>
+                    <ul>
+                        <li><a href="#3402e5da4e5885d9460b96d124b7017b1322052c5134d762259a7d39408426e7"><code>Create<code></code></code></a></li>
+                        <li><a href="#90ed75ccabbc35f8fe281b727efb84f253fb62fe16170c7313784659d04bee08"><code>Delete<code></code></code></a></li>
+                        <li><a href="#8a964738c1fd41faf6fef20e6593ad4852ccd95f38e4c4d47bdd78b1cebc1d36"><code>Update<code></code></code></a></li>
+                        <li><a href="#8fc24f49482ce6ce4ffd98520aa3e61cde0eed0a5df192190d8947814e2f8f17"><code>actor<code></code></code></a></li>
+                        <li><a href="#8821fe640fb97946823030bc45b4fd56e0e7b8a05d36284295acc670761ed10a"><code>mediaType<code></code></code></a></li>
+                        <li><a href="#39311eecb418e6dd320f3854f89d76295763948f5a670b83498f25bd439683dc"><code>object<code></code></code></a></li>
+                        <li><a href="#e80e2c11dea74c0081f1ec213ab96901f31d87cf372e5c8e5ebb3d59305e5e09"><code>origin<code></code></code></a></li>
+                        <li><a href="#b1274c3a39ffb5419c130c3c877130a9f263e26593dbd57f3020d7ec3328eb98"><code>published<code></code></code></a></li>
+                        <li><a href="#509d77441ca736fc71f195a705c5b29950a57f9fa967adb9216a671b6ddd3167"><code>target<code></code></code></a></li>
+                        <li><a href="#7705770160b173ebe124d6db3ffe6c2af9967bcaa2bdf1c9a30b260f3fd8cadd"><code>totalItems<code></code></code></a></li>
+                        <li><a href="#266f3ae3210ec2185154dcc2f3311ba1ec77706d2a2669280046a8fb659caa4d"><code>updated<code></code></code></a></li>
+                        <li><a href="#52bc57ea041db58ded36632f4f71ddd9ece282d3db60222e047726a5d23bb6d9"><code>inbox<code></code></code></a></li>
+                        <li><a href="#Container"><code>Container<code></code></code></a></li>
+                        <li><a href="#DataResource"><code>DataResource<code></code></code></a></li>
+                        <li><a href="#Notification"><code>Notification<code></code></code></a></li>
+                        <li><a href="#NotificationService"><code>NotificationService<code></code></code></a></li>
+                        <li><a href="#OpenIdProvider"><code>OpenIdProvider<code></code></code></a></li>
+                        <li><a href="#PreferLinkRelations"><code>PreferLinkRelations<code></code></code></a></li>
+                        <li><a href="#Storage"><code>Storage<code></code></code></a></li>
+                        <li><a href="#StorageDescription"><code>StorageDescription<code></code></code></a></li>
+                        <li><a href="#WebhookSubscription"><code>WebhookSubscription<code></code></code></a></li>
+                        <li><a href="#activity"><code>activity<code></code></code></a></li>
+                        <li><a href="#capability"><code>capability<code></code></code></a></li>
+                        <li><a href="#items"><code>items<code></code></code></a></li>
+                        <li><a href="#service"><code>service<code></code></code></a></li>
+                        <li><a href="#serviceEndpoint"><code>serviceEndpoint<code></code></code></a></li>
+                        <li><a href="#storage"><code>storage<code></code></code></a></li>
+                        <li><a href="#storageDescription"><code>storageDescription<code></code></code></a></li>
+                        <li><a href="#subscription"><code>subscription<code></code></code></a></li>
+                        <li><a href="#subscriptionType"><code>subscriptionType<code></code></code></a></li>
+                        <li><a href="#topic"><code>topic<code></code></code></a></li>
+                        <li><a href="#efb667ee234b4dff6323cb962c83811135a9126a05a4835ce19b5e1ca7e1200b"><code>expires<code></code></code></a></li>
+                        <li><a href="#459c0585b8f621976577328df8c114b4e6e790c022a95add3d952e0e767c753c"><code>size<code></code></code></a></li>
+                        <li><a href="#afed65d63e211837b30a28b453fbe4f178a904e31d7951f775ff045d96fdb02a"><code>authentication<code></code></code></a></li>
+                        <li><a href="#fa33984b561b2c3989b0776a4d3123f09d9ac86360b74214ed53484a7f8670ca"><code>controller<code></code></code></a></li>
+                        <li><a href="#624ce63c5dda3367d3dd53ca3411239ec495ea9045de38f4681608d0133e6fb3"><code>publicKeyJwk<code></code></code></a></li>
+                        <li><a href="#845f8cac7281e04d4bc2207f7a85d42507778854a7a4a5e077084a67655739ee"><code>verificationMethod<code></code></code></a></li>
+                    </ul>
+                </details>
+            </li>
+        </ul>
+    </section>
+
+    <section id="term_definitions"><div class="header-wrapper"><h2 id="x4-term-definitions"><bdi class="secno">4. </bdi>Term definitions</h2><a class="self-link" href="#term_definitions" aria-label="Permalink for Section 4."></a></div>
+        
+
+        <section id="property_definitions" class="term_definitions"><div class="header-wrapper"><h3 id="x4-1-property-definitions"><bdi class="secno">4.1 </bdi>Property definitions</h3><a class="self-link" href="#property_definitions" aria-label="Permalink for Section 4.1"></a></div>
+            
+            <p>The following are property definitions in the <code>lws</code> namespace.</p>
+            <section id="items"><div class="header-wrapper"><h4 id="x4-1-1-items"><bdi class="secno">4.1.1 </bdi><code>items</code></h4><a class="self-link" href="#items" aria-label="Permalink for Section 4.1.1"></a></div>
+                
+                <p><em>items</em></p>
+                <div>The list of resources contained in a container.</div>
+                <dl class="terms">
+                    <dt>Domain:</dt>
+                    <dd><a href="#Container"><code>Container</code></a></dd>
+                </dl>
+                <dl class="terms">
+                    <dt>Relevant <code>@context</code>:</dt>
+                    <dd><a href="https://www.w3.org/ns/lws/v1"><code>https://www.w3.org/ns/lws/v1</code></a></dd>
+                </dl>
+            </section>
+            <section id="7705770160b173ebe124d6db3ffe6c2af9967bcaa2bdf1c9a30b260f3fd8cadd"><div class="header-wrapper"><h4 id="x4-1-2-totalitems"><bdi class="secno">4.1.2 </bdi><code>totalItems</code></h4><a class="self-link" href="#7705770160b173ebe124d6db3ffe6c2af9967bcaa2bdf1c9a30b260f3fd8cadd" aria-label="Permalink for Section 4.1.2"></a></div>
+                
+                <p><em>total items</em></p>
+                <div>The total number of items in a container.</div>
+                <div class="note" role="note" id="issue-container-generatedID"><div class="note-title marker" id="h-note"><span>Note</span></div><p class="">
+                    <b>This term is formally defined in another vocabulary</b>
+                    (as <a href="https://www.w3.org/ns/activitystreams#totalItems">as:totalItems</a>), but is frequently used with this vocabulary and has been
+                    included to aid readability of this document.
+                </p></div>
+                <dl class="terms">
+                    <dt>Relevant <code>@context</code>:</dt>
+                    <dd><a href="https://www.w3.org/ns/lws/v1"><code>https://www.w3.org/ns/lws/v1</code></a></dd>
+                </dl>
+            </section>
+            <section id="8821fe640fb97946823030bc45b4fd56e0e7b8a05d36284295acc670761ed10a"><div class="header-wrapper"><h4 id="x4-1-3-mediatype"><bdi class="secno">4.1.3 </bdi><code>mediaType</code></h4><a class="self-link" href="#8821fe640fb97946823030bc45b4fd56e0e7b8a05d36284295acc670761ed10a" aria-label="Permalink for Section 4.1.3"></a></div>
+                
+                <p><em>media type</em></p>
+                <div>The media type of a data resource.</div>
+                <div class="note" role="note" id="issue-container-generatedID-0"><div class="note-title marker" id="h-note-0"><span>Note</span></div><p class="">
+                    <b>This term is formally defined in another vocabulary</b>
+                    (as <a href="https://www.w3.org/ns/activitystreams#mediaType">as:mediaType</a>), but is frequently used with this vocabulary and has been
+                    included to aid readability of this document.
+                </p></div>
+                <dl class="terms">
+                    <dt>Relevant <code>@context</code>:</dt>
+                    <dd><a href="https://www.w3.org/ns/lws/v1"><code>https://www.w3.org/ns/lws/v1</code></a></dd>
+                </dl>
+            </section>
+            <section id="266f3ae3210ec2185154dcc2f3311ba1ec77706d2a2669280046a8fb659caa4d"><div class="header-wrapper"><h4 id="x4-1-4-updated"><bdi class="secno">4.1.4 </bdi><code>updated</code></h4><a class="self-link" href="#266f3ae3210ec2185154dcc2f3311ba1ec77706d2a2669280046a8fb659caa4d" aria-label="Permalink for Section 4.1.4"></a></div>
+                
+                <p><em>modified</em></p>
+                <div>The date and time the resource was last modified.</div>
+                <div class="note" role="note" id="issue-container-generatedID-1"><div class="note-title marker" id="h-note-1"><span>Note</span></div><p class="">
+                    <b>This term is formally defined in another vocabulary</b>
+                    (as <a href="https://www.w3.org/ns/activitystreams#updated">as:updated</a>), but is frequently used with this vocabulary and has been
+                    included to aid readability of this document.
+                </p></div>
+                <dl class="terms">
+                    <dt>Relevant <code>@context</code>:</dt>
+                    <dd><a href="https://www.w3.org/ns/lws/v1"><code>https://www.w3.org/ns/lws/v1</code></a></dd>
+                </dl>
+            </section>
+            <section id="459c0585b8f621976577328df8c114b4e6e790c022a95add3d952e0e767c753c"><div class="header-wrapper"><h4 id="x4-1-5-size"><bdi class="secno">4.1.5 </bdi><code>size</code></h4><a class="self-link" href="#459c0585b8f621976577328df8c114b4e6e790c022a95add3d952e0e767c753c" aria-label="Permalink for Section 4.1.5"></a></div>
+                
+                <p><em>size</em></p>
+                <div>The size of the resource in bytes.</div>
+                <div class="note" role="note" id="issue-container-generatedID-2"><div class="note-title marker" id="h-note-2"><span>Note</span></div><p class="">
+                    <b>This term is formally defined in another vocabulary</b>
+                    (as <a href="http://schema.org/size">schema:size</a>), but is frequently used with this vocabulary and has been
+                    included to aid readability of this document.
+                </p></div>
+                <dl class="terms">
+                    <dt>Relevant <code>@context</code>:</dt>
+                    <dd><a href="https://www.w3.org/ns/lws/v1"><code>https://www.w3.org/ns/lws/v1</code></a></dd>
+                </dl>
+            </section>
+            <section id="capability"><div class="header-wrapper"><h4 id="x4-1-6-capability"><bdi class="secno">4.1.6 </bdi><code>capability</code></h4><a class="self-link" href="#capability" aria-label="Permalink for Section 4.1.6"></a></div>
+                
+                <p><em>capability</em></p>
+                <div>A capability supported by the storage.</div>
+                <dl class="terms">
+                    <dt>Domain:</dt>
+                    <dd><a href="#Storage"><code>Storage</code></a></dd>
+                </dl>
+                <dl class="terms">
+                    <dt>Relevant <code>@context</code>:</dt>
+                    <dd><a href="https://www.w3.org/ns/lws/v1"><code>https://www.w3.org/ns/lws/v1</code></a></dd>
+                </dl>
+            </section>
+            <section id="service"><div class="header-wrapper"><h4 id="x4-1-7-service"><bdi class="secno">4.1.7 </bdi><code>service</code></h4><a class="self-link" href="#service" aria-label="Permalink for Section 4.1.7"></a></div>
+                
+                <p><em>service</em></p>
+                <div>A service associated with the storage.</div>
+                <dl class="terms">
+                    <dt>Domain:</dt>
+                    <dd><a href="#Storage"><code>Storage</code></a></dd>
+                </dl>
+                <dl class="terms">
+                    <dt>Relevant <code>@context</code>:</dt>
+                    <dd><a href="https://www.w3.org/ns/lws/v1"><code>https://www.w3.org/ns/lws/v1</code></a></dd>
+                </dl>
+            </section>
+            <section id="serviceEndpoint"><div class="header-wrapper"><h4 id="x4-1-8-serviceendpoint"><bdi class="secno">4.1.8 </bdi><code>serviceEndpoint</code></h4><a class="self-link" href="#serviceEndpoint" aria-label="Permalink for Section 4.1.8"></a></div>
+                
+                <p><em>service endpoint</em></p>
+                <div>The URI of a service endpoint.</div>
+                <dl class="terms">
+                    <dt>Range:</dt>
+                    <dd><code>xsd:anyURI</code></dd>
+                </dl>
+                <dl class="terms">
+                    <dt>Relevant <code>@context</code>:</dt>
+                    <dd><a href="https://www.w3.org/ns/lws/v1"><code>https://www.w3.org/ns/lws/v1</code></a></dd>
+                </dl>
+            </section>
+            <section id="storageDescription"><div class="header-wrapper"><h4 id="x4-1-9-storagedescription"><bdi class="secno">4.1.9 </bdi><code>storageDescription</code></h4><a class="self-link" href="#storageDescription" aria-label="Permalink for Section 4.1.9"></a></div>
+                
+                <p><em>storage description</em></p>
+                <div>Link relation pointing to a storage description resource.</div>
+                <dl class="terms">
+                    <dt>Range:</dt>
+                    <dd><code>xsd:anyURI</code></dd>
+                </dl>
+                <dl class="terms">
+                    <dt>Relevant <code>@context</code>:</dt>
+                    <dd><a href="https://www.w3.org/ns/lws/v1"><code>https://www.w3.org/ns/lws/v1</code></a></dd>
+                </dl>
+            </section>
+            <section id="PreferLinkRelations"><div class="header-wrapper"><h4 id="x4-1-10-preferlinkrelations"><bdi class="secno">4.1.10 </bdi><code>PreferLinkRelations</code></h4><a class="self-link" href="#PreferLinkRelations" aria-label="Permalink for Section 4.1.10"></a></div>
+                
+                <p><em>Prefer Link Relations</em></p>
+                <div>A preference URI for including or omitting specific link relations in responses.</div>
+                <dl class="terms">
+                    <dt>Relevant <code>@context</code>:</dt>
+                    <dd><a href="https://www.w3.org/ns/lws/v1"><code>https://www.w3.org/ns/lws/v1</code></a></dd>
+                </dl>
+            </section>
+            <section id="subscriptionType"><div class="header-wrapper"><h4 id="x4-1-11-subscriptiontype"><bdi class="secno">4.1.11 </bdi><code>subscriptionType</code></h4><a class="self-link" href="#subscriptionType" aria-label="Permalink for Section 4.1.11"></a></div>
+                
+                <p><em>subscription type</em></p>
+                <p>See the <a href="https://www.w3.org/TR/lws-notifications/">formal definition of the term</a>.</p>
+                <div>The subscription types supported by a notification service.</div>
+                <dl class="terms">
+                    <dt>Domain:</dt>
+                    <dd><a href="#NotificationService"><code>NotificationService</code></a></dd>
+                </dl>
+                <dl class="terms">
+                    <dt>Relevant <code>@context</code>:</dt>
+                    <dd><a href="https://www.w3.org/ns/lws/v1"><code>https://www.w3.org/ns/lws/v1</code></a></dd>
+                </dl>
+            </section>
+            <section id="subscription"><div class="header-wrapper"><h4 id="x4-1-12-subscription"><bdi class="secno">4.1.12 </bdi><code>subscription</code></h4><a class="self-link" href="#subscription" aria-label="Permalink for Section 4.1.12"></a></div>
+                
+                <p><em>subscription</em></p>
+                <p>See the <a href="https://www.w3.org/TR/lws-notifications/">formal definition of the term</a>.</p>
+                <div>The URL of the subscription resource or connection endpoint.</div>
+                <dl class="terms">
+                    <dt>Range:</dt>
+                    <dd><code>xsd:anyURI</code></dd>
+                </dl>
+                <dl class="terms">
+                    <dt>Relevant <code>@context</code>:</dt>
+                    <dd><a href="https://www.w3.org/ns/lws/v1"><code>https://www.w3.org/ns/lws/v1</code></a></dd>
+                </dl>
+            </section>
+            <section id="activity"><div class="header-wrapper"><h4 id="x4-1-13-activity"><bdi class="secno">4.1.13 </bdi><code>activity</code></h4><a class="self-link" href="#activity" aria-label="Permalink for Section 4.1.13"></a></div>
+                
+                <p><em>activity</em></p>
+                <p>See the <a href="https://www.w3.org/TR/lws-notifications/">formal definition of the term</a>.</p>
+                <div>The Activity Streams 2.0 activity payload within a notification.</div>
+                <dl class="terms">
+                    <dt>Domain:</dt>
+                    <dd><a href="#Notification"><code>Notification</code></a></dd>
+                </dl>
+                <dl class="terms">
+                    <dt>Relevant <code>@context</code>:</dt>
+                    <dd><a href="https://www.w3.org/ns/lws/v1"><code>https://www.w3.org/ns/lws/v1</code></a></dd>
+                </dl>
+            </section>
+            <section id="topic"><div class="header-wrapper"><h4 id="x4-1-14-topic"><bdi class="secno">4.1.14 </bdi><code>topic</code></h4><a class="self-link" href="#topic" aria-label="Permalink for Section 4.1.14"></a></div>
+                
+                <p><em>topic</em></p>
+                <p>See the <a href="https://www.w3.org/TR/lws-notifications/">formal definition of the term</a>.</p>
+                <div>An array of resource URIs covered by a subscription.</div>
+                <dl class="terms">
+                    <dt>Range:</dt>
+                    <dd><code>xsd:anyURI</code></dd>
+                </dl>
+                <dl class="terms">
+                    <dt>Relevant <code>@context</code>:</dt>
+                    <dd><a href="https://www.w3.org/ns/lws/v1"><code>https://www.w3.org/ns/lws/v1</code></a></dd>
+                </dl>
+            </section>
+            <section id="storage"><div class="header-wrapper"><h4 id="x4-1-15-storage"><bdi class="secno">4.1.15 </bdi><code>storage</code></h4><a class="self-link" href="#storage" aria-label="Permalink for Section 4.1.15"></a></div>
+                
+                <p><em>storage</em></p>
+                <p>See the <a href="https://www.w3.org/TR/lws-notifications/">formal definition of the term</a>.</p>
+                <div>The URI identifying the LWS storage that emitted the notification.</div>
+                <dl class="terms">
+                    <dt>Range:</dt>
+                    <dd><code>xsd:anyURI</code></dd>
+                </dl>
+                <dl class="terms">
+                    <dt>Relevant <code>@context</code>:</dt>
+                    <dd><a href="https://www.w3.org/ns/lws/v1"><code>https://www.w3.org/ns/lws/v1</code></a></dd>
+                </dl>
+            </section>
+            <section id="3402e5da4e5885d9460b96d124b7017b1322052c5134d762259a7d39408426e7"><div class="header-wrapper"><h4 id="x4-1-16-create"><bdi class="secno">4.1.16 </bdi><code>Create</code></h4><a class="self-link" href="#3402e5da4e5885d9460b96d124b7017b1322052c5134d762259a7d39408426e7" aria-label="Permalink for Section 4.1.16"></a></div>
+                
+                <p><em>Create</em></p>
+                <div>An activity representing the creation of a resource.</div>
+                <div class="note" role="note" id="issue-container-generatedID-3"><div class="note-title marker" id="h-note-3"><span>Note</span></div><p class="">
+                    <b>This term is formally defined in another vocabulary</b>
+                    (as <a href="https://www.w3.org/ns/activitystreams#Create">as:Create</a>), but is frequently used with this vocabulary and has been
+                    included to aid readability of this document.
+                </p></div>
+                <dl class="terms">
+                    <dt>Relevant <code>@context</code>:</dt>
+                    <dd><a href="https://www.w3.org/ns/lws/v1"><code>https://www.w3.org/ns/lws/v1</code></a></dd>
+                </dl>
+            </section>
+            <section id="8a964738c1fd41faf6fef20e6593ad4852ccd95f38e4c4d47bdd78b1cebc1d36"><div class="header-wrapper"><h4 id="x4-1-17-update"><bdi class="secno">4.1.17 </bdi><code>Update</code></h4><a class="self-link" href="#8a964738c1fd41faf6fef20e6593ad4852ccd95f38e4c4d47bdd78b1cebc1d36" aria-label="Permalink for Section 4.1.17"></a></div>
+                
+                <p><em>Update</em></p>
+                <div>An activity representing the update of a resource.</div>
+                <div class="note" role="note" id="issue-container-generatedID-4"><div class="note-title marker" id="h-note-4"><span>Note</span></div><p class="">
+                    <b>This term is formally defined in another vocabulary</b>
+                    (as <a href="https://www.w3.org/ns/activitystreams#Update">as:Update</a>), but is frequently used with this vocabulary and has been
+                    included to aid readability of this document.
+                </p></div>
+                <dl class="terms">
+                    <dt>Relevant <code>@context</code>:</dt>
+                    <dd><a href="https://www.w3.org/ns/lws/v1"><code>https://www.w3.org/ns/lws/v1</code></a></dd>
+                </dl>
+            </section>
+            <section id="90ed75ccabbc35f8fe281b727efb84f253fb62fe16170c7313784659d04bee08"><div class="header-wrapper"><h4 id="x4-1-18-delete"><bdi class="secno">4.1.18 </bdi><code>Delete</code></h4><a class="self-link" href="#90ed75ccabbc35f8fe281b727efb84f253fb62fe16170c7313784659d04bee08" aria-label="Permalink for Section 4.1.18"></a></div>
+                
+                <p><em>Delete</em></p>
+                <div>An activity representing the deletion of a resource.</div>
+                <div class="note" role="note" id="issue-container-generatedID-5"><div class="note-title marker" id="h-note-5"><span>Note</span></div><p class="">
+                    <b>This term is formally defined in another vocabulary</b>
+                    (as <a href="https://www.w3.org/ns/activitystreams#Delete">as:Delete</a>), but is frequently used with this vocabulary and has been
+                    included to aid readability of this document.
+                </p></div>
+                <dl class="terms">
+                    <dt>Relevant <code>@context</code>:</dt>
+                    <dd><a href="https://www.w3.org/ns/lws/v1"><code>https://www.w3.org/ns/lws/v1</code></a></dd>
+                </dl>
+            </section>
+            <section id="39311eecb418e6dd320f3854f89d76295763948f5a670b83498f25bd439683dc"><div class="header-wrapper"><h4 id="x4-1-19-object"><bdi class="secno">4.1.19 </bdi><code>object</code></h4><a class="self-link" href="#39311eecb418e6dd320f3854f89d76295763948f5a670b83498f25bd439683dc" aria-label="Permalink for Section 4.1.19"></a></div>
+                
+                <p><em>object</em></p>
+                <div>The primary object of an activity.</div>
+                <div class="note" role="note" id="issue-container-generatedID-6"><div class="note-title marker" id="h-note-6"><span>Note</span></div><p class="">
+                    <b>This term is formally defined in another vocabulary</b>
+                    (as <a href="https://www.w3.org/ns/activitystreams#object">as:object</a>), but is frequently used with this vocabulary and has been
+                    included to aid readability of this document.
+                </p></div>
+                <dl class="terms">
+                    <dt>Relevant <code>@context</code>:</dt>
+                    <dd><a href="https://www.w3.org/ns/lws/v1"><code>https://www.w3.org/ns/lws/v1</code></a></dd>
+                </dl>
+            </section>
+            <section id="8fc24f49482ce6ce4ffd98520aa3e61cde0eed0a5df192190d8947814e2f8f17"><div class="header-wrapper"><h4 id="x4-1-20-actor"><bdi class="secno">4.1.20 </bdi><code>actor</code></h4><a class="self-link" href="#8fc24f49482ce6ce4ffd98520aa3e61cde0eed0a5df192190d8947814e2f8f17" aria-label="Permalink for Section 4.1.20"></a></div>
+                
+                <p><em>actor</em></p>
+                <div>The agent that performed the activity.</div>
+                <div class="note" role="note" id="issue-container-generatedID-7"><div class="note-title marker" id="h-note-7"><span>Note</span></div><p class="">
+                    <b>This term is formally defined in another vocabulary</b>
+                    (as <a href="https://www.w3.org/ns/activitystreams#actor">as:actor</a>), but is frequently used with this vocabulary and has been
+                    included to aid readability of this document.
+                </p></div>
+                <dl class="terms">
+                    <dt>Relevant <code>@context</code>:</dt>
+                    <dd><a href="https://www.w3.org/ns/lws/v1"><code>https://www.w3.org/ns/lws/v1</code></a></dd>
+                </dl>
+            </section>
+            <section id="509d77441ca736fc71f195a705c5b29950a57f9fa967adb9216a671b6ddd3167"><div class="header-wrapper"><h4 id="x4-1-21-target"><bdi class="secno">4.1.21 </bdi><code>target</code></h4><a class="self-link" href="#509d77441ca736fc71f195a705c5b29950a57f9fa967adb9216a671b6ddd3167" aria-label="Permalink for Section 4.1.21"></a></div>
+                
+                <p><em>target</em></p>
+                <div>The target of the activity.</div>
+                <div class="note" role="note" id="issue-container-generatedID-8"><div class="note-title marker" id="h-note-8"><span>Note</span></div><p class="">
+                    <b>This term is formally defined in another vocabulary</b>
+                    (as <a href="https://www.w3.org/ns/activitystreams#target">as:target</a>), but is frequently used with this vocabulary and has been
+                    included to aid readability of this document.
+                </p></div>
+                <dl class="terms">
+                    <dt>Relevant <code>@context</code>:</dt>
+                    <dd><a href="https://www.w3.org/ns/lws/v1"><code>https://www.w3.org/ns/lws/v1</code></a></dd>
+                </dl>
+            </section>
+            <section id="e80e2c11dea74c0081f1ec213ab96901f31d87cf372e5c8e5ebb3d59305e5e09"><div class="header-wrapper"><h4 id="x4-1-22-origin"><bdi class="secno">4.1.22 </bdi><code>origin</code></h4><a class="self-link" href="#e80e2c11dea74c0081f1ec213ab96901f31d87cf372e5c8e5ebb3d59305e5e09" aria-label="Permalink for Section 4.1.22"></a></div>
+                
+                <p><em>origin</em></p>
+                <div>The origin of a Move activity.</div>
+                <div class="note" role="note" id="issue-container-generatedID-9"><div class="note-title marker" id="h-note-9"><span>Note</span></div><p class="">
+                    <b>This term is formally defined in another vocabulary</b>
+                    (as <a href="https://www.w3.org/ns/activitystreams#origin">as:origin</a>), but is frequently used with this vocabulary and has been
+                    included to aid readability of this document.
+                </p></div>
+                <dl class="terms">
+                    <dt>Relevant <code>@context</code>:</dt>
+                    <dd><a href="https://www.w3.org/ns/lws/v1"><code>https://www.w3.org/ns/lws/v1</code></a></dd>
+                </dl>
+            </section>
+            <section id="b1274c3a39ffb5419c130c3c877130a9f263e26593dbd57f3020d7ec3328eb98"><div class="header-wrapper"><h4 id="x4-1-23-published"><bdi class="secno">4.1.23 </bdi><code>published</code></h4><a class="self-link" href="#b1274c3a39ffb5419c130c3c877130a9f263e26593dbd57f3020d7ec3328eb98" aria-label="Permalink for Section 4.1.23"></a></div>
+                
+                <p><em>published</em></p>
+                <div>The date and time the activity was published.</div>
+                <div class="note" role="note" id="issue-container-generatedID-10"><div class="note-title marker" id="h-note-10"><span>Note</span></div><p class="">
+                    <b>This term is formally defined in another vocabulary</b>
+                    (as <a href="https://www.w3.org/ns/activitystreams#published">as:published</a>), but is frequently used with this vocabulary and has been
+                    included to aid readability of this document.
+                </p></div>
+                <dl class="terms">
+                    <dt>Relevant <code>@context</code>:</dt>
+                    <dd><a href="https://www.w3.org/ns/lws/v1"><code>https://www.w3.org/ns/lws/v1</code></a></dd>
+                </dl>
+            </section>
+            <section id="845f8cac7281e04d4bc2207f7a85d42507778854a7a4a5e077084a67655739ee"><div class="header-wrapper"><h4 id="x4-1-24-verificationmethod"><bdi class="secno">4.1.24 </bdi><code>verificationMethod</code></h4><a class="self-link" href="#845f8cac7281e04d4bc2207f7a85d42507778854a7a4a5e077084a67655739ee" aria-label="Permalink for Section 4.1.24"></a></div>
+                
+                <p><em>verification method</em></p>
+                <div>A verification method associated with a key or identity.</div>
+                <div class="note" role="note" id="issue-container-generatedID-11"><div class="note-title marker" id="h-note-11"><span>Note</span></div><p class="">
+                    <b>This term is formally defined in another vocabulary</b>
+                    (as <a href="https://w3id.org/security#verificationMethod">sec:verificationMethod</a>), but is frequently used with this vocabulary and has been
+                    included to aid readability of this document.
+                </p></div>
+                <dl class="terms">
+                    <dt>Relevant <code>@context</code>:</dt>
+                    <dd><a href="https://www.w3.org/ns/lws/v1"><code>https://www.w3.org/ns/lws/v1</code></a></dd>
+                </dl>
+            </section>
+            <section id="afed65d63e211837b30a28b453fbe4f178a904e31d7951f775ff045d96fdb02a"><div class="header-wrapper"><h4 id="x4-1-25-authentication"><bdi class="secno">4.1.25 </bdi><code>authentication</code></h4><a class="self-link" href="#afed65d63e211837b30a28b453fbe4f178a904e31d7951f775ff045d96fdb02a" aria-label="Permalink for Section 4.1.25"></a></div>
+                
+                <p><em>authentication</em></p>
+                <div>An authentication method associated with an identity.</div>
+                <div class="note" role="note" id="issue-container-generatedID-12"><div class="note-title marker" id="h-note-12"><span>Note</span></div><p class="">
+                    <b>This term is formally defined in another vocabulary</b>
+                    (as <a href="https://w3id.org/security#authentication">sec:authentication</a>), but is frequently used with this vocabulary and has been
+                    included to aid readability of this document.
+                </p></div>
+                <dl class="terms">
+                    <dt>Relevant <code>@context</code>:</dt>
+                    <dd><a href="https://www.w3.org/ns/lws/v1"><code>https://www.w3.org/ns/lws/v1</code></a></dd>
+                </dl>
+            </section>
+            <section id="fa33984b561b2c3989b0776a4d3123f09d9ac86360b74214ed53484a7f8670ca"><div class="header-wrapper"><h4 id="x4-1-26-controller"><bdi class="secno">4.1.26 </bdi><code>controller</code></h4><a class="self-link" href="#fa33984b561b2c3989b0776a4d3123f09d9ac86360b74214ed53484a7f8670ca" aria-label="Permalink for Section 4.1.26"></a></div>
+                
+                <p><em>controller</em></p>
+                <div>The entity that controls a verification method.</div>
+                <div class="note" role="note" id="issue-container-generatedID-13"><div class="note-title marker" id="h-note-13"><span>Note</span></div><p class="">
+                    <b>This term is formally defined in another vocabulary</b>
+                    (as <a href="https://w3id.org/security#controller">sec:controller</a>), but is frequently used with this vocabulary and has been
+                    included to aid readability of this document.
+                </p></div>
+                <dl class="terms">
+                    <dt>Relevant <code>@context</code>:</dt>
+                    <dd><a href="https://www.w3.org/ns/lws/v1"><code>https://www.w3.org/ns/lws/v1</code></a></dd>
+                </dl>
+            </section>
+            <section id="624ce63c5dda3367d3dd53ca3411239ec495ea9045de38f4681608d0133e6fb3"><div class="header-wrapper"><h4 id="x4-1-27-publickeyjwk"><bdi class="secno">4.1.27 </bdi><code>publicKeyJwk</code></h4><a class="self-link" href="#624ce63c5dda3367d3dd53ca3411239ec495ea9045de38f4681608d0133e6fb3" aria-label="Permalink for Section 4.1.27"></a></div>
+                
+                <p><em>public key JWK</em></p>
+                <div>A public key expressed as a JSON Web Key.</div>
+                <div class="note" role="note" id="issue-container-generatedID-14"><div class="note-title marker" id="h-note-14"><span>Note</span></div><p class="">
+                    <b>This term is formally defined in another vocabulary</b>
+                    (as <a href="https://w3id.org/security#publicKeyJwk">sec:publicKeyJwk</a>), but is frequently used with this vocabulary and has been
+                    included to aid readability of this document.
+                </p></div>
+                <dl class="terms">
+                    <dt>Relevant <code>@context</code>:</dt>
+                    <dd><a href="https://www.w3.org/ns/lws/v1"><code>https://www.w3.org/ns/lws/v1</code></a></dd>
+                </dl>
+            </section>
+            <section id="52bc57ea041db58ded36632f4f71ddd9ece282d3db60222e047726a5d23bb6d9"><div class="header-wrapper"><h4 id="x4-1-28-inbox"><bdi class="secno">4.1.28 </bdi><code>inbox</code></h4><a class="self-link" href="#52bc57ea041db58ded36632f4f71ddd9ece282d3db60222e047726a5d23bb6d9" aria-label="Permalink for Section 4.1.28"></a></div>
+                
+                <p><em>inbox</em></p>
+                <div>A URL to which notifications are delivered via HTTP POST.</div>
+                <div class="note" role="note" id="issue-container-generatedID-15"><div class="note-title marker" id="h-note-15"><span>Note</span></div><p class="">
+                    <b>This term is formally defined in another vocabulary</b>
+                    (as <a href="http://www.w3.org/ns/ldp#inbox">ldp:inbox</a>), but is frequently used with this vocabulary and has been
+                    included to aid readability of this document.
+                </p></div>
+                <dl class="terms">
+                    <dt>Relevant <code>@context</code>:</dt>
+                    <dd><a href="https://www.w3.org/ns/lws/v1"><code>https://www.w3.org/ns/lws/v1</code></a></dd>
+                </dl>
+            </section>
+            <section id="efb667ee234b4dff6323cb962c83811135a9126a05a4835ce19b5e1ca7e1200b"><div class="header-wrapper"><h4 id="x4-1-29-expires"><bdi class="secno">4.1.29 </bdi><code>expires</code></h4><a class="self-link" href="#efb667ee234b4dff6323cb962c83811135a9126a05a4835ce19b5e1ca7e1200b" aria-label="Permalink for Section 4.1.29"></a></div>
+                
+                <p><em>expires</em></p>
+                <div>The date and time at which a subscription expires.</div>
+                <div class="note" role="note" id="issue-container-generatedID-16"><div class="note-title marker" id="h-note-16"><span>Note</span></div><p class="">
+                    <b>This term is formally defined in another vocabulary</b>
+                    (as <a href="http://schema.org/expires">schema:expires</a>), but is frequently used with this vocabulary and has been
+                    included to aid readability of this document.
+                </p></div>
+                <dl class="terms">
+                    <dt>Relevant <code>@context</code>:</dt>
+                    <dd><a href="https://www.w3.org/ns/lws/v1"><code>https://www.w3.org/ns/lws/v1</code></a></dd>
+                </dl>
+            </section>
+        </section>
+
+        <section id="class_definitions" class="term_definitions"><div class="header-wrapper"><h3 id="x4-2-class-definitions"><bdi class="secno">4.2 </bdi>Class definitions</h3><a class="self-link" href="#class_definitions" aria-label="Permalink for Section 4.2"></a></div>
+            
+            <p>The following are class definitions in the <code>lws</code> namespace.</p>
+            <section id="Container"><div class="header-wrapper"><h4 id="x4-2-1-container"><bdi class="secno">4.2.1 </bdi><code>Container</code></h4><a class="self-link" href="#Container" aria-label="Permalink for Section 4.2.1"></a></div>
+                
+                <p><em>Container</em></p>
+                <div>A resource that contains other resources.</div>
+                <dl class="terms">
+                    <dt>Domain of:</dt>
+                    <dd><a href="#items"><code>items</code></a>, <a href="#7705770160b173ebe124d6db3ffe6c2af9967bcaa2bdf1c9a30b260f3fd8cadd"><code>totalItems</code></a></dd>
+                </dl>
+                <dl class="terms">
+                    <dt>Relevant <code>@context</code>:</dt>
+                    <dd><a href="https://www.w3.org/ns/lws/v1"><code>https://www.w3.org/ns/lws/v1</code></a></dd>
+                </dl>
+            </section>
+            <section id="DataResource"><div class="header-wrapper"><h4 id="x4-2-2-dataresource"><bdi class="secno">4.2.2 </bdi><code>DataResource</code></h4><a class="self-link" href="#DataResource" aria-label="Permalink for Section 4.2.2"></a></div>
+                
+                <p><em>Data Resource</em></p>
+                <div>A data-bearing resource such as a document, image, or structured data file.</div>
+                <dl class="terms">
+                    <dt>Domain of:</dt>
+                    <dd><a href="#8821fe640fb97946823030bc45b4fd56e0e7b8a05d36284295acc670761ed10a"><code>mediaType</code></a>, <a href="#266f3ae3210ec2185154dcc2f3311ba1ec77706d2a2669280046a8fb659caa4d"><code>updated</code></a>, <a href="#459c0585b8f621976577328df8c114b4e6e790c022a95add3d952e0e767c753c"><code>size</code></a></dd>
+                </dl>
+                <dl class="terms">
+                    <dt>Relevant <code>@context</code>:</dt>
+                    <dd><a href="https://www.w3.org/ns/lws/v1"><code>https://www.w3.org/ns/lws/v1</code></a></dd>
+                </dl>
+            </section>
+            <section id="Storage"><div class="header-wrapper"><h4 id="x4-2-3-storage"><bdi class="secno">4.2.3 </bdi><code>Storage</code></h4><a class="self-link" href="#Storage" aria-label="Permalink for Section 4.2.3"></a></div>
+                
+                <p><em>Storage</em></p>
+                <div>A Linked Web Storage instance.</div>
+                <dl class="terms">
+                    <dt>Domain of:</dt>
+                    <dd><a href="#capability"><code>capability</code></a>, <a href="#service"><code>service</code></a></dd>
+                </dl>
+                <dl class="terms">
+                    <dt>Relevant <code>@context</code>:</dt>
+                    <dd><a href="https://www.w3.org/ns/lws/v1"><code>https://www.w3.org/ns/lws/v1</code></a></dd>
+                </dl>
+            </section>
+            <section id="StorageDescription"><div class="header-wrapper"><h4 id="x4-2-4-storagedescription"><bdi class="secno">4.2.4 </bdi><code>StorageDescription</code></h4><a class="self-link" href="#StorageDescription" aria-label="Permalink for Section 4.2.4"></a></div>
+                
+                <p><em>Storage Description</em></p>
+                <div>A service that provides a storage description resource.</div>
+                <dl class="terms">
+                    <dt>Relevant <code>@context</code>:</dt>
+                    <dd><a href="https://www.w3.org/ns/lws/v1"><code>https://www.w3.org/ns/lws/v1</code></a></dd>
+                </dl>
+            </section>
+            <section id="OpenIdProvider"><div class="header-wrapper"><h4 id="x4-2-5-openidprovider"><bdi class="secno">4.2.5 </bdi><code>OpenIdProvider</code></h4><a class="self-link" href="#OpenIdProvider" aria-label="Permalink for Section 4.2.5"></a></div>
+                
+                <p><em>OpenID Provider</em></p>
+                <p>See the <a href="https://www.w3.org/TR/lws-authn-openid/">formal definition of the term</a>.</p>
+                <div>An OpenID Connect identity provider service.</div>
+                <dl class="terms">
+                    <dt>Relevant <code>@context</code>:</dt>
+                    <dd><a href="https://www.w3.org/ns/lws/v1"><code>https://www.w3.org/ns/lws/v1</code></a></dd>
+                </dl>
+            </section>
+            <section id="Notification"><div class="header-wrapper"><h4 id="x4-2-6-notification"><bdi class="secno">4.2.6 </bdi><code>Notification</code></h4><a class="self-link" href="#Notification" aria-label="Permalink for Section 4.2.6"></a></div>
+                
+                <p><em>Notification</em></p>
+                <p>See the <a href="https://www.w3.org/TR/lws-notifications/">formal definition of the term</a>.</p>
+                <div>A notification envelope describing an event that occurred on a resource.</div>
+                <dl class="terms">
+                    <dt>Domain of:</dt>
+                    <dd><a href="#activity"><code>activity</code></a></dd>
+                </dl>
+                <dl class="terms">
+                    <dt>Relevant <code>@context</code>:</dt>
+                    <dd><a href="https://www.w3.org/ns/lws/v1"><code>https://www.w3.org/ns/lws/v1</code></a></dd>
+                </dl>
+            </section>
+            <section id="NotificationService"><div class="header-wrapper"><h4 id="x4-2-7-notificationservice"><bdi class="secno">4.2.7 </bdi><code>NotificationService</code></h4><a class="self-link" href="#NotificationService" aria-label="Permalink for Section 4.2.7"></a></div>
+                
+                <p><em>Notification Service</em></p>
+                <p>See the <a href="https://www.w3.org/TR/lws-notifications/">formal definition of the term</a>.</p>
+                <div>A service through which clients subscribe to resource change notifications.</div>
+                <dl class="terms">
+                    <dt>Domain of:</dt>
+                    <dd><a href="#subscriptionType"><code>subscriptionType</code></a></dd>
+                </dl>
+                <dl class="terms">
+                    <dt>Relevant <code>@context</code>:</dt>
+                    <dd><a href="https://www.w3.org/ns/lws/v1"><code>https://www.w3.org/ns/lws/v1</code></a></dd>
+                </dl>
+            </section>
+            <section id="WebhookSubscription"><div class="header-wrapper"><h4 id="x4-2-8-webhooksubscription"><bdi class="secno">4.2.8 </bdi><code>WebhookSubscription</code></h4><a class="self-link" href="#WebhookSubscription" aria-label="Permalink for Section 4.2.8"></a></div>
+                
+                <p><em>Webhook Subscription</em></p>
+                <p>See the <a href="https://www.w3.org/TR/lws-notifications/">formal definition of the term</a>.</p>
+                <div>A subscription type that delivers notifications via HTTP POST to a subscriber-provided inbox URL.</div>
+                <dl class="terms">
+                    <dt>Relevant <code>@context</code>:</dt>
+                    <dd><a href="https://www.w3.org/ns/lws/v1"><code>https://www.w3.org/ns/lws/v1</code></a></dd>
+                </dl>
+            </section>
+        </section>
+
+
+    </section>
+
+
+
+
+<section id="references" class="appendix"><div class="header-wrapper"><h2 id="a-references"><bdi class="secno">A. </bdi>References</h2><a class="self-link" href="#references" aria-label="Permalink for Appendix A."></a></div><section id="informative-references"><div class="header-wrapper"><h3 id="a-1-informative-references"><bdi class="secno">A.1 </bdi>Informative references</h3><a class="self-link" href="#informative-references" aria-label="Permalink for Appendix A.1"></a></div>
+    
+    <dl class="bibliography"><dt id="bib-lws-protocol">[lws-protocol]</dt><dd>
+      <a href="https://w3c.github.io/lws-protocol/lws10-core/"><cite>LWS Protocol</cite></a>.  W3C. URL: <a href="https://w3c.github.io/lws-protocol/lws10-core/">https://w3c.github.io/lws-protocol/lws10-core/</a>
+    </dd><dt id="bib-rdf-schema">[RDF-SCHEMA]</dt><dd>
+      <a href="https://www.w3.org/TR/rdf-schema/"><cite>RDF Schema 1.1</cite></a>. Dan Brickley; Ramanathan Guha.  W3C. 25 February 2014. W3C Recommendation. URL: <a href="https://www.w3.org/TR/rdf-schema/">https://www.w3.org/TR/rdf-schema/</a>
+    </dd></dl>
+  </section></section><p role="navigation" id="back-to-top">
+    <a href="#title"><abbr title="Back to Top">↑</abbr></a>
+  </p><script id="respec-highlight-vars">(() => {
+// @ts-check
+
+if (document.respec) {
+  document.respec.ready.then(setupVarHighlighter);
+} else {
+  setupVarHighlighter();
+}
+
+function setupVarHighlighter() {
+  document
+    .querySelectorAll("var")
+    .forEach(varElem => varElem.addEventListener("click", highlightListener));
+}
+
+/**
+ * @param {MouseEvent} ev
+ */
+function highlightListener(ev) {
+  ev.stopPropagation();
+  const varElem = /** @type {HTMLElement} */ (ev.target);
+  const hightligtedElems = highlightVars(varElem);
+  const resetListener = () => {
+    const hlColor = getHighlightColor(varElem);
+    hightligtedElems.forEach(el => removeHighlight(el, hlColor));
+    [...HL_COLORS.keys()].forEach(key => HL_COLORS.set(key, true));
+  };
+  if (hightligtedElems.length) {
+    document.body.addEventListener("click", resetListener, { once: true });
+  }
+}
+
+// availability of highlight colors. colors from var.css
+const HL_COLORS = new Map([
+  ["respec-hl-c1", true],
+  ["respec-hl-c2", true],
+  ["respec-hl-c3", true],
+  ["respec-hl-c4", true],
+  ["respec-hl-c5", true],
+  ["respec-hl-c6", true],
+  ["respec-hl-c7", true],
+]);
+
+/**
+ * @param {HTMLElement} target
+ */
+function getHighlightColor(target) {
+  // return current colors if applicable
+  const { value } = target.classList;
+  const re = /respec-hl-\w+/;
+  const activeClass = re.test(value) && value.match(re);
+  if (activeClass) return activeClass[0];
+
+  // first color preference
+  if (HL_COLORS.get("respec-hl-c1") === true) return "respec-hl-c1";
+
+  // otherwise get some other available color
+  return [...HL_COLORS.keys()].find(c => HL_COLORS.get(c)) || "respec-hl-c1";
+}
+
+/**
+ * @param {HTMLElement} varElem
+ */
+function highlightVars(varElem) {
+  const textContent = norm(varElem.textContent);
+  const parent = /** @type {HTMLElement} */ (
+    varElem.closest(".algorithm, section")
+  );
+  if (!parent) return [];
+  const highlightColor = getHighlightColor(varElem);
+
+  const varsToHighlight = [...parent.querySelectorAll("var")].filter(
+    el =>
+      norm(el.textContent) === textContent &&
+      el.closest(".algorithm, section") === parent
+  );
+
+  // update availability of highlight color
+  const colorStatus = varsToHighlight[0].classList.contains("respec-hl");
+  HL_COLORS.set(highlightColor, colorStatus);
+
+  // highlight vars
+  if (colorStatus) {
+    varsToHighlight.forEach(el => removeHighlight(el, highlightColor));
+    return [];
+  } else {
+    varsToHighlight.forEach(el => addHighlight(el, highlightColor));
+  }
+  return varsToHighlight;
+}
+
+/**
+ * @param {HTMLElement} el
+ * @param {string} highlightColor
+ */
+function removeHighlight(el, highlightColor) {
+  el.classList.remove("respec-hl", highlightColor);
+  // clean up empty class attributes so they don't come in export
+  if (!el.classList.length) el.removeAttribute("class");
+}
+
+/**
+ * @param {HTMLElement} elem
+ * @param {string} highlightColor
+ */
+function addHighlight(elem, highlightColor) {
+  elem.classList.add("respec-hl", highlightColor);
+}
+
+/**
+ * Same as `norm` from src/core/utils, but our build process doesn't allow
+ * imports in runtime scripts, so duplicated here.
+ * @param {string} str
+ */
+function norm(str) {
+  return str.trim().replace(/\s+/g, " ");
+}
+})()</script><script id="respec-dfn-panel">(() => {
+// @ts-check
+if (document.respec) {
+  document.respec.ready.then(setupPanel);
+} else {
+  setupPanel();
+}
+
+function setupPanel() {
+  const listener = panelListener();
+  document.body.addEventListener("keydown", listener);
+  document.body.addEventListener("click", listener);
+}
+
+function panelListener() {
+  /** @type {HTMLElement | null} */
+  let panel = null;
+  /**
+   * @param {KeyboardEvent|MouseEvent} event
+   */
+  return event => {
+    const { target, type } = event;
+
+    if (!(target instanceof HTMLElement)) return;
+
+    // For keys, we only care about Enter key to activate the panel
+    // otherwise it's activated via a click.
+    if (
+      type === "keydown" &&
+      /** @type {KeyboardEvent} */ (event).key !== "Enter"
+    )
+      return;
+
+    const action = deriveAction(event);
+
+    switch (action) {
+      case "show": {
+        hidePanel(panel);
+        /** @type {HTMLElement | null} */
+        const dfn = target.closest("dfn, .index-term");
+        if (!dfn?.id) break;
+        panel = document.getElementById(`dfn-panel-for-${dfn.id}`);
+        if (!panel) break;
+        const coords = deriveCoordinates(
+          /** @type {MouseEvent|KeyboardEvent} */ (event)
+        );
+        displayPanel(dfn, panel, coords);
+        break;
+      }
+      case "dock": {
+        if (panel) {
+          panel.style.left = "";
+          panel.style.top = "";
+          panel.classList.add("docked");
+        }
+        break;
+      }
+      case "hide": {
+        hidePanel(panel);
+        panel = null;
+        break;
+      }
+    }
+  };
+}
+
+/**
+ * @param {MouseEvent|KeyboardEvent} event
+ */
+function deriveCoordinates(event) {
+  const target = /** @type HTMLElement */ (event.target);
+
+  // We prevent synthetic AT clicks from putting
+  // the dialog in a weird place. The AT events sometimes
+  // lack coordinates, so they have clientX/Y = 0
+  const rect = target.getBoundingClientRect();
+  if (
+    event instanceof MouseEvent &&
+    event.clientX >= rect.left &&
+    event.clientY >= rect.top
+  ) {
+    // The event probably happened inside the bounding rect...
+    return { x: event.clientX, y: event.clientY };
+  }
+
+  // Offset to the middle of the element
+  const x = rect.x + rect.width / 2;
+  // Placed at the bottom of the element
+  const y = rect.y + rect.height;
+  return { x, y };
+}
+
+/**
+ * @param {Event} event
+ */
+function deriveAction(event) {
+  const target = /** @type {HTMLElement} */ (event.target);
+  const hitALink = !!target.closest("a");
+  if (target.closest("dfn:not([data-cite]), .index-term")) {
+    return hitALink ? "none" : "show";
+  }
+  if (target.closest(".dfn-panel")) {
+    if (hitALink) {
+      return target.classList.contains("self-link") ? "hide" : "dock";
+    }
+
+    const panel = /** @type {HTMLElement} */ (target.closest(".dfn-panel"));
+    return panel.classList.contains("docked") ? "hide" : "none";
+  }
+  if (document.querySelector(".dfn-panel:not([hidden])")) {
+    return "hide";
+  }
+  return "none";
+}
+
+/**
+ * @param {HTMLElement} dfn
+ * @param {HTMLElement} panel
+ * @param {{ x: number, y: number }} clickPosition
+ */
+function displayPanel(dfn, panel, { x, y }) {
+  panel.hidden = false;
+  // distance (px) between edge of panel and the pointing triangle (caret)
+  const MARGIN = 20;
+
+  const dfnRects = dfn.getClientRects();
+  // Find the `top` offset when the `dfn` can be spread across multiple lines
+  let closestTop = 0;
+  let minDiff = Infinity;
+  for (const rect of dfnRects) {
+    const { top, bottom } = rect;
+    const diffFromClickY = Math.abs((top + bottom) / 2 - y);
+    if (diffFromClickY < minDiff) {
+      minDiff = diffFromClickY;
+      closestTop = top;
+    }
+  }
+
+  const top = window.scrollY + closestTop + dfnRects[0].height;
+  const left = x - MARGIN;
+  panel.style.left = `${left}px`;
+  panel.style.top = `${top}px`;
+
+  // Find if the panel is flowing out of the window
+  const panelRect = panel.getBoundingClientRect();
+  const SCREEN_WIDTH = Math.min(window.innerWidth, window.screen.width);
+  if (panelRect.right > SCREEN_WIDTH) {
+    const newLeft = Math.max(MARGIN, x + MARGIN - panelRect.width);
+    const newCaretOffset = left - newLeft;
+    panel.style.left = `${newLeft}px`;
+    /** @type {HTMLElement | null} */
+    const caret = panel.querySelector(".caret");
+    if (caret) caret.style.left = `${newCaretOffset}px`;
+  }
+
+  // As it's a dialog, we trap focus.
+  // TODO: when <dialog> becomes a implemented, we should really
+  // use that.
+  trapFocus(panel, dfn);
+}
+
+/**
+ * @param {HTMLElement} panel
+ * @param {HTMLElement} dfn
+ * @returns
+ */
+function trapFocus(panel, dfn) {
+  /** @type NodeListOf<HTMLAnchorElement> elements */
+  const anchors = panel.querySelectorAll("a[href]");
+  // No need to trap focus
+  if (!anchors.length) return;
+
+  // Move focus to first anchor element
+  const first = anchors.item(0);
+  first.focus();
+
+  const trapListener = createTrapListener(anchors, panel, dfn);
+  panel.addEventListener("keydown", trapListener);
+
+  // Hiding the panel releases the trap
+  const mo = new MutationObserver(records => {
+    const [record] = records;
+    const target = /** @type HTMLElement */ (record.target);
+    if (target.hidden) {
+      panel.removeEventListener("keydown", trapListener);
+      mo.disconnect();
+    }
+  });
+  mo.observe(panel, { attributes: true, attributeFilter: ["hidden"] });
+}
+
+/**
+ *
+ * @param {NodeListOf<HTMLAnchorElement>} anchors
+ * @param {HTMLElement} panel
+ * @param {HTMLElement} dfn
+ * @returns
+ */
+function createTrapListener(anchors, panel, dfn) {
+  const lastIndex = anchors.length - 1;
+  let currentIndex = 0;
+  /**
+   * @param {KeyboardEvent} event
+   */
+  return event => {
+    switch (event.key) {
+      // Hitting "Tab" traps us in a nice loop around elements.
+      case "Tab": {
+        event.preventDefault();
+        currentIndex += event.shiftKey ? -1 : +1;
+        if (currentIndex < 0) {
+          currentIndex = lastIndex;
+        } else if (currentIndex > lastIndex) {
+          currentIndex = 0;
+        }
+        anchors.item(currentIndex).focus();
+        break;
+      }
+
+      // Hitting "Enter" on an anchor releases the trap.
+      case "Enter":
+        hidePanel(panel);
+        break;
+
+      // Hitting "Escape" returns focus to dfn.
+      case "Escape":
+        hidePanel(panel);
+        dfn.focus();
+        return;
+    }
+  };
+}
+
+/** @param {HTMLElement | null} panel */
+function hidePanel(panel) {
+  if (!panel) return;
+  panel.hidden = true;
+  panel.classList.remove("docked");
+}
+})()</script><script src="https://www.w3.org/scripts/TR/2021/fixup.js"></script></body></html>
