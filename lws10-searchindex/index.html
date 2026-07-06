@@ -341,8 +341,12 @@ Link: &lt;https://example.org/types/index?page=4&gt;; rel="last"
         <p>A <code>type</code> filter always denotes the <code>type</code> the matched resource itself bears; it never denotes the types of a container's members. The native LWS classes <code>https://www.w3.org/ns/lws#DataResource</code> and <code>https://www.w3.org/ns/lws#Container</code> are ordinary <code>type</code> values: filtering on them selects resources that are themselves data resources or containers, respectively (for example a <code>type</code> of <code>https://www.w3.org/ns/lws#Container</code> matches container resources, and a filter of <code>https://schema.org/Person</code> AND <code>https://www.w3.org/ns/lws#DataResource</code> matches data resources that are also <code>schema:Person</code>).</p>
         <p>
           This conjunctive-normal-form filter is the complete query expressiveness the service is
-          required to provide. A server MAY support nesting, negation, comparison, ordering, or text
-          matching, but a portable client MUST NOT rely on any of these. A type IRI that matches no
+          required to provide. It is also the complete expressiveness of the
+          <code>application/lws-query+json</code> format itself: a server MUST NOT extend this
+          grammar. Richer expressiveness &mdash; such as nesting, negation, comparison, ordering, or
+          text matching &mdash; is offered only through an alternate query format identified by its
+          own media type and advertised in <code>Accept-Query</code>, and a portable client MUST NOT
+          rely on any query format beyond this baseline. A type IRI that matches no
           resource yields no results and MUST NOT be treated as an error, and duplicate groups MUST
           be ignored. An empty group &mdash; an empty array appearing as an element of a filter
           key's value &mdash; MUST be rejected with <code>400</code> (Bad Request): an empty
