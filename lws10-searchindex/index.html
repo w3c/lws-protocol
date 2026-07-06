@@ -326,7 +326,7 @@ Link: &lt;https://example.org/types/index?page=4&gt;; rel="last"
           (as declared via <code>rel="type"</code> <code>Link</code> headers, server-intrinsic
           classes, or content; see <a href="#type-derivation"></a>). Its value is an array whose
           elements are combined with logical <strong>AND</strong>; each element is either a single
-          type URI or an array of type URIs combined with logical <strong>OR</strong>. The example
+          type IRI [[!RFC3987]] or an array of type IRIs combined with logical <strong>OR</strong>. The example
           above selects resources matching
           <code>(schema:Person OR foaf:Person) AND lws:DataResource</code> &mdash; the filter is a
           conjunction of disjunctions, that is, conjunctive normal form. A request whose body has no
@@ -334,7 +334,7 @@ Link: &lt;https://example.org/types/index?page=4&gt;; rel="last"
           matches all resources visible to the client.
         </p>
         <p>
-          A single-type query &mdash; a <code>type</code> value containing one URI and no OR group,
+          A single-type query &mdash; a <code>type</code> value containing one IRI and no OR group,
           for example <code>{"type": ["https://schema.org/Person"]}</code> &mdash; matches every
           resource that declares that type, even if the resource also declares other types.
         </p>
@@ -342,7 +342,7 @@ Link: &lt;https://example.org/types/index?page=4&gt;; rel="last"
         <p>
           This conjunctive-normal-form filter is the complete query expressiveness the service is
           required to provide. A server MAY support nesting, negation, comparison, ordering, or text
-          matching, but a portable client MUST NOT rely on any of these. A type URI that matches no
+          matching, but a portable client MUST NOT rely on any of these. A type IRI that matches no
           resource yields no results and MUST NOT be treated as an error, and duplicate groups MUST
           be ignored. An empty group &mdash; an empty array appearing as an element of a filter
           key's value &mdash; MUST be rejected with <code>400</code> (Bad Request): an empty
@@ -428,9 +428,11 @@ Link: &lt;https://example.org/types/index?page=4&gt;; rel="last"
             A request whose <code>Accept</code> header field excludes every response media type the server can produce for the result set MUST be rejected with <code>406</code> (Not Acceptable) [[!RFC10008]]. Because every server can produce the <code>application/lws+json</code> <code>ContainerPage</code>, a request that omits <code>Accept</code> or admits that media type never results in <code>406</code>.
           </li>
           <li>
-            A <code>type</code> value, or any relation target value, that is not a syntactically valid
-            absolute URI MUST be rejected with <code>400</code> (Bad Request). This is distinct from a
-            well-formed URI that matches no resource, and from a relation the server does not index, both of which yield no results and are not errors (see above).
+            A <code>type</code> value, or any relation target value, that does not match the
+            <code>IRI</code> production of [[!RFC3987]] &mdash; an absolute IRI, optionally carrying
+            a fragment identifier, the form of every IRI in the RDF abstract syntax
+            [[rdf11-concepts]] &mdash; MUST be rejected with <code>400</code> (Bad Request). This is distinct from a
+            well-formed IRI that matches no resource, and from a relation the server does not index, both of which yield no results and are not errors (see above).
           </li>
           <li>
             A filter that is well-formed but exceeds the complexity a server chooses to support
