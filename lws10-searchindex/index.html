@@ -223,7 +223,9 @@
           requests the advertised <code>serviceEndpoint</code> URI as-is, and any parameters
           appearing in server-issued pagination URIs (such as <code>?page=</code> in the
           example below) are server-internal parts of those opaque URIs, not part of this
-          interface.</p>
+          interface. A page reference may expire or cease to be recognized; the
+          pagination-expiry rule of <a href="#type-search-errors"></a> applies to
+          <code>TypeIndex</code> pages as it does to search result pages.</p>
         <p class="note">
           The Type Index takes no filter, so it is retrieved with a <code>GET</code>. The
           <a>Type Search Service</a>, which carries a filter, instead uses the HTTP
@@ -443,7 +445,12 @@ Link: &lt;https://example.org/types/index?page=4&gt;; rel="last"
             (consistent with the expressiveness ceiling above) MUST be rejected with <code>422</code> (Unprocessable Content), the status [[!RFC9110]] defines and [[!RFC10008]] suggests for a query that is understood but cannot be processed due to its actual contents. A server MUST NOT silently truncate or otherwise narrow such a filter, as doing so could return a superset of the intended results.
           </li>
           <li>
-            A pagination reference (a previously issued <code>next</code> link) that the server no longer recognizes or that has expired MUST result in <code>404</code> (Not Found) or <code>410</code> (Gone); clients SHOULD restart the query from the first page.
+            A pagination reference (a previously issued page link) that the server no longer
+            recognizes or that has expired MUST result in <code>404</code> (Not Found) or
+            <code>410</code> (Gone). This rule applies to the pages of both services: those of a
+            <a>Type Search Service</a> result set and those of a <a>Type Index Service</a> listing
+            alike. Clients SHOULD restart &mdash; a search by re-sending the <code>QUERY</code>
+            request, a type index listing by re-requesting the service endpoint.
           </li>
         </ul>
         <p class="note">
