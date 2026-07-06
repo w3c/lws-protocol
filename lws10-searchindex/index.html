@@ -363,12 +363,18 @@ Link: &lt;https://example.org/types/index?page=4&gt;; rel="last"
           <code>Link</code> headers, server-intrinsic state, or parsed content) and all sources MUST
           be treated identically.
         </p>
+        <p>
+          A server MUST NOT enumerate its set of additional <a>indexed relations</a> &mdash; not in
+          the storage description nor elsewhere. A relation the server does not index, like a target
+          value that matches nothing, yields no results for that constraint: this MUST NOT be treated
+          as an error, and the two cases MUST be indistinguishable to the client (consistent with the
+          type-matching rule above). Only <em>descriptive</em> relations are eligible for indexing;
+          servers MUST NOT index structural or protocol relations.
+        </p>
         <p class="note">
-          The set of additional indexed relations is deliberately NOT enumerated by the server &mdash; not in
-          the storage description nor elsewhere &mdash; so that it cannot serve as a discovery oracle. A
-          relation the server does not index, like a target value that matches nothing, simply yields no
-          results for that constraint; it MUST NOT be treated as an error, and the two cases MUST be
-          indistinguishable to the client (consistent with the type-matching rule above). Servers MUST NOT index structural or protocol relations, only descriptive relations are eligible.
+          Withholding the set of indexed relations keeps the filter interface from serving as a
+          discovery oracle for the server's configuration; see
+          <a href="#security-authorization"></a>.
         </p>
         <p>
           A successful search returns <code>200</code> (OK). The default response is an
@@ -381,14 +387,20 @@ Link: &lt;https://example.org/types/index?page=4&gt;; rel="last"
           responds <code>406</code> (Not Acceptable) (see <a href="#type-search-errors"></a>).
         </p>
         <p>
+          Each item in a <code>ContainerPage</code> result MUST carry at least the matched
+          resource's <code>id</code> and its <code>type</code>, mirroring a container member; a
+          server MAY include additional descriptive metadata (such as <code>mediaType</code>,
+          <code>size</code>, or <code>modified</code>) but is not required to.
+        </p>
+        <p>
           Whatever the response format, the result set is paginated following the standard LWS
           pagination model defined by [[!LWS10-CORE]]: page URIs are conveyed in <code>Link</code>
           headers &mdash; not in the response body &mdash; are opaque to the client, and are
           dereferenced to retrieve subsequent pages. Aside from <code>type</code> and any additional
           relation keys described above, no other filter inputs are defined.
         </p>
-        <p class="note">A <code>ContainerPage</code> returned by the <code>TypeSearchService</code> is a <em>synthetic</em> result set, not a representation of a container resource. The <code>ContainerPage</code> media type and pagination model are reused only for client convenience; the response does not identify a container, has no containment relationship to its members, is not retrievable or mutable as a resource, and its membership reflects the query rather than any stored hierarchy. Each item is a resource description carrying at least <code>id</code> and <code>type</code>, mirroring a container member; a server MAY include additional descriptive metadata (such as <code>mediaType</code>, <code>size</code>, or <code>modified</code>) but is not required to.</p>
-        <p class="note">
+        <p class="note">A <code>ContainerPage</code> returned by the <code>TypeSearchService</code> is a <em>synthetic</em> result set, not a representation of a container resource. The <code>ContainerPage</code> media type and pagination model are reused only for client convenience; the response does not identify a container, has no containment relationship to its members, is not retrievable or mutable as a resource, and its membership reflects the query rather than any stored hierarchy.</p>
+        <p>
           [[!RFC10008]] permits a response to carry a <code>Content-Location</code> header field
           identifying a resource that represents the query results. Because a Type Search result set
           is synthetic and client-specific (see the note above and
@@ -429,10 +441,10 @@ Link: &lt;https://example.org/types/index?page=4&gt;; rel="last"
           </li>
         </ul>
         <p class="note">
-          Error responses MAY include a representation describing the problem; this specification does
+          Error responses may include a representation describing the problem; this specification does
           not define its format.
         </p>
-        <p class="note">
+        <p>
           A <code>QUERY</code> response is cacheable [[!RFC10008]]. Because the filter travels in the
           request body, it forms part of the cache key itself ([[!RFC10008]], Section 2.7) and cannot
           be conveyed through the <code>Vary</code> header field, which names only request header
