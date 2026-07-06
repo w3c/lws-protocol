@@ -334,6 +334,12 @@ Link: &lt;https://example.org/types/index?page=4&gt;; rel="last"
           matches all resources visible to the client.
         </p>
         <p>
+          A single-type query &mdash; a <code>type</code> value containing one URI and no OR group,
+          for example <code>{"type": ["https://schema.org/Person"]}</code> &mdash; matches every
+          resource that declares that type, even if the resource also declares other types.
+        </p>
+        <p>A <code>type</code> filter always denotes the <code>type</code> the matched resource itself bears; it never denotes the types of a container's members. The native LWS classes <code>https://www.w3.org/ns/lws#DataResource</code> and <code>https://www.w3.org/ns/lws#Container</code> are ordinary <code>type</code> values: filtering on them selects resources that are themselves data resources or containers, respectively (for example a <code>type</code> of <code>https://www.w3.org/ns/lws#Container</code> matches container resources, and a filter of <code>https://schema.org/Person</code> AND <code>https://www.w3.org/ns/lws#DataResource</code> matches data resources that are also <code>schema:Person</code>).</p>
+        <p>
           This conjunctive-normal-form filter is the complete query expressiveness the service is
           required to provide. A server MAY support nesting, negation, comparison, ordering, or text
           matching, but a portable client MUST NOT rely on any of these. A type URI that matches no
@@ -390,8 +396,6 @@ Link: &lt;https://example.org/types/index?page=4&gt;; rel="last"
           a server that nonetheless exposes one MUST subject it to the same authorization filtering on
           every access and MUST prevent its reuse across clients.
         </p>
-        <p>A single-type query (one URI, not enclosed in an array) matches a resource that declares that type, even if the resource also declares other types.</p>
-        <p>A <code>type</code> filter always denotes the <code>type</code> the matched resource itself bears; it never denotes the types of a container's members. The native LWS classes <code>https://www.w3.org/ns/lws#DataResource</code> and <code>https://www.w3.org/ns/lws#Container</code> are ordinary <code>type</code> values: filtering on them selects resources that are themselves data resources or containers, respectively (for example a <code>type</code> of <code>https://www.w3.org/ns/lws#Container</code> matches container resources, and a filter of <code>https://schema.org/Person</code> AND <code>https://www.w3.org/ns/lws#DataResource</code> matches data resources that are also <code>schema:Person</code>).</p>
       </section>
 
       <section id="type-search-errors">
