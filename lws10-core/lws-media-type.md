@@ -12,7 +12,9 @@ Servers MUST support content negotiation for container representations. The resp
 - If a client requests `application/ld+json`, the server MUST respond with `Content-Type: application/ld+json`.
 - If a client requests `application/json`, the server MUST respond with `Content-Type: application/json`.
 
-In all three cases, the response body is the same JSON-LD document conforming to the LWS container vocabulary. Servers are free to support additional media types (e.g., `text/turtle`) through content negotiation.
+In all three cases, the response body is the same JSON-LD document conforming to the <a>container representation</a> structure defined in [](#container-representation). Servers MAY support additional media types through content negotiation.
+
+Because the `Content-Type` of these responses varies with the request's `Accept` header, responses subject to content negotiation SHOULD include a `Vary: Accept` header [[!RFC9110]].
 
 
 #### Pagination
