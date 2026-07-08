@@ -541,7 +541,7 @@
       <li>
         <strong>Redirects:</strong> A <a href="#Client">Client</a> that chooses to follow redirects assumes the risk of the redirecting <a href="#Server">Server</a> being mistakingly or maliciously configured and thus points to a malicious <a href="#Server">Server</a>.
         In such a case, the <a href="#Client">Client</a> might obtain a valid <a href="#Agent-Document">Web-CID Agent Document</a> and validate it to be authoritative despite it being malicious.
-        This risk can be mitigated by a <a href="#Client">Client</a> by not following redirects, which means to only accept <a href="#agent-identifier">agent identifiers</a> that include a fragment [[URL]].
+        A <a href="#Client">Client</a> can mitigate this risk by not following redirects (e.g., HTTP/S `3xx` result codes). Such a Client will only accept an <a href="#agent-identifier">agent identifier</a> that includes a fragment [[URL]] and that does not result in a redirect upon dereferencing. 
       </li>
       <li>
         <strong>Reliance on DNS:</strong> As for any HTTP-based communication that relies on DNS, there exists the risk of a malicious actor being able to modify the DNS record of a particular domain name entry to point to a malicious <a href="#Server">Server</a>.
