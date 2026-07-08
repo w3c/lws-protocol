@@ -161,7 +161,7 @@ body:has(input[name=color-scheme][value=dark]:checked){color-scheme:dark}
 <meta name="color-scheme" content="light">
 <meta name="description" content="This document describes the Linked Web Storage Vocabulary, i.e.,
             the RDFS [RDF-SCHEMA] vocabulary used by the Linked Web Storage Protocol [lws-protocol].">
-<link rel="canonical" href="https://www.w3.org/TR/@@/">
+<link rel="canonical" href="https://www.w3.org/TR/lws10-vocab/">
 <style>
 var:hover{text-decoration:underline;cursor:pointer}
 var.respec-hl{color:var(--color,#000);background-color:var(--bg-color);box-shadow:0 0 0 2px var(--bg-color)}
@@ -188,7 +188,6 @@ var[data-type]:hover::after,var[data-type]:hover::before{opacity:1}
 </style>
 <script id="initialUserConfig" type="application/json">{
   "specStatus": "DNOTE",
-  "shortName": "@@",
   "editors": [
     {
       "name": "Jesse Wright",
@@ -212,6 +211,8 @@ var[data-type]:hover::after,var[data-type]:hover::before{opacity:1}
     }
   ],
   "github": "w3c/lws-protocol",
+  "edDraftURI": "https://w3c.github.io/lws-protocol/lws10-vocab/",
+  "shortName": "lws10-vocab",
   "xref": [
     "web-platform"
   ],
@@ -224,9 +225,9 @@ var[data-type]:hover::after,var[data-type]:hover::before{opacity:1}
       "id": "lws-protocol"
     }
   },
-  "publishDate": "2026-07-16",
-  "publishISODate": "2026-07-16T00:00:00.000Z",
-  "generatedSubtitle": "W3C Group Note Draft 16 July 2026"
+  "publishDate": "2026-07-14",
+  "publishISODate": "2026-07-14T00:00:00.000Z",
+  "generatedSubtitle": "W3C Group Note Draft 14 July 2026"
 }</script>
 <link rel="stylesheet" href="https://www.w3.org/StyleSheets/TR/2021/W3C-DNOTE"></head>
 
@@ -234,19 +235,19 @@ var[data-type]:hover::after,var[data-type]:hover::before{opacity:1}
     <p class="logos"><a class="logo" href="https://www.w3.org/"><img crossorigin="" alt="W3C" height="48" src="https://www.w3.org/StyleSheets/TR/2021/logos/W3C" width="72">
   </a></p>
     <h1 id="title" class="title">Linked Web Storage Vocabulary</h1> 
-    <p id="w3c-state"><a href="https://www.w3.org/standards/types#DNOTE">W3C Group Note Draft</a> <time class="dt-published" datetime="2026-07-16">16 July 2026</time></p>
+    <p id="w3c-state"><a href="https://www.w3.org/standards/types#DNOTE">W3C Group Note Draft</a> <time class="dt-published" datetime="2026-07-14">14 July 2026</time></p>
     <details open="">
       <summary>More details about this document</summary>
       <dl>
         <dt>This version:</dt><dd>
-                <a class="u-url" href="https://www.w3.org/TR/2026/DNOTE-@@-20260716/">https://www.w3.org/TR/2026/DNOTE-@@-20260716/</a>
+                <a class="u-url" href="https://www.w3.org/TR/2026/DNOTE-lws10-vocab-20260714/">https://www.w3.org/TR/2026/DNOTE-lws10-vocab-20260714/</a>
               </dd>
         <dt>Latest published version:</dt><dd>
-                <a href="https://www.w3.org/TR/@@/">https://www.w3.org/TR/@@/</a>
+                <a href="https://www.w3.org/TR/lws10-vocab/">https://www.w3.org/TR/lws10-vocab/</a>
               </dd>
-        <dt>Latest editor's draft:</dt><dd><a href="https://w3c.github.io/lws-protocol/">https://w3c.github.io/lws-protocol/</a></dd>
+        <dt>Latest editor's draft:</dt><dd><a href="https://w3c.github.io/lws-protocol/lws10-vocab/">https://w3c.github.io/lws-protocol/lws10-vocab/</a></dd>
         <dt>History:</dt><dd>
-                    <a href="https://www.w3.org/standards/history/@@/">https://www.w3.org/standards/history/@@/</a>
+                    <a href="https://www.w3.org/standards/history/lws10-vocab/">https://www.w3.org/standards/history/lws10-vocab/</a>
                   </dd><dd>
                     <a href="https://github.com/w3c/lws-protocol/commits/">Commit history</a>
                   </dd>
@@ -294,7 +295,7 @@ var[data-type]:hover::after,var[data-type]:hover::before{opacity:1}
     <hr title="Separator for header">
   </div>
     <section id="abstract" class="introductory"><h2>Abstract</h2>
-        <p>This document describes the <span property="dc:title" id="title">Linked Web Storage Vocabulary</span>, i.e.,
+        <p>This document describes the <span property="dc:title" id="ontology_title">Linked Web Storage Vocabulary</span>, i.e.,
             the <span property="dc:description" id="description">RDFS [<cite><a class="bibref" data-link-type="biblio" href="#bib-rdf-schema" title="RDF Schema 1.1">RDF-SCHEMA</a></cite>] vocabulary used by the Linked Web Storage Protocol [<cite><a class="bibref" data-link-type="biblio" href="#bib-lws-protocol" title="LWS Protocol">lws-protocol</a></cite>]</span>.
         </p>
         <p>Alternate versions of the vocabulary definition exist in
@@ -303,10 +304,11 @@ var[data-type]:hover::after,var[data-type]:hover::before{opacity:1}
         </p>
         <dl>
             <dt>Published:</dt>
-            <dd><time property="dc:date" id="time">2026-06-22</time></dd>
+            <dd><time property="dc:date" id="time">2026-07-14</time></dd>
             <dt>Version Info:</dt>
             <dd>1.0</dd>
-            <dt id="see_also">See Also: <a href="https://www.w3.org/TR/lws-protocol/">https://www.w3.org/TR/lws-protocol/</a></dt>
+            <dt>See Also: </dt>
+            <dd id="see_also"><a href="https://www.w3.org/TR/lws-protocol/">https://www.w3.org/TR/lws-protocol/</a></dd>
         </dl>
     </section>
     <section id="sotd" class="introductory"><h2>Status of This Document</h2><p><em>This section describes the status of this
