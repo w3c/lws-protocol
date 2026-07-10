@@ -186,6 +186,17 @@
               alt="Figure 1 System Context shows the LWS System as a single unit and the person who uses it."/>
           <figcaption>System Context (C4 Level 1)</figcaption>
         </figure>
+        <p>
+          <table>
+            <thead>
+              <tr><th>Box</th><th>Description</th></tr>
+            </thead>
+            <tbody>
+              <tr><td>LWS User</td><td>A user of the LWS system</td></tr>
+              <tr><td>LWS System</td><td>A system that implements the LWS Protocol</td></tr>
+            </tbody>
+          </table>
+        </p>
 
         <p>
           Figure 2 Container Diagram breaks the LWS System into its primary elements.
@@ -195,6 +206,19 @@
               alt="Figure 2 Container Diagram breaks the LWS System into its primary elements."/>
           <figcaption>Container diagram (C4 Level 2)</figcaption>
         </figure>
+        <p>
+          <table>
+            <thead>
+              <tr><th>Box</th><th>Description</th></tr>
+            </thead>
+            <tbody>
+              <tr><td>LWS User</td><td>A user of the LWS system</td></tr>
+              <tr><td>LWS System</td><td>A system that implements the LWS Protocol</td></tr>
+              <tr><td>LWS Client</td><td>An HTTP client that complies with the LWS Protocol</td></tr>
+              <tr><td>LWS Server</td><td>An HTTP server that complies with the LWS Protocol</td></tr>
+            </tbody>
+          </table>
+        </p>
 
         <p>
           Figure 3 Component Diagram decomposition of the LWS Server into components and their responsibilities from client request to storage access.
@@ -204,6 +228,23 @@
               alt="Figure 3 Component Diagram decomposition of the LWS Server into components and their responsibilities from client request to storage access."/>
           <figcaption>Component diagram (C4 Level 3)</figcaption>
         </figure>
+        <p>
+          <table>
+            <thead>
+              <tr><th>Box</th><th>Description</th></tr>
+            </thead>
+            <tbody>
+              <tr><td>LWS Client</td><td>An HTTP client that complies with the LWS Protocol</td></tr>
+              <tr><td>LWS Server</td><td>An HTTP server that complies with the LWS Protocol</td></tr>
+              <tr><td>Resource Manager</td><td>Manages data resources, containers, containment and linksets</td></tr>
+              <tr><td>Authentication</td><td>Validates credentials against the identity provider</td></tr>
+              <tr><td>Authorization</td><td>Enforces resource manager access decisions</td></tr>
+              <tr><td>Storage Controller</td><td>Controls all resources in the storage, directed by its client resource-manager</td></tr>
+              <tr><td>Identity Provider</td><td>Confirms user identity and issues signed credentials. MAY be an external system</td></tr>
+              <tr><td>Storage</td><td>A set of hierarchically organized HTTP resources managed per LWS conventions</td></tr>
+            </tbody>
+          </table>          
+        </p>
 
         <p>
           Figure 4 Resource Types show taxonomy and relationship defined in the specification's Terminology section.
@@ -213,6 +254,25 @@
               alt="Figure 4 Resource Types show taxonomy and relationship defined in the specification's Terminology section."/>
           <figcaption>Resource hierarchy</figcaption>
         </figure>
+        <p>
+          <table>
+            <thead>
+              <tr><th>Box</th><th>Description</th></tr>
+            </thead>
+            <tbody>
+              <tr><td>Resource Manager</td><td>Manages data resources, containers, containment and linksets</td></tr>
+              <tr><td>Storage</td><td>A set of hierarchically organized HTTP resources managed per LWS conventions</td></tr>
+              <tr><td>LWS Resource</td><td>An HTTP resource that supports the read operations defined by LWS</td></tr>
+              <tr><td>Container</td><td>An LWS resource able to enumerate a collection of LWS resources; may recursively contain other containers</td></tr>
+              <tr><td>Data Resource</td><td>A data-bearing LWS resource such as a document, image, or structured information</td></tr>
+              <tr><td>Auxiliary Resource</td><td>An LWS resource whose lifetime is bound to a primary resource</td></tr>
+              <tr><td>Linkset Resource</td><td>An auxiliary resource conforming to RFC9264</td></tr>
+              <tr><td>Metadata Resource</td><td>An auxiliary resource, managed by a storage, that describes an LWS resource</td></tr>
+              <tr><td>Storage Root</td><td>The container at the root of a containment hierarchy of a storage</td></tr>
+              <tr><td>Storage Description</td><td>Enumerates the storage root and the services/capabilities of a storage</td></tr>
+            </tbody>
+          </table>          
+        </p>
 
       </section>
 

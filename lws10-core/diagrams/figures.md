@@ -39,7 +39,7 @@ Decomposition of the LWS Server into components and their responsibilities from 
 | Resource Manager | Manages data resources, containers, containment and linksets |
 | Authentication | Validates credentials against the identity provider |
 | Authorization | Enforces resource manager access decisions |
-| Storage Controller | CControls all resources in the storage directed by its client resource-manager |
+| Storage Controller | Controls all resources in the storage directed by its client resource-manager |
 | Identity Provider | Confirms user identity and issues signed credentials. MAY be an external system |
 | Storage | A set of hierarchically organized HTTP resources managed per LWS conventions |
 
