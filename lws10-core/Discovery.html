@@ -10,9 +10,15 @@
   <section id="storage-description-data-model">
     <h4>Data Model</h4>
 
+    <p>
+      A <a>storage description resource</a> is a specialization of a W3C Controlled Identifier document [[!CID-1.0]].
+      It conforms to the data model defined by [[!CID-1.0]], extended with LWS-specific properties.
+    </p>
+
     <ul>
       <li>
-        <strong>`id`</strong> - the <code>id</code> property is REQUIRED. Its value MUST be a URI that identifies the <a>storage</a>.
+        <strong>`id`</strong> - the <code>id</code> property is REQUIRED. Its value MUST be the canonical URI of the <a>storage</a>.
+        Per [[!CID-1.0]], this URI is also the canonical URL of the controlled identifier document.
       </li>
       <li>
         <strong>`type`</strong> - the <code>type</code> property is REQUIRED. Its value MUST be a string that equals
@@ -28,7 +34,7 @@
         </ul>
       </li>
       <li>
-        <strong>`service`</strong> - the <code>service</code> property is REQUIRED. Its value MUST be a set of services,
+        <strong>`service`</strong> - the <code>service</code> property is OPTIONAL. If present, its value MUST be a set of services,
         where each service is described by a map containing the following properties. Additional properties MAY be present.
         <ul>
           <li><strong>`id`</strong> - the <code>id</code> property is OPTIONAL. If present, its value MUST be a URI.</li>
@@ -45,11 +51,7 @@
     "https://www.w3.org/ns/lws/v1"
   ],
   "id": "https://storage.example/",
-  "type": "Storage",
-  "service": [{
-    "type": "StorageDescription",
-    "serviceEndpoint": "https://storage.example/description"
-  }]
+  "type": "Storage"
 }
     </pre>
   </section>
@@ -59,21 +61,12 @@
 
     <p>
       All responses to <code>GET</code> and <code>HEAD</code> requests targeting <a>storage</a> resources MUST include a
-      <code>Link</code> header whose target is the URI of the <a>storage description resource</a>, including a relation
-      (<code>rel</code>) parameter whose value equals <code>https://www.w3.org/ns/lws#storageDescription</code>.
+      <code>Link</code> header whose target is the canonical URI of the <a>storage</a>, including a relation
+      (<code>rel</code>) parameter whose value equals <code>https://www.w3.org/ns/lws#storage</code>.
     </p>
 
     <p>
-      When dereferenced, the <a>storage description</a> MUST contain an <code>id</code> property that identifies the
-      <a>storage</a>. In addition, the <code>service</code> property MUST contain a service description whose type equals
-      <code>StorageDescription</code> and whose <code>serviceEndpoint</code> equals the URL of the
-      <a>storage description</a>.
-    </p>
-
-    <p class="note">
-      The URI for a <a>storage description</a> can be distinct from the URI identifying a <a>storage</a>, which can be distinct
-      from the <a>storage root</a>. These URIs can also be identical, provided that the resulting representation
-      conforms to the requirements outlined in this document.
+      Dereferencing the <a>storage</a> URI MUST return the <a>storage description</a> document.
     </p>
   </section>
 
@@ -89,9 +82,8 @@
     <h4>Storage Services</h4>
 
     <p>
-      In addition to a <code>StorageDescription</code> service, a <a>storage description resource</a> may contain links
-      to other services connected to a <a>storage</a>. The API definition of these services are outside the scope of
-      this specification.
+      A <a>storage description resource</a> may contain links to services connected to a <a>storage</a>.
+      The API definition of these services are outside the scope of this specification.
     </p>
   </section>
 
@@ -99,8 +91,7 @@
     <h4>Storage Description Representation</h4>
 
     <p>
-      A <a>storage description resource</a> is a specialization of a W3C Controlled Identifier document [[!CID-1.0]].
-      It MUST be serializable with the media type <code>application/lws+cid</code>.
+      A <a>storage description</a> MUST be serializable with the media type <code>application/lws+cid</code>.
       The <code>@context</code> property MUST be an array starting with the URIs <code>https://www.w3.org/ns/cid/v1</code>
       and <code>https://www.w3.org/ns/lws/v1</code>.
       Other representations MAY be available via content negotiation.
@@ -145,9 +136,6 @@
   }, {
     "type": "DataSharingService",
     "serviceEndpoint": "https://storage.example/sharing/api"
-  }, {
-    "type": "StorageDescription",
-    "serviceEndpoint": "https://storage.example/description"
   }]
 }
     </pre>

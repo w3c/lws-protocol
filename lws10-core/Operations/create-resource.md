@@ -86,7 +86,7 @@ This creates a new <a>container</a> at `/alice/notes/`, with server-generated me
 **Additional notes on Create (HTTP binding):**
 * POST is not idempotent. Repeating it may create duplicates; clients SHOULD avoid unintentional retries or use unique identifiers/checks to prevent this.
 * Metadata updates are atomic; servers MUST ensure the <a>linkset resource</a> is created and populated with mandatory server-managed fields before returning success.
-* For discoverability, servers SHOULD include a `Link` header with `rel="storageDescription"` on 401 responses to guide clients without hardcoded URIs.
+* For discoverability, servers SHOULD include a `Link` header with `rel="storage"` on 401 responses to guide clients without hardcoded URIs.
 
 **Managing and Retrieving Metadata (Related to Creation):**
 While metadata is primarily retrieved via read operations, it is generated during creation. Clients can immediately retrieve it post-creation using GET or HEAD on the new resource URI. Clients can use the `Prefer` header to request inclusion of specific metadata links (via relation types) and attributes.
