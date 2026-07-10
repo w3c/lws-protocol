@@ -1,0 +1,161 @@
+specification {
+  element actor {
+    style {
+      shape person
+      color amber
+    }
+  }
+  element system {
+    style {
+      color blue
+      opacity 30%
+    }
+  }
+  element externalSystem {
+    style {
+      color secondary
+      opacity 30%
+    }
+  }
+  element component
+
+  element resource {
+    style {
+      shape document
+      color indigo
+    }
+  }
+
+  relationship isA {
+    color gray
+    line dashed
+    head none
+  }
+  relationship contains {
+    color gray
+    head diamond
+  }
+  relationship boundTo {
+    color gray
+    line dotted
+    head none
+  }
+  relationship describes {
+    color gray
+    line dotted
+  }
+  relationship manages
+
+  tag optional
+}
+
+model {
+  lws-user = actor 'LWS User' {
+    description 'A user of the LWS system'
+  }
+
+  lws = system 'LWS System' {
+    description 'A system that implements the LWS Protocol'
+    component lws-client 'LWS Client' {
+      description 'An HTTP client that complies with the LWS Protocol'
+    }
+    component lws-server 'LWS Server' {
+      description 'An HTTP server that complies with the LWS Protocol'
+
+      component identity-provider 'Identity Provider' {
+        #optional
+        description 'Confirms user identity and issues signed credentials. MAY be an external system'
+      }
+      component resource-manager 'Resource Manager' {
+        description 'Manages data resources, containers, containment and linksets'
+      }
+      component authentication 'Authentication' {
+        description 'Validates credentials against the identity provider'
+      }
+      component authorization 'Authorization' {
+        description 'Enforces resource manager access decisions'
+      }
+      component storage 'Storage' {
+        description 'A set of hierarchically organized HTTP resources managed per LWS conventions'
+
+        lws-resource = resource 'LWS Resource' {
+          description 'An HTTP resource that supports the read operations defined by LWS'
+        }
+        container = resource 'Container' {
+          description 'An LWS resource able to enumerate a collection of LWS resources; may recursively contain other containers'
+        }
+        data-resource = resource 'Data Resource' {
+          description 'A data-bearing LWS resource such as a document, image, or structured information'
+        }
+        auxiliary-resource = resource 'Auxiliary Resource' {
+          description 'An LWS resource whose lifetime is bound to a primary resource'
+        }
+        linkset-resource = resource 'Linkset Resource' {
+          description 'An auxiliary resource conforming to RFC9264'
+        }
+        metadata-resource = resource 'Metadata Resource' {
+          description 'An auxiliary resource, managed by a storage, that describes an LWS resource'
+        }
+        storage-root = resource 'Storage Root' {
+          description 'The container at the root of a containment hierarchy of a storage'
+        }
+        storage-description = resource 'Storage Description' {
+          description 'Enumerates the storage root and the services/capabilities of a storage'
+        }
+
+        container -[isA]-> lws-resource
+        data-resource -[isA]-> lws-resource
+        auxiliary-resource -[isA]-> lws-resource
+        linkset-resource -[isA]-> auxiliary-resource
+        metadata-resource -[isA]-> auxiliary-resource
+        storage-root -[isA]-> container
+        storage-description -[isA]-> lws-resource
+
+        container -[contains]-> data-resource 'contains'
+
+        auxiliary-resource -[boundTo]-> lws-resource 'bound to primary resource'
+        metadata-resource -[describes]-> lws-resource 'describes'
+        storage-description -[describes]-> storage-root 'enumerates & describes'
+      }
+
+      component storage-controller 'Storage Controller' {
+        description 'Controls all resources in the storage directed by its client resource-manager'
+      }
+    }
+
+    lws-user -> lws-client 'user requests'
+    lws-client -> lws-server 'HTTP requests'
+    lws-client -> identity-provider 'authenticates'
+    lws-client -> resource-manager 'sends request'
+    resource-manager -> authentication 'authenticates request'
+    authentication -> identity-provider 'validates credentials'
+    resource-manager -> authorization 'checks permission'
+    resource-manager -> storage-controller 'acts as client to'
+    storage-controller -> storage 'controls'
+    resource-manager -[manages]-> storage-root 'manages'
+  }
+}
+
+views {
+  view fig1-system-context {
+    title 'System Context Diagram'
+    include lws-user, lws
+  }
+
+  view fig2-container-diagram of lws {
+    title 'Container Diagram'
+    include *
+  }
+
+  view fig3-lws-server-components of lws-server {
+    title 'LWS Server Component Diagram'
+    autoLayout TopBottom
+    include *
+  }
+
+  view fig4-resource-hierarchy of storage {
+    title 'LWS Resource Type Hierarchy'
+    autoLayout LeftRight
+    include *
+  }
+}
