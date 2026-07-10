@@ -179,26 +179,42 @@
           to guide implementation.
         </p>
         <p>
-          Figure 1 shows the System Context, identifying the user, the systems 
-          that interact with a compliant LWS server, and the external systems on 
-          which the protocol depends.
+          Figure 1 System Context shows the LWS System as a single unit and the person who uses it.
         </p>
         <figure id="fig-1-system-context">
-          <img src="diagrams/fig-1-system-context.svg" 
-              alt="LWS Protocol system context diagram showing the user, client application, LWS server, identity provider, and external resources"/>
-          <figcaption>LWS Protocol &mdash; system context (C4 Level 1)</figcaption>
+          <img src="diagrams/fig1-system-context.png" 
+              alt="Figure 1 System Context shows the LWS System as a single unit and the person who uses it."/>
+          <figcaption>System Context (C4 Level 1)</figcaption>
         </figure>
+
         <p>
-          Figure 2 shows the Container Diagram, describing the protocol-level 
-          responsibilities within a compliant LWS server and the relationships 
-          between them.
+          Figure 2 Container Diagram breaks the LWS System into its primary elements.
         </p>
         <figure id="fig-2-container-diagram">
-          <img src="diagrams/fig-2-container-diagram.svg"
-              alt="LWS Protocol container diagram showing authentication, authorization, resource management, and external resource access within the LWS server boundary"/>
-          <figcaption>LWS Protocol &mdash; container diagram (C4 Level 2)</figcaption>
+          <img src="diagrams/fig2-container-diagram.png"
+              alt="Figure 2 Container Diagram breaks the LWS System into its primary elements."/>
+          <figcaption>Container diagram (C4 Level 2)</figcaption>
         </figure>
-     </section>
+
+        <p>
+          Figure 3 Component Diagram decomposition of the LWS Server into components and their responsibilities from client request to storage access.
+        </p>
+        <figure id="fig-3-lws-server-components">
+          <img src="diagrams/fig3-lws-server-components.png"
+              alt="Figure 3 Component Diagram decomposition of the LWS Server into components and their responsibilities from client request to storage access."/>
+          <figcaption>Component diagram (C4 Level 3)</figcaption>
+        </figure>
+
+        <p>
+          Figure 4 Resource Types show taxonomy and relationship defined in the specification's Terminology section.
+        </p>
+        <figure id="fig-4-resource-hierarchy">
+          <img src="diagrams/fig4-resource-hierarchy.png"
+              alt="Figure 4 Resource Types show taxonomy and relationship defined in the specification's Terminology section."/>
+          <figcaption>Resource hierarchy</figcaption>
+        </figure>
+
+      </section>
 
     </section>
     <section id="terminology">
