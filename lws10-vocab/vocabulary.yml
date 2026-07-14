@@ -10,8 +10,12 @@ prefix:
     value: https://schema.org/
   - id: sec
     value: https://w3id.org/security#
+  - id: dcterms
+    value: http://purl.org/dc/terms/
   - id: ldp
     value: http://www.w3.org/ns/ldp#
+  - id: odrl
+    value: http://www.w3.org/ns/odrl/2/
 
 ontology:
   - property: dc:title
@@ -59,6 +63,26 @@ class:
     label: Webhook Subscription
     comment: A subscription type that delivers notifications via HTTP POST to a subscriber-provided inbox URL.
     defined_by: https://www.w3.org/TR/lws-notifications/
+
+  - id: AccessProfile
+    label: Access Profile
+    comment: An access profile describes the requirements for expressing a valid access policy.
+
+  - id: AccessPolicy
+    label: Access Policy
+    comment: An access policy expresses the actions, targets, and constraints for a particular access request or grant.
+
+  - id: AccessGrant
+    label: Access Grant
+    comment: An authorization by a storage controller granting access to resources.
+
+  - id: AccessGrantService
+    label: Access Grant Service
+    comment: A service endpoint for managing access grants.
+
+  - id: AccessRequestService
+    label: Access Request Service
+    comment: A service endpoint for managing access requests.
 
 property:
   - id: items
@@ -200,6 +224,86 @@ property:
     label: expires
     range: xsd:dateTime
     comment: The date and time at which a subscription expires.
+
+  - id: access
+    label: access
+    comment: The access policies associated with an access request or grant.
+
+  - id: dcterms:conformsTo
+    label: conforms to
+    external: true
+    comment: An established standard to which the described resource conforms.
+
+  - id: odrl:action
+    label: action
+    domain: lws:AccessPolicy
+    external: true
+    comment: The operation relating to the asset of the rule.
+    one_of:
+      - odrl:read
+      - odrl:modify
+      - odrl:delete
+      - create
+
+  - id: odrl:assignee
+    label: assignee
+    domain: lws:AccessPolicy
+    external: true
+    comment: The party that is assigned the rule.
+
+  - id: odrl:target
+    label: target
+    domain: lws:AccessPolicy
+    external: true
+    comment: The asset that is the target of the rule.
+
+  - id: odrl:constraint
+    label: constraint
+    domain: lws:AccessPolicy
+    external: true
+    comment: A constraint that refines the semantics of an action or rule.
+
+  - id: odrl:leftOperand
+    label: left operand
+    domain: lws:AccessPolicy
+    external: true
+    comment: The left operand of a constraint.
+    one_of:
+      - odrl:purpose
+      - odrl:dateTime
+      - client
+      - dcterms:type
+
+  - id: odrl:operator
+    label: operator
+    domain: lws:AccessPolicy
+    external: true
+    comment: The operator of a constraint.
+    one_of:
+      - odrl:eq
+      - odrl:neq
+      - odrl:lt
+      - odrl:gt
+      - odrl:lteq
+      - odrl:gteq
+      - odrl:isAnyOf
+      - odrl:isAllOf
+      - odrl:isNoneOf
+
+  - id: odrl:rightOperand
+    label: right operand
+    domain: lws:AccessPolicy
+    external: true
+    comment: The right operand of a constraint.
+
+individual:
+  - id: create
+    label: create
+    comment: An action representing the creation of a new resource within a container.
+
+  - id: client
+    label: client
+    comment: A left operand representing the client identifier for an HTTP request.
 
 json_ld:
   alias:
