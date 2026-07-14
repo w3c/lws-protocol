@@ -50,8 +50,8 @@ specification {
 }
 
 model {
-  lws-user = actor 'LWS User' {
-    description 'A user of the LWS system'
+  agent = actor 'Agent' {
+    description 'An agent of the LWS system'
   }
 
   lws = system 'LWS System' {
@@ -123,7 +123,7 @@ model {
       }
     }
 
-    lws-user -> lws-client 'user requests'
+    agent -> lws-client 'agent requests'
     lws-client -> lws-server 'HTTP requests'
     lws-client -> identity-provider 'authenticates'
     lws-client -> resource-manager 'sends request'
@@ -139,7 +139,7 @@ model {
 views {
   view fig1-system-context {
     title 'System Context Diagram'
-    include lws-user, lws
+    include agent, lws
   }
 
   view fig2-container-diagram of lws {

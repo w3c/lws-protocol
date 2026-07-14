@@ -10,7 +10,7 @@ Shows the LWS System as a single unit and the person who uses it. Establishes sc
 
 | Box | Description |
 |---|---|
-| LWS User | A user of the LWS system |
+| Agent | An agent of the LWS system |
 | LWS System | A system that implements the LWS Protocol |
 
 ## Figure 2 - Container Diagram
@@ -21,7 +21,7 @@ Breaks the LWS System into its primary elements.
 
 | Box | Description |
 |---|---|
-| LWS User | A user of the LWS system |
+| Agent | An agent of the LWS system |
 | LWS System | A system that implements the LWS Protocol |
 | LWS Client | An HTTP client that complies with the LWS Protocol |
 | LWS Server | An HTTP server that complies with the LWS Protocol |
