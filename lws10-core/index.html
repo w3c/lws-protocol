@@ -188,11 +188,11 @@
           to guide implementation.
         </p>
         <p>
-          Figure 1 System Context shows the LWS System as a single unit and the person who uses it.
+          Figure 1 System Context shows the LWS System as a single unit and the agent who uses it.
         </p>
         <figure id="fig-1-system-context">
           <img src="diagrams/fig1-system-context.png" 
-              alt="Figure 1 System Context shows the LWS System as a single unit and the person who uses it."/>
+              alt="Figure 1 System Context shows the LWS System as a single unit and the agent who uses it."/>
           <figcaption>System Context (C4 Level 1)</figcaption>
         </figure>
         <p>
@@ -201,7 +201,7 @@
               <tr><th>Box</th><th>Description</th></tr>
             </thead>
             <tbody>
-              <tr><td>LWS User</td><td>A user of the LWS system</td></tr>
+              <tr><td>Agent</td><td>An agent of the LWS system</td></tr>
               <tr><td>LWS System</td><td>A system that implements the LWS Protocol</td></tr>
             </tbody>
           </table>
@@ -221,7 +221,7 @@
               <tr><th>Box</th><th>Description</th></tr>
             </thead>
             <tbody>
-              <tr><td>LWS User</td><td>A user of the LWS system</td></tr>
+              <tr><td>Agent</td><td>An agent of the LWS system</td></tr>
               <tr><td>LWS System</td><td>A system that implements the LWS Protocol</td></tr>
               <tr><td>LWS Client</td><td>An HTTP client that complies with the LWS Protocol</td></tr>
               <tr><td>LWS Server</td><td>An HTTP server that complies with the LWS Protocol</td></tr>
@@ -299,7 +299,7 @@
         This specification defines the following terms:
       </p>
       <ul>
-        <li><dfn data-lt="agents">agent</dfn> &mdash; a person, social entity, or software identified by a URI.</li>
+        <li><dfn data-lt="agents">agent</dfn> &mdash; a person, social entity, or software identified by a URI. An agent uses software (e.g. browser, curl, software library etc) to make LWS Client requests to the LWS Server.</li>
         <li><dfn data-lt="authentication credentials">authentication credential</dfn> &mdash; a security token that asserts claims about an <a>agent</a> or end-user. This token is secured with a cryptographic proof.
           Examples of authentication credentials include assertions of identity such as OpenID Connect ID Tokens and SAML-based assertions as well as assertions of
           capability such as ZCAPs.
