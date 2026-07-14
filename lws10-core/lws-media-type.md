@@ -17,9 +17,9 @@ In all three cases, the response body is the same JSON-LD document conforming to
 
 #### Pagination
 
-Certain composite resources, like containers, may hold a large number of resources. 
+Certain composite resources, like <a>containers</a>, may hold a large number of resources. 
 To allow clients to retrieve listings incrementally, servers SHOULD support
-pagination for containers whose membership exceeds a server-determined threshold.
+pagination for <a>containers</a> whose membership exceeds a server-determined threshold.
 
 ##### Pagination Model
 
@@ -51,8 +51,7 @@ Link headers that the client follows to retrieve subsequent pages. Servers MAY a
 direct access to specific pages via the pagination URIs obtained during a previous scan.
 
 When a paginated response is returned, the server MUST respond with 200 OK. The `totalItems`
-property in the response body MUST reflect the total number of items across all pages, not just the
-current page.
+property in the response body SHOULD reflect the total number of items across all pages, not just the current page.
 
 ##### Example: Paginated Container
 
