@@ -1,0 +1,21 @@
+specification {
+  color pink #f3d9f2
+
+  element ThreatContainer {
+    style {
+      color sky
+    }
+  }
+  element Process {
+  }
+
+  element DataObject {
+  }
+
+  element DataStore {
+  }
+
+  element ExternalEntity {
+  }
+}
+
