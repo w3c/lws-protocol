@@ -1,25 +1,19 @@
 (function () {
     var threat = {
         id: "T3",
-        name: "Client ID Impersonation",
-        desc: "The Client (Client A) may pretend to be another Client (Client B), to circumvent Client-based authorization decisions. The User Authorization Server may or may not collude with the Client.",
+        name: "Client ID Impersonation (with Trustworthy User Authorization Server)",
+        desc: "The Client (Client A) may pretend to be another Client (Client B), to gain authorization it should not have.",
         response: [
             {
                 id: "R4",
-                name: "Verification from User Authorization Server",
-                type: "Transfer and Reduce",
-                desc: "The User Authorization Server verifies the identity of the Client, such as by checking the Origin matches the targets in the Client's CID Document. This attests the Client CID. It requires no additional resource consumption from the Resource Authorization Server, but relying on the trust of User Authorization Server.",
-            },
-            {
-                id: "R5",
-                name: "...",
-                type: "...",
-                desc: "...",
+                name: "CID and Environment Verification (from User Authorization Server)",
+                type: "Reduce",
+                desc: "The User Authorization Server verifies the identity of the Client, by checking the environmental information (e.g. redirect URL, Origin) of the Client matches those specified in the Client CID Document.",
             },
         ],
-        elements: ["F4"],
+        elements: ["P3", "P2"],
         taxonomyName: "STRIDE",
-        taxonomyClass: "Tampering",
+        taxonomyClass: "Spoofing",
     };
 
     window.ThreatModel.register(threat);

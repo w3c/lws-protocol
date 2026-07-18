@@ -17,7 +17,7 @@
                 desc: "The User's access Credentials are securely stored and managed in a location where only the corresponding Client can use (e.g. browser's Cookie with `HttpOnly` and `Strict`). This prohibits Client B from using the Credentials issues to Client A. This transfers the threat from the Client or Client Admin to the underlying technology (e.g. browser).",
             },
         ],
-        elements: ["E2"],
+        elements: ["P3", "P4", "P5"],
         taxonomyName: "STRIDE",
         taxonomyClass: "Spoofing",
     };
