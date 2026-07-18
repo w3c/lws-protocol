@@ -9,6 +9,7 @@
 | Name | Contact | License | Client | Server |
 |------|---------|---------|--------|--------|
 | [sai-js](https://sai.js.org) | [@elf-pavlik](https://github.com/elf-pavlik) | MIT | ● | ◐ [^1] |
+| [sparq](https://sparq.jeswr.org/) | [Jesse Wright](https://jeswr.org/#me) | MIT | ○ | ● |
 |      |         |         |        |        |
 
 ## Features
