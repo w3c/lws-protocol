@@ -4,7 +4,7 @@ A set of composition diagrams that model the [Linked Web Storage Protocol](https
 
 ## Figure 1 - System Context Diagram
 
-Shows the LWS System as a single unit and the person who uses it. Establishes scope only — no internal structure is shown.
+Shows the LWS System as a single unit and the person or other agent that uses it. Establishes scope only — no internal structure is shown.
 
 ![Fig. 1 - System Context](./fig1-system-context.png)
 
