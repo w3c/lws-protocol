@@ -331,8 +331,8 @@ Link: &lt;https://example.org/types/index?page=4&gt;; rel="last"
           type IRI [[!RFC3987]] or an array of type IRIs combined with logical <strong>OR</strong>. The example
           above selects resources matching
           <code>(schema:Person OR foaf:Person) AND lws:DataResource</code> &mdash; the filter is a
-          conjunction of disjunctions, that is, conjunctive normal form. A request whose body has no
-          <code>type</code> key and no relation keys (or only keys whose values are empty arrays)
+          conjunction of disjunctions; that is, conjunctive normal form. A request whose body has no
+          <code>type</code> key and no relation keys (or all of whose keys have values of empty arrays)
           matches all resources visible to the client.
         </p>
         <p>
