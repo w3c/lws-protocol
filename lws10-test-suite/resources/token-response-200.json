@@ -1,5 +1,0 @@
-{
-  "access_token": "<bearer-token>",
-  "token_type": "Bearer",
-  "expires_in": 300
-}
