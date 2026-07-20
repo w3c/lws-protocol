@@ -4,7 +4,7 @@ Linked Web Storage organizes resources into <a>containers</a>. A <a>container</a
 as organizational units, analogous to directories or collections, enabling clients to group, discover, and navigate resources. A container maintains references to its member resources,
 which may comprise both non-container resources and additional container resources, thereby enabling hierarchical formations. Typically, a container holds minimal intrinsic content
 beyond metadata or enumerations of its members; its principal role is to aggregate and structure subordinate resources. The <a>storage</a> system's root is designated as a <a>container</a>, serving
-as the apex organizational unit devoid of a superior parent. The structure of <a>container representations</a> is defined in [](#container-representation); their media type, content negotiation, and pagination requirements are defined in [](#lws-media-type).
+as the apex organizational unit devoid of a superior parent. The structure of <a>container representations</a> is defined in [](#container-representation); their media type and pagination requirements are defined in [](#lws-media-type).
 Storage MAY function as a root container, enabling direct writes.
 
 Every LWS <a>storage</a> has a **<a>storage root</a>** that serves as the top-level organizational unit. The <a>storage root</a> has no parent and acts as the entry point for the <a>storage</a> hierarchy.
