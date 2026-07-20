@@ -274,7 +274,7 @@ Link: &lt;https://example.org/types/index?page=4&gt;; rel="last"
           A client searches by sending an HTTP <code>QUERY</code> request [[!RFC10008]] to the
           service endpoint, carrying the filter in the request body. The query format is identified
           by the request's <code>Content-Type</code> header field, which MUST be present; per
-          [[!RFC10008]] a server fails the request if the <code>Content-Type</code> is missing or
+          [[!RFC10008]], a server fails the request if the <code>Content-Type</code> is missing or
           inconsistent with the body (see <a href="#type-search-errors"></a>). Every server MUST
           support the <code>application/lws-query+json</code> filter format defined here as its baseline query
           format; a server MAY additionally accept other query formats, each identified by its own
