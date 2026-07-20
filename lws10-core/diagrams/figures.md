@@ -1,6 +1,6 @@
 # Figures
 
-A set of composition diagrams that models the [Linked Web Storage Protocol](https://w3c.github.io/lws-protocol/lws10-core/) specification.
+A set of composition diagrams that model the [Linked Web Storage Protocol](https://w3c.github.io/lws-protocol/lws10-core/).
 
 ## Figure 1 - System Context Diagram
 
