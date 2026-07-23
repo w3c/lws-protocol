@@ -79,44 +79,6 @@ model {
         style {
           multiple true
         }
-        lws-resource = resource 'LWS Resource' {
-          description 'An HTTP resource that supports the read operations defined by LWS'
-        }
-        container = resource 'Container' {
-          description 'An LWS resource able to enumerate a collection of LWS resources; may recursively contain other containers'
-        }
-        data-resource = resource 'Data Resource' {
-          description 'A data-bearing LWS resource such as a document, image, or structured information'
-        }
-        auxiliary-resource = resource 'Auxiliary Resource' {
-          description 'An LWS resource whose lifetime is bound to a primary resource'
-        }
-        linkset-resource = resource 'Linkset Resource' {
-          description 'An auxiliary resource conforming to RFC9264'
-        }
-        metadata-resource = resource 'Metadata Resource' {
-          description 'An auxiliary resource, managed by a storage, that describes an LWS resource'
-        }
-        storage-root = resource 'Storage Root' {
-          description 'The container at the root of a containment hierarchy of a storage'
-        }
-        storage-description = resource 'Storage Description' {
-          description 'Enumerates the storage root and the services/capabilities of a storage'
-        }
-
-        container -[isA]-> lws-resource
-        data-resource -[isA]-> lws-resource
-        auxiliary-resource -[isA]-> lws-resource
-        linkset-resource -[isA]-> auxiliary-resource
-        metadata-resource -[isA]-> auxiliary-resource
-        storage-root -[isA]-> container
-        storage-description -[isA]-> lws-resource
-
-        container -[contains]-> data-resource 'contains'
-
-        auxiliary-resource -[boundTo]-> lws-resource 'bound to primary resource'
-        metadata-resource -[describes]-> lws-resource 'describes'
-        storage-description -[describes]-> storage-root 'enumerates & describes'
       }
 
     }
@@ -129,7 +91,6 @@ model {
     lws-client -> resource-server 'sends request'
     authorization-server -> controlled-identifier 'verifies identity provider'
     authorization-server -> identity-provider 'validates credentials'
-    resource-server -[manages]-> storage-root 'manages'
   }
 //}
 
