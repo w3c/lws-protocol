@@ -54,30 +54,31 @@ model {
     description 'An agent of the LWS system'
   }
 
-  lws = system 'LWS System' {
-    description 'A system that implements the LWS Protocol'
+  //lws = system 'LWS System' {
+  //description 'A system that implements the LWS Protocol'
     component lws-client 'LWS Client' {
       description 'An HTTP client that complies with the LWS Protocol'
+    }
+    component controlled-identifier 'Controlled Identifier' {
+      description 'An identifier that is controlled by an agent and used to identify the agent to the LWS system'
+    }
+    component identity-provider 'Identity Provider' {
+      description 'Confirms user identity and issues signed credentials. MAY be an external system'
     }
     component lws-server 'LWS Server' {
       description 'An HTTP server that complies with the LWS Protocol'
 
-      component identity-provider 'Identity Provider' {
-        #optional
-        description 'Confirms user identity and issues signed credentials. MAY be an external system'
+      component authorization-server "Authorization Server" {
+        description 'An OAuth 2.0 authorization server that issues access tokens. MAY be an external system'
       }
-      component resource-manager 'Resource Manager' {
+      component resource-server 'Resource Server' {
         description 'Manages data resources, containers, containment and linksets'
-      }
-      component authentication 'Authentication' {
-        description 'Validates credentials against the identity provider'
-      }
-      component authorization 'Authorization' {
-        description 'Enforces resource manager access decisions'
       }
       component storage 'Storage' {
         description 'A set of hierarchically organized HTTP resources managed per LWS conventions'
-
+        style {
+          multiple true
+        }
         lws-resource = resource 'LWS Resource' {
           description 'An HTTP resource that supports the read operations defined by LWS'
         }
@@ -118,42 +119,41 @@ model {
         storage-description -[describes]-> storage-root 'enumerates & describes'
       }
 
-      component storage-controller 'Storage Controller' {
-        description 'Controls all resources in the storage directed by its client resource-manager'
-      }
     }
 
     agent -> lws-client 'agent requests'
+    controlled-identifier -> agent 'identifies'
     lws-client -> lws-server 'HTTP requests'
     lws-client -> identity-provider 'authenticates'
-    lws-client -> resource-manager 'sends request'
-    resource-manager -> authentication 'authenticates request'
-    authentication -> identity-provider 'validates credentials'
-    resource-manager -> authorization 'checks permission'
-    resource-manager -> storage-controller 'acts as client to'
-    storage-controller -> storage 'controls'
-    resource-manager -[manages]-> storage-root 'manages'
+    lws-client -> authorization-server 'requests access token'
+    lws-client -> resource-server 'sends request'
+    authorization-server -> controlled-identifier 'verifies identity provider'
+    authorization-server -> identity-provider 'validates credentials'
+    resource-server -[manages]-> storage-root 'manages'
   }
-}
+//}
 
 views {
-  view fig1-system-context {
-    title 'System Context Diagram'
-    include agent, lws
-  }
 
-  view fig2-container-diagram of lws {
-    title 'Container Diagram'
+  view fig-system-context {
+    title 'System Context Diagram'
     include *
   }
 
-  view fig3-lws-server-components of lws-server {
-    title 'LWS Server Component Diagram'
+  view fig-container-diagram of lws-server {
+    title 'Container Diagram'
+    autoLayout TopBottom
+    include *, identity-provider, agent
+    exclude storage
+  }
+
+  view fig-resource-server of resource-server {
+    title 'Resource Server Component Diagram'
     autoLayout TopBottom
     include *
   }
 
-  view fig4-resource-hierarchy of storage {
+  view fig-storage of storage {
     title 'LWS Resource Type Hierarchy'
     autoLayout LeftRight
     include *
