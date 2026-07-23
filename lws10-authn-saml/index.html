@@ -182,8 +182,44 @@
     <section id="privacy-considerations" class="informative">
       <h2>Privacy Considerations</h2>
 
-      <p class="issue" data-number="119">
-        This section needs to be completed.
+      <p>
+        All privacy considerations described in "Security and Privacy Considerations for the OASIS Security
+        Assertion Markup Language (SAML) V2.0" [[SAML2-SEC]] apply to this specification.
+      </p>
+
+      <p>
+        A SAML assertion used as an <a>authentication credential</a> can contain attributes
+        that reveal personally identifiable information about the end-user. Identity providers
+        are encouraged to issue assertions that contain only the information necessary for LWS
+        authentication &mdash; specifically, the <code>saml:NameID</code>, <code>saml:Issuer</code>,
+        and <code>saml:Audience</code> elements and the <code>Recipient</code> attribute of
+        <code>saml:SubjectConfirmationData</code> &mdash; and to avoid including additional identity
+        attributes unless explicitly required.
+      </p>
+
+      <p>
+        The <code>saml:NameID</code> element is used as the LWS subject identifier. When a
+        persistent name identifier format is used, it enables verifiers and storage servers
+        to correlate an end-user's activity across sessions and resources. Identity providers
+        that support transient name identifiers can reduce this correlation, though deployers
+        will need to evaluate whether transient identifiers are compatible with the access
+        control requirements of their LWS deployment.
+      </p>
+
+      <p>
+        Unlike the JWT-based authentication suites, the trust model for SAML in this
+        specification relies on out-of-band trust establishment with identity providers.
+        This means there is no subject identifier dereference step during validation, which
+        avoids the associated metadata leakage. However, the out-of-band trust relationship
+        itself reveals which identity providers are used within a deployment.
+      </p>
+
+      <p>
+        SAML assertions presented to a storage server or authorization server can be read by
+        those parties. Audience restriction (via the <code>saml:AudienceRestriction</code>
+        element) limits which parties the assertion is intended for but does not prevent an
+        intermediary from reading the assertion's contents in transit. The use of TLS is
+        essential for protecting authentication credentials during transmission.
       </p>
     </section>
   </body>
