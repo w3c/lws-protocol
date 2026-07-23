@@ -34,6 +34,10 @@ class:
     label: Storage
     comment: A Linked Web Storage instance.
 
+  - id: StorageRoot
+    label: Storage Root
+    comment: A service endpoint for a storage root container.
+
   - id: OpenIdProvider
     label: OpenID Provider
     comment: An OpenID Connect identity provider service.

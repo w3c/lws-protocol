@@ -34,8 +34,9 @@
         </ul>
       </li>
       <li>
-        <strong>`service`</strong> - the <code>service</code> property is OPTIONAL. If present, its value MUST be a set of services,
+        <strong>`service`</strong> - the <code>service</code> property is REQUIRED. Its value MUST be a set of services,
         where each service is described by a map containing the following properties. Additional properties MAY be present.
+        The set MUST contain a service whose <code>type</code> equals <code>StorageRoot</code>.
         <ul>
           <li><strong>`id`</strong> - the <code>id</code> property is OPTIONAL. If present, its value MUST be a URI.</li>
           <li><strong>`type`</strong> - the <code>type</code> property is REQUIRED. Its value MUST be a string or a set of strings.</li>
@@ -51,7 +52,11 @@
     "https://www.w3.org/ns/lws/v1"
   ],
   "id": "https://storage.example/",
-  "type": "Storage"
+  "type": "Storage",
+  "service": [{
+    "type": "StorageRoot",
+    "serviceEndpoint": "https://storage.example/root/"
+  }]
 }
     </pre>
   </section>
@@ -66,7 +71,9 @@
     </p>
 
     <p>
-      Dereferencing the <a>storage</a> URI MUST return the <a>storage description</a> document.
+      Requests for the <a>storage</a> URI MUST return a document that conforms to the
+      <a>storage description resource</a> data model with a media type of <code>application/lws+cid</code>,
+      unless content negotiation requires a different format.
     </p>
   </section>
 
@@ -82,8 +89,10 @@
     <h4>Storage Services</h4>
 
     <p>
-      A <a>storage description resource</a> may contain links to services connected to a <a>storage</a>.
-      The API definition of these services are outside the scope of this specification.
+      A <a>storage description resource</a> MUST contain a <code>StorageRoot</code> service whose
+      <code>serviceEndpoint</code> is the URI of the <a>storage root</a> container.
+      Additional services connected to a <a>storage</a> MAY also be present.
+      The API definition of these additional services are outside the scope of this specification.
     </p>
   </section>
 
@@ -124,6 +133,9 @@
     "target": ["image/png"]
   }],
   "service": [{
+    "type": "StorageRoot",
+    "serviceEndpoint": "https://storage.example/root/"
+  }, {
     "type": "NotificationService",
     "serviceEndpoint": "https://storage.example/notification/api",
     "subscriptionType": ["WebhookSubscription"]

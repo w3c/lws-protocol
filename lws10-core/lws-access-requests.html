@@ -70,6 +70,10 @@
   "type": "Storage",
   "service": [
     {
+      "type": "StorageRoot",
+      "serviceEndpoint": "https://storage.example/root/"
+    },
+    {
       "type": "AccessRequestService",
       "serviceEndpoint": "https://access.example/request/",
       "conformsTo": ["https://www.w3.org/ns/lws#AccessProfile"]
@@ -113,7 +117,7 @@
     "assignee": "https://id.example/agent",
     "target": {
       "type": "StorageResource",
-      "value": ["https://storage.example/projects/"]
+      "value": ["https://storage.example/root/projects/"]
     },
     "constraint": [
       {
@@ -149,7 +153,7 @@
     "assignee": "https://id.example/agent",
     "target": {
       "type": "StorageResource",
-      "value": ["https://storage.example/projects/"]
+      "value": ["https://storage.example/root/projects/"]
     },
     "constraint": [
       {
@@ -449,8 +453,8 @@
     "target": {
       "type": "StorageResource",
       "value": [
-        "https://storage.example/data/2025",
-        "https://storage.example/data/2026"
+        "https://storage.example/root/2025",
+        "https://storage.example/root/2026"
       ]
     }
   }]
@@ -696,7 +700,7 @@ Link: &lt;https://type.example/Playlist&gt;; rel="type"
     "assignee": "https://id.example/agent",
     "target": {
       "type": "StorageResource",
-      "value": ["https://storage.example/projects/"]
+      "value": ["https://storage.example/root/projects/"]
     },
     "constraint": [
       {
