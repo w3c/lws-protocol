@@ -26,7 +26,7 @@ jobs:
       - name: Build vocabulary
         working-directory: lws10-vocab
         run: |
-          npm install yml2vocab
+          npm install yml2vocab@^1
           npx yml2vocab -v vocabulary -t template.html -c && mv vocabulary.html index.html
           rm -rf node_modules package.json package-lock.json
 
