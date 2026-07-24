@@ -21,18 +21,14 @@ jobs:
 
       - uses: actions/setup-node@v4
         with:
-          node-version: "20"
-          cache: "npm"
-          cache-dependency-path: lws10-vocab/package-lock.json
+          node-version: "24"
 
       - name: Build vocabulary
         working-directory: lws10-vocab
         run: |
-          npm ci
-          npm run build
-
-      - name: Clean up node_modules
-        run: rm -rf lws10-vocab/node_modules
+          npm install yml2vocab
+          npx yml2vocab -v vocabulary -t template.html -c && mv vocabulary.html index.html
+          rm -rf node_modules package.json package-lock.json
 
       - name: Convert README to HTML
         uses: docker://pandoc/core:3.8
