@@ -18,7 +18,7 @@ ontology:
     value: Linked Web Storage Vocabulary
 
   - property: dc:description
-    value: RDFS [[RDF-SCHEMA]] vocabulary used by the Linked Web Storage Protocol [[lws-protocol]]
+    value: RDFS [[RDF-SCHEMA]] vocabulary used by the Linked Web Storage Protocol [[lws-core]]
 
   - property: rdfs:seeAlso
     value: https://www.w3.org/TR/lws-protocol/
@@ -48,17 +48,17 @@ class:
   - id: Notification
     label: Notification
     comment: A notification envelope describing an event that occurred on a resource.
-    defined_by: https://www.w3.org/TR/lws-notifications/
+    defined_by: https://www.w3.org/TR/lws-core/
 
   - id: NotificationService
     label: Notification Service
     comment: A service through which clients subscribe to resource change notifications.
-    defined_by: https://www.w3.org/TR/lws-notifications/
+    defined_by: https://www.w3.org/TR/lws-core/
 
   - id: WebhookSubscription
     label: Webhook Subscription
     comment: A subscription type that delivers notifications via HTTP POST to a subscriber-provided inbox URL.
-    defined_by: https://www.w3.org/TR/lws-notifications/
+    defined_by: https://www.w3.org/TR/lws-core/
 
 property:
   - id: items
@@ -116,31 +116,31 @@ property:
     label: subscription type
     domain: lws:NotificationService
     comment: The subscription types supported by a notification service.
-    defined_by: https://www.w3.org/TR/lws-notifications/
+    defined_by: https://www.w3.org/TR/lws-core/
 
   - id: subscription
     label: subscription
     range: xsd:anyURI
     comment: The URL of the subscription resource or connection endpoint.
-    defined_by: https://www.w3.org/TR/lws-notifications/
+    defined_by: https://www.w3.org/TR/lws-core/
 
   - id: activity
     label: activity
     domain: lws:Notification
     comment: The Activity Streams 2.0 activity payload within a notification.
-    defined_by: https://www.w3.org/TR/lws-notifications/
+    defined_by: https://www.w3.org/TR/lws-core/
 
   - id: topic
     label: topic
     range: xsd:anyURI
     comment: An array of resource URIs covered by a subscription.
-    defined_by: https://www.w3.org/TR/lws-notifications/
+    defined_by: https://www.w3.org/TR/lws-core/
 
   - id: storage
     label: storage
     range: xsd:anyURI
     comment: The URI identifying the LWS storage that emitted the notification.
-    defined_by: https://www.w3.org/TR/lws-notifications/
+    defined_by: https://www.w3.org/TR/lws-core/
 
   - id: as:Create
     label: Create
