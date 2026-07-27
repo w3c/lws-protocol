@@ -8,7 +8,7 @@
                 id: "R4",
                 name: "CID and Environment Verification (from User Authorization Server)",
                 type: "Reduce",
-                desc: "The User Authorization Server verifies the identity of the Client, by checking the environmental information (e.g. redirect URL) of the Client matches those specified in the Client CID Document. This ensures that the response that the User Authorization Server sends is to a location trusted by the claimed Client CID Document. As long as those specified locations are not compromised, there will not be impersonations.",
+                desc: "The User Authorization Server verifies the identity of the Client, by checking the environmental information (e.g., redirect URL) of the Client matches those specified in the Client CID Document. This ensures that the response sent by the User Authorization Server is to a location trusted by the claimed Client CID Document. As long as those specified locations are not compromised, there will be no impersonations.",
             },
         ],
         elements: ["P3", "P2"],
