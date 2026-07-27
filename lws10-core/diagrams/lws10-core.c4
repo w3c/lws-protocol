@@ -1,52 +1,23 @@
 specification {
+ 
   element actor {
     style {
       shape person
-      color amber
+      opacity 50%
+      color gray
     }
   }
-  element system {
+  element component {
     style {
-      color blue
-      opacity 30%
-    }
-  }
-  element externalSystem {
-    style {
+      border solid
       color secondary
-      opacity 30%
-    }
-  }
-  element component
-
-  element resource {
-    style {
-      shape document
-      color indigo
     }
   }
 
-  relationship isA {
+  relationship manages {
     color gray
-    line dashed
-    head none
+    line solid
   }
-  relationship contains {
-    color gray
-    head diamond
-  }
-  relationship boundTo {
-    color gray
-    line dotted
-    head none
-  }
-  relationship describes {
-    color gray
-    line dotted
-  }
-  relationship manages
-
-  tag optional
 }
 
 model {
@@ -54,52 +25,47 @@ model {
     description 'An agent of the LWS system'
   }
 
-  //lws = system 'LWS System' {
-  //description 'A system that implements the LWS Protocol'
-    component lws-client 'LWS Client' {
-      description 'An HTTP client that complies with the LWS Protocol'
-    }
-    component controlled-identifier 'Controlled Identifier' {
-      description 'An identifier that is controlled by an agent and used to identify the agent to the LWS system'
-    }
-    component identity-provider 'Identity Provider' {
-      description 'Confirms user identity and issues signed credentials. MAY be an external system'
-    }
-    component lws-server 'LWS Server' {
-      description 'An HTTP server that complies with the LWS Protocol'
+  component lws-client 'LWS Client' {
+    description 'An HTTP client that complies with the LWS Protocol'
+  }
+  component controlled-identifier 'Controlled Identifier' {
+    description 'An identifier that is controlled by an agent and used to identify the agent to the LWS system'
+  }
+  component identity-provider 'Identity Provider' {
+    description 'Confirms user identity and issues signed credentials. MAY be an external system'
+  }
+  component lws-server 'LWS Server' {
+    description 'An HTTP server that complies with the LWS Protocol'
 
-      component authorization-server "Authorization Server" {
-        description 'An OAuth 2.0 authorization server that issues access tokens. MAY be an external system'
-      }
-      component resource-server 'Resource Server' {
-        description 'Manages data resources, containers, containment and linksets'
-        component storage 'Storage' {
-          description 'A set of hierarchically organized HTTP resources managed per LWS conventions'
-          style {
-            multiple true
-          }
+    component authorization-server "Authorization Server" {
+      description 'An OAuth 2.0 authorization server that issues access tokens. MAY be an external system'
+    }
+    component resource-server 'Resource Server' {
+      description 'Manages data resources, containers, containment and linksets'
+      component storage 'Storage' {
+        description 'A set of hierarchically organized HTTP resources managed per LWS conventions'
+        style {
+          multiple true
         }
       }
-
     }
-
-    agent -> lws-client 'agent requests'
-    controlled-identifier -> agent 'identifies'
-    lws-client -> lws-server 'HTTP requests'
-    lws-client -> identity-provider 'authenticates'
-    lws-client -> authorization-server 'requests access token'
-    lws-client -> resource-server 'sends request'
-    authorization-server -> controlled-identifier 'verifies identity provider'
-    authorization-server -> identity-provider 'validates credentials'
   }
-//}
+
+  // To use your custom rules, swap '->' for your defined triggers:
+  agent .manages lws-client 'agent requests'
+  controlled-identifier .manages agent 'identifies'
+  lws-client .manages lws-server 'HTTP requests'
+  lws-client .manages identity-provider 'authenticates'
+  lws-client .manages authorization-server 'requests access token'
+  lws-client .manages resource-server 'sends request'
+  authorization-server .manages controlled-identifier 'verifies identity provider'
+  authorization-server .manages identity-provider 'validates credentials'
+}
 
 views {
-
   view fig-container-diagram of lws-server {
     title 'Container Diagram'
     autoLayout TopBottom
     include *, identity-provider, agent, storage
   }
-
 }
