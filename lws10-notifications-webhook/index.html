@@ -1,0 +1,398 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <title>LWS 1.0 Notification Suite: Webhooks</title>
+    <script src="https://www.w3.org/Tools/respec/respec-w3c" class="remove"></script>
+    <link rel="stylesheet" href="../lws10-core/local.css"/>
+    <script class='remove'>
+      // See https://respec.org/docs/ for how to configure ReSpec
+      var respecConfig = {
+        specStatus: "ED",
+        shortName: "lws10-notifications-webhook",
+        editors: [{
+          name: "Jesse Wright",
+          w3cid: "132252",
+          company: "University of Oxford",
+          companyURL: "https://www.ox.ac.uk/",
+        }, {
+          name: "Erich Bremer",
+          w3cid: "45759",
+          company: "Stony Brook University",
+          companyURL: "https://www.stonybrook.edu/",
+        }],
+        authors: [{
+          name: "Laurens Debackere"
+        },
+        {
+          name: "Aaron Coburn"
+        }],
+        github: "w3c/lws-protocol",
+        xref: ["web-platform"],
+        group: "lws",
+        maxTocLevel: 3,
+        localBiblio: {
+          "LWS10-CORE": {
+            title: "Linked Web Storage Protocol 1.0",
+            href: "https://www.w3.org/TR/lws10-core/",
+            publisher: "W3C",
+            status: "FPWD",
+          },
+          "RFC9421": {
+            title: "HTTP Message Signatures",
+            href: "https://www.rfc-editor.org/rfc/rfc9421",
+            publisher: "IETF",
+            status: "Proposed Standard",
+          },
+          "RFC9530": {
+            title: "Digest Fields",
+            href: "https://www.rfc-editor.org/rfc/rfc9530",
+            publisher: "IETF",
+            status: "Proposed Standard",
+          },
+          "CID-1.0": {
+            title: "Controlled Identifiers 1.0",
+            href: "https://www.w3.org/TR/cid-1.0/",
+            publisher: "W3C",
+            status: "REC",
+          },
+        },
+      };
+    </script>
+  </head>
+  <body>
+    <section id="abstract">
+      <p>
+        This document defines a Webhook-based notification suite for the Linked Web Storage (LWS)
+        protocol, enabling LWS servers to deliver resource change notifications to registered
+        endpoints via HTTP POST.
+      </p>
+    </section>
+    <section id="sotd">
+      <p>
+        This is an unofficial proposal.
+      </p>
+    </section>
+
+    <section id="introduction">
+      <h2>Introduction</h2>
+
+      <p>
+        The [[!LWS10-CORE|Linked Web Storage]] protocol defines a notification mechanism that
+        allows clients to subscribe to resource changes and receive updates through various
+        delivery channels. This document describes the Webhook notification suite &mdash; a
+        server-to-server mechanism whereby the LWS storage server delivers change events to a
+        registered endpoint via HTTP POST.
+      </p>
+    </section>
+
+    <section id="conformance"></section>
+
+    <section id="terminology">
+      <h2>Terminology</h2>
+
+      <p>
+        The terms "<dfn data-cite="LWS10-CORE#dfn-notification">notification</dfn>",
+        "<dfn data-cite="LWS10-CORE#dfn-subscription">subscription</dfn>",
+        "<dfn data-cite="LWS10-CORE#dfn-subscriber">subscriber</dfn>",
+        "<dfn data-cite="LWS10-CORE#dfn-notification-suite">notification suite</dfn>",
+        "<dfn data-cite="LWS10-CORE#dfn-storage-description-resource">storage description resource</dfn>",
+        and "<dfn data-cite="LWS10-CORE#dfn-agent">agent</dfn>"
+        are defined by the Linked Web Storage Protocol [[!LWS10-CORE]].
+      </p>
+
+      <p>
+        The terms "controlled identifier document", "verification method", and "verification
+        relationship" are defined by Controlled Identifiers 1.0 [[!CID-1.0]].
+      </p>
+
+      <p>
+        This specification defines the following additional terms:
+      </p>
+
+      <ul>
+        <li>
+          <dfn>Inbox</dfn> &mdash; a URL controlled by a <a>subscriber</a> or other agent
+          to which a server delivers notifications via HTTP <code>POST</code>. An inbox is
+          used whenever the recipient of a notification is a server rather than a client
+          holding an open connection.
+        </li>
+      </ul>
+    </section>
+
+    <section id="webhook-subscription">
+      <h2>Creating a Webhook Subscription</h2>
+
+      <p>
+        When a client creates a webhook notification <a>subscription</a>, the subscription body MUST
+        include a <code>type</code> field equal to <code>WebhookSubscription</code>. In
+        addition, a server MUST support the following fields:
+      </p>
+
+      <ul>
+        <li>
+          <code>inbox</code> &mdash; REQUIRED. The URI of the <a>inbox</a> to which
+          notification messages are delivered.
+        </li>
+        <li>
+          <code>expires</code> &mdash; OPTIONAL. A datetime value indicating when the
+          subscription expires.
+        </li>
+      </ul>
+
+      <pre class="example" title="Webhook subscription request">
+POST /subscriptions HTTP/2
+Host: notification.example
+Authorization: Bearer &lt;access-token&gt;
+Content-Type: application/lws+json
+
+{
+  "@context": ["https://www.w3.org/ns/lws/v1"],
+  "type": "WebhookSubscription",
+  "topic": [
+    "https://storage.example/alice/notes/",
+    "https://storage.example/alice/profile"
+  ],
+  "inbox": "https://receiver.example/hooks/lws",
+  "expires": "2026-06-09T12:00:00Z"
+}
+      </pre>
+
+      <p>
+        A successful response body has these additional requirements:
+      </p>
+
+      <ul>
+        <li>
+          <code>type</code> &mdash; the value of this property MUST be a string equal to
+          <code>WebhookSubscription</code>.
+        </li>
+        <li>
+          <code>subscription</code> &mdash; a URL that can be used to manage the lifecycle of
+          the subscription.
+        </li>
+        <li>
+          <code>expires</code> &mdash; OPTIONAL. A datetime value indicating when the
+          subscription expires.
+        </li>
+      </ul>
+
+      <pre class="example" title="Webhook subscription response">
+HTTP/2 200 OK
+Content-Type: application/lws+json
+Location: https://notification.example/subscriptions/9e8d7c6b5a4f
+
+{
+  "@context": ["https://www.w3.org/ns/lws/v1"],
+  "type": "WebhookSubscription",
+  "subscription": "https://notification.example/subscriptions/9e8d7c6b5a4f",
+  "expires": "2026-06-09T12:00:00Z"
+}
+      </pre>
+    </section>
+
+    <section id="webhook-authentication">
+      <h2>Webhook Authentication</h2>
+
+      <p>
+        When a server delivers a <a>notification</a> to an <a>inbox</a>, the
+        <a>subscriber</a> needs to verify that the request is authentic.
+      </p>
+
+      <p>
+        A server SHOULD sign each outbound request using HTTP Message Signatures
+        [[!RFC9421]]. When an <a>inbox</a> receives a signed message, it MUST
+        verify the signature using the notification server's public key, discoverable via
+        the <a>storage description resource</a>.
+      </p>
+
+      <p>
+        A server that supports HTTP Message Signatures MUST include the signing key in the
+        <a>storage description resource</a>. The key MUST be expressed as a verification method
+        in a <code>verificationMethod</code> array, and MUST be referenced from an
+        <code>authentication</code> verification relationship, following the Controlled
+        Identifiers 1.0 [[!CID-1.0]] data model.
+      </p>
+
+      <pre class="example" title="Storage description with verification method and authentication relationship">
+{
+  "@context": ["https://www.w3.org/ns/lws/v1"],
+  "id": "https://storage.example/",
+  "type": "Storage",
+  "verificationMethod": [{
+    "id": "https://storage.example/#key-20260320",
+    "type": "JsonWebKey",
+    "controller": "https://storage.example/",
+    "publicKeyJwk": {
+      "kid": "key-20260320",
+      "kty": "EC",
+      "crv": "P-256",
+      "alg": "ES256",
+      "x": "f83OJ3D2xF1Bg8vub9tLe1gHMzV76e8Tus9uPHvRVEU",
+      "y": "x_FEzRu9m36HLN_tue659LNpXW6pCyStikYjKIWI5a0"
+    }
+  }],
+  "authentication": ["https://storage.example/#key-20260320"],
+  "service": [{
+    "type": "NotificationService",
+    "serviceEndpoint": "https://notification.example/subscriptions",
+    "subscriptionType": ["WebhookSubscription"]
+  }]
+}
+      </pre>
+
+      <section id="signature-requirements">
+        <h3>Signature Requirements</h3>
+
+        <p>
+          A server that signs webhook delivery requests MUST include at least the following
+          components in the signature base:
+        </p>
+
+        <ul>
+          <li><code>@method</code> &mdash; the HTTP method of the request (always POST).</li>
+          <li><code>@scheme</code> &mdash; prevents downgrade from https to http.</li>
+          <li>
+            <code>@authority</code> &mdash; the host of the <a>inbox</a>,
+            preventing delivery to an unintended endpoint.
+          </li>
+          <li>
+            <code>@path</code> &mdash; the path component of the <a>inbox</a> URL.
+          </li>
+          <li>
+            <code>content-type</code> &mdash; the media type of the request body.
+          </li>
+          <li>
+            <code>content-digest</code> &mdash; a digest of the request body, computed
+            according to [[!RFC9530]].
+          </li>
+        </ul>
+
+        <p>
+          The <code>Signature-Input</code> field MUST include the <code>created</code> and
+          <code>keyid</code> parameters. The <code>keyid</code> value MUST correspond to
+          the <code>id</code> of a key in the <code>verificationMethod</code> array of the
+          <a>storage description resource</a>.
+        </p>
+      </section>
+
+      <section id="signature-verification">
+        <h3>Signature Verification</h3>
+
+        <p>
+          To verify a webhook signature, a receiver MUST perform the following steps:
+        </p>
+
+        <ol>
+          <li>
+            Extract the <code>keyid</code> value from the <code>Signature-Input</code>
+            field. The <code>keyid</code> value MUST be a URL with a fragment component.
+          </li>
+          <li>
+            Remove the fragment component from the <code>keyid</code> URL. The resulting
+            URL is the storage identifier.
+          </li>
+          <li>
+            Dereference the storage identifier to retrieve the <a>storage description resource</a>.
+            The <code>id</code> property of the top-level document map MUST match the
+            storage identifier.
+          </li>
+          <li>
+            Find the object in the <code>verificationMethod</code> array whose
+            <code>id</code> property matches either the full <code>keyid</code> URL or the
+            fragment component of the <code>keyid</code> URL.
+          </li>
+          <li>
+            Verify the HTTP Message Signature using the located verification method.
+          </li>
+        </ol>
+      </section>
+    </section>
+
+    <section id="webhook-subscription-management">
+      <h2>Subscription Management</h2>
+
+      <p>
+        The value of the <code>serviceEndpoint</code> property for a
+        <code>NotificationService</code> that supports <code>WebhookSubscription</code>
+        MUST be a URL that supports <code>GET</code> operations to list a <a>subscriber</a>'s
+        active webhook subscriptions. The resulting serialization MUST conform to the requirements
+        for LWS Containers [[!LWS10-CORE]]. The response SHOULD support LWS Paging.
+      </p>
+
+      <p>
+        Each subscription resource listed in this container MUST support <code>GET</code>
+        and <code>DELETE</code> operations. A <code>GET</code> request returns the current
+        state of the subscription. A <code>DELETE</code> request cancels the subscription.
+      </p>
+    </section>
+
+    <section id="webhook-delivery">
+      <h2>Notification Delivery</h2>
+
+      <p>
+        The server sends an HTTP <code>POST</code> request to the registered
+        <a>inbox</a> with the notification envelope as the request body. The
+        request body MUST conform to the <code>application/lws+json</code> media type.
+      </p>
+
+      <ul>
+        <li>
+          <strong>Acknowledgment</strong>: A 2xx response indicates successful receipt.
+        </li>
+        <li>
+          <strong>Retry</strong>: On failure, the server MAY retry delivery.
+        </li>
+        <li>
+          <strong>Expiration</strong>: After repeated failures, the server MAY deactivate
+          the subscription.
+        </li>
+      </ul>
+    </section>
+
+    <section id="subscription-type">
+      <h2>Subscription Type Identifier</h2>
+
+      <p>
+        A Webhook <a>subscription</a> MUST use the <code>WebhookSubscription</code> string
+        as its subscription type when interacting with the <code>NotificationService</code>.
+      </p>
+    </section>
+
+    <section id="security-considerations" class="informative">
+      <h2>Security Considerations</h2>
+
+      <ul>
+        <li>
+          <strong>Webhook Verification</strong>: Without proper authentication on webhook
+          deliveries, an attacker could spoof notifications. <a>Subscribers</a> are strongly
+          encouraged to validate HTTP Message Signatures on all incoming notification requests
+          using the public key published in the associated <a>storage description resource</a>.
+        </li>
+        <li>
+          <strong>Subscription Abuse</strong>: Rate limiting and endpoint verification are
+          suggested to prevent abuse of the subscription mechanism.
+        </li>
+        <li>
+          <strong>Signature Replay</strong>: A signed webhook request could be captured and
+          replayed by an attacker. <a>Subscribers</a> are encouraged to check the
+          <code>created</code> parameter in the <code>Signature-Input</code> field and reject
+          signatures whose timestamp falls outside a reasonable clock-skew window.
+        </li>
+      </ul>
+    </section>
+
+    <section id="privacy-considerations" class="informative">
+      <h2>Privacy Considerations</h2>
+
+      <ul>
+        <li>
+          <strong>Inbox Disclosure</strong>: The <a>inbox</a> URL is shared with the
+          notification server, revealing the existence and location of the <a>subscriber</a>'s
+          receiving endpoint. <a>Subscribers</a> MAY use unique per-subscription inbox URLs
+          to limit correlation.
+        </li>
+      </ul>
+    </section>
+  </body>
+</html>
