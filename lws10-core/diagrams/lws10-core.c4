@@ -99,13 +99,7 @@ views {
   view fig-container-diagram of lws-server {
     title 'Container Diagram'
     autoLayout TopBottom
-    include *, identity-provider, agent
-    exclude storage
+    include *, identity-provider, agent, storage
   }
 
-  view fig-resource-server of resource-server {
-    title 'Resource Server Component Diagram'
-    autoLayout TopBottom
-    include *
-  }
 }
