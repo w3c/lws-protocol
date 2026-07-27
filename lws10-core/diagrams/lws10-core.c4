@@ -73,11 +73,11 @@ model {
       }
       component resource-server 'Resource Server' {
         description 'Manages data resources, containers, containment and linksets'
-      }
-      component storage 'Storage' {
-        description 'A set of hierarchically organized HTTP resources managed per LWS conventions'
-        style {
-          multiple true
+        component storage 'Storage' {
+          description 'A set of hierarchically organized HTTP resources managed per LWS conventions'
+          style {
+            multiple true
+          }
         }
       }
 
