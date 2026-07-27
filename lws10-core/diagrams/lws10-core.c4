@@ -96,11 +96,6 @@ model {
 
 views {
 
-  view fig-system-context {
-    title 'System Context Diagram'
-    include *
-  }
-
   view fig-container-diagram of lws-server {
     title 'Container Diagram'
     autoLayout TopBottom
