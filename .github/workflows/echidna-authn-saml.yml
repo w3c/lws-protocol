@@ -12,7 +12,7 @@ jobs:
     name: Build, validate and publish
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v7
       - uses: w3c/spec-prod@v2
         with:
           SOURCE: lws10-authn-saml/index.html
