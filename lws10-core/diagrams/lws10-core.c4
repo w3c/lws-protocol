@@ -113,10 +113,4 @@ views {
     autoLayout TopBottom
     include *
   }
-
-  view fig-storage of storage {
-    title 'LWS Resource Type Hierarchy'
-    autoLayout LeftRight
-    include *
-  }
 }
