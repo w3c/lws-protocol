@@ -137,7 +137,6 @@
       <p>
         Different LWS server instances each maintain their own hierarchy of linked resources. An agent might use the same identification to navigate across servers, with access to each server's resources determined by the permissions granted by that server's resource managers. It is not guaranteed that every LWS server instance will support every possible agent identifier; any given LWS server instance might require that an agent identify itself via a particular identity provider, to gain access to resources managed by that server instance.
       </p>
-
       
       <section id="resource-access">
         <h2>Resource Access</h2>
@@ -177,11 +176,25 @@
         </p>
 
         <p>
-          A <dfn>LWS Client</dfn> is an HTTP client [[!rfc9112]] that complies with all of the relevant "MUST" statements in this specification. Specifically, the relevant normative "MUST" statements in <a href="#operations"></a> of this document MUST be respected.
+          An <dfn>LWS Client</dfn> is an HTTP client [[!rfc9112]] that complies with all of the relevant "MUST" statements in this specification. Specifically, the relevant normative "MUST" statements in <a href="#operations"></a> of this document MUST be respected.
         </p>
       </section>
-    </section>
 
+      <section id="scope-diagrams">    <!-- becomes 2.4 Scope Diagrams -->
+        <h2>Scope Diagrams</h2>
+        <p>
+          The following diagrams are platform-independent models 
+          to guide implementation.
+        </p>
+        <figure id="fig-system-context">
+          <img src="diagrams/fig-container-diagram.svg" 
+              alt="Figure: System Context shows the LWS System and its major components"/>
+          <figcaption>System Context shows the LWS System and its major components.</figcaption>
+        </figure>
+
+      </section>
+
+    </section>
     <section id="terminology">
       <h2>Terminology</h2>
       <p>
