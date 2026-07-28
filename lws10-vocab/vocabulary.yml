@@ -5,7 +5,10 @@ vocab:
 
 prefix:
   - id: as
-    value: https://www.w3.org/ns/activitystreams#
+- id: as
+  value: https://www.w3.org/ns/activitystreams#
+- id: as2
+  value: https://www.w3.org/ns/activitystreams#
   - id: schema
     value: https://schema.org/
   - id: dcterms
@@ -239,6 +242,7 @@ property:
       - odrl:dateTime
       - client
       - dcterms:type
+      - as2:mediaType
 
   - id: odrl:operator
     label: operator
