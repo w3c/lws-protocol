@@ -16,6 +16,10 @@ To see the most recent HTML rendered version of the specification from this repo
 - [`authn-ssi-did-key`](lws10-authn-ssi-did-key): Self-signed `did:key` Authentication Suite
 - [`notifications`](lws10-notifications/): Notifications
 
+## (1.0) Implementations:
+
+[Implementations.md](Implementations.md) <- please signal interest and progress via PR
+
 
 ## Contribution Guidelines:
 
