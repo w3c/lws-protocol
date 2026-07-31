@@ -143,27 +143,27 @@
       <table class="dictionary">
         <tbody>
           <tr>
-            <td class="left"><dfn data-lt="E1|E1 User|User">E1 User</dfn>
+            <td class="left"><dfn data-lt="E1|E1 Agent|Agent">E1 Agent</dfn>
             </td>
             <td>An <a>agent</a> who the <a>LWS Client</a> represents; the User is identified by their <a>CID Document</a>, which specifies basic User information, and the <a>User Authorization Server(s)</a> that proves the User's identity.</td>
           </tr>
           <tr>
             <td class="left"><dfn
-                data-lt="E2|E2 Application Admin|Application Admin">E2
-                Application Admin</dfn></td>
+                data-lt="E2|E2 Application Provider|Application Provider">E2
+                Application Provider</dfn></td>
             <td>An <a>agent</a> responsible for developing, deploying or configuring an
               <a>LWS Client</a> that accesses resources on behalf of Users.</td>
           </tr>
           <tr>
             <td class="left"><dfn
-                data-lt="E3|E3 Storage Controller|Storage Controller">E3
-                Storage Controller</dfn></td>
+                data-lt="E3|E3 Resource Owner|Resource Owner">E3
+                Resource Owner</dfn></td>
             <td>An <a>agent</a> that controls all resources in an <a>LWS Storage</a>. The Storage Controller specifies the Resource Authorization Server, and may determine the Access Control policies for Resources in the LWS Storage.</td>
           </tr>
           <tr>
             <td class="left"><dfn
-                data-lt="C1|C1 CID Provider|CID Provider">C1
-                CID Provider</dfn></td>
+                data-lt="C1|C1 End User CID Provider|End User CID Provider">C1
+                End User CID Provider</dfn></td>
             <td>The service where the User stores their
               <a>CID Document</a>, which designates the
               <a>User Authorization Server(s)</a> that prove the User's
@@ -171,8 +171,8 @@
           </tr>
           <tr>
             <td class="left"><dfn
-                data-lt="C2|C2 User Authorization Server|User Authorization Server">C2
-                User Authorization Server</dfn></td>
+                data-lt="C2|C2 End User Auth / IdP|End User Auth / IdP">C2
+                End User Auth / IdP</dfn></td>
             <td>The service that proves the User's identity by issuing
               <a>authentication credentials</a> signed with the User's private
               key.</td>
@@ -187,8 +187,8 @@
           </tr>
           <tr>
             <td class="left"><dfn
-                data-lt="C4|C4 LWS Storage|LWS Storage Container">C4
-                LWS Storage</dfn></td>
+                data-lt="C4|C4 Resource Owner|Resource Owner">C4
+                Resource Owner</dfn></td>
             <td>The storage system where the User's <a>LWS resources</a> are
               hosted, managed by a <a>Resource Authorization Server</a> that
               validates <a>authentication credentials</a> and issues access
@@ -196,15 +196,16 @@
           </tr>
           <tr>
             <td class="left"><dfn
-                data-lt="P1|P1 CID|CID">P1 CID</dfn></td>
+                data-lt="P1|P1 Controlled Identifier|Controlled Identifier">P1
+                Controlled Identifier</dfn></td>
             <td>Process managing the User's <a>CID Document</a>,
               which points to the User's chosen
               <a>User Authorization Server(s)</a>.</td>
           </tr>
           <tr>
             <td class="left"><dfn
-                data-lt="P2|P2 User Authorization Server|User Authorization Server">P2
-                User Authorization Server</dfn></td>
+                data-lt="P2|P2 Identity Provider|Identity Provider">P2
+                Identity Provider</dfn></td>
             <td>Process acting as the User's <a>authorization server</a> and
               <a>issuer</a>, which issues <a>authentication credentials</a> signed
               with the User's private key, proving the User's identity.</td>
@@ -228,8 +229,8 @@
           </tr>
           <tr>
             <td class="left"><dfn
-                data-lt="P5|P5 Resource Authorization Server|Resource Authorization Server">P5
-                Resource Authorization Server</dfn></td>
+                data-lt="P5|P5 Authorization Server|Authorization Server">P5
+                Authorization Server</dfn></td>
             <td>The <a>authorization server</a> for an <a>LWS Storage</a>.
               Validates <a>authentication credentials</a> by fetching the User's
               public <a>verification method</a> from their
@@ -245,32 +246,32 @@
           </tr>
           <tr>
             <td class="left"><dfn
-                data-lt="F1|F1 designates User Authorization Server|designates User Authorization Server">F1
-                designates User Authorization Server</dfn></td>
+                data-lt="F1|F1 designates authn service|designates authn service">F1
+                designates authn service</dfn></td>
             <td>The <a>CID Document</a> designates which
               <a>User Authorization Server(s)</a> handle authentication for the
               User.</td>
           </tr>
           <tr>
             <td class="left"><dfn
-                data-lt="F3|F3 discovers User Authorization Server|discovers User Authorization Server">F3
-                discovers User Authorization Server</dfn></td>
+                data-lt="F3|F3 discovers AuthN Service|discovers AuthN Service">F3
+                discovers AuthN Service</dfn></td>
             <td>The <a>LWS Client</a> reads the User's <a>CID
               Document</a> to discover the <a>User Authorization Server</a>
               endpoint.</td>
           </tr>
           <tr>
             <td class="left"><dfn
-                data-lt="F4|F4 obtains authentication credential|obtains authentication credential">F4
-                obtains authentication credential</dfn></td>
+                data-lt="F4|F4 authenticates|authenticates">F4
+                authenticates</dfn></td>
             <td>The <a>LWS Client</a> requests and receives an
               <a>authentication credential</a> from the
               <a>User Authorization Server</a>.</td>
           </tr>
           <tr>
             <td class="left"><dfn
-                data-lt="F5|F5 discovers User Authorization Server (RS)|discovers User Authorization Server (RS)">F5
-                discovers User Authorization Server</dfn></td>
+                data-lt="F5|F5 verifies identity provider|verifies identity provider">F5
+                verifies identity provider</dfn></td>
             <td>The <a>Resource Authorization Server</a> reads the User's
               <a>CID Document</a> to discover the
               <a>User Authorization Server</a> for verifying
@@ -278,8 +279,8 @@
           </tr>
           <tr>
             <td class="left"><dfn
-                data-lt="F6|F6 obtains public key|obtains public key">F6
-                obtains public key</dfn></td>
+                data-lt="F6|F6 validates credentials|validates credentials">F6
+                validates credentials</dfn></td>
             <td>The <a>Resource Authorization Server</a> fetches the User's
               public <a>verification method</a> from their
               <a>User Authorization Server</a> to verify an
@@ -287,23 +288,23 @@
           </tr>
           <tr>
             <td class="left"><dfn
-                data-lt="F8|F8 exchanges credential for token|exchanges credential for token">F8
-                exchanges credential for token</dfn></td>
+                data-lt="F8|F8 requests access token|requests access token">F8
+                requests access token</dfn></td>
             <td>The <a>LWS Client</a> presents its <a>authentication credential</a>
               to the <a>Resource Authorization Server</a> in exchange for
               an access token.</td>
           </tr>
           <tr>
             <td class="left"><dfn
-                data-lt="F13|F13 User uses LWS Client|User uses LWS Client">F13
-                User uses LWS Client</dfn></td>
+                data-lt="F13|F13 agent requests|agent requests">F13
+                agent requests</dfn></td>
             <td>The User interacts with an <a>LWS Client</a> to access and manage
               their <a>LWS resources</a>.</td>
           </tr>
           <tr>
             <td class="left"><dfn
-                data-lt="F14|F14 accesses data|accesses data">F14
-                accesses data</dfn></td>
+                data-lt="F14|F14 sends requests|sends requests">F14
+                sends requests</dfn></td>
             <td>The <a>LWS Client</a> uses an access token to read and write
               <a>LWS resources</a> in the <a>LWS Storage</a> on behalf of the
               User.</td>
