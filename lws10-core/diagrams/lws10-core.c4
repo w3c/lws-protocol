@@ -1,23 +1,9 @@
 specification {
  
-  element actor {
-    style {
-      shape person
-      opacity 50%
-      color gray
-    }
-  }
-  element component {
-    style {
-      border solid
-      color secondary
-    }
-  }
+  element actor
+  element component
 
-  relationship manages {
-    color gray
-    line solid
-  }
+  relationship manages
 }
 
 model {
@@ -44,9 +30,6 @@ model {
       description 'Manages data resources, containers, containment and linksets'
       component storage 'Storage' {
         description 'A set of hierarchically organized HTTP resources managed per LWS conventions'
-        style {
-          multiple true
-        }
       }
     }
   }
@@ -67,5 +50,23 @@ views {
     title 'Container Diagram'
     autoLayout TopBottom
     include *, identity-provider, agent, storage
+
+    include * -> * where kind is manages with {
+      color gray
+      line solid
+    }
+
+    style element.kind = actor {
+      shape person
+      opacity 50%
+      color gray
+    }
+    style element.kind = component {
+      border solid
+      color secondary
+    }
+    style storage {
+      multiple true
+    }
   }
 }
