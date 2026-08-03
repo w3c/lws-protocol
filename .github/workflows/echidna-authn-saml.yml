@@ -13,7 +13,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v7
-      - uses: w3c/spec-prod@v2
+      - uses: w3c/spec-prod@v2.13.2
         with:
           SOURCE: lws10-authn-saml/index.html
           TOOLCHAIN: respec
