@@ -5,10 +5,9 @@ vocab:
 
 prefix:
   - id: as
-- id: as
-  value: https://www.w3.org/ns/activitystreams#
-- id: as2
-  value: https://www.w3.org/ns/activitystreams#
+    value: https://www.w3.org/ns/activitystreams#
+  - id: as2
+    value: https://www.w3.org/ns/activitystreams#
   - id: schema
     value: https://schema.org/
   - id: dcterms
@@ -95,18 +94,18 @@ property:
     label: total items
     domain: lws:Container
     comment: The total number of items in a container.
-  
+
   - id: as:mediaType
     label: media type
     domain: lws:DataResource
     comment: The media type of a data resource.
-    
+
   - id: as:updated
     label: modified
     domain: lws:DataResource
     range: xsd:dateTime
     comment: The date and time the resource was last modified.
-    
+
   - id: schema:size
     label: size
     domain: lws:DataResource
