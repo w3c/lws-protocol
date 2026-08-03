@@ -227,10 +227,46 @@ signature
     <section id="privacy-considerations" class="informative">
       <h2>Privacy Considerations</h2>
 
-      <p class="issue" data-number="119">
-        This section needs to be completed.
+      <p>
+        All privacy considerations described in "OpenID Connect Core 1.0" Section 17 [[OPENID-CONNECT-CORE]] apply to this specification.
       </p>
 
+      <p>
+        An ID Token used as an <a>authentication credential</a> can contain claims that reveal
+        personally identifiable information about the end-user, such as email addresses,
+        names, or other profile attributes. OpenID providers are encouraged to issue ID Tokens
+        that contain only the claims necessary for LWS authentication &mdash; specifically, the
+        <code>sub</code>, <code>iss</code>, <code>azp</code>, and <code>aud</code> claims &mdash;
+        and to avoid including additional identity attributes unless explicitly required.
+      </p>
+
+      <p>
+        Because the <code>sub</code> (subject) claim is used as the LWS subject identifier and
+        can be dereferenced during validation, the choice of subject identifier has privacy
+        implications. A persistent, globally unique subject identifier allows verifiers and
+        storage servers to correlate an end-user's activity across sessions and resources.
+        OpenID providers that support pairwise subject identifiers (as described in
+        [[OPENID-CONNECT-CORE]] Section 8) can reduce the potential for cross-provider
+        correlation, though the LWS validation model requires the subject identifier
+        to resolve to a controlled identifier document.
+      </p>
+
+      <p>
+        The validation process requires dereferencing the subject identifier to retrieve a
+        controlled identifier document. This dereference operation can reveal to the hosting
+        server of that document which verifiers are validating credentials for a given subject,
+        including timing and frequency of access. Verifiers are encouraged to cache controlled
+        identifier documents to reduce unnecessary network requests and the associated metadata
+        leakage.
+      </p>
+
+      <p>
+        Clients and relying parties are advised that an ID Token presented to a storage
+        server or authorization server can be read by those parties. Audience restriction
+        (via the <code>aud</code> claim) limits which parties the token is intended for but
+        does not prevent an intermediary from reading the token's contents in transit.
+        The use of TLS is essential for protecting authentication credentials during transmission.
+      </p>
     </section>
   </body>
 </html>
