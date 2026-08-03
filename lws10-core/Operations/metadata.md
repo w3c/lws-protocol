@@ -18,7 +18,7 @@ For each resource in <a>storage</a>, a server MUST make metadata links available
 
 **Discovering Metadata**
 Clients discover metadata primarily through Link headers in response to GET or HEAD requests.
-- Storage Description: Servers MUST support a Link header with `rel="storageDescription"` on relevant responses.
+- Storage: Servers MUST include a Link header with `rel="https://www.w3.org/ns/lws#storage"` on relevant responses.
 - <a>Containment</a>: Servers MUST include a Link header with `rel="up"` pointing to the parent <a>container</a> for any non-root resource.
 - Preferences: Clients MAY use the Prefer header [[!RFC7240]] with the URI `https://www.w3.org/ns/lws#PreferLinkRelations` to include or omit specific relations.
 
