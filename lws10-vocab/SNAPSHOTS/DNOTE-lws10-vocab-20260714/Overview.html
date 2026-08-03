@@ -160,7 +160,7 @@ body:has(input[name=color-scheme][value=dark]:checked){color-scheme:dark}
 
 <meta name="color-scheme" content="light">
 <meta name="description" content="This document describes the Linked Web Storage Vocabulary, i.e.,
-            the RDFS [RDF-SCHEMA] vocabulary used by the Linked Web Storage Protocol [lws-protocol].">
+            the RDFS [RDF-SCHEMA] vocabulary used by the Linked Web Storage Protocol [lws-core].">
 <link rel="canonical" href="https://www.w3.org/TR/lws10-vocab/">
 <style>
 var:hover{text-decoration:underline;cursor:pointer}
@@ -217,14 +217,6 @@ var[data-type]:hover::after,var[data-type]:hover::before{opacity:1}
     "web-platform"
   ],
   "group": "lws",
-  "localBiblio": {
-    "lws-protocol": {
-      "title": "LWS Protocol",
-      "href": "https://w3c.github.io/lws-protocol/lws10-core/",
-      "publisher": "W3C",
-      "id": "lws-protocol"
-    }
-  },
   "publishDate": "2026-07-14",
   "publishISODate": "2026-07-14T00:00:00.000Z",
   "generatedSubtitle": "W3C Group Note Draft 14 July 2026"
@@ -296,7 +288,7 @@ var[data-type]:hover::after,var[data-type]:hover::before{opacity:1}
   </div>
     <section id="abstract" class="introductory"><h2>Abstract</h2>
         <p>This document describes the <span property="dc:title" id="ontology_title">Linked Web Storage Vocabulary</span>, i.e.,
-            the <span property="dc:description" id="description">RDFS [<cite><a class="bibref" data-link-type="biblio" href="#bib-rdf-schema" title="RDF Schema 1.1">RDF-SCHEMA</a></cite>] vocabulary used by the Linked Web Storage Protocol [<cite><a class="bibref" data-link-type="biblio" href="#bib-lws-protocol" title="LWS Protocol">lws-protocol</a></cite>]</span>.
+            the <span property="dc:description" id="description">RDFS [<cite><a class="bibref" data-link-type="biblio" href="#bib-rdf-schema" title="RDF Schema 1.1">RDF-SCHEMA</a></cite>] vocabulary used by the Linked Web Storage Protocol [<cite><a class="bibref" data-link-type="biblio" href="#bib-lws-core" title="Linked Web Storage Protocol 1.0">lws-core</a></cite>]</span>.
         </p>
         <p>Alternate versions of the vocabulary definition exist in
             <a rel="alternate" href="vocabulary.ttl">Turtle</a> and
@@ -567,7 +559,7 @@ var[data-type]:hover::after,var[data-type]:hover::before{opacity:1}
             <section id="subscriptionType"><div class="header-wrapper"><h4 id="x4-1-11-subscriptiontype"><bdi class="secno">4.1.11 </bdi><code>subscriptionType</code></h4><a class="self-link" href="#subscriptionType" aria-label="Permalink for Section 4.1.11"></a></div>
                 
                 <p><em>subscription type</em></p>
-                <p>See the <a href="https://www.w3.org/TR/lws-notifications/">formal definition of the term</a>.</p>
+                <p>See the <a href="https://www.w3.org/TR/lws-core/">formal definition of the term</a>.</p>
                 <div>The subscription types supported by a notification service.</div>
                 <dl class="terms">
                     <dt>Domain:</dt>
@@ -581,7 +573,7 @@ var[data-type]:hover::after,var[data-type]:hover::before{opacity:1}
             <section id="subscription"><div class="header-wrapper"><h4 id="x4-1-12-subscription"><bdi class="secno">4.1.12 </bdi><code>subscription</code></h4><a class="self-link" href="#subscription" aria-label="Permalink for Section 4.1.12"></a></div>
                 
                 <p><em>subscription</em></p>
-                <p>See the <a href="https://www.w3.org/TR/lws-notifications/">formal definition of the term</a>.</p>
+                <p>See the <a href="https://www.w3.org/TR/lws-core/">formal definition of the term</a>.</p>
                 <div>The URL of the subscription resource or connection endpoint.</div>
                 <dl class="terms">
                     <dt>Range:</dt>
@@ -595,7 +587,7 @@ var[data-type]:hover::after,var[data-type]:hover::before{opacity:1}
             <section id="activity"><div class="header-wrapper"><h4 id="x4-1-13-activity"><bdi class="secno">4.1.13 </bdi><code>activity</code></h4><a class="self-link" href="#activity" aria-label="Permalink for Section 4.1.13"></a></div>
                 
                 <p><em>activity</em></p>
-                <p>See the <a href="https://www.w3.org/TR/lws-notifications/">formal definition of the term</a>.</p>
+                <p>See the <a href="https://www.w3.org/TR/lws-core/">formal definition of the term</a>.</p>
                 <div>The Activity Streams 2.0 activity payload within a notification.</div>
                 <dl class="terms">
                     <dt>Domain:</dt>
@@ -609,7 +601,7 @@ var[data-type]:hover::after,var[data-type]:hover::before{opacity:1}
             <section id="topic"><div class="header-wrapper"><h4 id="x4-1-14-topic"><bdi class="secno">4.1.14 </bdi><code>topic</code></h4><a class="self-link" href="#topic" aria-label="Permalink for Section 4.1.14"></a></div>
                 
                 <p><em>topic</em></p>
-                <p>See the <a href="https://www.w3.org/TR/lws-notifications/">formal definition of the term</a>.</p>
+                <p>See the <a href="https://www.w3.org/TR/lws-core/">formal definition of the term</a>.</p>
                 <div>An array of resource URIs covered by a subscription.</div>
                 <dl class="terms">
                     <dt>Range:</dt>
@@ -623,7 +615,7 @@ var[data-type]:hover::after,var[data-type]:hover::before{opacity:1}
             <section id="storage"><div class="header-wrapper"><h4 id="x4-1-15-storage"><bdi class="secno">4.1.15 </bdi><code>storage</code></h4><a class="self-link" href="#storage" aria-label="Permalink for Section 4.1.15"></a></div>
                 
                 <p><em>storage</em></p>
-                <p>See the <a href="https://www.w3.org/TR/lws-notifications/">formal definition of the term</a>.</p>
+                <p>See the <a href="https://www.w3.org/TR/lws-core/">formal definition of the term</a>.</p>
                 <div>The URI identifying the LWS storage that emitted the notification.</div>
                 <dl class="terms">
                     <dt>Range:</dt>
@@ -896,7 +888,7 @@ var[data-type]:hover::after,var[data-type]:hover::before{opacity:1}
             <section id="Notification"><div class="header-wrapper"><h4 id="x4-2-6-notification"><bdi class="secno">4.2.6 </bdi><code>Notification</code></h4><a class="self-link" href="#Notification" aria-label="Permalink for Section 4.2.6"></a></div>
                 
                 <p><em>Notification</em></p>
-                <p>See the <a href="https://www.w3.org/TR/lws-notifications/">formal definition of the term</a>.</p>
+                <p>See the <a href="https://www.w3.org/TR/lws-core/">formal definition of the term</a>.</p>
                 <div>A notification envelope describing an event that occurred on a resource.</div>
                 <dl class="terms">
                     <dt>Domain of:</dt>
@@ -910,7 +902,7 @@ var[data-type]:hover::after,var[data-type]:hover::before{opacity:1}
             <section id="NotificationService"><div class="header-wrapper"><h4 id="x4-2-7-notificationservice"><bdi class="secno">4.2.7 </bdi><code>NotificationService</code></h4><a class="self-link" href="#NotificationService" aria-label="Permalink for Section 4.2.7"></a></div>
                 
                 <p><em>Notification Service</em></p>
-                <p>See the <a href="https://www.w3.org/TR/lws-notifications/">formal definition of the term</a>.</p>
+                <p>See the <a href="https://www.w3.org/TR/lws-core/">formal definition of the term</a>.</p>
                 <div>A service through which clients subscribe to resource change notifications.</div>
                 <dl class="terms">
                     <dt>Domain of:</dt>
@@ -924,7 +916,7 @@ var[data-type]:hover::after,var[data-type]:hover::before{opacity:1}
             <section id="WebhookSubscription"><div class="header-wrapper"><h4 id="x4-2-8-webhooksubscription"><bdi class="secno">4.2.8 </bdi><code>WebhookSubscription</code></h4><a class="self-link" href="#WebhookSubscription" aria-label="Permalink for Section 4.2.8"></a></div>
                 
                 <p><em>Webhook Subscription</em></p>
-                <p>See the <a href="https://www.w3.org/TR/lws-notifications/">formal definition of the term</a>.</p>
+                <p>See the <a href="https://www.w3.org/TR/lws-core/">formal definition of the term</a>.</p>
                 <div>A subscription type that delivers notifications via HTTP POST to a subscriber-provided inbox URL.</div>
                 <dl class="terms">
                     <dt>Relevant <code>@context</code>:</dt>
@@ -941,8 +933,8 @@ var[data-type]:hover::after,var[data-type]:hover::before{opacity:1}
 
 <section id="references" class="appendix"><div class="header-wrapper"><h2 id="a-references"><bdi class="secno">A. </bdi>References</h2><a class="self-link" href="#references" aria-label="Permalink for Appendix A."></a></div><section id="informative-references"><div class="header-wrapper"><h3 id="a-1-informative-references"><bdi class="secno">A.1 </bdi>Informative references</h3><a class="self-link" href="#informative-references" aria-label="Permalink for Appendix A.1"></a></div>
     
-    <dl class="bibliography"><dt id="bib-lws-protocol">[lws-protocol]</dt><dd>
-      <a href="https://w3c.github.io/lws-protocol/lws10-core/"><cite>LWS Protocol</cite></a>.  W3C. URL: <a href="https://w3c.github.io/lws-protocol/lws10-core/">https://w3c.github.io/lws-protocol/lws10-core/</a>
+    <dl class="bibliography"><dt id="bib-lws-core">[lws-core]</dt><dd>
+      <a href="https://www.w3.org/TR/lws10-core/"><cite>Linked Web Storage Protocol 1.0</cite></a>. Jesse Wright; Erich Bremer.  W3C. 22 June 2026. W3C Working Draft. URL: <a href="https://www.w3.org/TR/lws10-core/">https://www.w3.org/TR/lws10-core/</a>
     </dd><dt id="bib-rdf-schema">[RDF-SCHEMA]</dt><dd>
       <a href="https://www.w3.org/TR/rdf-schema/"><cite>RDF Schema 1.1</cite></a>. Dan Brickley; Ramanathan Guha.  W3C. 25 February 2014. W3C Recommendation. URL: <a href="https://www.w3.org/TR/rdf-schema/">https://www.w3.org/TR/rdf-schema/</a>
     </dd></dl>

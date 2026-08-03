@@ -6,19 +6,23 @@ vocab:
 prefix:
   - id: as
     value: https://www.w3.org/ns/activitystreams#
+  - id: as2
+    value: https://www.w3.org/ns/activitystreams#
   - id: schema
     value: https://schema.org/
-  - id: sec
-    value: https://w3id.org/security#
+  - id: dcterms
+    value: http://purl.org/dc/terms/
   - id: ldp
     value: http://www.w3.org/ns/ldp#
+  - id: odrl
+    value: http://www.w3.org/ns/odrl/2/
 
 ontology:
   - property: dc:title
     value: Linked Web Storage Vocabulary
 
   - property: dc:description
-    value: RDFS [[RDF-SCHEMA]] vocabulary used by the Linked Web Storage Protocol [[lws-protocol]]
+    value: RDFS [[RDF-SCHEMA]] vocabulary used by the Linked Web Storage Protocol [[lws-core]]
 
   - property: rdfs:seeAlso
     value: https://www.w3.org/TR/lws-protocol/
@@ -36,9 +40,9 @@ class:
     label: Storage
     comment: A Linked Web Storage instance.
 
-  - id: StorageDescription
-    label: Storage Description
-    comment: A service that provides a storage description resource.
+  - id: StorageRoot
+    label: Storage Root
+    comment: A service endpoint for a storage root container.
 
   - id: OpenIdProvider
     label: OpenID Provider
@@ -48,17 +52,37 @@ class:
   - id: Notification
     label: Notification
     comment: A notification envelope describing an event that occurred on a resource.
-    defined_by: https://www.w3.org/TR/lws-notifications/
+    defined_by: https://www.w3.org/TR/lws-core/
 
   - id: NotificationService
     label: Notification Service
     comment: A service through which clients subscribe to resource change notifications.
-    defined_by: https://www.w3.org/TR/lws-notifications/
+    defined_by: https://www.w3.org/TR/lws-core/
 
   - id: WebhookSubscription
     label: Webhook Subscription
     comment: A subscription type that delivers notifications via HTTP POST to a subscriber-provided inbox URL.
-    defined_by: https://www.w3.org/TR/lws-notifications/
+    defined_by: https://www.w3.org/TR/lws-core/
+
+  - id: AccessProfile
+    label: Access Profile
+    comment: An access profile describes the requirements for expressing a valid access policy.
+
+  - id: AccessPolicy
+    label: Access Policy
+    comment: An access policy expresses the actions, targets, and constraints for a particular access request or grant.
+
+  - id: AccessGrant
+    label: Access Grant
+    comment: An authorization by a storage controller granting access to resources.
+
+  - id: AccessGrantService
+    label: Access Grant Service
+    comment: A service endpoint for managing access grants.
+
+  - id: AccessRequestService
+    label: Access Request Service
+    comment: A service endpoint for managing access requests.
 
 property:
   - id: items
@@ -70,18 +94,18 @@ property:
     label: total items
     domain: lws:Container
     comment: The total number of items in a container.
-  
+
   - id: as:mediaType
     label: media type
     domain: lws:DataResource
     comment: The media type of a data resource.
-    
+
   - id: as:updated
     label: modified
     domain: lws:DataResource
     range: xsd:dateTime
     comment: The date and time the resource was last modified.
-    
+
   - id: schema:size
     label: size
     domain: lws:DataResource
@@ -93,21 +117,6 @@ property:
     domain: lws:Storage
     comment: A capability supported by the storage.
 
-  - id: service
-    label: service
-    domain: lws:Storage
-    comment: A service associated with the storage.
-
-  - id: serviceEndpoint
-    label: service endpoint
-    range: xsd:anyURI
-    comment: The URI of a service endpoint.
-
-  - id: storageDescription
-    label: storage description
-    range: xsd:anyURI
-    comment: Link relation pointing to a storage description resource.
-
   - id: PreferLinkRelations
     label: Prefer Link Relations
     comment: A preference URI for including or omitting specific link relations in responses.
@@ -116,31 +125,30 @@ property:
     label: subscription type
     domain: lws:NotificationService
     comment: The subscription types supported by a notification service.
-    defined_by: https://www.w3.org/TR/lws-notifications/
+    defined_by: https://www.w3.org/TR/lws-core/
 
   - id: subscription
     label: subscription
     range: xsd:anyURI
     comment: The URL of the subscription resource or connection endpoint.
-    defined_by: https://www.w3.org/TR/lws-notifications/
+    defined_by: https://www.w3.org/TR/lws-core/
 
   - id: activity
     label: activity
     domain: lws:Notification
     comment: The Activity Streams 2.0 activity payload within a notification.
-    defined_by: https://www.w3.org/TR/lws-notifications/
+    defined_by: https://www.w3.org/TR/lws-core/
 
   - id: topic
     label: topic
     range: xsd:anyURI
     comment: An array of resource URIs covered by a subscription.
-    defined_by: https://www.w3.org/TR/lws-notifications/
+    defined_by: https://www.w3.org/TR/lws-core/
 
   - id: storage
     label: storage
     range: xsd:anyURI
-    comment: The URI identifying the LWS storage that emitted the notification.
-    defined_by: https://www.w3.org/TR/lws-notifications/
+    comment: The canonical URI identifying an LWS storage.
 
   - id: as:Create
     label: Create
@@ -175,22 +183,6 @@ property:
     range: xsd:dateTime
     comment: The date and time the activity was published.
 
-  - id: sec:verificationMethod
-    label: verification method
-    comment: A verification method associated with a key or identity.
-
-  - id: sec:authentication
-    label: authentication
-    comment: An authentication method associated with an identity.
-
-  - id: sec:controller
-    label: controller
-    comment: The entity that controls a verification method.
-
-  - id: sec:publicKeyJwk
-    label: public key JWK
-    comment: A public key expressed as a JSON Web Key.
-
   - id: ldp:inbox
     label: inbox
     range: xsd:anyURI
@@ -200,6 +192,87 @@ property:
     label: expires
     range: xsd:dateTime
     comment: The date and time at which a subscription expires.
+
+  - id: access
+    label: access
+    comment: The access policies associated with an access request or grant.
+
+  - id: dcterms:conformsTo
+    label: conforms to
+    external: true
+    comment: An established standard to which the described resource conforms.
+
+  - id: odrl:action
+    label: action
+    domain: lws:AccessPolicy
+    external: true
+    comment: The operation relating to the asset of the rule.
+    one_of:
+      - odrl:read
+      - odrl:modify
+      - odrl:delete
+      - create
+
+  - id: odrl:assignee
+    label: assignee
+    domain: lws:AccessPolicy
+    external: true
+    comment: The party that is assigned the rule.
+
+  - id: odrl:target
+    label: target
+    domain: lws:AccessPolicy
+    external: true
+    comment: The asset that is the target of the rule.
+
+  - id: odrl:constraint
+    label: constraint
+    domain: lws:AccessPolicy
+    external: true
+    comment: A constraint that refines the semantics of an action or rule.
+
+  - id: odrl:leftOperand
+    label: left operand
+    domain: lws:AccessPolicy
+    external: true
+    comment: The left operand of a constraint.
+    one_of:
+      - odrl:purpose
+      - odrl:dateTime
+      - client
+      - dcterms:type
+      - as2:mediaType
+
+  - id: odrl:operator
+    label: operator
+    domain: lws:AccessPolicy
+    external: true
+    comment: The operator of a constraint.
+    one_of:
+      - odrl:eq
+      - odrl:neq
+      - odrl:lt
+      - odrl:gt
+      - odrl:lteq
+      - odrl:gteq
+      - odrl:isAnyOf
+      - odrl:isAllOf
+      - odrl:isNoneOf
+
+  - id: odrl:rightOperand
+    label: right operand
+    domain: lws:AccessPolicy
+    external: true
+    comment: The right operand of a constraint.
+
+individual:
+  - id: create
+    label: create
+    comment: An action representing the creation of a new resource within a container.
+
+  - id: client
+    label: client
+    comment: A left operand representing the client identifier for an HTTP request.
 
 json_ld:
   alias:

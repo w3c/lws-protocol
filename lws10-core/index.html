@@ -115,6 +115,27 @@
     <section id="introduction">
       <h2>Introduction</h2>
       <p>
+        This specification defines the Linked Web Storage (LWS) Protocol, which enables client applications to access and manage web resources, based on the identity and permissions of an agent.
+      </p>
+      <p>
+        By standardizing how a resource server manages and provides access to a hierarchy of linked resources, the protocol enables users to use different client applications to interact with the same stored data. These linked resources are defined through containers and containment relationships that describe where things are located, and metadata that describes how the resources relate to each other.
+      </p>
+      <p>
+        The protocol defines standard operations on these resources to create, read, update, and delete. Each resource is identified by a URI. A client navigates the resource hierarchy from a root container, discovering contained resources and their relations through links provided in server responses.
+      </p>
+      <p>
+        A agent's identity is confirmed through an identity provider that can be external to the Linked Web Storage server. This loose coupling means the server does not necessarily manage credentials directly; rather, it can receive and validate a signed authentication credential as a token issued by a trusted identity provider. A user can therefore present an existing identity to a compliant server, without always needing a new or existing account just for that server. LWS makes use of user authentication as defined in specifications for OpenID Connect, SAML 2.0, and self-signed controlled identifiers (CIDs), for example.
+      </p>
+      <p>
+        Authorization determines whether a requesting agent has permission to access a resource or perform an operation on it. A compliant LWS server designates a resource manager for each resource that determines whether a resource is private (i.e., available only to its owner), restricted (i.e., available to a defined set of users), or public (i.e., available to any user). The server enforces the access decisions of the resource manager when handling each client request.
+      </p>
+      <p>This specification is intended to be used by:</p>
+      <ul>
+        <li>Developers building client applications that access LWS resources</li>
+        <li>Developers building compliant servers that mediate access to LWS resources</li>
+      </ul>
+      <p>
+        Different LWS server instances each maintain their own hierarchy of linked resources. An agent might use the same identification to navigate across servers, with access to each server's resources determined by the permissions granted by that server's resource managers. It is not guaranteed that every LWS server instance will support every possible agent identifier; any given LWS server instance might require that an agent identify itself via a particular identity provider, to gain access to resources managed by that server instance.
       </p>
       
       <section id="resource-access">
@@ -155,11 +176,25 @@
         </p>
 
         <p>
-          A <dfn>LWS Client</dfn> is an HTTP client [[!rfc9112]] that complies with all of the relevant "MUST" statements in this specification. Specifically, the relevant normative "MUST" statements in <a href="#operations"></a> of this document MUST be respected.
+          An <dfn>LWS Client</dfn> is an HTTP client [[!rfc9112]] that complies with all of the relevant "MUST" statements in this specification. Specifically, the relevant normative "MUST" statements in <a href="#operations"></a> of this document MUST be respected.
         </p>
       </section>
-    </section>
 
+      <section id="scope-diagrams">    <!-- becomes 2.4 Scope Diagrams -->
+        <h2>Scope Diagrams</h2>
+        <p>
+          The following diagrams are platform-independent models 
+          to guide implementation.
+        </p>
+        <figure id="fig-system-context">
+          <img src="diagrams/fig-container-diagram.svg" 
+              alt="Figure: System Context shows the LWS System and its major components"/>
+          <figcaption>System Context shows the LWS System and its major components.</figcaption>
+        </figure>
+
+      </section>
+
+    </section>
     <section id="terminology">
       <h2>Terminology</h2>
       <p>
@@ -197,13 +232,17 @@
         <li><dfn data-cite="webarch#def-resource">resource</dfn> &mdash; a resource is, as described by [[WebArch]] and [[RFC3986]], “whatever might be identified by a URI”. Resources whose essential characteristics can be conveyed in a message (such as web pages, images, structured data objects...) are called <dfn data-cite="webarch#def-information-resource">information resources</dfn> [[WebArch]].
         <li><dfn>storage</dfn> &mdash; a set of hierarchically organized HTTP resources whose lifecycle is managed by the conventions described by the Linked Web Storage Protocol. A storage is described by a <a>storage description resource</a> which references a collection of services that provide affordances over those resources.</li>
         <li><dfn>storage controller</dfn> &mdash; an <a>agent</a> that controls all resources in a <a>storage</a>.</li>
-        <li><dfn data-lt="storage description resource">storage description</dfn> &mdash; an <a>LWS resource</a> that enumerates and describes the <a>storage root</a> along with services and capabilities of a <a>storage</a>. Its representation conforms to the storage description data model.</li>
+        <li><dfn data-lt="storage description resource">storage description</dfn> &mdash; an <a>LWS resource</a>, conforming to the requirements of a W3C Controlled Identifier document [[!CID-1.0]], that describes a <a>storage</a> along with its services and capabilities.</li>
         <li><dfn>storage root</dfn> &mdash; a <a>container</a> at the root of a <a>containment</a> hierarchy of a <a>storage</a>. The storage root is the only <a>LWS resource</a> that does not have a parent in the LWS <a>containment</a> hierarchy nor a <a>primary resource</a>.</li>
+        <li><dfn data-lt="notifications">notification</dfn> &mdash; a message describing an event that has occurred on a resource.</li>
+        <li><dfn data-lt="subscriptions">subscription</dfn> &mdash; a registration expressing interest in receiving notifications for a given resource or set of resources.</li>
+        <li><dfn>subscriber</dfn> &mdash; the <a>agent</a> that creates a <a>subscription</a> and receives the resulting notifications.</li>
+        <li><dfn data-lt="notification suites">notification suite</dfn> &mdash; a defined delivery mechanism for a concrete channel through which notifications are sent to a <a>subscriber</a>.</li>
       </ul>
 
       <div class="issue atrisk" title="Section may be removed">
       <p>
-        This specification defines <a>operations</a> on <a>served resources</a>, the resulting change of state, and a <a>response</a> intended to give the <a>requesting agent</a> requested infomation or inform them of the outcome of the <a>operation</a>.
+        This specification defines <a>operations</a> on <a>served resources</a>, the resulting change of state, and a <a>response</a> intended to give the <a>requesting agent</a> requested information or inform them of the outcome of the <a>operation</a>.
         An <dfn>operation</dfn> is any of the following actions that can be performed on a <a>served resource</a>:
       </p>
       <ul>
@@ -214,7 +253,7 @@
       </ul>
 
       <p>
-        The folowing section will describe the semantics and <dfn>responses</dfn> of these operations but the following <dfn>core responses</dfn> apply to any operation:
+        The following section will describe the semantics and <dfn>responses</dfn> of these operations but the following <dfn>core responses</dfn> apply to any operation:
       </p>
       <ul>
         <li><dfn>success</dfn> - the operation is believed to have completed. This may be accompanied by a <dfn>resource representation</dfn> conveying the contents of a <a>served resource</a>. A <a>success</a> response is not defined for the <a>create resource</a> operation. See instead <a href="#dfn-created">created</a>.</li>
@@ -279,6 +318,11 @@
 	  <div data-include="Operations/rest-table.md" data-include-format="markdown" data-include-replace="true"></div>
     </section>
 
+    <section id="notifications">
+      <h2>Notifications</h2>
+      <div data-include="Notifications.html" data-include-replace="true"></div>
+    </section>
+
     <section id="access-requests-and-grants">
       <h2>Access Requests and Grants</h2>
       <div data-include="lws-access-requests.html" data-include-replace="true"></div>
@@ -290,7 +334,7 @@
     </section>
 
     <section id="jsonld-context">
-      <h2>JSON-LD Context and Vocabulary</h2>
+      <h2>JSON-LD Context</h2>
 	  <div data-include="jsonld-context.md" data-include-format="markdown" data-include-replace="true"></div>
     </section>
 
