@@ -86,3 +86,27 @@
     <code>application/lws+json</code>.
   </p>
 </section>
+
+<section id="iana-media-type-cid-registry">
+  <h3>The <code>application/lws+cid</code> Media Type</h3>
+
+  <p>
+    This specification registers the <code>application/lws+cid</code> media type for identifying
+    storage description documents conforming to the Linked Web Storage protocol as a specialization
+    of the W3C Controlled Identifiers 1.0 document format.
+  </p>
+
+  <ul>
+    <li>Type name: application</li>
+    <li>Subtype name: lws+cid</li>
+    <li>Required parameters: None</li>
+    <li>
+      Encoding considerations: Resources that use the <code>application/lws+cid</code> media type
+      are required to conform to all of the requirements for the <code>application/json</code>
+      media type and are therefore subject to the same encoding considerations specified in
+      Section 11 of [[RFC8259]].
+    </li>
+    <li>Security considerations: As defined in this specification</li>
+    <li>Contact: W3C Linked Web Storage Working Group &lt;public-lws-wg@w3.org&gt;</li>
+  </ul>
+</section>
