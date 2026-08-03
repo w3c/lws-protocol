@@ -15,7 +15,6 @@
     // See https://respec.org/docs/ for how to configure ReSpec
     var respecConfig = {
       specStatus: "ED",
-      shortName: "lws-vocab",
       editors: [{
         name: "Jesse Wright",
         w3cid: "132252",
@@ -34,16 +33,10 @@
         companyURL: "https://www.digitaalvlaanderen.be"
       }],
       github: "w3c/lws-protocol",
-      shortName: "@@",
+      edDraftURI: "https://w3c.github.io/lws-protocol/lws10-vocab/",
+      shortName: "lws10-vocab",
       xref: ["web-platform"],
       group: "lws",
-      localBiblio: {
-        "lws-protocol": {
-          title: "LWS Protocol",
-          href: "https://w3c.github.io/lws-protocol/lws10-core/",
-          publisher: "W3C",
-        },
-      }
     };
   </script>
   <style type="text/css">
@@ -101,7 +94,7 @@
 
 <body typeof="owl:Ontology">
   <section id="abstract">
-    <p>This document describes the <span property="dc:title" id="title"></span>, i.e.,
+    <p>This document describes the <span property="dc:title" id="ontology_title"></span>, i.e.,
       the <span property="dc:description" id="description"></span>.
     </p>
     <p>Alternate versions of the vocabulary definition exist in
@@ -113,7 +106,8 @@
       <dd><time property="dc:date" id="time"></time></dd>
       <dt>Version Info:</dt>
       <dd>1.0</dd>
-      <dt id="see_also">See Also: </dt>
+      <dt>See Also: </dt>
+      <dd id="see_also"></dd>
     </dl>
   </section>
   <section id="sotd">

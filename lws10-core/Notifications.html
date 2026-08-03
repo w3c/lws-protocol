@@ -1,0 +1,355 @@
+<p>
+  This section defines a mechanism for clients to receive timely updates about changes to
+  resources managed by a linked web storage server. This specification defines a common
+  notification data model and a subscription mechanism; specific delivery channels are
+  described in separate notification suite specifications.
+</p>
+
+<section id="notification-discovery">
+  <h3>Notification Discovery</h3>
+
+  <p>
+    A storage MAY support notifications. A storage that supports notifications MUST
+    advertise a service object in the <code>service</code> array of its <a>storage description</a>
+    resource with <code>type</code> equal to <code>NotificationService</code>.
+  </p>
+
+  <p>
+    The service object MUST include a <code>serviceEndpoint</code> property whose value
+    is the URI of the subscription endpoint. The service object MUST include a
+    <code>subscriptionType</code> property whose value is an array of strings, each
+    identifying a supported <a>subscription</a> type.
+  </p>
+
+  <p>
+    Additional properties MAY be present on the service object.
+  </p>
+
+  <pre class="example" title="Storage description with notification service">
+{
+  "@context": ["https://www.w3.org/ns/lws/v1"],
+  "id": "https://storage.example/",
+  "type": "Storage",
+  "service": [{
+    "type": "NotificationService",
+    "serviceEndpoint": "https://notification.example/subscriptions",
+    "subscriptionType": [
+      "WebhookSubscription"
+    ]
+  }]
+}
+  </pre>
+
+  <p class="note">
+    A server is not required to support all subscription types. The
+    <code>subscriptionType</code> array advertises exactly which types are available.
+  </p>
+</section>
+
+<section id="notification-data-model">
+  <h3>Notification Data Model</h3>
+
+  <p>
+    A <a>notification</a> is represented as a JSON-LD document with a
+    <code>Notification</code> type. The envelope carries metadata about the delivery
+    context and wraps an Activity Streams 2.0 [[ACTIVITYSTREAMS-CORE]] [[ACTIVITYSTREAMS-VOCABULARY]]
+    activity describing the event.
+  </p>
+
+  <section id="envelope-properties">
+    <h4>Envelope Properties</h4>
+
+    <p>
+      A notification envelope has the following properties:
+    </p>
+
+    <ul>
+      <li>
+        <code>type</code> &mdash; REQUIRED. The value MUST be the string
+        <code>Notification</code>.
+      </li>
+      <li>
+        <code>storage</code> &mdash; REQUIRED. A URI identifying the LWS storage with
+        which the notification is associated.
+      </li>
+      <li>
+        <code>activity</code> &mdash; REQUIRED. A JSON object or an array of JSON objects,
+        each conforming to the Activity Streams 2.0 data model, describing the event or
+        events that occurred. See <a href="#activity-properties"></a>.
+      </li>
+    </ul>
+
+    <pre class="example" title="Notification envelope">
+{
+  "@context": [
+    "https://www.w3.org/ns/lws/v1",
+    "https://www.w3.org/ns/activitystreams"
+  ],
+  "type": "Notification",
+  "storage": "https://storage.example/",
+  "activity": {
+    "id": "ec4dcc48-6581-4232-81c9-584525a98693",
+    "type": ["Delete"],
+    "object": {
+      "id": "https://storage.example/alice/notes/shopping.txt",
+      "type": ["DataResource"]
+    },
+    "origin": "https://storage.example/alice/notes/",
+    "published": "2026-03-26T10:30:00Z"
+  }
+}
+    </pre>
+  </section>
+
+  <section id="activity-properties">
+    <h4>Activity Properties</h4>
+
+    <p>
+      Each activity object within the <code>activity</code> property MUST conform to the
+      Activity Streams 2.0 data model and MUST include the following properties:
+    </p>
+
+    <ul>
+      <li>
+        <code>id</code> &mdash; REQUIRED. A string uniquely identifying the activity.
+      </li>
+      <li>
+        <code>type</code> &mdash; REQUIRED. An array of strings containing at least one
+        Activity Streams 2.0 activity type.
+      </li>
+      <li>
+        <code>object</code> &mdash; REQUIRED. A JSON object identifying the resource
+        that the notification is about. The <code>object</code> MUST include the
+        following properties:
+        <ul>
+          <li>
+            <code>id</code> &mdash; REQUIRED. The URI of the resource.
+          </li>
+          <li>
+            <code>type</code> &mdash; REQUIRED. An array of strings containing at least
+            one resource type. Values defined by this specification include
+            <code>Container</code> and <code>DataResource</code>. Additional type values
+            MAY be included.
+          </li>
+        </ul>
+      </li>
+      <li>
+        <code>published</code> &mdash; REQUIRED. A datetime value conforming to
+        [[!RFC3339]] indicating when the activity occurred.
+      </li>
+    </ul>
+
+    <p>
+      The following properties are OPTIONAL:
+    </p>
+
+    <ul>
+      <li>
+        <code>actor</code> &mdash; a URI identifying the agent that performed the action.
+      </li>
+      <li>
+        <code>target</code> &mdash; a URI identifying the container into which the
+        resource was added. Used with <code>Create</code> activities.
+      </li>
+      <li>
+        <code>origin</code> &mdash; a URI identifying the container from which the
+        resource was removed. Used with <code>Delete</code> activities.
+      </li>
+    </ul>
+  </section>
+
+  <section id="activity-types">
+    <h4>Activity Types</h4>
+
+    <p>
+      A server MUST support the following Activity Streams 2.0 activity types to
+      indicate LWS resource changes:
+    </p>
+
+    <ul>
+      <li>
+        <code>Create</code> &mdash; a new resource was created in a container. The
+        <code>target</code> field indicates the container to which the resource was added.
+      </li>
+      <li>
+        <code>Update</code> &mdash; an existing resource's content or metadata was modified.
+      </li>
+      <li>
+        <code>Delete</code> &mdash; a resource was removed. The <code>origin</code> field
+        indicates the container from which the resource was removed.
+      </li>
+    </ul>
+
+    <p>
+      Other activity types MAY also be supported.
+    </p>
+  </section>
+
+  <section id="batching">
+    <h4>Batching Notifications</h4>
+
+    <p>
+      A server MAY combine multiple activities into a single notification envelope by
+      providing an array of activity objects as the value of the <code>activity</code>
+      property.
+    </p>
+
+    <pre class="example" title="Batched notification">
+{
+  "@context": [
+    "https://www.w3.org/ns/lws/v1",
+    "https://www.w3.org/ns/activitystreams"
+  ],
+  "type": "Notification",
+  "storage": "https://storage.example/",
+  "activity": [
+    {
+      "id": "a1b2c3d4-5678-9abc-def0-1234567890ab",
+      "type": ["Create"],
+      "object": {
+        "id": "https://storage.example/alice/notes/meeting.txt",
+        "type": ["DataResource"]
+      },
+      "target": "https://storage.example/alice/notes/",
+      "published": "2026-03-26T10:30:00Z"
+    },
+    {
+      "id": "b2c3d4e5-6789-abcd-ef01-234567890abc",
+      "type": ["Update"],
+      "object": {
+        "id": "https://storage.example/alice/profile",
+        "type": ["DataResource"]
+      },
+      "published": "2026-03-26T10:30:01Z"
+    }
+  ]
+}
+    </pre>
+  </section>
+</section>
+
+<section id="subscriptions">
+  <h3>Subscriptions</h3>
+
+  <p>
+    To receive notifications, a <a>subscriber</a> creates a <a>subscription</a> by sending
+    an authenticated <code>POST</code> request to the <code>serviceEndpoint</code> of the
+    <code>NotificationService</code>. The request body MUST conform to the
+    <code>application/lws+json</code> media type.
+  </p>
+
+  <section id="subscription-request">
+    <h4>Subscription Request</h4>
+
+    <p>
+      A subscription request MUST contain the following fields:
+    </p>
+
+    <ul>
+      <li>
+        <code>type</code> &mdash; REQUIRED. A string identifying the subscription type.
+        The value MUST be one of the types listed in the <code>subscriptionType</code>
+        array of the <code>NotificationService</code>.
+      </li>
+      <li>
+        <code>topic</code> &mdash; REQUIRED. An array of URIs identifying the resources
+        included in the subscription.
+      </li>
+    </ul>
+
+    <p>
+      A subscription request MAY contain additional fields as required by the specific
+      subscription type.
+    </p>
+
+    <pre class="example" title="Subscription request">
+POST /subscriptions HTTP/2
+Host: notification.example
+Authorization: Bearer &lt;access-token&gt;
+Content-Type: application/lws+json
+
+{
+  "@context": ["https://www.w3.org/ns/lws/v1"],
+  "type": "WebhookSubscription",
+  "topic": [
+    "https://storage.example/alice/notes/",
+    "https://storage.example/alice/profile"
+  ],
+  "inbox": "https://receiver.example/hooks/lws"
+}
+    </pre>
+  </section>
+
+  <section id="subscription-scope">
+    <h4>Subscription Scope</h4>
+
+    <p>
+      A <a>subscription</a> to a container is recursive: the <a>subscriber</a> receives
+      notifications for the container itself and for all resources transitively contained
+      in that container. A <a>subscription</a> to a data resource applies only to that
+      individual resource.
+    </p>
+  </section>
+
+  <section id="subscription-authorization">
+    <h4>Subscription Authorization</h4>
+
+    <p>
+      A server MUST enforce resource authorization when creating a <a>subscription</a>.
+      If a <a>subscriber</a> does not have the equivalent of read access to all resources
+      listed in the <code>topic</code> array, the server MUST reject the subscription
+      request.
+    </p>
+
+    <p>
+      Authorization MUST also be enforced at notification delivery time. A server MUST
+      NOT deliver a <a>notification</a> about a resource that the <a>subscriber</a> is
+      not authorized to read at the time the event occurs. This applies to all resources
+      within the scope of a <a>subscription</a>, including resources in subcontainers.
+    </p>
+
+    <p>
+      If the <a>subscriber</a>'s access to a resource or container within the scope of a
+      <a>subscription</a> is revoked after the <a>subscription</a> is created, the server
+      MUST stop delivering notifications for the affected resources. The server SHOULD
+      NOT terminate the entire <a>subscription</a> unless the <a>subscriber</a> has lost
+      access to all resources in the <code>topic</code> array.
+    </p>
+
+    <p class="note">
+      Subscription-time authorization verifies that a <a>subscriber</a> has a legitimate
+      basis for receiving notifications. Delivery-time authorization ensures that
+      notifications remain consistent with the <a>subscriber</a>'s current permissions,
+      accounting for authorization changes that may occur after the <a>subscription</a>
+      was created.
+    </p>
+  </section>
+
+  <section id="subscription-response">
+    <h4>Subscription Response</h4>
+
+    <p>
+      The response to a successful subscription creation request MUST conform to the
+      <code>application/lws+json</code> media type and MUST contain the following fields:
+    </p>
+
+    <ul>
+      <li>
+        <code>type</code> &mdash; REQUIRED. A string equal to the subscription type from
+        the request.
+      </li>
+      <li>
+        <code>subscription</code> &mdash; REQUIRED. A URL representing the subscription.
+      </li>
+    </ul>
+  </section>
+
+  <section id="notification-subscription-type-identifier">
+    <h4>Subscription Type Identifiers</h4>
+    <p>
+      Each <a>notification</a> suite MUST be associated with a subscription type string.
+      The subscription type string is used in the <code>subscriptionType</code> array of a
+      <code>NotificationService</code> and in the <code>type</code> field of a subscription request.
+    </p>
+  </section>
+</section>

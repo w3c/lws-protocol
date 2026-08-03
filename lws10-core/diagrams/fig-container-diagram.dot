@@ -1,0 +1,143 @@
+digraph {
+    graph [TBbalance=min,
+        bgcolor=transparent,
+        compound=true,
+        fontname=Arial,
+        fontsize=20,
+        labeljust=l,
+        labelloc=t,
+        layout=dot,
+        likec4_viewId="fig-container-diagram",
+        nodesep=1.528,
+        outputorder=nodesfirst,
+        pad=0.209,
+        rankdir=TB,
+        ranksep=1.667,
+        splines=spline
+    ];
+    node [color="#2563eb",
+        fillcolor="#3b82f6",
+        fontcolor="#eff6ff",
+        fontname=Arial,
+        penwidth=0,
+        shape=rect,
+        style=filled
+    ];
+    edge [arrowsize=0.75,
+        color="#8D8D8D",
+        fontcolor="#C9C9C9",
+        fontname=Arial,
+        fontsize=14,
+        penwidth=2,
+        style=""
+    ];
+    subgraph "cluster_lws-server" {
+        graph [color="#0d374e",
+            fillcolor="#0f4460",
+            label=<<FONT POINT-SIZE="11" COLOR="#b6ecf7b3"><B>LWS SERVER</B></FONT>>,
+            likec4_depth=2,
+            likec4_id="lws-server",
+            likec4_level=0,
+            margin=40,
+            style=filled
+        ];
+        subgraph "cluster_resource-server" {
+            graph [color="#0b3c57",
+                fillcolor="#0d4b6c",
+                label=<<FONT POINT-SIZE="11" COLOR="#b6ecf7b3"><B>RESOURCE SERVER</B></FONT>>,
+                likec4_depth=1,
+                likec4_id="lws-server.resource-server",
+                likec4_level=1,
+                margin=32,
+                style=filled
+            ];
+            storage [color="#0369a1",
+                fillcolor="#0284c7",
+                fontcolor="#f0f9ff",
+                height=2.5,
+                label=<<TABLE BORDER="0" CELLPADDING="0" CELLSPACING="4"><TR><TD><FONT POINT-SIZE="20">Storage</FONT></TD></TR><TR><TD><FONT POINT-SIZE="15" COLOR="#B6ECF7">A set of hierarchically organized HTTP<BR/>resources managed per LWS conventions</FONT></TD></TR></TABLE>>,
+                likec4_id="lws-server.resource-server.storage",
+                likec4_level=2,
+                margin="0.223,0.223",
+                width=4.445];
+        }
+        "authorization-server" [color="#0369a1",
+            fillcolor="#0284c7",
+            fontcolor="#f0f9ff",
+            height=2.5,
+            label=<<TABLE BORDER="0" CELLPADDING="0" CELLSPACING="4"><TR><TD><FONT POINT-SIZE="20">Authorization Server</FONT></TD></TR><TR><TD><FONT POINT-SIZE="15" COLOR="#B6ECF7">An OAuth 2.0 authorization server that issues<BR/>access tokens. MAY be an external system</FONT></TD></TR></TABLE>>,
+            likec4_id="lws-server.authorization-server",
+            likec4_level=1,
+            margin="0.223,0.223",
+            width=4.445];
+    }
+    "lws-client" [color="#0369a1",
+        fillcolor="#0284c7",
+        fontcolor="#f0f9ff",
+        height=2.5,
+        label=<<TABLE BORDER="0" CELLPADDING="0" CELLSPACING="4"><TR><TD><FONT POINT-SIZE="20">LWS Client</FONT></TD></TR><TR><TD><FONT POINT-SIZE="15" COLOR="#B6ECF7">An HTTP client that complies with the LWS<BR/>Protocol</FONT></TD></TR></TABLE>>,
+        likec4_id="lws-client",
+        likec4_level=0,
+        margin="0.223,0.223",
+        width=4.445];
+    "lws-client" -> "authorization-server" [arrowhead=normal,
+        label=<<TABLE BORDER="0" CELLPADDING="3" CELLSPACING="0" BGCOLOR="#18191BA0"><TR><TD ALIGN="TEXT" BALIGN="LEFT"><FONT POINT-SIZE="14">requests access token</FONT></TD></TR></TABLE>>,
+        likec4_id="9zky4r",
+        style=solid];
+    "identity-provider" [color="#0369a1",
+        fillcolor="#0284c7",
+        fontcolor="#f0f9ff",
+        height=2.5,
+        label=<<TABLE BORDER="0" CELLPADDING="0" CELLSPACING="4"><TR><TD><FONT POINT-SIZE="20">Identity Provider</FONT></TD></TR><TR><TD><FONT POINT-SIZE="15" COLOR="#B6ECF7">Confirms user identity and issues signed<BR/>credentials. MAY be an external system</FONT></TD></TR></TABLE>>,
+        likec4_id="identity-provider",
+        likec4_level=0,
+        margin="0.223,0.223",
+        width=4.445];
+    "lws-client" -> "identity-provider" [arrowhead=normal,
+        label=<<TABLE BORDER="0" CELLPADDING="3" CELLSPACING="0" BGCOLOR="#18191BA0"><TR><TD ALIGN="TEXT" BALIGN="LEFT"><FONT POINT-SIZE="14">authenticates</FONT></TD></TR></TABLE>>,
+        likec4_id=ydrjak,
+        style=solid,
+        weight=2];
+    "lws-client" -> storage [arrowhead=normal,
+        lhead="cluster_resource-server",
+        likec4_id="1mtvne",
+        minlen=1,
+        style=solid,
+        xlabel=<<TABLE BORDER="0" CELLPADDING="3" CELLSPACING="0" BGCOLOR="#18191BA0"><TR><TD ALIGN="TEXT" BALIGN="LEFT"><FONT POINT-SIZE="14">sends request</FONT></TD></TR></TABLE>>];
+    "controlled-identifier" [color="#0369a1",
+        fillcolor="#0284c7",
+        fontcolor="#f0f9ff",
+        height=2.5,
+        label=<<TABLE BORDER="0" CELLPADDING="0" CELLSPACING="4"><TR><TD><FONT POINT-SIZE="20">Controlled Identifier</FONT></TD></TR><TR><TD><FONT POINT-SIZE="15" COLOR="#B6ECF7">An identifier that is controlled by an agent<BR/>and used to identify the agent to the LWS<BR/>system</FONT></TD></TR></TABLE>>,
+        likec4_id="controlled-identifier",
+        likec4_level=0,
+        margin="0.223,0.223",
+        width=4.445];
+    "authorization-server" -> "controlled-identifier" [arrowhead=normal,
+        label=<<TABLE BORDER="0" CELLPADDING="3" CELLSPACING="0" BGCOLOR="#18191BA0"><TR><TD ALIGN="TEXT" BALIGN="LEFT"><FONT POINT-SIZE="14">verifies identity provider</FONT></TD></TR></TABLE>>,
+        likec4_id="19toz03",
+        style=solid];
+    "authorization-server" -> "identity-provider" [arrowhead=normal,
+        label=<<TABLE BORDER="0" CELLPADDING="3" CELLSPACING="0" BGCOLOR="#18191BA0"><TR><TD ALIGN="TEXT" BALIGN="LEFT"><FONT POINT-SIZE="14">validates credentials</FONT></TD></TR></TABLE>>,
+        likec4_id=lkcm0d,
+        style=solid];
+    agent [color="#525252",
+        fillcolor="#737373",
+        fontcolor="#fafafa",
+        height=2.5,
+        label=<<TABLE BORDER="0" CELLPADDING="0" CELLSPACING="4"><TR><TD><FONT POINT-SIZE="20">Agent</FONT></TD></TR><TR><TD><FONT POINT-SIZE="15" COLOR="#d4d4d4">An agent of the LWS system</FONT></TD></TR></TABLE>>,
+        likec4_id=agent,
+        likec4_level=0,
+        margin="0.223,0.223",
+        width=4.445];
+    "controlled-identifier" -> agent [arrowhead=normal,
+        label=<<TABLE BORDER="0" CELLPADDING="3" CELLSPACING="0" BGCOLOR="#18191BA0"><TR><TD ALIGN="TEXT" BALIGN="LEFT"><FONT POINT-SIZE="14">identifies</FONT></TD></TR></TABLE>>,
+        likec4_id="123ygk7",
+        style=solid,
+        weight=2];
+    agent -> "lws-client" [arrowhead=normal,
+        label=<<TABLE BORDER="0" CELLPADDING="3" CELLSPACING="0" BGCOLOR="#18191BA0"><TR><TD ALIGN="TEXT" BALIGN="LEFT"><FONT POINT-SIZE="14">agent requests</FONT></TD></TR></TABLE>>,
+        likec4_id=u6f8pb,
+        style=solid,
+        weight=2];
+}
