@@ -45,7 +45,7 @@ When the target URI corresponds to a <a>container</a> (determined via metadata t
 ```
 GET /alice/notes/ HTTP/1.1
 Authorization: Bearer <token>
-Accept: application/ld+json
+Accept: application/lws+json
 ```
 Assuming the container exists and the client has access:
 ```
