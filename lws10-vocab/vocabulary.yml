@@ -6,10 +6,10 @@ vocab:
 prefix:
   - id: as
     value: https://www.w3.org/ns/activitystreams#
-  - id: as2
-    value: https://www.w3.org/ns/activitystreams#
   - id: schema
     value: https://schema.org/
+  - id: dc
+    value: http://purl.org/dc/terms/
   - id: dcterms
     value: http://purl.org/dc/terms/
   - id: ldp
@@ -90,17 +90,17 @@ property:
     domain: lws:Container
     comment: The list of resources contained in a container.
 
-  - id: as:totalItems
+  - id: totalItems
     label: total items
     domain: lws:Container
     comment: The total number of items in a container.
 
-  - id: as:mediaType
-    label: media type
+  - id: dc:format
+    label: format
     domain: lws:DataResource
     comment: The media type of a data resource.
 
-  - id: as:updated
+  - id: dc:modified
     label: modified
     domain: lws:DataResource
     range: xsd:dateTime
@@ -197,7 +197,7 @@ property:
     label: access
     comment: The access policies associated with an access request or grant.
 
-  - id: dcterms:conformsTo
+  - id: dc:conformsTo
     label: conforms to
     external: true
     comment: An established standard to which the described resource conforms.
@@ -241,7 +241,7 @@ property:
       - odrl:dateTime
       - client
       - dcterms:type
-      - as2:mediaType
+      - dcterms:format
 
   - id: odrl:operator
     label: operator
