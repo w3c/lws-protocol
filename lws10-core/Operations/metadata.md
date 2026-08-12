@@ -43,7 +43,7 @@ Core metadata MAY be modified by clients. To ensure interoperability, servers MU
 [!IMPORTANT] Clients SHOULD NOT assume support for PUT or specific patch formats unless they are advertised in the resource headers and MUST handle 405 Method Not Allowed or 415 Unsupported Media Type responses gracefully.
 
 **Managing Metadata**
-Metadata is managed by interacting with the resource's associated <a>linkset resource</a> URI. Servers MUST support concurrency controls for updates.
+Metadata is managed by interacting with the resource's associated <a>linkset resource</a> URI. Servers SHOULD support concurrency controls as defined in [[RFC9110]] for updates.
 
 - Partial Updates (PATCH): This is the primary mechanism for metadata management. Servers MUST support PATCH using `application/merge-patch+json`.
 
