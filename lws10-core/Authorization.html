@@ -87,10 +87,25 @@ WWW-Authenticate: Bearer as_uri="https://authorization.example",
     </p>
 
     <p>
-      An authorization server SHOULD advertise the subject tokens that it supports by including a <code>subject_token_types_supported</code>
-      entry in the server metadata document. This entry is a JSON array containing a list of valid <code>subject_token_type</code> values
-      that can be supplied at the authorization server's token endpoint.
+      In addition to the metadata defined in [[!RFC8414]], an LWS authorization server metadata document
+      defines the following parameters:
     </p>
+
+    <ul>
+      <li>
+        <code>subject_token_types_supported</code>
+        OPTIONAL. JSON array containing a list of valid <code>subject_token_type</code> values
+        that can be supplied at the authorization server's token endpoint. An authorization server
+        SHOULD advertise the subject tokens that it supports by including this entry in the server metadata document.
+      </li>
+      <li>
+        <code>subject_uri_schemes_supported</code>
+        OPTIONAL. JSON array containing a list of URI scheme values for subject identifiers that the
+        authorization server supports. An authorization server SHOULD advertise the subject URI schemes
+        that it supports by including this entry in the server metadata document.
+        If omitted, the default value is <code>["https"]</code>.
+      </li>
+    </ul>
 
     <p>
       An example authorization server metadata resource is included below.
@@ -112,7 +127,11 @@ WWW-Authenticate: Bearer as_uri="https://authorization.example",
         "token"],
     "subject_token_types_supported": [
         "urn:ietf:params:oauth:token-type:jwt",
-        "urn:ietf:params:oauth:token-type:id-token"]
+        "urn:ietf:params:oauth:token-type:id-token"],
+    "subject_uri_schemes_supported": [
+        "did:web",
+        "did:key",
+        "https"]
 }
     </pre>
 
