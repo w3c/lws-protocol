@@ -100,7 +100,7 @@ property:
     domain: lws:DataResource
     comment: The media type of a data resource.
 
-  - id: dc:modified
+  - id: dcterms:modified
     label: modified
     domain: lws:DataResource
     range: xsd:dateTime
@@ -197,7 +197,7 @@ property:
     label: access
     comment: The access policies associated with an access request or grant.
 
-  - id: dc:conformsTo
+  - id: dcterms:conformsTo
     label: conforms to
     external: true
     comment: An established standard to which the described resource conforms.
