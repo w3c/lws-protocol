@@ -8,7 +8,7 @@ prefix:
     value: https://www.w3.org/ns/activitystreams#
   - id: schema
     value: https://schema.org/
-  - id: dc
+  - id: dct
     value: http://purl.org/dc/terms/
   - id: dcterms
     value: http://purl.org/dc/terms/
@@ -95,7 +95,7 @@ property:
     domain: lws:Container
     comment: The total number of items in a container.
 
-  - id: dc:format
+  - id: dct:format
     label: format
     domain: lws:DataResource
     comment: The media type of a data resource.
