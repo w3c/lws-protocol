@@ -218,8 +218,35 @@ signature
     <section id="privacy-considerations" class="informative">
       <h2>Privacy Considerations</h2>
 
-      <p class="issue" data-number="119">
-        This section needs to be completed.
+      <p>
+        A self-issued <a>authentication credential</a> uses a subject identifier that
+        is both persistent and globally unique. Because the <code>sub</code>,
+        <code>iss</code>, and <code>client_id</code> claims all share the same URI value,
+        verifiers and storage servers can correlate all activity from a given <a>agent</a>
+        across sessions and resources.
+      </p>
+
+      <p>
+        The validation process requires dereferencing the subject identifier to retrieve a
+        controlled identifier document. This dereference operation can reveal to the hosting
+        server of that document which verifiers are validating credentials for a given
+        <a>agent</a>, including timing and frequency of access. Verifiers are encouraged to
+        cache controlled identifier documents to reduce unnecessary network requests and the
+        associated metadata leakage.
+      </p>
+
+      <p>
+        Because the controlled identifier document contains the public key material used
+        for validation, the hosting server of that document is in a position to observe
+        which keys are being actively used. <a>Agents</a> that require stronger privacy
+        guarantees are encouraged to host their controlled identifier documents on
+        infrastructure they control.
+      </p>
+
+      <p>
+        Self-issued tokens presented to a storage server or authorization server can be
+        read by those parties. The use of TLS is essential for protecting authentication
+        credentials during transmission.
       </p>
     </section>
   </body>

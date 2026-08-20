@@ -1,51 +1,77 @@
 specification {
- 
-  element actor {
-    style {
-      shape person
-      opacity 50%
-      color gray
-    }
-  }
-  element component {
-    style {
-      border solid
-      color secondary
-    }
-  }
+  color pink #f3d9f2
 
-  relationship manages {
-    color gray
-    line solid
-  }
+  element actor
+  element component
+
+  relationship manages
 }
 
 model {
-  agent = actor 'Agent' {
+  actor agent 'Agent' {
     description 'An agent of the LWS system'
   }
+  actor app-provider 'E2 Application Provider'
+  actor resource-owner 'E3 Resource Owner'
 
-  component lws-client 'LWS Client' {
-    description 'An HTTP client that complies with the LWS Protocol'
-  }
-  component controlled-identifier 'Controlled Identifier' {
-    description 'An identifier that is controlled by an agent and used to identify the agent to the LWS system'
-  }
-  component identity-provider 'Identity Provider' {
-    description 'Confirms user identity and issues signed credentials. MAY be an external system'
-  }
-  component lws-server 'LWS Server' {
-    description 'An HTTP server that complies with the LWS Protocol'
-
-    component authorization-server "Authorization Server" {
-      description 'An OAuth 2.0 authorization server that issues access tokens. MAY be an external system'
+  component cid-context 'C1 End User CID Provider' {
+    metadata {
+      _shape 'threat-container'
     }
-    component resource-server 'Resource Server' {
-      description 'Manages data resources, containers, containment and linksets'
-      component storage 'Storage' {
-        description 'A set of hierarchically organized HTTP resources managed per LWS conventions'
-        style {
-          multiple true
+    component controlled-identifier 'Controlled Identifier' {
+      description 'An identifier that is controlled by an agent and used to identify the agent to the LWS system'
+      metadata {
+        _shape 'process'
+      }
+    }
+  }
+  component idp-context 'C2 End User Auth / IdP' {
+    metadata {
+      _shape 'threat-container'
+    }
+    component identity-provider 'Identity Provider' {
+      description 'Confirms user identity and issues signed credentials. MAY be an external system'
+      metadata {
+        _shape 'process'
+      }
+    }
+    component key 'O1 Private Key' {
+      metadata {
+        _shape 'data-object'
+      }
+    }
+  }
+  component app-context 'C3 Application Provider' {
+    metadata {
+      _shape 'threat-container'
+    }
+    component lws-client 'LWS Client' {
+      description 'An HTTP client that complies with the LWS Protocol'
+      metadata {
+        _shape 'process'
+      }
+    }
+  }
+  component owner-context 'C4 Resource Owner' {
+    metadata {
+      _shape 'threat-container'
+    }
+    component lws-server 'LWS Server' {
+      description 'An HTTP server that complies with the LWS Protocol'
+
+      component authorization-server 'Authorization Server' {
+        description 'An OAuth 2.0 authorization server that issues access tokens. MAY be an external system'
+        metadata {
+          _shape 'process'
+        }
+      }
+      component resource-server 'Resource Server' {
+        description 'Manages data resources, containers, containment and linksets'
+        metadata {
+          _shape 'process'
+        }
+        component storage 'Storage' {
+          description 'A set of hierarchically organized HTTP resources managed per LWS conventions'
         }
       }
     }
@@ -60,12 +86,132 @@ model {
   lws-client .manages resource-server 'sends request'
   authorization-server .manages controlled-identifier 'verifies identity provider'
   authorization-server .manages identity-provider 'validates credentials'
+
+  // Copied from threat model (F-relationships without a .manages counterpart)
+  controlled-identifier -> identity-provider 'F1 designates authn service'
+  identity-provider -> key 'F2 signs AuthN Credentials with'
+  lws-client -> controlled-identifier 'F3 discovers AuthN Service'
+  authorization-server -> resource-server 'F7 issues access tokens for'
+  agent -> idp-context 'F10 controlls'
+  app-provider -> app-context 'F11 controlls'
+  resource-owner -> owner-context 'F12 controlls'
 }
 
 views {
   view fig-container-diagram of lws-server {
     title 'Container Diagram'
     autoLayout TopBottom
-    include *, identity-provider, agent, storage
+    include *, identity-provider, agent, storage, lws-client, controlled-identifier
+    exclude cid-context, idp-context, app-context, owner-context, key
+    exclude controlled-identifier -> identity-provider, lws-client -> controlled-identifier, authorization-server -> resource-server
+
+    include
+      * -> * where kind is manages with {
+        color gray
+        line solid
+      }
+
+    style element.kind = actor {
+      shape person
+      opacity 50%
+      color gray
+    }
+    style element.kind = component {
+      border solid
+      color secondary
+    }
+    style storage {
+      multiple true
+    }
+  }
+
+  view threat-model {
+    title 'Threat Model'
+    include
+      cid-context with {
+        description ''
+      },
+      cid-context.* with {
+        description ''
+      },
+      controlled-identifier with {
+        title 'P1 Controlled Identifier'
+        description ''
+      },
+      idp-context with {
+        description ''
+      },
+      idp-context.* with {
+        description ''
+      },
+      identity-provider with {
+        title 'P2 Identity Provider'
+        description ''
+      },
+      agent with {
+        title 'E1 Agent'
+        description ''
+      },
+      app-context with {
+        description ''
+      },
+      app-context.* with {
+        description ''
+      },
+      lws-client with {
+        title 'P3 LWS Client'
+        description ''
+      },
+      app-provider with {
+        description ''
+      },
+      owner-context with {
+        description ''
+      },
+      owner-context.* with {
+        description ''
+      },
+      authorization-server with {
+        title 'P5 Authorization Server'
+        description ''
+      },
+      resource-server with {
+        title 'P4 Resource Server'
+        description ''
+      },
+      resource-owner with {
+        description ''
+      }
+
+    include
+      controlled-identifier -> agent with {
+        title 'F9 identifies'
+      },
+      agent -> lws-client with {
+        title 'F13 agent requests'
+      },
+      lws-client -> identity-provider with {
+        title 'F4 authenticates'
+      },
+      lws-client -> authorization-server with {
+        title 'F8 requests access token'
+      },
+      lws-client -> resource-server with {
+        title 'F14 sends requests'
+      },
+      authorization-server -> controlled-identifier with {
+        title 'F5 verifies identity provider'
+      },
+      authorization-server -> identity-provider with {
+        title 'F6 validates credentials'
+      }
+    exclude lws-server
+
+    style key {
+      color pink
+    }
+    style cid-context, idp-context, app-context, owner-context {
+      color sky
+    }
   }
 }

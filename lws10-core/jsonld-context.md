@@ -1,62 +1,16 @@
-### JSON-LD Context and Vocabulary
+The LWS JSON-LD context is identified by the URL `https://www.w3.org/ns/lws/v1`.
+The SHA2-256 digest of the document resolved from that URL is included in the table below:
 
-#### Normative JSON-LD Context
+| Context URL and Hash |
+|---|
+| **URL:** `https://www.w3.org/ns/lws/v1` |
+| **SHA2-256 Digest:** <span class="issue" data-number="216">TODO: include the JSON-LD context digest once the context document is finalized</span> |
 
-Container representations MUST include the following `@context` value:
+The digest can be verified with a command such as:
+`curl -sL -H "Accept: application/ld+json" https://www.w3.org/ns/lws/v1 | openssl dgst -sha256`
 
-```
-"@context": "https://www.w3.org/ns/lws/v1"
-```
-
-The normative JSON-LD context document defines the mapping between the short property names used in <a>container</a> representations and their full URIs in the LWS and related vocabularies. The context is defined as follows:
-
-```json
-{
-  "@context": {
-    "@version": 1.1,
-    "@protected": true,
-    "lws": "https://www.w3.org/ns/lws#",
-    "as": "https://www.w3.org/ns/activitystreams#",
-    "schema": "https://schema.org/",
-    "xs": "http://www.w3.org/2001/XMLSchema#",
-    "id": "@id",
-    "type": "@type",
-    "Container": "lws:Container",
-    "DataResource": "lws:DataResource",
-    "items": "lws:items",
-    "totalItems": "as:totalItems",
-    "mediaType": "as:mediaType",
-    "size": {
-      "@id": "schema:size",
-      "@type": "xs:long"
-    },
-    "modified": {
-      "@id": "as:updated",
-      "@type": "xs:dateTime"
-    }
-  }
-}
-```
-
-The context is `@protected`, ensuring that the term definitions cannot be overridden by other contexts.
-
-#### Vocabulary
-
-The LWS vocabulary defines the following types and properties used in <a>container</a> representations:
-
-**Types:**
-
-| Term | URI | Description |
-|------|-----|-------------|
-| `Container` | `lws:Container` | A resource that contains other resources |
-| `DataResource` | `lws:DataResource` | A data-bearing resource |
-
-**Properties:**
-
-| Term | URI | Description |
-|------|-----|-------------|
-| `items` | `lws:items` | The list of resources contained in a container |
-| `totalItems` | `as:totalItems` | The total number of contained resources |
-| `mediaType` | `as:mediaType` | The media type of a resource |
-| `size` | `schema:size` | The size of a resource in bytes |
-| `modified` | `as:updated` | The date-time a resource was last modified |
+<div class="note">
+Production systems are advised not to fetch remote JSON-LD context documents at runtime.
+Bundling or caching contexts locally eliminates a runtime dependency on external
+infrastructure, reduces latency, and prevents context manipulation attacks.
+</div>

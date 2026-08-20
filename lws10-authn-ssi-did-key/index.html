@@ -181,8 +181,34 @@ signature
     <section id="privacy-considerations" class="informative">
       <h2>Privacy Considerations</h2>
 
-      <p class="issue" data-number="119">
-        This section needs to be completed.
+      <p>
+        A self-issued <a>authentication credential</a> using the <code>did:key</code>
+        method embeds the public key directly in the subject identifier. Because the
+        <code>sub</code>, <code>iss</code>, and <code>client_id</code> claims all share the
+        same <code>did:key:</code> URI, verifiers and storage servers can correlate all
+        activity from a given <a>agent</a> across sessions and resources.
+      </p>
+
+      <p>
+        Unlike the other authentication suites, the <code>did:key</code> method does not
+        require dereferencing a remote resource during validation &mdash; the public key is
+        derived directly from the identifier. This avoids the metadata leakage associated
+        with network-based validation, as no third-party server is contacted during the
+        credential verification process.
+      </p>
+
+      <p>
+        However, because the public key is encoded in the identifier itself, the
+        <code>did:key</code> identifier is inherently long-lived and cannot be rotated
+        without changing the <a>agent</a>'s identity. An <a>agent</a> that needs to rotate
+        keys while maintaining a stable identity is encouraged to use a different
+        authentication suite, such as one based on controlled identifier documents.
+      </p>
+
+      <p>
+        Self-issued tokens presented to a storage server or authorization server can be
+        read by those parties. The use of TLS is essential for protecting authentication
+        credentials during transmission.
       </p>
     </section>
   </body>
