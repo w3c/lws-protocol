@@ -37,7 +37,7 @@ A resource's metadata is updated by modifying its corresponding <a>linkset resou
 Full Replacement (PUT): A PUT request to the <a>linkset resource</a> URI with a complete linkset document in the body replaces all metadata for the resource.
 Partial Update (PATCH): A PATCH request to the <a>linkset resource</a> URI adds, removes, or modifies specific links.
 
-**Concurrency Control for Metadata**
+**Conditional Requests for Metadata**
 Because a resource's metadata can be modified by multiple actors, preventing concurrent overwrites is important. Servers and clients SHOULD use conditional requests as defined in [[RFC9110]] for PUT and PATCH operations on a <a>linkset resource</a>. When a server receives a conditional request for which the precondition fails, it MUST reject the request with a `412 Precondition Failed` status code.
 Example (PUT to replace a linkset):
 A client first fetches the linkset.

@@ -1,5 +1,5 @@
 ### Summary of HTTP Status Mappings
-This table maps generic LWS [responses](#dfn-responses) (from Section 8) to HTTP status codes and payloads for consistency, incorporating specific scenarios such as pagination, concurrency controls, quota constraints, and metadata integration:
+This table maps generic LWS [responses](#dfn-responses) (from Section 8) to HTTP status codes and payloads for consistency, incorporating specific scenarios such as pagination, conditional requests, quota constraints, and metadata integration:
 | LWS response | HTTP status code | HTTP payload |
 | ----- | ----- | ----- |
 | [Success](#dfn-success) (read or update, returning data) | `200 OK` | [Resource representation](#dfn-resource-representation) in the response body (for GET or if PUT/PATCH returns content), along with relevant headers (`Content-Type`, `Link` for metadata such as `rel="linkset"` or `rel="up"`). For container listings, include JSON-LD with normative context and member metadata (IDs, types, sizes, timestamps, etc.). |
