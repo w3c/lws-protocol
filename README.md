@@ -17,6 +17,10 @@ To see the most recent HTML rendered version of the specification from this repo
 - [`notifications-webhook`](lws10-notifications-webhook/): Notification Suite: Webhooks
 - [`searchindex`](lws10-searchindex/): Search and Type Index Services
 
+## (1.0) Implementations:
+
+[Implementations.md](Implementations.md) <- please signal interest and progress via PR
+
 
 ## Contribution Guidelines:
 
