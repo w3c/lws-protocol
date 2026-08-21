@@ -477,7 +477,7 @@
         <code>client</code> &mdash; representing the client identifier for an HTTP request
       </li>
       <li>
-        <code>mediaType</code> &mdash; representing the media type of the target HTTP
+        <code>format</code> &mdash; representing the media type of the target HTTP
         resource
       </li>
       <li>
@@ -557,12 +557,12 @@
       </pre>
     </section>
 
-    <section id="constraint-mediaType">
-      <h5>Media Type Constraints</h5>
+    <section id="constraint-format">
+      <h5>Format Constraints</h5>
 
       <p>
         The following example uses a <code>leftOperand</code> value of
-        <code>mediaType</code> to restrict
+        <code>format</code> to restrict
         access to resources with specific media types. When the <code>eq</code> operator
         is used, the <code>rightOperand</code> value is a string identifying an
         <a href="https://www.iana.org/assignments/media-types/">IANA media type</a>. When
@@ -571,12 +571,12 @@
         media type matches any of the listed values:
       </p>
 
-      <pre class="example" title="Media type constraint">
+      <pre class="example" title="Format constraint">
 {
   "access": [{
     "constraint": [
       {
-        "leftOperand": "mediaType",
+        "leftOperand": "format",
         "operator": "isAnyOf",
         "rightOperand": ["image/jpeg", "image/png"]
       }

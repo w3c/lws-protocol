@@ -7,7 +7,7 @@ All metadata in LWS is expressed as a set of typed links originating from a reso
 - A relation type: A string that defines the nature of the relationship.
 - Optional target attributes: Additional key-value pairs that further describe the link or the target resource.
 
-Metadata distinguishes between resources and their representations, allowing for multiple media types where applicable. For <a>data resources</a>, metadata includes representations, each with mediaType and optional sizeInBytes. For <a>containers</a> and <a>data resources</a> we consider the link to its parent <a>container</a> resource to be part of the metadata of the resource.
+Metadata distinguishes between resources and their representations, allowing for multiple media types where applicable. For <a>data resources</a>, metadata includes representations, each with format and optional sizeInBytes. For <a>containers</a> and <a>data resources</a>, we consider the link to its parent <a>container</a> resource to be part of the metadata of the resource.
 
 
 **The <a>Linkset Resource</a>**
@@ -26,7 +26,7 @@ Clients discover metadata primarily through Link headers in response to GET or H
 
 | Category | Description |
 |------------|------------|
-| System Managed | Maintained by the server; Read-Only. Includes `linkset`, `type`, `mediaType`, `size`, `modified`. |
+| System Managed | Maintained by the server; Read-Only. Includes `linkset`, `type`, `format`, `size`, `modified`. |
 | Core Metadata | Managed by the client (subject to server restrictions). Includes `up`, `items`, `title`, `creator`. |
 | User-Defined | Custom vocabularies and indexes created by the user. |
 
