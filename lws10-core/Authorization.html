@@ -93,15 +93,15 @@ WWW-Authenticate: Bearer as_uri="https://authorization.example",
 
     <ul>
       <li>
-        <code>subject_token_types_supported</code>
+        <dfn><code>subject_token_types_supported</code></dfn>
         OPTIONAL. JSON array containing a list of valid <code>subject_token_type</code> values
         that can be supplied at the authorization server's token endpoint. An authorization server
         SHOULD advertise the subject tokens that it supports by including this entry in the server metadata document.
       </li>
       <li>
-        <code>subject_uri_schemes_supported</code>
-        OPTIONAL. JSON array containing a list of URI scheme values for subject identifiers that the
-        authorization server supports. An authorization server SHOULD advertise the subject URI schemes
+        <dfn><code>subject_uri_resolvers_supported</code></dfn>
+        OPTIONAL. JSON array containing a list of URI resolver values for subject identifiers that the
+        authorization server supports. An authorization server SHOULD advertise the subject URI resolvers
         that it supports by including this entry in the server metadata document.
         If omitted, the default value is <code>["https"]</code>.
       </li>
@@ -128,7 +128,7 @@ WWW-Authenticate: Bearer as_uri="https://authorization.example",
     "subject_token_types_supported": [
         "urn:ietf:params:oauth:token-type:jwt",
         "urn:ietf:params:oauth:token-type:id-token"],
-    "subject_uri_schemes_supported": [
+    "subject_uri_resolvers_supported": [
         "did:web",
         "did:key",
         "https"]
