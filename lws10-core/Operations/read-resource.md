@@ -65,21 +65,21 @@ Link: <https://www.w3.org/ns/lws#Container>; rel="type"
     {
       "type": "DataResource",
       "id": "/alice/notes/shoppinglist.txt",
-      "mediaType": "text/plain",
+      "format": "text/plain",
       "size": 47,
       "modified": "2025-11-24T12:00:00Z"
     },
     {
       "type": ["DataResource", "http://example.org/customType"],
       "id": "/alice/notes/todo.json",
-      "mediaType": "application/json",
+      "format": "application/json",
       "size": 2048,
       "modified": "2025-11-24T13:00:00Z"
     }
   ]
 }
 ```
-In this example, `/alice/notes/` is a <a>container</a>. The response uses JSON-LD with the LWS context, listing members with required metadata. Each item includes its `type`, `id`, `mediaType`, `size`, and `modified` timestamp as flat properties.
+In this example, `/alice/notes/` is a <a>container</a>. The response uses JSON-LD with the LWS context, listing members with required metadata. Each item includes its `type`, `id`, `format`, `size`, and `modified` timestamp as flat properties.
 
 In all cases, the server MUST include the following metadata in the response headers: an ETag (representing the listing version, which changes on membership modifications), and Link headers with `rel="type"` indicating it is a <a>container</a>, `rel="linkset"` and `rel="up"`.
 

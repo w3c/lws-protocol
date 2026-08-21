@@ -19,32 +19,6 @@
   actions, constraints, and assignees. Other profiles could use a different conceptual framework.
 </p>
 
-<div class="issue" title="Integrate with main terminology section">
-<p>
-  This section defines the following terms:
-</p>
-
-<ul>
-  <li>
-    <dfn>Access Request</dfn> &mdash; a data object submitted by an <a>agent</a>, expressing a
-    request to perform specific actions on storage resources, including the desired scope
-    and constraints.
-  </li>
-  <li>
-    <dfn>Access Grant</dfn> &mdash; a data object created by a <a>storage controller</a>, expressing
-    an ability for an <a>agent</a> to perform specific actions on <a>storage</a> resources within certain
-    defined constraints.
-  </li>
-  <li>
-    <dfn data-lt="access profiles">Access Profile</dfn> &mdash; an access profile describes the
-    requirements for expressing a valid access policy. Every access profile is identified
-    with a URI, and a server indicates support for one or more access profiles by
-    referencing them in the <code>conformsTo</code> property of a service object in its
-    <a>storage description</a> resource.
-  </li>
-</ul>
-</div>
-
 <section id="access-discovery">
   <h3>Discovery</h3>
 
@@ -503,7 +477,7 @@
         <code>client</code> &mdash; representing the client identifier for an HTTP request
       </li>
       <li>
-        <code>mediaType</code> &mdash; representing the media type of the target HTTP
+        <code>format</code> &mdash; representing the media type of the target HTTP
         resource
       </li>
       <li>
@@ -583,12 +557,12 @@
       </pre>
     </section>
 
-    <section id="constraint-mediaType">
-      <h5>Media Type Constraints</h5>
+    <section id="constraint-format">
+      <h5>Format Constraints</h5>
 
       <p>
         The following example uses a <code>leftOperand</code> value of
-        <code>mediaType</code> to restrict
+        <code>format</code> to restrict
         access to resources with specific media types. When the <code>eq</code> operator
         is used, the <code>rightOperand</code> value is a string identifying an
         <a href="https://www.iana.org/assignments/media-types/">IANA media type</a>. When
@@ -597,12 +571,12 @@
         media type matches any of the listed values:
       </p>
 
-      <pre class="example" title="Media type constraint">
+      <pre class="example" title="Format constraint">
 {
   "access": [{
     "constraint": [
       {
-        "leftOperand": "mediaType",
+        "leftOperand": "format",
         "operator": "isAnyOf",
         "rightOperand": ["image/jpeg", "image/png"]
       }
