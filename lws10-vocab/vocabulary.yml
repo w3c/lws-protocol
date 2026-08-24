@@ -28,13 +28,20 @@ ontology:
     value: https://www.w3.org/TR/lws-protocol/
 
 class:
+  - id: StorageResource
+    label: Storage Resource
+    comment: An LWS resource; an HTTP resource that supports the read operations defined by the Linked Web Storage Protocol. The protocol term "LWS resource" and this vocabulary class refer to the same class of resources.
+    defined_by: https://www.w3.org/TR/lws-core/#dfn-lws-resource
+
   - id: Container
     label: Container
     comment: A resource that contains other resources.
+    upper_value: StorageResource
 
   - id: DataResource
     label: Data Resource
     comment: A data-bearing resource such as a document, image, or structured data file.
+    upper_value: StorageResource
 
   - id: Storage
     label: Storage
