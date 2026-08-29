@@ -73,3 +73,38 @@
   </ul>
 </section>
 
+<section id="security-moving-resources" class="informative">
+  <h4>Moving Resources Between Containers</h4>
+
+  <ul>
+    <li>
+      <strong>Change of Applicable Policy</strong>: Access to a resource is frequently governed
+      by policies expressed in terms of the resource's position in the <a>containment</a>
+      hierarchy. Changing the <code>up</code> link of a resource may therefore widen or narrow
+      the set of <a>agents</a> that can access it, without any policy being edited and without
+      the content of the resource changing. Servers SHOULD make this consequence visible to the
+      <a>storage controller</a>, and clients SHOULD warn <a>agents</a> before moving a resource
+      into a <a>container</a> that is governed by different policies.
+    </li>
+    <li>
+      <strong>Privilege Combination</strong>: Moving a resource combines the effects of a delete
+      in the source <a>container</a> and a create in the destination <a>container</a>. Servers
+      MUST evaluate both authorizations, as required by <a href="#moving-resources"></a>;
+      evaluating only the authorization to update the metadata of the resource would allow an
+      <a>agent</a> to place resources in <a>containers</a> they cannot write to, or to remove
+      resources from <a>containers</a> they cannot delete from.
+    </li>
+    <li>
+      <strong>Moving Containers</strong>: Moving a <a>container</a> moves its descendants, which
+      may include resources the requesting <a>agent</a> is not aware of. Servers that support
+      moving <a>containers</a> MUST authorize the change for every resource in the moved subtree,
+      and MUST NOT partially apply a move that fails authorization for part of the subtree.
+    </li>
+    <li>
+      <strong>Relaxing Server-Managed Metadata</strong>: Advertising a link relation as modifiable
+      makes metadata that servers otherwise maintain themselves writable by clients. Servers
+      SHOULD advertise the narrowest set of modifiable link relations that their deployment
+      requires, and MUST continue to preserve the links a client is not permitted to modify.
+    </li>
+  </ul>
+</section>

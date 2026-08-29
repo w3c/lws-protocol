@@ -63,3 +63,27 @@
   </ul>
 </section>
 
+<section id="privacy-moving-resources" class="informative">
+  <h4>Moving Resources Between Containers</h4>
+
+  <ul>
+    <li>
+      <strong>Unintended Exposure</strong>: An <a>agent</a> moving a resource may not realize
+      that the destination <a>container</a> is governed by more permissive policies than the
+      source. Clients SHOULD surface the difference in applicable policies before changing the
+      <code>up</code> link of a resource.
+    </li>
+    <li>
+      <strong>Retained Identifiers</strong>: Where a server preserves the identifier of a moved
+      resource, that identifier keeps disclosing the <a>container</a> in which the resource was
+      originally created, if the identifier was derived from it. Servers that treat identifiers
+      as opaque avoid this disclosure.
+    </li>
+    <li>
+      <strong>Redirects</strong>: A 301 Moved Permanently response left behind at a previous
+      identifier discloses the new position of a resource to <a>agents</a> that may not be
+      authorized to access it. Servers SHOULD apply the same access control to such responses
+      as to the moved resource itself, and MAY respond with 404 Not Found instead.
+    </li>
+  </ul>
+</section>

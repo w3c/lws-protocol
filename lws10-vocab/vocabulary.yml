@@ -84,6 +84,11 @@ class:
     label: Access Request Service
     comment: A service endpoint for managing access requests.
 
+  - id: MetadataUpdate
+    label: Metadata Update
+    comment: A capability indicating which link relations, otherwise managed by the storage, clients are allowed to modify on a linkset resource.
+    defined_by: https://www.w3.org/TR/lws-core/
+
 property:
   - id: items
     label: items
@@ -116,6 +121,25 @@ property:
     label: capability
     domain: lws:Storage
     comment: A capability supported by the storage.
+
+  - id: modifiable
+    label: modifiable
+    domain: lws:MetadataUpdate
+    comment: A link relation type that clients are allowed to modify on the linkset resource of an LWS resource.
+    defined_by: https://www.w3.org/TR/lws-core/
+
+  - id: appliesTo
+    label: applies to
+    domain: lws:MetadataUpdate
+    comment: The types of LWS resource a capability applies to.
+    defined_by: https://www.w3.org/TR/lws-core/
+
+  - id: preservesIdentifier
+    label: preserves identifier
+    domain: lws:MetadataUpdate
+    range: xsd:boolean
+    comment: Whether a storage preserves the identifier of a resource whose containment metadata is modified.
+    defined_by: https://www.w3.org/TR/lws-core/
 
   - id: PreferLinkRelations
     label: Prefer Link Relations
@@ -161,6 +185,10 @@ property:
   - id: as:Delete
     label: Delete
     comment: An activity representing the deletion of a resource.
+
+  - id: as:Move
+    label: Move
+    comment: An activity representing the move of a resource from one container to another.
 
   - id: as:object
     label: object
