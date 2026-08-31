@@ -1,5 +1,6 @@
 node_modules/
 index.html
+vocabulary.html
 vocabulary.ttl
 vocabulary.jsonld
 vocabulary.context.jsonld

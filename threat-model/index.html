@@ -110,7 +110,7 @@
         <a>CID Document</a> and fetches (<a>F6</a>) the public
         <a>verification method</a> to validate the credential. The
         <a>LWS Client</a> then uses the access token to access
-        (<a>F14</a>) <a>LWS resources</a> hosted by the
+        (<a>F14</a>) <a>Storage Resources</a> hosted by the
         <a>LWS Server</a> (<a>P4</a>).</p>
       <p>The <a>Storage Controller</a> (<a>E3</a>) specifies the
         <a>Resource Authorization Server</a> and may determine access
@@ -124,7 +124,7 @@
         (<a>C3</a>) may deliver the <a>LWS Client</a> as a web
         application, a native app, or a server-side process. The
         <a>LWS Storage</a> (<a>C4</a>) encompasses both the
-        <a>LWS Server</a> hosting <a>LWS resources</a> and its
+        <a>LWS Server</a> hosting <a>Storage Resources</a> and its
         <a>Resource Authorization Server</a> — these are modeled as
         separate components because they may be operated independently.</p>
       <p>This threat model focuses on the LWS protocol layer. Threats
@@ -189,14 +189,14 @@
                 data-lt="C3|C3 Application Provider|Application Provider">C3
                 Application Provider</dfn></td>
             <td>The service provider that develops and operates an
-              <a>LWS Client</a>, which accesses <a>LWS resources</a> on behalf of
+              <a>LWS Client</a>, which accesses <a>Storage Resources</a> on behalf of
               the User.</td>
           </tr>
           <tr>
             <td class="left"><dfn
                 data-lt="C4|C4 Resource Owner|Resource Owner">C4
                 Resource Owner</dfn></td>
-            <td>The storage system where the User's <a>LWS resources</a> are
+            <td>The storage system where the User's <a>Storage Resources</a> are
               hosted, managed by a <a>Resource Authorization Server</a> that
               validates <a>authentication credentials</a> and issues access
               tokens.</td>
@@ -224,14 +224,14 @@
               <a>User Authorization Server</a> via the
               <a>CID Document</a>, obtains an
               <a>authentication credential</a>, and accesses protected
-              <a>LWS resources</a> on behalf of the User.</td>
+              <a>Storage Resources</a> on behalf of the User.</td>
           </tr>
           <tr>
             <td class="left"><dfn
                 data-lt="P4|P4 Resource Server|Resource Server">P4 Resource
                 Server</dfn></td>
             <td>An <a>LWS Server</a> process hosting an <a>LWS Storage</a> that
-              serves the User's <a>LWS resources</a>, accepting access tokens
+              serves the User's <a>Storage Resources</a>, accepting access tokens
               issued by the <a>Resource Authorization Server</a>.</td>
           </tr>
           <tr>
@@ -306,14 +306,14 @@
                 data-lt="F13|F13 agent requests|agent requests">F13
                 agent requests</dfn></td>
             <td>The User interacts with an <a>LWS Client</a> to access and manage
-              their <a>LWS resources</a>.</td>
+              their <a>Storage Resources</a>.</td>
           </tr>
           <tr>
             <td class="left"><dfn
                 data-lt="F14|F14 sends requests|sends requests">F14
                 sends requests</dfn></td>
             <td>The <a>LWS Client</a> uses an access token to read and write
-              <a>LWS resources</a> in the <a>LWS Storage</a> on behalf of the
+              <a>Storage Resources</a> in the <a>LWS Storage</a> on behalf of the
               User.</td>
           </tr>
         </tbody>
@@ -341,8 +341,8 @@
     <h3>E2 Application Admin</h3>
     <p>The <a>agent</a> responsible for developing, deploying, or
       configuring an <a>LWS Client</a> that accesses
-      <a>LWS resources</a> on behalf of Users. The <a>LWS Client</a>
-      relies on <a>LWS resources</a> in <a>LWS Storages</a>, while it may
+      <a>Storage Resources</a> on behalf of Users. The <a>LWS Client</a>
+      relies on <a>Storage Resources</a> in <a>LWS Storages</a>, while it may
       perform additional actions on them, such as caching or further
       processing.</p>
     <p>Ideally, the Application Admin would ensure the <a>LWS Client</a>
@@ -358,17 +358,17 @@
     <p>The <a>agent</a> that controls all resources in an
       <a>LWS Storage</a>. The <a>Storage Controller</a> specifies the
       <a>Resource Authorization Server</a> and may determine access control
-      policies for <a>LWS resources</a> in that <a>LWS Storage</a>.
+      policies for <a>Storage Resources</a> in that <a>LWS Storage</a>.
       A typical example of the <a>Storage Controller</a> is the User
-      themselves; however, Users may also access <a>LWS resources</a>
+      themselves; however, Users may also access <a>Storage Resources</a>
       managed by other <a>Storage Controllers</a>.</p>
     <p>The <a>Storage Controller</a>’s security interest is in ensuring the
-      security of the <a>LWS resources</a> — that only trusted or
+      security of the <a>Storage Resources</a> — that only trusted or
       authorized Users and <a>LWS Clients</a> can access them. That is
       typically accomplished by the <a>Resource Authorization Server</a>
       correctly validating <a>authentication credentials</a> and issuing
       access tokens only for authorized access, access control policies
-      being correctly enforced, and the <a>LWS resources</a> under their
+      being correctly enforced, and the <a>Storage Resources</a> under their
       control being protected from unauthorized access or modification.</p>
   </section>
   <section id="threat-model-threats">

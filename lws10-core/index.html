@@ -131,8 +131,8 @@
       </p>
       <p>This specification is intended to be used by:</p>
       <ul>
-        <li>Developers building client applications that access LWS resources</li>
-        <li>Developers building compliant servers that mediate access to LWS resources</li>
+        <li>Developers building client applications that access <a>Storage Resources</a></li>
+        <li>Developers building compliant servers that mediate access to <a>Storage Resources</a></li>
       </ul>
       <p>
         Different LWS server instances each maintain their own hierarchy of linked resources. An agent might use the same identification to navigate across servers, with access to each server's resources determined by the permissions granted by that server's resource managers. It is not guaranteed that every LWS server instance will support every possible agent identifier; any given LWS server instance might require that an agent identify itself via a particular identity provider, to gain access to resources managed by that server instance.
@@ -209,7 +209,7 @@
       </p>
       <ul>
         <li><dfn>access grant</dfn> &mdash; a data object created by a <a>storage controller</a>, expressing
-        an ability for an <a>agent</a> to perform specific actions on <a>storage</a> resources within certain
+        an ability for an <a>agent</a> to perform specific actions on <a>Storage Resources</a> within certain
         defined constraints.</li>
         <li><dfn data-lt="access profiles">access profile</dfn> &mdash; an access profile describes the
         requirements for expressing a valid access policy. Every access profile is identified
@@ -217,7 +217,7 @@
         referencing them in the <code>conformsTo</code> property of a service object in its
         <a>storage description</a> resource.</li>
         <li><dfn>access request</dfn> &mdash; a data object submitted by an <a>agent</a>, expressing a
-        request to perform specific actions on storage resources, including the desired scope
+        request to perform specific actions on <a>Storage Resources</a>, including the desired scope
         and constraints.</li>
         <li><dfn data-lt="agents">agent</dfn> &mdash; a person, social entity, or software identified by a URI.</li>
         <li><dfn data-lt="authentication credentials">authentication credential</dfn> &mdash; a security token that asserts claims about an <a>agent</a> or end-user. This token is secured with a cryptographic proof.
@@ -225,26 +225,27 @@
           capability such as ZCAPs.
         </li>
         <li><dfn data-lt="authentication suites">authentication suite</dfn> &mdash; a defined validation mechanism for a concrete serialization of an <a>authentication credential</a>.</li>
-        <li><dfn>auxiliary resource</dfn> &mdash; an <a>LWS resource</a> that plays a particular role with respect to a <a>LWS resource</a>, called its <dfn>primary resource</dfn>,
+        <li><dfn>auxiliary resource</dfn> &mdash; a <a>Storage Resource</a> that plays a particular role with respect to a <a>Storage Resource</a>, called its <dfn>primary resource</dfn>,
         and whose lifetime is bound to the primary resource.
         This specification defines <a>linkset resource</a> and <a>metadata resource</a> as types of auxiliary resources,
         but <a>LWS Servers</a> are free to manage additional kinds of auxiliary resources (e.g. access control resources, notification inboxes).
         Auxiliary resources are discovered using web links [[RFC8288]] of a specific type (see Section <a href="#metadata"></a>).
         Some auxiliary resources may, in some implementations, be identical to their primary resource.
         </li>
-        <li><dfn data-lt="LWS resources">LWS resource</dfn> &mdash; an HTTP <a>resource</a> as defined in [[[RFC9110]]] which supports the read operations defined by the Linked Web Storage Protocol.
-        Following [[[RFC9110]]], this specification "does not limit the nature of a [LWS] resource; it merely defines an interface that might be used to interact with [LWS] resources." [[RFC9110]]
+        <li><dfn data-lt="Storage Resources">Storage Resource</dfn> &mdash; an HTTP <a>resource</a> as defined in [[[RFC9110]]] which supports the read operations defined by the Linked Web Storage Protocol.
+        Following [[[RFC9110]]], this specification "does not limit the nature of a resource; it merely defines an interface that might be used to interact with resources." [[RFC9110]]
+        This class is identified by the IRI <code>https://www.w3.org/ns/lws#StorageResource</code>.
         </li>
-        <li><dfn data-lt="containers">container</dfn> &mdash; an <a>LWS resource</a> that is able to enumerate a collection of <a>LWS resources</a>, conforming to the conventions described in <a href="#container-representation">Section 8. Containers</a>. The ability to create new resources in a container or to delete an existing container follows the requirements outlined in <a href="#operations">Section 9. Operations</a>.</li>
-        <li><dfn data-lt="data resources">data resource</dfn> &mdash; a data-bearing <a>LWS resource</a> such as a document, image, or structured information whose support for update and delete operations follows the requirements outlined in <a href="#operations">Section 9. Operations</a>.</li>
-        <li><dfn>containment</dfn> &mdash; the relationship between a <a>container</a> and the <a>LWS resources</a> whose lifecycle the <a>container</a> manages.</li>
+        <li><dfn data-lt="containers">container</dfn> &mdash; a <a>Storage Resource</a> that is able to enumerate a collection of <a>Storage Resources</a>, conforming to the conventions described in <a href="#container-representation">Section 8. Containers</a>. The ability to create new resources in a container or to delete an existing container follows the requirements outlined in <a href="#operations">Section 9. Operations</a>.</li>
+        <li><dfn data-lt="data resources">data resource</dfn> &mdash; a data-bearing <a>Storage Resource</a> such as a document, image, or structured information whose support for update and delete operations follows the requirements outlined in <a href="#operations">Section 9. Operations</a>.</li>
+        <li><dfn>containment</dfn> &mdash; the relationship between a <a>container</a> and the <a>Storage Resources</a> whose lifecycle the <a>container</a> manages.</li>
         <li><dfn>linkset resource</dfn> &mdash; a type of <a>auxiliary resource</a> whose representation conforms to [[[RFC9264]]]. Update operations for linkset resources follow the requirements outlined in <a href="#operations">Section 9. Operations</a>.</li>
-        <li><dfn>metadata resource</dfn> &mdash; an <a>auxiliary resource</a>, managed by a <a>storage</a>, that describes an <a>LWS resource</a> and conforms to the conventions described in <a href="todo-metadata-resource">TBD</a>. The lifecycle of a metadata resource is bound to the <a>LWS resource</a> it describes.</li>
+        <li><dfn>metadata resource</dfn> &mdash; an <a>auxiliary resource</a>, managed by a <a>storage</a>, that describes a <a>Storage Resource</a> and conforms to the conventions described in <a href="todo-metadata-resource">TBD</a>. The lifecycle of a metadata resource is bound to the <a>Storage Resource</a> it describes.</li>
         <li><dfn data-cite="webarch#def-resource">resource</dfn> &mdash; a resource is, as described by [[WebArch]] and [[RFC3986]], “whatever might be identified by a URI”. Resources whose essential characteristics can be conveyed in a message (such as web pages, images, structured data objects...) are called <dfn data-cite="webarch#def-information-resource">information resources</dfn> [[WebArch]].
         <li><dfn>storage</dfn> &mdash; a set of hierarchically organized HTTP resources whose lifecycle is managed by the conventions described by the Linked Web Storage Protocol. A storage is described by a <a>storage description resource</a> which references a collection of services that provide affordances over those resources.</li>
         <li><dfn>storage controller</dfn> &mdash; an <a>agent</a> that controls all resources in a <a>storage</a>.</li>
-        <li><dfn data-lt="storage description resource">storage description</dfn> &mdash; an <a>LWS resource</a>, conforming to the requirements of a W3C Controlled Identifier document [[!CID-1.0]], that describes a <a>storage</a> along with its services and capabilities.</li>
-        <li><dfn>storage root</dfn> &mdash; a <a>container</a> at the root of a <a>containment</a> hierarchy of a <a>storage</a>. The storage root is the only <a>LWS resource</a> that does not have a parent in the LWS <a>containment</a> hierarchy nor a <a>primary resource</a>.</li>
+        <li><dfn data-lt="storage description resource">storage description</dfn> &mdash; a <a>Storage Resource</a>, conforming to the requirements of a W3C Controlled Identifier document [[!CID-1.0]], that describes a <a>storage</a> along with its services and capabilities.</li>
+        <li><dfn>storage root</dfn> &mdash; a <a>container</a> at the root of a <a>containment</a> hierarchy of a <a>storage</a>. The storage root is the only <a>Storage Resource</a> that does not have a parent in the LWS <a>containment</a> hierarchy nor a <a>primary resource</a>.</li>
         <li><dfn data-lt="notifications">notification</dfn> &mdash; a message describing an event that has occurred on a resource.</li>
         <li><dfn data-lt="subscriptions">subscription</dfn> &mdash; a registration expressing interest in receiving notifications for a given resource or set of resources.</li>
         <li><dfn>subscriber</dfn> &mdash; the <a>agent</a> that creates a <a>subscription</a> and receives the resulting notifications.</li>
