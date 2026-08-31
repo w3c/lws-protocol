@@ -25,13 +25,13 @@ New resources are created using POST to a target <a>container</a> URI, with the 
 
 On success, the server MUST return the 201 status code with the new URI in the `Location` header. The server MUST include `Link` headers for key server-managed metadata, including a link to the parent <a>container</a> (`rel="up"`), and a link to the created resource's dedicated <a>linkset resource</a> (`rel="linkset"; type="application/linkset+json"`). Additional links SHOULD include `rel="type"` (indicating `https://www.w3.org/ns/lws#Container` or `https://www.w3.org/ns/lws#DataResource`). The body MAY be empty or include a minimal representation of the resource. All metadata creation and linking MUST be atomic with the resource creation to maintain consistency.
 
-If the request-target does not identify an existing resource, the server MUST fail the operation with the [Target Not Found](#dfn-target-not-found) outcome. In the HTTP binding, this is 404 Not Found.
-
-If the request-target identifies an existing <a>data resource</a>, the server MUST reject the request with 405 Method Not Allowed.
-
 The server MUST NOT create missing ancestor <a>containers</a> as a side effect of this operation. <a>Containment</a> is expressed by `rel="up"` links and <a>container</a> membership, not by URI path structure.
 
 If the client lacks authorization, the server MUST return 403 Forbidden (if the client's identity is known but permissions are insufficient) or 401 Unauthorized (if no valid authentication is provided). In cases where revealing resource existence poses a security risk, the server MAY return 404 Not Found instead.
+
+If the request is authorized and the request-target does not identify an existing resource, the server MUST fail the operation with the [Target Not Found](#dfn-target-not-found) outcome. In the HTTP binding, this is 404 Not Found.
+
+If the request is authorized and the request-target identifies an existing non-container resource, the server MUST reject the request with 405 Method Not Allowed.
 
 **POST (to a container URI)** – *Create with server-assigned name:*
 Use POST to add a new resource inside an existing <a>container</a>. The server assigns the identifier for the resource. Clients indicate the type of resource to create as follows:
@@ -78,7 +78,7 @@ Content-Length: 4
 
 test
 ```
-If `/alice/notes/` does not exist, the server responds with 404 Not Found:
+If the client is authorized and `/alice/notes/` does not exist, the server responds with 404 Not Found:
 ```
 HTTP/1.1 404 Not Found
 ```
