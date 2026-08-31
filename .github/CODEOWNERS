@@ -1,0 +1,49 @@
+# Topic ownership for the Linked Web Storage specifications.
+#
+# GitHub only honors entries for users with write access to this repository.
+# Additional topic reviewers who should be mentioned, but are not primary owners,
+# are configured in notify-topic-owners.yml.
+
+# Authentication
+/lws10-authn-openid/                 @jeswr @acoburn
+/lws10-authn-saml/                   @jeswr @acoburn
+/lws10-authn-ssi-cid/                @jeswr @acoburn
+/lws10-authn-ssi-did-key/            @jeswr @acoburn
+/lws10-core/Authentication.html      @jeswr @acoburn
+
+# CRUD operations
+/lws10-core/operations.md            @ebremer
+/lws10-core/Operations/              @ebremer
+
+# Metadata and linksets
+/lws10-core/Operations/metadata.md   @ebremer
+
+# Notifications
+/lws10-notifications-webhook/        @laurensdeb
+/lws10-core/Notifications.html       @laurensdeb
+
+# Access requests and grants
+/lws10-core/Authorization.html       @acoburn @ericprud @jeswr
+/lws10-core/lws-access-requests.html @acoburn @ericprud @jeswr
+
+# CI and publication tooling
+/.github/                             @pchampin
+/.pr-preview.json                    @pchampin
+/w3c.json                            @pchampin
+
+# Vocabulary and JSON-LD
+/lws10-vocab/                        @ebremer @pchampin @acoburn @jeswr
+/lws10-core/jsonld-context.md        @ebremer @pchampin @acoburn @jeswr
+
+# Test suite (reserved for the proposed test-suite directory)
+/tests/                              @langsamu @ebremer @ericprud
+
+# Threat model
+/threat-model/                       @renyuneyun @ericprud
+
+# Introduction. The introduction currently lives in the main core document,
+# so this rule necessarily applies to every direct edit of that file.
+/lws10-core/index.html               @jeremycaine @jeswr @ebremer
+
+# Search index
+/lws10-searchindex/                  @ebremer @FabienGandon
