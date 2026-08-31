@@ -2,13 +2,13 @@
     var threat = {
         id: "T2",
         name: "Impersonation through Credentials",
-        desc: "The LWS Client may impersonate the User by using the user' access Credentials to access LWS Resources without the user's knowledge.",
+        desc: "The LWS Client may impersonate the User by using the user' access Credentials to access Storage Resources without the user's knowledge.",
         response: [
             {
                 id: "R2",
                 name: "Frontend-only Ephemeral Apps",
                 type: "Reduce",
-                desc: "Requiring the Client to be an ephemeral app, whose whole lifecycle is in the browser, and does not store anything externally (apart from the LWS Resources). This circumvents the impersonation from the current Client.",
+                desc: "Requiring the Client to be an ephemeral app, whose whole lifecycle is in the browser, and does not store anything externally (apart from the Storage Resources). This circumvents the impersonation from the current Client.",
             },
             {
                 id: "R3",
