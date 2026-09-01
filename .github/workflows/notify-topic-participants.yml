@@ -1,4 +1,4 @@
-name: Notify topic owners
+name: Notify topic participants
 
 on:
   issues:
@@ -13,7 +13,7 @@ permissions:
 
 jobs:
   notify:
-    name: Mention relevant owners and reviewers
+    name: Mention relevant topic participants
     runs-on: ubuntu-latest
     steps:
       - uses: actions/github-script@v9
@@ -23,7 +23,7 @@ jobs:
               {
                 name: "Authentication",
                 slug: "authentication",
-                owners: ["@jeswr", "@acoburn"],
+                contacts: ["@jeswr", "@acoburn"],
                 reviewers: ["@ericprud"],
                 labels: ["authentication"],
                 matches: (path) =>
@@ -33,7 +33,7 @@ jobs:
               {
                 name: "CRUD operations",
                 slug: "crud-operations",
-                owners: ["@ebremer"],
+                contacts: ["@ebremer"],
                 reviewers: [],
                 labels: [],
                 matches: (path) =>
@@ -44,7 +44,7 @@ jobs:
               {
                 name: "Metadata and linksets",
                 slug: "metadata-linksets",
-                owners: ["@ebremer"],
+                contacts: ["@ebremer"],
                 reviewers: ["@termontwouter", "@pchampin"],
                 labels: ["metadata", "storage-description"],
                 matches: (path) =>
@@ -53,7 +53,7 @@ jobs:
               {
                 name: "Notifications",
                 slug: "notifications",
-                owners: ["@laurensdeb"],
+                contacts: ["@laurensdeb"],
                 reviewers: ["@ericprud"],
                 labels: ["notifications"],
                 matches: (path) =>
@@ -63,7 +63,7 @@ jobs:
               {
                 name: "Access requests and grants",
                 slug: "access-requests-grants",
-                owners: ["@acoburn", "@ericprud", "@jeswr"],
+                contacts: ["@acoburn", "@ericprud", "@jeswr"],
                 reviewers: [],
                 labels: ["access-request", "authorization"],
                 matches: (path) =>
@@ -73,7 +73,7 @@ jobs:
               {
                 name: "CI and publication tooling",
                 slug: "ci-publication",
-                owners: ["@pchampin"],
+                contacts: ["@pchampin"],
                 reviewers: [],
                 labels: ["github_actions"],
                 matches: (path) =>
@@ -84,7 +84,7 @@ jobs:
               {
                 name: "Vocabulary and JSON-LD",
                 slug: "vocabulary-jsonld",
-                owners: ["@ebremer", "@pchampin", "@acoburn", "@jeswr"],
+                contacts: ["@ebremer", "@pchampin", "@acoburn", "@jeswr"],
                 reviewers: [],
                 labels: ["vocabulary"],
                 matches: (path) =>
@@ -94,7 +94,7 @@ jobs:
               {
                 name: "Test suite",
                 slug: "test-suite",
-                owners: ["@langsamu", "@ebremer", "@ericprud"],
+                contacts: ["@langsamu", "@ebremer", "@ericprud"],
                 reviewers: [],
                 labels: [],
                 matches: (path) => path.startsWith("tests/"),
@@ -102,7 +102,7 @@ jobs:
               {
                 name: "Threat model",
                 slug: "threat-model",
-                owners: ["@renyuneyun", "@ericprud"],
+                contacts: ["@renyuneyun", "@ericprud"],
                 reviewers: [],
                 labels: ["security-privacy"],
                 matches: (path) => path.startsWith("threat-model/"),
@@ -110,7 +110,7 @@ jobs:
               {
                 name: "Introduction",
                 slug: "introduction",
-                owners: ["@jeremycaine", "@jeswr", "@ebremer"],
+                contacts: ["@jeremycaine", "@jeswr", "@ebremer"],
                 reviewers: [],
                 labels: [],
                 matches: (path) => path === "lws10-core/index.html",
@@ -118,7 +118,7 @@ jobs:
               {
                 name: "Search index",
                 slug: "search-index",
-                owners: ["@ebremer", "@FabienGandon"],
+                contacts: ["@ebremer", "@FabienGandon"],
                 reviewers: [],
                 labels: ["link-index"],
                 matches: (path) => path.startsWith("lws10-searchindex/"),
@@ -177,7 +177,7 @@ jobs:
 
             for (const slug of selectedSlugs) {
               const topic = topics.find((candidate) => candidate.slug === slug);
-              const marker = `<!-- topic-owner-notification:${topic.slug} -->`;
+              const marker = `<!-- topic-participant-notification:${topic.slug} -->`;
               if (comments.some((comment) => comment.body?.includes(marker))) {
                 continue;
               }
@@ -186,7 +186,7 @@ jobs:
                 marker,
                 `This ${kind} concerns the **${topic.name}** area.`,
                 "",
-                `Primary owners: ${topic.owners.join(" ")}`,
+                `Primary contacts: ${topic.contacts.join(" ")}`,
                 topic.reviewers.length > 0
                   ? `Additional reviewers: ${topic.reviewers.join(" ")}`
                   : null,
