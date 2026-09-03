@@ -118,7 +118,7 @@ jobs:
               {
                 name: "Search index",
                 slug: "search-index",
-                contacts: ["@ebremer", "@FabienGandon"],
+                contacts: ["@ebremer", "@gibsonf1"],
                 reviewers: [],
                 labels: ["link-index"],
                 matches: (path) => path.startsWith("lws10-searchindex/"),
