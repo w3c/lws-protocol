@@ -4,6 +4,7 @@ This is the repository for lws-protocol. You're welcome to contribute! Let's mak
 off!
 To see the most recent HTML rendered version of the specification from this repository can be found at the following:
  * [LWS Protocol](https://w3c.github.io/lws-protocol/lws10-core/)
+ * [Implementer changelog](https://w3c.github.io/lws-protocol/changes/)
 
 
 ## (1.0) Specs:
@@ -30,3 +31,8 @@ The following etiquette is followed for managing PRs submitted to this repositor
 | 4     | 2                   | 5 business days      | Yes - formal vote required[^1]     |   
 
 [^1]: Vote will be a resolution of the group made during the meeting. The vote will be announced in the agenda.
+
+Pull requests that modify a specification must complete the correction-class,
+test-impact, and Working Group evidence fields in the pull request template. See
+the [changelog policy](changes/README.md) for how those fields become reviewed
+implementer notes and publication diffs.

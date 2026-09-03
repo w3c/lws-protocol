@@ -1,0 +1,6 @@
+{
+  "$schema": "./state.schema.json",
+  "schemaVersion": 1,
+  "adoptionCommit": "602ca1917b45450163400a43edaf961cec20873e",
+  "publicationNotBefore": "2026-09-03T00:00:00Z"
+}
