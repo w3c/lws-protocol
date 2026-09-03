@@ -1,0 +1,17 @@
+{
+  "name": "lws-changelog-tools",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "engines": {
+    "node": ">=22"
+  },
+  "scripts": {
+    "test": "node --test test/*.test.mjs",
+    "validate": "node cli.mjs validate",
+    "render": "node cli.mjs render"
+  },
+  "dependencies": {
+    "openai": "7.9.0"
+  }
+}

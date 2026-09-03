@@ -6,8 +6,7 @@ on:
   workflow_dispatch:
 
 permissions:
-  pages: write
-  id-token: write
+  contents: read
 
 concurrency:
   group: pages
@@ -16,10 +15,14 @@ concurrency:
 jobs:
   build:
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
     steps:
-      - uses: actions/checkout@v7
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+        with:
+          persist-credentials: false
 
-      - uses: actions/setup-node@v7
+      - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7
         with:
           node-version: "20"
           cache: "npm"
@@ -35,26 +38,67 @@ jobs:
         run: rm -rf lws10-vocab/node_modules
 
       - name: Convert README to HTML
-        uses: docker://pandoc/core:3.8
+        uses: docker://pandoc/core@sha256:c7127705b9d84c1b4acbbe411a86e3a6d67ac57870654dc378b6fe636ab747df
         with:
           args: >-
             README.md -s
             --metadata title="LWS Protocol"
-            --css https://cdn.jsdelivr.net/npm/@picocss/pico@2/css/pico.min.css
+            --css https://cdn.jsdelivr.net/npm/@picocss/pico@2.1.1/css/pico.min.css
             --template .github/pandoc/template.html
             -o index.html
 
-      - uses: actions/upload-pages-artifact@v5
+      - name: Convert changelog to HTML
+        uses: docker://pandoc/core@sha256:c7127705b9d84c1b4acbbe411a86e3a6d67ac57870654dc378b6fe636ab747df
         with:
-          path: .
+          args: >-
+            CHANGELOG.md -s
+            --metadata title="LWS implementer changelog"
+            --css https://cdn.jsdelivr.net/npm/@picocss/pico@2.1.1/css/pico.min.css
+            --template .github/pandoc/template.html
+            -o changes/index.html
+
+      - name: Reject symlinks before packaging
+        shell: bash
+        run: |
+          symlink_path=$(find . -path ./.git -prune -o -type l -print -quit)
+          if [ -n "$symlink_path" ]; then
+            printf 'Refusing to package symbolic link: %s\n' "$symlink_path" >&2
+            exit 1
+          fi
+
+      - name: Stage the public site from an explicit allowlist
+        shell: bash
+        run: |
+          mkdir _site
+          cp -R \
+            index.html \
+            changes \
+            lws10-core \
+            lws10-vocab \
+            lws10-authn-openid \
+            lws10-authn-saml \
+            lws10-authn-ssi-cid \
+            lws10-authn-ssi-did-key \
+            lws10-notifications-webhook \
+            lws10-searchindex \
+            oct-meeting \
+            threat-model \
+            _site/
+
+      - uses: actions/upload-pages-artifact@fc324d3547104276b827a68afc52ff2a11cc49c9 # v5
+        with:
+          path: _site
 
   deploy:
     runs-on: ubuntu-latest
     needs: build
+    permissions:
+      pages: write
+      id-token: write
     environment:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}
     steps:
       - name: Deploy to GitHub Pages
         id: deployment
-        uses: actions/deploy-pages@v5
+        uses: actions/deploy-pages@368f82528645a54fb793d4d04e342629a3f51346 # v5

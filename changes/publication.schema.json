@@ -1,0 +1,70 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://w3c.github.io/lws-protocol/changes/publication.schema.json",
+  "title": "LWS publication record",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "$schema",
+    "schemaVersion",
+    "id",
+    "specification",
+    "publishedAt",
+    "thisVersion",
+    "previousVersion",
+    "diff",
+    "sourceCommits",
+    "entries",
+    "echidnaRuns"
+  ],
+  "properties": {
+    "$schema": { "const": "../publication.schema.json" },
+    "schemaVersion": { "const": 1 },
+    "id": { "type": "string", "pattern": "^lws[0-9a-z-]+--[0-9]{4}-[0-9]{2}-[0-9]{2}$" },
+    "specification": { "type": "string", "pattern": "^lws[0-9a-z-]+$" },
+    "publishedAt": { "type": "string", "format": "date" },
+    "thisVersion": { "type": "string", "format": "uri" },
+    "previousVersion": { "type": "string", "format": "uri" },
+    "diff": { "type": "string", "format": "uri" },
+    "sourceCommits": {
+      "type": "array",
+      "minItems": 1,
+      "uniqueItems": true,
+      "items": { "$ref": "#/$defs/commit" }
+    },
+    "entries": {
+      "type": "array",
+      "uniqueItems": true,
+      "items": { "type": "string" }
+    },
+    "echidnaRuns": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "id",
+          "attempt",
+          "url",
+          "workflowId",
+          "workflowFile",
+          "headCommit",
+          "completedAt"
+        ],
+        "properties": {
+          "id": { "type": "integer", "minimum": 1 },
+          "attempt": { "type": "integer", "minimum": 1 },
+          "url": { "type": "string", "format": "uri" },
+          "workflowId": { "type": "integer", "minimum": 1 },
+          "workflowFile": { "type": "string", "pattern": "^echidna-[a-z0-9-]+\\.yml$" },
+          "headCommit": { "$ref": "#/$defs/commit" },
+          "completedAt": { "type": "string", "format": "date-time" }
+        }
+      }
+    }
+  },
+  "$defs": {
+    "commit": { "type": "string", "pattern": "^[0-9a-f]{40}$" }
+  }
+}
