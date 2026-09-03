@@ -1,0 +1,204 @@
+name: Notify topic participants
+
+on:
+  issues:
+    types: [opened, edited, labeled]
+  pull_request_target:
+    types: [opened, ready_for_review, synchronize]
+
+permissions:
+  contents: read
+  issues: write
+  pull-requests: read
+
+jobs:
+  notify:
+    name: Mention relevant topic participants
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/github-script@v9
+        with:
+          script: |
+            const topics = [
+              {
+                name: "Authentication",
+                slug: "authentication",
+                contacts: ["@jeswr", "@acoburn"],
+                reviewers: ["@ericprud"],
+                labels: ["authentication"],
+                matches: (path) =>
+                  path.startsWith("lws10-authn-") ||
+                  path === "lws10-core/Authentication.html",
+              },
+              {
+                name: "CRUD operations",
+                slug: "crud-operations",
+                contacts: ["@ebremer"],
+                reviewers: [],
+                labels: [],
+                matches: (path) =>
+                  path === "lws10-core/operations.md" ||
+                  (path.startsWith("lws10-core/Operations/") &&
+                    path !== "lws10-core/Operations/metadata.md"),
+              },
+              {
+                name: "Metadata and linksets",
+                slug: "metadata-linksets",
+                contacts: ["@ebremer"],
+                reviewers: ["@termontwouter", "@pchampin"],
+                labels: ["metadata", "storage-description"],
+                matches: (path) =>
+                  path === "lws10-core/Operations/metadata.md",
+              },
+              {
+                name: "Notifications",
+                slug: "notifications",
+                contacts: ["@laurensdeb"],
+                reviewers: ["@ericprud"],
+                labels: ["notifications"],
+                matches: (path) =>
+                  path.startsWith("lws10-notifications-webhook/") ||
+                  path === "lws10-core/Notifications.html",
+              },
+              {
+                name: "Access requests and grants",
+                slug: "access-requests-grants",
+                contacts: ["@acoburn", "@ericprud", "@jeswr"],
+                reviewers: [],
+                labels: ["access-request", "authorization"],
+                matches: (path) =>
+                  path === "lws10-core/Authorization.html" ||
+                  path === "lws10-core/lws-access-requests.html",
+              },
+              {
+                name: "CI and publication tooling",
+                slug: "ci-publication",
+                contacts: ["@pchampin"],
+                reviewers: [],
+                labels: ["github_actions"],
+                matches: (path) =>
+                  path.startsWith(".github/") ||
+                  path === ".pr-preview.json" ||
+                  path === "w3c.json",
+              },
+              {
+                name: "Vocabulary and JSON-LD",
+                slug: "vocabulary-jsonld",
+                contacts: ["@ebremer", "@pchampin", "@acoburn", "@jeswr"],
+                reviewers: [],
+                labels: ["vocabulary"],
+                matches: (path) =>
+                  path.startsWith("lws10-vocab/") ||
+                  path === "lws10-core/jsonld-context.md",
+              },
+              {
+                name: "Test suite",
+                slug: "test-suite",
+                contacts: ["@langsamu", "@ebremer", "@ericprud"],
+                reviewers: [],
+                labels: [],
+                matches: (path) => path.startsWith("tests/"),
+              },
+              {
+                name: "Threat model",
+                slug: "threat-model",
+                contacts: ["@renyuneyun", "@ericprud"],
+                reviewers: [],
+                labels: ["security-privacy"],
+                matches: (path) => path.startsWith("threat-model/"),
+              },
+              {
+                name: "Introduction",
+                slug: "introduction",
+                contacts: ["@jeremycaine", "@jeswr", "@ebremer"],
+                reviewers: [],
+                labels: [],
+                matches: (path) => path === "lws10-core/index.html",
+              },
+              {
+                name: "Search index",
+                slug: "search-index",
+                contacts: ["@ebremer", "@gibsonf1"],
+                reviewers: [],
+                labels: ["link-index"],
+                matches: (path) => path.startsWith("lws10-searchindex/"),
+              },
+            ];
+
+            const selectedSlugs = new Set();
+            const number = context.payload.issue?.number ?? context.payload.pull_request.number;
+
+            if (context.eventName === "issues") {
+              const issue = context.payload.issue;
+              const lines = (issue.body ?? "").split(/\r?\n/);
+              const topicHeading = lines.findIndex(
+                (line) => line.trim() === "### Topic",
+              );
+              const selectedTopic = lines
+                .slice(topicHeading + 1)
+                .find((line) => line.trim())
+                ?.trim();
+
+              const bodyTopic = topics.find((topic) => topic.name === selectedTopic);
+              if (bodyTopic) selectedSlugs.add(bodyTopic.slug);
+
+              const issueLabels = issue.labels.map((label) =>
+                typeof label === "string" ? label : label.name,
+              );
+              for (const topic of topics) {
+                if (topic.labels.some((label) => issueLabels.includes(label))) {
+                  selectedSlugs.add(topic.slug);
+                }
+              }
+            } else {
+              const files = await github.paginate(github.rest.pulls.listFiles, {
+                ...context.repo,
+                pull_number: number,
+                per_page: 100,
+              });
+              for (const topic of topics) {
+                if (files.some((file) => topic.matches(file.filename))) {
+                  selectedSlugs.add(topic.slug);
+                }
+              }
+            }
+
+            if (selectedSlugs.size === 0) return;
+
+            const comments = await github.paginate(
+              github.rest.issues.listComments,
+              {
+                ...context.repo,
+                issue_number: number,
+                per_page: 100,
+              },
+            );
+            const kind = context.eventName === "issues" ? "issue" : "pull request";
+
+            for (const slug of selectedSlugs) {
+              const topic = topics.find((candidate) => candidate.slug === slug);
+              const marker = `<!-- topic-participant-notification:${topic.slug} -->`;
+              if (comments.some((comment) => comment.body?.includes(marker))) {
+                continue;
+              }
+
+              const body = [
+                marker,
+                `This ${kind} concerns the **${topic.name}** area.`,
+                "",
+                `Primary contacts: ${topic.contacts.join(" ")}`,
+                topic.reviewers.length > 0
+                  ? `Additional reviewers: ${topic.reviewers.join(" ")}`
+                  : null,
+                "",
+                `Please review or help route this ${kind}.`,
+              ]
+                .filter((line) => line !== null)
+                .join("\n");
+
+              await github.rest.issues.createComment({
+                ...context.repo,
+                issue_number: number,
+                body,
+              });
+            }
