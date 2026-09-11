@@ -24,7 +24,7 @@ jobs:
                 name: "Authentication",
                 slug: "authentication",
                 contacts: ["@jeswr", "@acoburn"],
-                reviewers: ["@ericprud"],
+                reviewers: ["@elf-pavlik"],
                 labels: ["authentication"],
                 matches: (path) =>
                   path.startsWith("lws10-authn-") ||
@@ -54,7 +54,7 @@ jobs:
                 name: "Notifications",
                 slug: "notifications",
                 contacts: ["@laurensdeb"],
-                reviewers: ["@ericprud"],
+                reviewers: ["@elf-pavlik"],
                 labels: ["notifications"],
                 matches: (path) =>
                   path.startsWith("lws10-notifications-webhook/") ||
@@ -63,7 +63,7 @@ jobs:
               {
                 name: "Access requests and grants",
                 slug: "access-requests-grants",
-                contacts: ["@acoburn", "@ericprud", "@jeswr"],
+                contacts: ["@acoburn", "@elf-pavlik", "@jeswr"],
                 reviewers: [],
                 labels: ["access-request", "authorization"],
                 matches: (path) =>
@@ -95,14 +95,14 @@ jobs:
                 name: "Test suite",
                 slug: "test-suite",
                 contacts: ["@langsamu", "@ebremer", "@ericprud"],
-                reviewers: [],
+                reviewers: ["@elf-pavlik"],
                 labels: [],
                 matches: (path) => path.startsWith("tests/"),
               },
               {
                 name: "Threat model",
                 slug: "threat-model",
-                contacts: ["@renyuneyun", "@ericprud"],
+                contacts: ["@renyuneyun", "@elf-pavlik"],
                 reviewers: [],
                 labels: ["security-privacy"],
                 matches: (path) => path.startsWith("threat-model/"),
