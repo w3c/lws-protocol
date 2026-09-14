@@ -31,7 +31,7 @@ Each entry in the `items` array describes a resource contained in the <a>contain
 
 A contained resource description SHOULD include:
 
-- **`mediaType`**: The media type of the resource (e.g., `"text/plain"`, `"image/jpeg"`). MUST be present for DataResources.
+- **`format`**: The media type of the resource (e.g., `"text/plain"`, `"image/jpeg"`). MUST be present for DataResources.
 - **`size`**: The size of the resource in bytes, expressed as an integer.
 - **`modified`**: The date and time the resource was last modified, expressed as an ISO 8601 date-time string.
 
@@ -49,14 +49,14 @@ The following example shows a <a>container</a> at `/alice/notes/` containing two
     {
       "type": "DataResource",
       "id": "/alice/notes/shoppinglist.txt",
-      "mediaType": "text/plain",
+      "format": "text/plain",
       "size": 47,
       "modified": "2025-11-24T12:00:00Z"
     },
     {
       "type": ["DataResource", "http://example.org/customType"],
       "id": "/alice/notes/todo.json",
-      "mediaType": "application/json",
+      "format": "application/json",
       "size": 2048,
       "modified": "2025-11-24T13:00:00Z"
     }
