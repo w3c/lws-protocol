@@ -55,6 +55,12 @@
         In these cases, the <a>agent</a> is able to securely manage the private portion of a keypair, which it uses to generate signed JSON Web Tokens (JWT).
         This specification describes how this class of <a>agents</a> can generate <a>authentication credentials</a> that can be used with a Linked Web Storage.
       </p>
+
+      <div class="note">
+        <p>
+          This authentication suite is designed to work with subject identifiers that use HTTPS URIs as well as DID URIs. Since DID documents, as defined in Decentralized Identifiers (DIDs) 1.1 [[DID-1.1]] Section 5.1.2, extend controlled identifier documents [[CID-1.0]], they are compatible with the validation process described in this specification.
+        </p>
+      </div>
     </section>
     <section id="conformance"></section>
 
@@ -151,7 +157,7 @@ signature
       </p>
 
       <p>
-        In the absence of a pre-existing trust relationship, the verifier MUST dereference the <code>sub</code> (subject) claim in the <a>authentication credential</a>.
+        In the absence of a pre-existing trust relationship, the verifier MUST resolve the <code>sub</code> (subject) claim in the <a>authentication credential</a>.
         The resulting resource MUST be formatted as a valid controlled identifier document [[!CID-1.0]] with an <code>id</code> value equal to the subject identifier.
       </p>
 
@@ -228,8 +234,8 @@ signature
       </p>
 
       <p>
-        The validation process requires dereferencing the subject identifier to retrieve a
-        controlled identifier document. This dereference operation can reveal to the hosting
+        The validation process requires resolving the subject identifier to retrieve a
+        controlled identifier document. This resolution operation can reveal to the hosting
         server of that document which verifiers are validating credentials for a given
         <a>agent</a>, including timing and frequency of access. Verifiers are encouraged to
         cache controlled identifier documents to reduce unnecessary network requests and the
