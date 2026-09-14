@@ -1,0 +1,61 @@
+{
+  "schemaVersion": 1,
+  "specifications": {
+    "lws10-core": {
+      "title": "Linked Web Storage Protocol 1.0",
+      "shortName": "lws10-core",
+      "publicationWorkflow": "Echidna lws-core",
+      "publicationWorkflowFile": "echidna-core.yml",
+      "initialPublication": "https://www.w3.org/TR/2026/WD-lws10-core-20260331/"
+    },
+    "lws10-vocab": {
+      "title": "Linked Web Storage Vocabulary",
+      "shortName": "lws10-vocab",
+      "publicationWorkflow": null,
+      "publicationWorkflowFile": null,
+      "initialPublication": "https://www.w3.org/TR/2026/DNOTE-lws10-vocab-20260714/"
+    },
+    "lws10-authn-openid": {
+      "title": "LWS 1.0 Authentication Suite: OpenID Connect",
+      "shortName": "lws10-authn-openid",
+      "publicationWorkflow": "Echidna lws-authn-openid",
+      "publicationWorkflowFile": "echidna-authn-openid.yml",
+      "initialPublication": "https://www.w3.org/TR/2026/WD-lws10-authn-openid-20260423/"
+    },
+    "lws10-authn-saml": {
+      "title": "LWS 1.0 Authentication Suite: SAML 2.0",
+      "shortName": "lws10-authn-saml",
+      "publicationWorkflow": "Echidna lws-authn-saml",
+      "publicationWorkflowFile": "echidna-authn-saml.yml",
+      "initialPublication": "https://www.w3.org/TR/2026/WD-lws10-authn-saml-20260423/"
+    },
+    "lws10-authn-ssi-cid": {
+      "title": "LWS 1.0 Authentication Suite: Self-signed Controlled Identifiers",
+      "shortName": "lws10-authn-ssi-cid",
+      "publicationWorkflow": "Echidna lws-authn-ssi-cid",
+      "publicationWorkflowFile": "echidna-authn-ssi-cid.yml",
+      "initialPublication": "https://www.w3.org/TR/2026/WD-lws10-authn-ssi-cid-20260423/"
+    },
+    "lws10-authn-ssi-did-key": {
+      "title": "LWS 1.0 Authentication Suite: Self-signed did:key",
+      "shortName": "lws10-authn-ssi-did-key",
+      "publicationWorkflow": "Echidna lws-authn-ssi-did-key",
+      "publicationWorkflowFile": "echidna-authn-ssi-did-key.yml",
+      "initialPublication": "https://www.w3.org/TR/2026/WD-lws10-authn-ssi-did-key-20260423/"
+    },
+    "lws10-notifications-webhook": {
+      "title": "LWS 1.0 Notification Suite: Webhooks",
+      "shortName": "lws10-notifications-webhook",
+      "publicationWorkflow": null,
+      "publicationWorkflowFile": null,
+      "initialPublication": null
+    },
+    "lws10-searchindex": {
+      "title": "LWS 1.0 Search and Type Index Services",
+      "shortName": "lws-searchindex",
+      "publicationWorkflow": null,
+      "publicationWorkflowFile": null,
+      "initialPublication": null
+    }
+  }
+}

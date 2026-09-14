@@ -1,0 +1,19 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://w3c.github.io/lws-protocol/changes/state.schema.json",
+  "title": "LWS changelog reconciliation state",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "$schema",
+    "schemaVersion",
+    "adoptionCommit",
+    "publicationNotBefore"
+  ],
+  "properties": {
+    "$schema": { "const": "./state.schema.json" },
+    "schemaVersion": { "const": 1 },
+    "adoptionCommit": { "const": "602ca1917b45450163400a43edaf961cec20873e" },
+    "publicationNotBefore": { "const": "2026-09-03T00:00:00Z" }
+  }
+}

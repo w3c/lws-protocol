@@ -1,0 +1,164 @@
+name: Maintain changelog
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - "lws10-core/**"
+      - "lws10-vocab/**"
+      - "lws10-authn-openid/**"
+      - "lws10-authn-saml/**"
+      - "lws10-authn-ssi-cid/**"
+      - "lws10-authn-ssi-did-key/**"
+      - "lws10-notifications-webhook/**"
+      - "lws10-searchindex/**"
+  workflow_run:
+    workflows:
+      - Echidna lws-core
+      - Echidna lws-authn-openid
+      - Echidna lws-authn-saml
+      - Echidna lws-authn-ssi-cid
+      - Echidna lws-authn-ssi-did-key
+    types: [completed]
+  schedule:
+    - cron: "17 * * * *"
+  workflow_dispatch:
+
+permissions: {}
+
+concurrency:
+  group: lws-changelog
+  cancel-in-progress: false
+
+jobs:
+  generate:
+    name: reconcile evidence and generate candidate
+    if: >-
+      github.repository == 'w3c/lws-protocol' &&
+      github.ref == 'refs/heads/main' &&
+      (github.event_name != 'workflow_run' ||
+       (github.event.workflow_run.conclusion == 'success' &&
+        github.event.workflow_run.event == 'push' &&
+        github.event.workflow_run.head_branch == 'main'))
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    outputs:
+      base-sha: ${{ steps.checkout.outputs.commit }}
+      branch-sha: ${{ steps.cache.outputs.branch-sha }}
+    permissions:
+      actions: read
+      contents: read
+      id-token: write
+      pull-requests: read
+    steps:
+      - name: Check out current main without persisted credentials
+        id: checkout
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+        with:
+          ref: main
+          fetch-depth: 0
+          persist-credentials: false
+
+      - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7
+        with:
+          node-version: "24"
+          cache: npm
+          cache-dependency-path: tools/changelog/package-lock.json
+
+      - name: Install the pinned changelog dependency
+        run: npm ci --prefix tools/changelog
+
+      - name: Restore the editor-reviewed reconciliation cache
+        id: cache
+        shell: bash
+        run: |
+          branch_sha=
+          if branch_ref=$(git ls-remote --exit-code --heads origin refs/heads/automation/changelog); then
+            read -r branch_sha _ <<< "$branch_ref"
+            git fetch --no-tags origin automation/changelog:refs/remotes/origin/automation/changelog
+            test "$(git rev-parse refs/remotes/origin/automation/changelog)" = "$branch_sha"
+            restore=$(GITHUB_TOKEN="${{ github.token }}" \
+              GITHUB_REPOSITORY="${{ github.repository }}" \
+              EXPECTED_BRANCH_SHA="$branch_sha" \
+              GENERATED_BASE_SHA="${{ steps.checkout.outputs.commit }}" \
+              node tools/changelog/cache.mjs)
+            test "$restore" = true || test "$restore" = false
+          else
+            status=$?
+            if [ "$status" -ne 2 ]; then
+              exit "$status"
+            fi
+          fi
+          printf 'branch-sha=%s\n' "$branch_sha" >> "$GITHUB_OUTPUT"
+
+      - name: Normalize and validate the restored cache before use
+        run: |
+          node tools/changelog/cli.mjs render
+          node tools/changelog/cli.mjs validate
+
+      - name: Reconcile merges and successful publications
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+          CHANGELOG_AI_ENABLED: ${{ vars.CHANGELOG_AI_ENABLED }}
+          OPENAI_MODEL: ${{ vars.OPENAI_MODEL || 'gpt-5.6-luna' }}
+          OPENAI_WIF_AUDIENCE: ${{ vars.OPENAI_WIF_AUDIENCE }}
+          OPENAI_IDENTITY_PROVIDER_ID: ${{ vars.OPENAI_IDENTITY_PROVIDER_ID }}
+          OPENAI_SERVICE_ACCOUNT_ID: ${{ vars.OPENAI_SERVICE_ACCOUNT_ID }}
+        run: >-
+          node tools/changelog/cli.mjs reconcile
+          --target "${{ steps.checkout.outputs.commit }}"
+
+      - name: Validate generated artifacts
+        run: node tools/changelog/cli.mjs validate
+
+      - name: Transfer only validated changelog data
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+        with:
+          name: changelog-candidate-${{ github.run_id }}
+          path: |
+            CHANGELOG.md
+            changes/entries
+            changes/publications
+          if-no-files-found: error
+          include-hidden-files: true
+          retention-days: 1
+
+  propose:
+    name: open editor-controlled draft
+    needs: generate
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    permissions:
+      actions: read
+      contents: write
+      pull-requests: write
+    steps:
+      - name: Check out the captured main revision
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+        with:
+          ref: ${{ needs.generate.outputs.base-sha }}
+          fetch-depth: 0
+          persist-credentials: true
+
+      - name: Clear base ledger files so artifact deletions are preserved
+        shell: bash
+        run: find changes/entries changes/publications -mindepth 1 -maxdepth 1 -delete
+
+      - uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c # v8.0.1
+        with:
+          name: changelog-candidate-${{ github.run_id }}
+          path: .
+
+      - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7
+        with:
+          node-version: "24"
+
+      - name: Revalidate the transferred candidate
+        run: node tools/changelog/cli.mjs validate
+
+      - name: Update the editor-controlled draft without overwriting concurrent edits
+        env:
+          EXPECTED_BRANCH_SHA: ${{ needs.generate.outputs.branch-sha }}
+          GENERATED_BASE_SHA: ${{ needs.generate.outputs.base-sha }}
+          GITHUB_TOKEN: ${{ github.token }}
+        run: node tools/changelog/propose.mjs

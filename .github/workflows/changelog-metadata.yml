@@ -1,0 +1,63 @@
+name: Changelog metadata
+
+on:
+  pull_request:
+    types: [opened, edited, synchronize, reopened, ready_for_review]
+
+permissions:
+  contents: read
+  pull-requests: read
+
+concurrency:
+  group: changelog-metadata-${{ github.event.pull_request.number }}
+  cancel-in-progress: true
+
+jobs:
+  validate:
+    name: validate
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - name: Check out the trusted base revision
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+        with:
+          ref: ${{ github.event.pull_request.base.sha }}
+          persist-credentials: false
+
+      - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7
+        with:
+          node-version: "24"
+
+      - name: Validate pull request metadata
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+        run: |
+          if [[ ! -f tools/changelog/cli.mjs ]]; then
+            echo "Trusted base has no changelog validator; skipping the bootstrap PR."
+            exit 0
+          fi
+          node tools/changelog/cli.mjs validate-pr --event "$GITHUB_EVENT_PATH"
+
+  records:
+    name: records and generator
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - name: Check out the proposed revision without persisted credentials
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+        with:
+          persist-credentials: false
+          fetch-depth: 0
+
+      - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7
+        with:
+          node-version: "24"
+
+      - name: Verify the pinned dependency lock
+        run: npm ci --prefix tools/changelog --ignore-scripts
+
+      - name: Test the changelog generator
+        run: node --test tools/changelog/test/*.test.mjs
+
+      - name: Validate records and generated Markdown
+        run: node tools/changelog/cli.mjs validate

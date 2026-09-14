@@ -1,0 +1,104 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://w3c.github.io/lws-protocol/changes/entry.schema.json",
+  "title": "LWS changelog entry",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "$schema",
+    "schemaVersion",
+    "id",
+    "specification",
+    "classification",
+    "source",
+    "review",
+    "summary"
+  ],
+  "properties": {
+    "$schema": { "const": "../entry.schema.json" },
+    "schemaVersion": { "const": 1 },
+    "id": { "type": "string", "pattern": "^(pr-[0-9]+|commit-[0-9a-f]{12})--lws[0-9a-z-]+$" },
+    "specification": { "type": "string", "pattern": "^lws[0-9a-z-]+$" },
+    "classification": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["class", "selectedBy", "public"],
+      "properties": {
+        "class": { "oneOf": [{ "enum": [1, 2, 3, 4] }, { "const": "unclassified" }] },
+        "selectedBy": { "enum": ["author", "maintainer", "unavailable"] },
+        "public": { "type": "boolean" }
+      }
+    },
+    "source": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["kind", "title", "url", "author", "mergedAt", "baseCommit", "headCommit", "mergeCommit", "changedFiles"],
+      "properties": {
+        "kind": { "enum": ["pull_request", "direct_push"] },
+        "pullRequest": { "type": "integer", "minimum": 1 },
+        "title": { "type": "string", "minLength": 1, "maxLength": 300 },
+        "url": { "type": "string", "format": "uri" },
+        "author": { "type": "string", "minLength": 1, "maxLength": 100 },
+        "mergedAt": { "type": "string", "format": "date-time" },
+        "baseCommit": { "$ref": "#/$defs/commit" },
+        "headCommit": { "$ref": "#/$defs/commit" },
+        "mergeCommit": { "$ref": "#/$defs/commit" },
+        "changedFiles": {
+          "type": "array",
+          "uniqueItems": true,
+          "items": { "type": "string", "minLength": 1 }
+        }
+      }
+    },
+    "review": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["tests", "workingGroupRecord"],
+      "properties": {
+        "tests": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["status", "rationale"],
+          "properties": {
+            "status": { "enum": ["added", "updated", "not_needed", "tracked_separately", "unavailable"] },
+            "rationale": { "type": "string", "maxLength": 1000 }
+          }
+        },
+        "workingGroupRecord": { "type": ["string", "null"], "maxLength": 1000 }
+      }
+    },
+    "summary": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["status", "text", "implementationConsiderations", "evidenceGaps"],
+      "properties": {
+        "status": { "enum": ["pending", "generated", "edited"] },
+        "text": { "type": "string", "maxLength": 1200 },
+        "implementationConsiderations": {
+          "type": "array",
+          "maxItems": 5,
+          "items": { "type": "string", "maxLength": 400 }
+        },
+        "evidenceGaps": {
+          "type": "array",
+          "maxItems": 5,
+          "items": { "type": "string", "maxLength": 400 }
+        },
+        "generator": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["provider", "model", "responseId", "generatedAt"],
+          "properties": {
+            "provider": { "const": "openai" },
+            "model": { "type": "string", "minLength": 1 },
+            "responseId": { "type": "string", "minLength": 1 },
+            "generatedAt": { "type": "string", "format": "date-time" }
+          }
+        }
+      }
+    }
+  },
+  "$defs": {
+    "commit": { "type": "string", "pattern": "^[0-9a-f]{40}$" }
+  }
+}
