@@ -83,6 +83,57 @@
     <p>
       A <a>storage description</a> may contain descriptions of additional capabilities supported by the <a>storage</a>.
     </p>
+
+    <p>
+      A <a>storage</a> that allows clients to modify link relations that it would otherwise manage itself,
+      as described in <a href="#metadata"></a>, MUST describe a capability whose <code>type</code> equals
+      <code>MetadataUpdate</code>. Clients MUST NOT assume that such a link relation is modifiable in the
+      absence of this capability. The following properties are defined for a <code>MetadataUpdate</code>
+      capability:
+    </p>
+
+    <ul>
+      <li>
+        <strong>`modifiable`</strong> - the <code>modifiable</code> property is REQUIRED. Its value MUST be a set of
+        link relation types that clients are allowed to modify on the <a>linkset resource</a> of an
+        <a>LWS resource</a>. Listing <code>up</code> indicates that the <a>storage</a> supports moving resources
+        between <a>containers</a>, as described in <a href="#moving-resources"></a>.
+      </li>
+      <li>
+        <strong>`appliesTo`</strong> - the <code>appliesTo</code> property is OPTIONAL. If present, its value MUST be a
+        set of strings naming the types of <a>LWS resource</a> the capability applies to, such as
+        <code>DataResource</code> or <code>Container</code>. If the property is absent, the capability applies
+        to <a>data resources</a> only.
+      </li>
+      <li>
+        <strong>`preservesIdentifier`</strong> - the <code>preservesIdentifier</code> property is OPTIONAL.
+        If present, its value MUST be a boolean indicating whether the <a>storage</a> preserves the identifier
+        of a resource whose <a>containment</a> metadata is modified. If the property is absent, clients
+        MUST NOT assume that identifiers are preserved, and MUST rely on the response to the update
+        to determine the identifier of the resource.
+      </li>
+    </ul>
+
+    <pre id="example-storage-description-move" class="example" title="Storage description resource advertising that clients may move resources between containers">
+{
+  "@context": [
+    "https://www.w3.org/ns/cid/v1",
+    "https://www.w3.org/ns/lws/v1"
+  ],
+  "id": "https://storage.example/",
+  "type": "Storage",
+  "capability": [{
+    "type": "MetadataUpdate",
+    "modifiable": ["up"],
+    "appliesTo": ["DataResource", "Container"],
+    "preservesIdentifier": true
+  }],
+  "service": [{
+    "type": "StorageRoot",
+    "serviceEndpoint": "https://storage.example/root/"
+  }]
+}
+    </pre>
   </section>
 
   <section id="storage-description-services">

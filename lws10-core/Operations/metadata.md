@@ -49,6 +49,6 @@ Metadata is managed by interacting with the resource's associated <a>linkset res
 
 - Replacement (PUT): If advertised in the Allow header, a client MAY replace the entire linkset. If the server does not support PUT, it MUST reject the request with 405 Method Not Allowed.
 
-- Restrictions: Servers MAY restrict modifications to specific links (like `up` or `items`) to maintain system integrity.
+- Restrictions: Servers MAY restrict modifications to specific links (like `up` or `items`) to maintain system integrity. A server that lifts such a restriction MUST advertise the affected link relations in its <a>storage description</a>, as described in [](#storage-description-capabilities), and MUST preserve the links a client is not permitted to modify when applying a patch. Allowing clients to modify the `up` link moves the resource between <a>containers</a>; the resulting requirements are defined in [](#moving-resources).
 
 - Lifecycle: Metadata lifecycles are tied to the described resource; deleting a resource MUST result in the automatic removal of its associated <a>linkset resource</a> metadata.
