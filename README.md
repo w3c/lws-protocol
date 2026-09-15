@@ -18,6 +18,10 @@ To see the most recent HTML rendered version of the specification from this repo
 - [`searchindex`](lws10-searchindex/): Search and Type Index Services
 
 
+## (1.0) Test suites:
+
+- [`LWS 1.0`](https://github.com/lws-contrib/lws-test-suite/tree/main/lws10): 1.0 core test suite
+
 ## Contribution Guidelines:
 
 The following etiquette is followed for managing PRs submitted to this repository. In the below table we refer to the official [W3C Correction Classes](https://www.w3.org/policies/process/#correction-classes).
