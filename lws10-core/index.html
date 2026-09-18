@@ -208,6 +208,17 @@
         This specification defines the following terms:
       </p>
       <ul>
+        <li><dfn>access grant</dfn> &mdash; a data object created by a <a>storage controller</a>, expressing
+        an ability for an <a>agent</a> to perform specific actions on <a>storage</a> resources within certain
+        defined constraints.</li>
+        <li><dfn data-lt="access profiles">access profile</dfn> &mdash; an access profile describes the
+        requirements for expressing a valid access policy. Every access profile is identified
+        with a URI, and a server indicates support for one or more access profiles by
+        referencing them in the <code>conformsTo</code> property of a service object in its
+        <a>storage description</a> resource.</li>
+        <li><dfn>access request</dfn> &mdash; a data object submitted by an <a>agent</a>, expressing a
+        request to perform specific actions on storage resources, including the desired scope
+        and constraints.</li>
         <li><dfn data-lt="agents">agent</dfn> &mdash; a person, social entity, or software identified by a URI.</li>
         <li><dfn data-lt="authentication credentials">authentication credential</dfn> &mdash; a security token that asserts claims about an <a>agent</a> or end-user. This token is secured with a cryptographic proof.
           Examples of authentication credentials include assertions of identity such as OpenID Connect ID Tokens and SAML-based assertions as well as assertions of

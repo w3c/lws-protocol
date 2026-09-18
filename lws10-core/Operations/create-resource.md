@@ -21,12 +21,12 @@ The **create resource** operation adds a new [served resource](#dfn-served-resou
 * **Conflict:** A resource with the generated identifier already exists, or there is another state conflict.
 * **Unknown Error:** An unexpected internal error occurred.
 
-New resources are created using POST to a target <a>container</a> URI, with the server assigning the final identifier. Clients MAY suggest a name via the `Slug` header. Clients MAY provide initial user-managed metadata for the new resource by including one or more `Link` headers in the POST request, following the syntax of Web Linking in [[RFC8288]]. Server-managed metadata MUST be generated automatically by the server upon creation and MUST NOT be overridden by client-provided links.
+New resources are created using POST to a target <a>container</a> URI, with the server assigning the final identifier. Clients MAY provide initial user-managed metadata for the new resource by including one or more `Link` headers in the POST request, following the syntax of Web Linking in [[RFC8288]]. Server-managed metadata MUST be generated automatically by the server upon creation and MUST NOT be overridden by client-provided links.
 
 On success, the server MUST return the 201 status code with the new URI in the `Location` header. The server MUST include `Link` headers for key server-managed metadata, including a link to the parent <a>container</a> (`rel="up"`), and a link to the created resource's dedicated <a>linkset resource</a> (`rel="linkset"; type="application/linkset+json"`). Additional links SHOULD include `rel="type"` (indicating `https://www.w3.org/ns/lws#Container` or `https://www.w3.org/ns/lws#DataResource`). The body MAY be empty or include a minimal representation of the resource. All metadata creation and linking MUST be atomic with the resource creation to maintain consistency.
 
 **POST (to a container URI)** – *Create with server-assigned name:*
-Use POST to add a new resource inside an existing <a>container</a>. The server assigns an identifier to the resource, optionally suggested via the `Slug` header. The server MAY honor the Slug header if it does not conflict with naming rules or existing resources. Clients indicate the type of resource to create as follows:
+Use POST to add a new resource inside an existing <a>container</a>. The server assigns the identifier for the resource. Clients indicate the type of resource to create as follows:
 
 - To create a **<a>Container</a>**, the client MUST include a `Link` header with `rel="type"` pointing to the Container type: `Link: <https://www.w3.org/ns/lws#Container>; rel="type"`.
 - To create a **<a>Data resource</a>**, the client includes the resource content in the request body with the appropriate `Content-Type` header.
@@ -38,7 +38,6 @@ Host: example.com
 Authorization: Bearer <token>
 Content-Type: text/plain
 Content-Length: 47
-Slug: shoppinglist.txt
 
 milk
 eggs
@@ -68,7 +67,6 @@ POST /alice/ HTTP/1.1
 Host: example.com
 Authorization: Bearer <token>
 Content-Length: 0
-Slug: notes
 Link: <https://www.w3.org/ns/lws#Container>; rel="type"
 ```
 

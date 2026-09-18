@@ -7,7 +7,7 @@ All metadata in LWS is expressed as a set of typed links originating from a reso
 - A relation type: A string that defines the nature of the relationship.
 - Optional target attributes: Additional key-value pairs that further describe the link or the target resource.
 
-Metadata distinguishes between resources and their representations, allowing for multiple media types where applicable. For <a>data resources</a>, metadata includes representations, each with mediaType and optional sizeInBytes. For <a>containers</a> and <a>data resources</a> we consider the link to its parent <a>container</a> resource to be part of the metadata of the resource.
+Metadata distinguishes between resources and their representations, allowing for multiple media types where applicable. For <a>data resources</a>, metadata includes representations, each with format and optional sizeInBytes. For <a>containers</a> and <a>data resources</a>, we consider the link to its parent <a>container</a> resource to be part of the metadata of the resource.
 
 
 **The <a>Linkset Resource</a>**
@@ -26,7 +26,7 @@ Clients discover metadata primarily through Link headers in response to GET or H
 
 | Category | Description |
 |------------|------------|
-| System Managed | Maintained by the server; Read-Only. Includes `linkset`, `type`, `mediaType`, `size`, `modified`. |
+| System Managed | Maintained by the server; Read-Only. Includes `linkset`, `type`, `format`, `size`, `modified`. |
 | Core Metadata | Managed by the client (subject to server restrictions). Includes `up`, `items`, `title`, `creator`. |
 | User-Defined | Custom vocabularies and indexes created by the user. |
 
@@ -43,7 +43,7 @@ Core metadata MAY be modified by clients. To ensure interoperability, servers MU
 [!IMPORTANT] Clients SHOULD NOT assume support for PUT or specific patch formats unless they are advertised in the resource headers and MUST handle 405 Method Not Allowed or 415 Unsupported Media Type responses gracefully.
 
 **Managing Metadata**
-Metadata is managed by interacting with the resource's associated <a>linkset resource</a> URI. Servers MUST support concurrency controls for updates.
+Metadata is managed by interacting with the resource's associated <a>linkset resource</a> URI. Servers MUST include an `ETag` header as defined in [[RFC9110]] in responses to GET and HEAD requests.
 
 - Partial Updates (PATCH): This is the primary mechanism for metadata management. Servers MUST support PATCH using `application/merge-patch+json`.
 
