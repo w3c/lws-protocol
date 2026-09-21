@@ -14,7 +14,7 @@ To see the most recent HTML rendered version of the specification from this repo
 - [`authn-saml`](lws10-authn-saml/): SAML 2.0 Authentication Suite
 - [`authn-ssi-cid`](lws10-authn-ssi-cid): Self-signed Controlled Identifier Authentication Suite
 - [`notifications-webhook`](lws10-notifications-webhook/): Notification Suite: Webhooks
-- [`searchindex`](lws10-searchindex/): Search and Type Index Services
+- [`index`](lws10-index/): Search and Type Index Services
 
 ## (1.0) Implementations:
 
