@@ -1,5 +1,5 @@
 ### Metadata
-This section defines the model for associating metadata with <a>LWS resources</a>. The LWS metadata system is based on the principles of Web Linking [[!RFC8288]], which allows servers to describe the relationships between resources using typed links. Metadata enhances discoverability, supports self-descriptive APIs, and aligns with resource operations, and <a>container</a> hierarchies.
+This section defines the model for associating metadata with <a>Storage Resources</a>. The LWS metadata system is based on the principles of Web Linking [[!RFC8288]], which allows servers to describe the relationships between resources using typed links. Metadata enhances discoverability, supports self-descriptive APIs, and aligns with resource operations, and <a>container</a> hierarchies.
 
 **Metadata Model**
 All metadata in LWS is expressed as a set of typed links originating from a resource (the link context). Each link consists of:
@@ -43,7 +43,7 @@ Core metadata MAY be modified by clients. To ensure interoperability, servers MU
 [!IMPORTANT] Clients SHOULD NOT assume support for PUT or specific patch formats unless they are advertised in the resource headers and MUST handle 405 Method Not Allowed or 415 Unsupported Media Type responses gracefully.
 
 **Managing Metadata**
-Metadata is managed by interacting with the resource's associated <a>linkset resource</a> URI. Servers MUST support concurrency controls for updates.
+Metadata is managed by interacting with the resource's associated <a>linkset resource</a> URI. Servers MUST include an `ETag` header as defined in [[RFC9110]] in responses to GET and HEAD requests.
 
 - Partial Updates (PATCH): This is the primary mechanism for metadata management. Servers MUST support PATCH using `application/merge-patch+json`.
 
