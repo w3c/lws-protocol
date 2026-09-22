@@ -9,7 +9,7 @@ While LWS container representations use JSON-LD conventions, the constraints and
 
 #### Content Negotiation
 
-Servers MUST support content negotiation for `application/lws+json`, `application/ld+json`, and `application/json` on <a>containers</a>, and MUST set the `Content-Type` response header to the selected media type. A response with `Content-Type: application/lws+json` MUST use the <a>container representation</a> structure defined in [](#container-representation). Responses with `Content-Type: application/ld+json` or `Content-Type: application/json` are not required to use that structure or have identical bodies. A client that requires the LWS container structure can request `application/lws+json`.
+Servers MUST support `application/lws+json` for <a>containers</a>. A response with `Content-Type: application/lws+json` MUST use the <a>container representation</a> structure defined in [](#container-representation). Servers MAY also offer `application/ld+json` and `application/json` representations of a <a>container</a>. When a server selects either of these media types, it MUST identify the selected media type in the `Content-Type` response header. These responses are not required to use the LWS container structure or have identical bodies. A client that requires the LWS container structure can request `application/lws+json`.
 
 When the selected representation depends on the request's `Accept` header, responses SHOULD include a `Vary: Accept` header [[!RFC9110]].
 
