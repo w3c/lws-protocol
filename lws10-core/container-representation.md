@@ -1,6 +1,6 @@
 ### Container Representation
 
-An LWS <dfn>container representation</dfn> describes a <a>container</a> and its contents. This section defines its required and optional properties when served as `application/lws+json`. Other negotiated media types are not required to use this JSON structure.
+An LWS <dfn>container representation</dfn> describes a <a>container</a> and its contents. This section defines its required and optional properties when served as `application/lws+json`.
 
 #### Container Properties
 
