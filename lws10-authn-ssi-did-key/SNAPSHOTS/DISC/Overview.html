@@ -1,6 +1,6 @@
 <!DOCTYPE html><html lang="en"><head>
 <meta charset="utf-8">
-<meta name="generator" content="ReSpec 37.3.1">
+<meta name="generator" content="ReSpec 37.3.6">
 <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 <style>
 span.example-title{text-transform:none}
@@ -8,19 +8,6 @@ span.example-title{text-transform:none}
 div.illegal-example{color:red}
 div.illegal-example p{color:#000}
 aside.example div.example{border-left-width:.1em;border-color:#999;background:#fff}
-</style>
-<style>
-.issue-label{text-transform:initial}
-.warning>p:first-child{margin-top:0}
-.warning{padding:.5em;border-left-width:.5em;border-left-style:solid}
-span.warning{padding:.1em .5em .15em}
-.issue.closed span.issue-number{text-decoration:line-through}
-.issue.closed span.issue-number::after{content:" (Closed)";font-size:smaller}
-.warning{border-color:#f11;border-color:var(--warning-border,#f11);border-width:.2em;border-style:solid;background:#fbe9e9;background:var(--warning-bg,#fbe9e9);color:#000;color:var(--text,#000)}
-.warning-title:before{content:"⚠";font-size:1.3em;float:left;padding-right:.3em;margin-top:-.3em}
-li.task-list-item{list-style:none}
-input.task-list-item-checkbox{margin:0 .35em .25em -1.6em;vertical-align:middle}
-.issue a.respec-gh-label{padding:5px;margin:0 2px 0 2px;font-size:10px;text-transform:none;text-decoration:none;font-weight:700;border-radius:4px;position:relative;bottom:2px;border:none;display:inline-block}
 </style>
 <style>
 dfn{cursor:pointer}
@@ -83,11 +70,11 @@ details.respec-tests-details>li{padding-left:1em}
 .self-link:hover{opacity:1;text-decoration:none;background-color:transparent}
 aside.example .marker>a.self-link{color:inherit}
 .header-wrapper{display:flex;align-items:baseline}
-:is(h2,h3,h4,h5,h6):not(#toc>h2,#abstract>h2,#sotd>h2,.head>h2):has(+a.self-link){position:relative;left:-.5em}
-:is(h2,h3,h4,h5,h6):not(#toch2)+a.self-link{color:inherit;order:-1;position:relative;left:-1.1em;font-size:1rem;opacity:.5}
-:is(h2,h3,h4,h5,h6)+a.self-link::before{content:"§";text-decoration:none;color:var(--heading-text)}
+:is(h2,h3,h4,h5,h6):not(:where(#toc>h2,#abstract>h2,#sotd>h2,.head>h2)):has(+a.self-link){position:relative;left:-.5em}
+:is(h2,h3,h4,h5,h6):not(:where(#toch2))+a.self-link{color:inherit;order:-1;position:relative;left:-1.1em;font-size:1rem;opacity:.8;text-decoration:none}
+:is(h2,h3,h4,h5,h6)+a.self-link::before{content:"§"}
 :is(h2,h3)+a.self-link{top:-.2em}
-:is(h4,h5,h6)+a.self-link::before{color:#000}
+:is(h2,h3)+a.self-link::before{color:var(--heading-text)}
 @media (max-width:767px){
 dd{margin-left:0}
 }
@@ -102,6 +89,7 @@ body:has(input[name=color-scheme][value=dark]:checked){color-scheme:dark}
     
   
 <meta name="color-scheme" content="light">
+<link rel="stylesheet" href="https://www.w3.org/StyleSheets/TR/2021/dark.css" disabled="">
 <meta name="description" content="This document defines an authentication suite for the Linked Web Storage (LWS) protocol, enabling clients that are able to sign their own identity tokens to integrate with LWS.">
 <link rel="canonical" href="https://www.w3.org/TR/lws10-authn-ssi-did-key/">
 <style>
@@ -175,7 +163,7 @@ var[data-type]:hover::after,var[data-type]:hover::before{opacity:1}
 </style>
 <script id="initialUserConfig" type="application/json">{
   "specStatus": "DISC",
-  "publishDate": "2026-09-01",
+  "publishDate": "2026-09-29",
   "shortName": "lws10-authn-ssi-did-key",
   "edDraftURI": "https://w3c.github.io/lws-protocol/lws10-authn-ssi-did-key/",
   "editors": [
@@ -213,20 +201,20 @@ var[data-type]:hover::after,var[data-type]:hover::before{opacity:1}
       "id": "lws10-core"
     }
   },
-  "publishISODate": "2026-09-01T00:00:00.000Z",
-  "generatedSubtitle": "W3C Discontinued Draft 01 September 2026"
+  "publishISODate": "2026-09-29T00:00:00.000Z",
+  "generatedSubtitle": "W3C Discontinued Draft 29 September 2026"
 }</script>
 <link rel="stylesheet" href="https://www.w3.org/StyleSheets/TR/2021/W3C-DISC"></head>
   <body class="h-entry" data-cite="web-platform"><div class="head">
     <p class="logos"><a class="logo" href="https://www.w3.org/"><img crossorigin="" alt="W3C" height="48" src="https://www.w3.org/StyleSheets/TR/2021/logos/W3C" width="72">
   </a></p>
     <h1 id="title" class="title">LWS 1.0 Authentication Suite: Self-signed Identity using did:key</h1> 
-    <p id="w3c-state"><a href="https://www.w3.org/standards/types#DISC">W3C Discontinued Draft</a> <time class="dt-published" datetime="2026-09-01">01 September 2026</time></p>
+    <p id="w3c-state"><a href="https://www.w3.org/standards/types#DISC">W3C Discontinued Draft</a> <time class="dt-published" datetime="2026-09-29">29 September 2026</time></p>
     <details open="">
       <summary>More details about this document</summary>
       <dl>
         <dt>This version:</dt><dd>
-                  <a class="u-url" href="https://www.w3.org/TR/2026/DISC-lws10-authn-ssi-did-key-20260901/">https://www.w3.org/TR/2026/DISC-lws10-authn-ssi-did-key-20260901/</a>
+                  <a class="u-url" href="https://www.w3.org/TR/2026/DISC-lws10-authn-ssi-did-key-20260929/">https://www.w3.org/TR/2026/DISC-lws10-authn-ssi-did-key-20260929/</a>
                 </dd>
         <dt>Latest published version:</dt><dd>
                   <a href="https://www.w3.org/TR/lws10-authn-ssi-did-key/">https://www.w3.org/TR/lws10-authn-ssi-did-key/</a>
@@ -282,9 +270,6 @@ var[data-type]:hover::after,var[data-type]:hover::before{opacity:1}
       <p>
         This document defines an authentication suite for the Linked Web Storage (LWS) protocol, enabling clients that are able to sign their own identity tokens to integrate with LWS.
       </p>
-      <div class="note" role="note" id="issue-container-generatedID"><div class="note-title marker" id="h-note"><span>Note</span></div><p class="">
-        This draft is discontinued in favor of the more genertic <cite><a data-matched-text="[[[lws10-authn-ssi-cid]]]" href="https://www.w3.org/TR/lws10-authn-ssi-cid/">LWS 1.0 Authentication Suite: Self-signed Identity using Controlled Identifiers</a></cite>.
-      </p></div>
     </section>
     <section id="sotd" class="introductory"><h2>Status of This Document</h2><p><em>This section describes the status of this
       document at the time of its publication. A list of current <abbr title="World Wide Web Consortium">W3C</abbr>
@@ -292,7 +277,9 @@ var[data-type]:hover::after,var[data-type]:hover::before{opacity:1}
       in the
       <a href="https://www.w3.org/TR/"><abbr title="World Wide Web Consortium">W3C</abbr> standards and drafts index</a>.</em></p>
       <p>
-        This is an unofficial proposal.
+        This draft is discontinued in favor of <cite><a data-matched-text="[[[lws10-authn-ssi-cid]]]" href="https://www.w3.org/TR/lws10-authn-ssi-cid/">LWS 1.0 Authentication Suite: Self-signed Identity using Controlled Identifiers</a></cite>,
+        which subsumes this specification by specifying a generalization
+        of the mechanism described here.
       </p>
     <p>
     This document was published by the <a href="https://www.w3.org/groups/wg/lws">Linked Web Storage Working Group</a> as
@@ -517,7 +504,7 @@ signature</code></pre>
   </section><section id="informative-references"><div class="header-wrapper"><h3 id="a-2-informative-references"><bdi class="secno">A.2 </bdi>Informative references</h3><a class="self-link" href="#informative-references" aria-label="Permalink for Appendix A.2"></a></div>
     
     <dl class="bibliography"><dt id="bib-lws10-authn-ssi-cid">[lws10-authn-ssi-cid]</dt><dd>
-      <a href="https://www.w3.org/TR/lws10-authn-ssi-cid/"><cite>LWS 1.0 Authentication Suite: Self-signed Identity using Controlled Identifiers</cite></a>. Jesse Wright.  W3C. 9 June 2026. W3C Working Draft. URL: <a href="https://www.w3.org/TR/lws10-authn-ssi-cid/">https://www.w3.org/TR/lws10-authn-ssi-cid/</a>
+      <a href="https://www.w3.org/TR/lws10-authn-ssi-cid/"><cite>LWS 1.0 Authentication Suite: Self-signed Identity using Controlled Identifiers</cite></a>. Jesse Wright.  W3C. 21 August 2026. W3C Working Draft. URL: <a href="https://www.w3.org/TR/lws10-authn-ssi-cid/">https://www.w3.org/TR/lws10-authn-ssi-cid/</a>
     </dd><dt id="bib-openid-connect-core">[OPENID-CONNECT-CORE]</dt><dd>
       <a href="https://openid.net/specs/openid-connect-core-1_0.html"><cite>OpenID Connect Core 1.0 incorporating errata set 2</cite></a>. N. Sakimura; J. Bradley; M. Jones; B. de Medeiros; C. Mortimore.  OpenID Foundation. 15 December 2023. Final. URL: <a href="https://openid.net/specs/openid-connect-core-1_0.html">https://openid.net/specs/openid-connect-core-1_0.html</a>
     </dd><dt id="bib-rfc9700">[RFC9700]</dt><dd>
