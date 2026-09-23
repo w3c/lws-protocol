@@ -5,11 +5,11 @@ The `application/lws+cid` media type identifies a document that is a specializat
 
 An LWS <a>container representation</a> MUST support the media type `application/lws+json`.
 
-While LWS container representations use JSON-LD conventions, the constraints and requirements for LWS justify the use of a specific media type. A server MAY identify an LWS container representation served as JSON-LD with `Content-Type: application/ld+json; profile="https://www.w3.org/ns/lws/v1"`.
+While LWS container representations use JSON-LD conventions, the constraints and requirements for LWS justify the use of a specific media type.
 
 #### Content Negotiation
 
-Servers MUST support `application/lws+json` for <a>containers</a>. A response with `Content-Type: application/lws+json` MUST use the <a>container representation</a> structure defined in [](#container-representation). Servers MAY also offer `application/ld+json` and `application/json` representations of a <a>container</a>. When a server selects either of these media types, it MUST identify the selected media type in the `Content-Type` response header. These responses are not required to use the LWS container structure or have identical bodies. A client that requires the LWS container structure can request `application/lws+json`.
+Servers MUST honor a request for `application/lws+json` on <a>containers</a> and MUST respond with `Content-Type: application/lws+json`. The response body MUST conform to the <a>container representation</a> structure defined in [](#container-representation).
 
 When the selected representation depends on the request's `Accept` header, responses SHOULD include a `Vary: Accept` header [[!RFC9110]].
 
@@ -27,9 +27,9 @@ pagination for <a>containers</a> whose membership exceeds a server-determined th
 Pagination is link-based: the server provides pagination URIs via HTTP `Link` headers [[!RFC8288]],
 allowing clients to navigate the full listing without relying on numeric offsets.
 
-When a listing is paginated, the response body contains only the current page of items. In an
-`application/lws+json` response, the composite resource's `id`, `type`, and `totalItems` properties
-reflect the full membership, while `items` contains only the resources on the current page.
+When a listing is paginated, the response body contains only the current page of items. The
+composite resource's `id`, `type`, and `totalItems` properties reflect the full membership, while `items`
+contains only the resources on the current page.
 
 ##### Pagination Link Relations
 
@@ -52,7 +52,7 @@ Link headers that the client follows to retrieve subsequent pages. Servers MAY a
 direct access to specific pages via the pagination URIs obtained during a previous scan.
 
 When a paginated response is returned, the server MUST respond with 200 OK. The `totalItems`
-property in an `application/lws+json` response body SHOULD reflect the total number of items across all pages, not just the current page.
+property in the response body SHOULD reflect the total number of items across all pages, not just the current page.
 
 ##### Example: Paginated Container
 
