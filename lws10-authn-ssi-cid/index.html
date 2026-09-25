@@ -55,6 +55,12 @@
         In these cases, the <a>agent</a> is able to securely manage the private portion of a keypair, which it uses to generate signed JSON Web Tokens (JWT).
         This specification describes how this class of <a>agents</a> can generate <a>authentication credentials</a> that can be used with a Linked Web Storage.
       </p>
+
+      <div class="note">
+        <p>
+          This authentication suite is designed to work with subject identifiers that use HTTPS URIs as well as DID URIs. Since DID documents, as defined in Decentralized Identifiers (DIDs) 1.1 [[DID-1.1]] Section 5.1.2, extend controlled identifier documents [[CID-1.0]], they are compatible with the validation process described in this specification.
+        </p>
+      </div>
     </section>
     <section id="conformance"></section>
 
@@ -212,7 +218,8 @@ signature
       <h2>Security Considerations</h2>
 
       <p>
-        All security considerations described in "Best Current Practice for OAuth 2.0 Security" [[RFC9700]] and "OpenID Connect Core 1.0" Section 16 [[OPENID-CONNECT-CORE]] apply to this specification.
+        As authorization in the Linked Web Storage Protocol [[LWS10-CORE]] is based on the OAuth framework, this authentication suite is applied within the OAuth framework.
+        Therefore, all security considerations described in "Best Current Practice for OAuth 2.0 Security" [[RFC9700]] and "OpenID Connect Core 1.0" Section 16 [[OPENID-CONNECT-CORE]] apply to this specification.
       </p>
     </section>
     <section id="privacy-considerations" class="informative">

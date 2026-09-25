@@ -216,7 +216,10 @@ Location: https://notification.example/subscriptions/9e8d7c6b5a4f
 
       <pre class="example" title="Storage description with verification method and authentication relationship">
 {
-  "@context": ["https://www.w3.org/ns/lws/v1"],
+  "@context": [
+    "https://www.w3.org/ns/cid/v1",
+    "https://www.w3.org/ns/lws/v1"
+  ],
   "id": "https://storage.example/",
   "type": "Storage",
   "verificationMethod": [{
