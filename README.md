@@ -20,7 +20,7 @@ To see the most recent HTML rendered version of the specification from this repo
 
 ## (1.0) Test suites:
 
-- [`LWS 1.0`](https://github.com/lws-contrib/lws-test-suite/tree/main/lws10): 1.0 core test suite
+- [`LWS 1.0`](https://github.com/lws-contrib/lws-test-suite): 1.0 core test suite
 
 ## Contribution Guidelines:
 
