@@ -1,5 +1,5 @@
 ### Metadata
-This section defines the model for associating metadata with <a>LWS resources</a>. The LWS metadata system is based on the principles of Web Linking [[!RFC8288]], which allows servers to describe the relationships between resources using typed links. Metadata enhances discoverability, supports self-descriptive APIs, and aligns with resource operations, and <a>container</a> hierarchies.
+This section defines the model for associating metadata with <a>Storage Resources</a>. The LWS metadata system is based on the principles of Web Linking [[!RFC8288]], which allows servers to describe the relationships between resources using typed links. Metadata enhances discoverability, supports self-descriptive APIs, and aligns with resource operations, and <a>container</a> hierarchies.
 
 **Metadata Model**
 All metadata in LWS is expressed as a set of typed links originating from a resource (the link context). Each link consists of:
