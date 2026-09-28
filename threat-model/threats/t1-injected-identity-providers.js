@@ -14,7 +14,7 @@
                 id: "R2",
                 name: "External Web-CID Document",
                 type: "Reduce",
-                desc: "Instead of having the Web-CID Document as an LWS Resource, serve it as an external resource. This prevents the LWS Client from modifying Web-CID Document through LWS protocol; the external service can use custom mechanisms to protect the Web-CID Document. But this does not prevent the same LWS Client supporting other protocols to modify the Web-CID Document.",
+                desc: "Instead of having the Web-CID Document as a Storage Resource, serve it as an external resource. This prevents the LWS Client from modifying Web-CID Document through LWS protocol; the external service can use custom mechanisms to protect the Web-CID Document. But this does not prevent the same LWS Client supporting other protocols to modify the Web-CID Document.",
             },
         ],
         elements: ["P1", "C2", "C3", "C4"],
