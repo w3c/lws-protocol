@@ -24,7 +24,7 @@ The content of the moved resource and its user-defined metadata are unaffected b
 Servers MUST reject an update that would violate the <a>containment</a> integrity requirements in [](#logical-resource-organization) with 409 Conflict. In particular, a <a>container</a> MUST NOT be moved into itself or into one of its own descendants, as this would introduce a cycle in the <a>containment</a> hierarchy.
 
 **Identity of the moved resource:**
-The URI of a resource is independent of its position in the <a>containment</a> hierarchy, as described in [](#logical-resource-organization). Servers SHOULD therefore preserve the identifier of a moved resource, so that existing links to it remain valid, and SHOULD indicate whether they do so with the `preservesIdentifier` property of the advertised capability.
+The URI of a resource is independent of its position in the <a>containment</a> hierarchy, as described in [](#logical-resource-organization). Servers SHOULD therefore preserve the identifier of a moved resource, so that existing links to it remain valid, and MUST indicate whether they do so with the `preservesIdentifier` property of the advertised capability.
 
 A server that cannot preserve the identifier MUST respond with 200 OK and a representation of the updated <a>linkset resource</a> whose `anchor` is the new identifier of the resource, and MUST include a `Content-Location` header field carrying the new identifier of the <a>linkset resource</a> itself. Such a server SHOULD respond to subsequent requests on the previous identifiers of the resource and of its <a>auxiliary resources</a> with 301 Moved Permanently, including a `Location` header field pointing at the new identifier.
 
