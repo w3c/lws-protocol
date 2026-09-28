@@ -7,13 +7,13 @@ An LWS <a>container representation</a> MUST support the media type `application/
 
 While LWS container representations use JSON-LD conventions, the constraints and requirements for LWS justify the use of a specific media type. Because LWS containers can be considered a restricted profile of JSON-LD, implementations SHOULD consider the `application/ld+json; profile="https://www.w3.org/ns/lws/v1"` media type as equivalent to `application/lws+json`.
 
-#### Media Type Equivalence
+#### Content Negotiation
 
-For <a>container representations</a>, the media types `application/lws+json`, `application/ld+json`, and `application/json` are equivalent: the response body is the same JSON-LD document conforming to the <a>container representation</a> structure defined in [](#container-representation), and only the `Content-Type` response header varies. Servers MUST honor a request for any of these media types and MUST set the `Content-Type` response header to the requested media type.
+Servers MUST honor a request for `application/lws+json` on <a>containers</a> and MUST respond with `Content-Type: application/lws+json`. The response body MUST conform to the <a>container representation</a> structure defined in [](#container-representation).
 
-Because the `Content-Type` of a container response depends on the request's `Accept` header, these responses SHOULD include a `Vary: Accept` header [[!RFC9110]].
+When the selected representation depends on the request's `Accept` header, responses SHOULD include a `Vary: Accept` header [[!RFC9110]].
 
-**Note (non-normative):** This equivalence applies only to the three media types above. As with any HTTP resource, a server can offer additional representations of a container (for example, `text/turtle`) through standard content negotiation [[RFC9110]]; this specification neither requires nor precludes such support.
+**Note (non-normative):** A server can offer additional representations of a container (for example, `text/turtle`) through standard content negotiation [[RFC9110]]; this specification neither requires nor precludes such support.
 
 
 #### Pagination
