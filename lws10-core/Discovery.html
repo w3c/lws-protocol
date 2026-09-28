@@ -85,7 +85,7 @@
     </p>
 
     <p>
-      A <a>storage</a> that allows clients to change the <code>up</code> link of an <a>LWS resource</a>,
+      A <a>storage</a> that allows clients to change the <code>up</code> link of a <a>Storage Resource</a>,
       and thereby to move resources between <a>containers</a> as described in
       <a href="#moving-resources"></a>, MUST describe a capability whose <code>type</code> equals
       <code>MoveResource</code>. Clients MUST NOT assume that the <code>up</code> link is modifiable in
@@ -96,7 +96,7 @@
     <ul>
       <li>
         <strong>`appliesTo`</strong> - the <code>appliesTo</code> property is OPTIONAL. If present, its value MUST be a
-        set of strings naming the types of <a>LWS resource</a> the capability applies to, such as
+        set of strings naming the types of <a>Storage Resource</a> the capability applies to, such as
         <code>DataResource</code> or <code>Container</code>. If the property is absent, the capability applies
         to <a>data resources</a> only.
       </li>
