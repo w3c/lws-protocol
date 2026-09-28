@@ -121,4 +121,4 @@ Content-Type: application/problem+json
 ```
 
 **Notifications:**
-A server that supports moving resources and emits notifications SHOULD describe a successful move with a single `Move` activity, as described in [](#activity-types), rather than with a separate `Delete` and `Create` activity.
+A server that advertises support for moving resources and emits notifications SHOULD describe a successful move with a single `Move` activity, as described in [](#activity-types), rather than with a separate `Delete` and `Create` activity.
