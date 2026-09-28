@@ -70,20 +70,30 @@
     <li>
       <strong>Unintended Exposure</strong>: An <a>agent</a> moving a resource may not realize
       that the destination <a>container</a> is governed by more permissive policies than the
-      source. Clients SHOULD surface the difference in applicable policies before changing the
-      <code>up</code> link of a resource.
+      source. Surfacing the difference in applicable policies before the <code>up</code> link of
+      a resource is changed is a useful mitigation, though how a client does so is outside the
+      scope of this specification.
     </li>
     <li>
-      <strong>Retained Identifiers</strong>: Where a server preserves the identifier of a moved
-      resource, that identifier keeps disclosing the <a>container</a> in which the resource was
-      originally created, if the identifier was derived from it. Servers that treat identifiers
-      as opaque avoid this disclosure.
+      <strong>Retained Identifiers</strong>: This consideration applies only where a server
+      derives identifiers from the <a>containment</a> hierarchy. Such a server, if it preserves
+      the identifier of a moved resource, leaves an identifier that continues to disclose the
+      <a>container</a> in which the resource was originally created. Servers that treat
+      identifiers as opaque, as this specification recommends, do not make this disclosure,
+      because their identifiers never encoded a position in the hierarchy.
+      <p class="issue" data-number="207">
+        A concrete example for this consideration is best given once the Working Group has
+        decided how a <a>storage</a> describes its approach to allocating identifiers.
+      </p>
     </li>
     <li>
       <strong>Redirects</strong>: A 301 Moved Permanently response left behind at a previous
-      identifier discloses the new position of a resource to <a>agents</a> that may not be
-      authorized to access it. Servers SHOULD apply the same access control to such responses
-      as to the moved resource itself, and MAY respond with 404 Not Found instead.
+      identifier discloses the new identifier of a resource to <a>agents</a> that may not be
+      authorized to access it. Where identifiers are derived from the <a>containment</a>
+      hierarchy, it additionally discloses the new position of the resource in that hierarchy,
+      and hence the <a>container</a> it was moved into; where identifiers are opaque, only the
+      new identifier is disclosed. Servers SHOULD apply the same access control to such
+      responses as to the moved resource itself, and MAY respond with 404 Not Found instead.
     </li>
   </ul>
 </section>

@@ -82,9 +82,10 @@
       by policies expressed in terms of the resource's position in the <a>containment</a>
       hierarchy. Changing the <code>up</code> link of a resource may therefore widen or narrow
       the set of <a>agents</a> that can access it, without any policy being edited and without
-      the content of the resource changing. Servers SHOULD make this consequence visible to the
-      <a>storage controller</a>, and clients SHOULD warn <a>agents</a> before moving a resource
-      into a <a>container</a> that is governed by different policies.
+      the content of the resource changing. Making this consequence visible to the
+      <a>storage controller</a> and to the <a>agent</a> requesting the move is a useful
+      mitigation, though how an implementation does so is outside the scope of this
+      specification.
     </li>
     <li>
       <strong>Privilege Combination</strong>: Moving a resource combines the effects of a delete
@@ -96,15 +97,19 @@
     </li>
     <li>
       <strong>Moving Containers</strong>: Moving a <a>container</a> moves its descendants, which
-      may include resources the requesting <a>agent</a> is not aware of. Servers that support
-      moving <a>containers</a> MUST authorize the change for every resource in the moved subtree,
-      and MUST NOT partially apply a move that fails authorization for part of the subtree.
+      may include resources the requesting <a>agent</a> is not aware of. Although the parent of
+      those descendants does not change, the policies that apply to them may, so servers that
+      support moving <a>containers</a> MUST evaluate the authorization required for a recursive
+      delete of the moved subtree, as required by <a href="#moving-resources"></a>, and MUST NOT
+      partially apply a move whose authorization fails for part of the subtree.
     </li>
     <li>
-      <strong>Relaxing Server-Managed Metadata</strong>: Advertising a link relation as modifiable
-      makes metadata that servers otherwise maintain themselves writable by clients. Servers
-      SHOULD advertise the narrowest set of modifiable link relations that their deployment
-      requires, and MUST continue to preserve the links a client is not permitted to modify.
+      <strong>Relaxing Server-Managed Metadata</strong>: Describing a <code>MoveResource</code>
+      capability makes the <code>up</code> link, which servers otherwise maintain themselves,
+      writable by clients. Servers SHOULD describe the capability only where their deployment
+      requires it, SHOULD restrict its <code>appliesTo</code> property to the resource types they
+      need to support, and MUST continue to preserve the links a client is not permitted to
+      modify.
     </li>
   </ul>
 </section>
