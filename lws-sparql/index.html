@@ -1,0 +1,1091 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <title>LWS SPARQL Query Service</title>
+    <script src="https://www.w3.org/Tools/respec/respec-w3c" class="remove"></script>
+    <script class='remove'>
+      // See https://respec.org/docs/ for how to configure ReSpec
+      var respecConfig = {
+        specStatus: "ED",
+        shortName: "lws-sparql",
+        editors: [{
+          name: "Erich Bremer",
+          w3cid: "45759",
+          company: "Stony Brook University",
+          companyURL: "https://www.stonybrook.edu/",
+        }],
+        github: "w3c/lws-protocol",
+        xref: ["web-platform"],
+        group: "lws",
+        maxTocLevel: 3,
+        localBiblio: {
+          "LWS10-CORE": {
+            title: "Linked Web Storage Protocol 1.0",
+            href: "https://www.w3.org/TR/lws10-core/",
+            publisher: "W3C",
+            status: "FPWD",
+          },
+          "LWS10-INDEX": {
+            title: "LWS Search and Type Index Services",
+            href: "https://w3c.github.io/lws-protocol/lws10-index/",
+            publisher: "W3C",
+            status: "ED",
+          },
+          "RFC10008": {
+            title: "The HTTP QUERY Method",
+            href: "https://www.rfc-editor.org/rfc/rfc10008",
+            authors: ["J. Reschke", "J. M. Snell", "M. Bishop"],
+            publisher: "IETF",
+            status: "Proposed Standard",
+            date: "June 2026",
+          },
+        },
+      };
+    </script>
+  </head>
+  <body>
+    <section id="abstract">
+      <p>
+        This document extends the Linked Web Storage (LWS) protocol with an optional
+        server-managed SPARQL Query Service that evaluates SPARQL queries over the RDF
+        content of a storage. Queries are conveyed with the HTTP QUERY method, whose safe,
+        idempotent, and cacheable semantics let the query travel in the request content
+        rather than the request URI. The specification defines how the service is
+        discovered, the RDF dataset a query is evaluated against, the request and response
+        formats and their error handling, and the authorization requirements that keep
+        every result client-specific.
+      </p>
+    </section>
+    <section id="sotd">
+      <p>
+        This is an unofficial proposal. It is not part of the Linked Web Storage Protocol
+        1.0 suite: implementing it is entirely optional, and a conforming LWS server need
+        not support it.
+      </p>
+    </section>
+
+    <section id="introduction">
+      <h2>Introduction</h2>
+
+      <p>
+        The [[!LWS10-CORE|Linked Web Storage]] protocol defines a resource-centric storage
+        system built on HTTP: clients create, read, update, and delete resources, and
+        containers enumerate the resources they contain. Much of what a storage holds is
+        RDF, yet the core protocol offers no way to ask questions that span resources. The
+        Type Search Service of [[LWS10-INDEX]] takes a first, deliberately bounded
+        step &mdash; a conjunctive filter over resource types and indexed link relations
+        &mdash; and caps its own expressiveness there, delegating anything richer to an
+        alternate query format identified by its own media type.
+      </p>
+
+      <p>
+        Some applications need that richer step: joins across resources, graph pattern
+        matching, property paths, value filtering, aggregation &mdash; in short, SPARQL
+        [[!sparql11-query]]. The SPARQL Protocol [[sparql11-protocol]] binds query
+        evaluation to <code>GET</code>, carrying the query percent-encoded in the request
+        URI &mdash; subject to request-URI length limits and to exposure in URI-based
+        logs &mdash; or to <code>POST</code>, which is neither safe nor idempotent nor
+        cacheable as far as generic HTTP components can know, so that an intermediary can
+        neither retry nor cache it. The HTTP <code>QUERY</code> method [[!RFC10008]]
+        resolves exactly this tension: a method that is safe, idempotent, and cacheable,
+        whose request content carries the query.
+      </p>
+
+      <p>
+        This specification binds SPARQL query evaluation to the <code>QUERY</code> method
+        for LWS storages. It defines a server-managed <a>SPARQL Query Service</a>,
+        discoverable via the storage description resource like the other LWS services; the
+        <a>queryable dataset</a> a query is evaluated against, derived from the storage's
+        resources and filtered by the requesting agent's authorization; and the request
+        formats, response formats, and error handling of the query operation. The service
+        is an optional extension for deployments that want graph-level query capability;
+        [[!LWS10-CORE]] already provides that a storage description may reference
+        additional services whose APIs are defined outside the core specification, and the
+        SPARQL Query Service is such a service.
+      </p>
+
+      <section id="relationship-to-type-search" class="informative">
+        <h3>Relationship to the Type Search Service</h3>
+
+        <p>
+          The Type Search Service and the SPARQL Query Service are complements, not
+          competitors. The Type Search filter is the bounded-cost baseline: its grammar is
+          frozen, its evaluation cost is predictable, and a portable client can rely on
+          it. SPARQL is the opt-in power tool: every Type Search type filter is
+          expressible as a SPARQL basic graph pattern over the same storage, while the
+          reverse does not hold &mdash; and the extra expressiveness is correspondingly
+          more expensive to evaluate and to guard. [[LWS10-INDEX]] anticipates exactly
+          this split when it states that richer expressiveness is offered only through an
+          alternate query format identified by its own media type;
+          <code>application/sparql-query</code> is such a format, here given a service of
+          its own. A server implementing both may even serve both from one endpoint (see
+          <a href="#discovery"></a>).
+        </p>
+      </section>
+    </section>
+
+    <section id="conformance"></section>
+
+    <section id="terminology">
+      <h2>Terminology</h2>
+
+      <p>
+        The terms "storage", "storage root", "storage description resource",
+        "Storage Resource", "container", "containment", "data resource",
+        "auxiliary resource", "resource manager", and "requesting agent" are defined by
+        [[!LWS10-CORE]]. The term "Type Search Service" is defined by [[LWS10-INDEX]]. The
+        terms "RDF graph", "RDF dataset", "named graph", "default graph", and "blank node"
+        are used as defined by [[!rdf11-concepts]].
+      </p>
+
+      <p>
+        This specification defines the following additional terms:
+      </p>
+
+      <ul>
+        <li>
+          <dfn>SPARQL Query Service</dfn> &mdash; a server-managed service, identified by
+          the <code>SparqlQueryService</code> service type, that evaluates SPARQL queries
+          [[!sparql11-query]] over the <a>queryable dataset</a> of a storage as visible to
+          the requesting client.
+        </li>
+        <li>
+          <dfn>queryable dataset</dfn> &mdash; the RDF dataset a query is evaluated
+          against: one named graph per <a>RDF-bearing resource</a> the requesting agent is
+          authorized to read, each named by the resource's URI, with the union of those
+          graphs as the default graph. Defined in <a href="#queryable-dataset"></a>.
+        </li>
+        <li>
+          <dfn data-lt="RDF-bearing resources">RDF-bearing resource</dfn> &mdash; a data
+          resource whose representation the server can parse as an RDF concrete syntax
+          (see <a href="#queryable-dataset"></a>).
+        </li>
+      </ul>
+    </section>
+
+    <section id="discovery">
+      <h2>Discovery</h2>
+
+      <p>
+        A storage MAY support the <a>SPARQL Query Service</a>. A storage that supports it
+        MUST advertise it with a service object in the <code>service</code> array of its
+        storage description resource whose <code>type</code> equals
+        <code>SparqlQueryService</code>. The service object MUST include a
+        <code>serviceEndpoint</code> property whose value is the URI of the query
+        endpoint. Additional properties MAY be present on the service object.
+      </p>
+
+      <pre class="example" title="Service advertised in storage description">
+{
+  "@context": [
+    "https://www.w3.org/ns/cid/v1",
+    "https://www.w3.org/ns/lws/v1"
+  ],
+  "id": "https://example.org/storage/alice/",
+  "type": "Storage",
+  "service": [
+    {
+      "type": "StorageRoot",
+      "serviceEndpoint": "https://example.org/data/"
+    },
+    {
+      "type": "TypeSearchService",
+      "serviceEndpoint": "https://example.org/types/search"
+    },
+    {
+      "type": "SparqlQueryService",
+      "serviceEndpoint": "https://example.org/sparql"
+    }
+  ]
+}
+      </pre>
+
+      <p class="note">
+        The service endpoint may be the same URI as another <code>QUERY</code>-accepting
+        endpoint of the storage &mdash; for example the Type Search Service of
+        [[LWS10-INDEX]] &mdash; since [[RFC10008]] distinguishes query formats by the
+        request's <code>Content-Type</code> header field, and <code>Accept-Query</code>
+        can advertise both (for example
+        <code>Accept-Query: application/lws-query+json, application/sparql-query</code>).
+        Requests in each format are governed by that format's specification.
+      </p>
+
+      <section id="service-description">
+        <h3>Service Description</h3>
+
+        <p>
+          A <code>GET</code> request to the service endpoint SHOULD return a SPARQL
+          service description [[sparql11-service-description]], subject to ordinary
+          content negotiation (for example as <code>text/turtle</code> or
+          <code>application/ld+json</code>). The description SHOULD state the query
+          language versions the service supports (<code>sd:supportedLanguage</code>),
+          SHOULD assert <code>sd:feature sd:UnionDefaultGraph</code> &mdash; the
+          default-graph behavior required by <a href="#queryable-dataset"></a> &mdash; and
+          MAY enumerate supported result formats (<code>sd:resultFormat</code>).
+        </p>
+
+        <p>
+          A service description is computed for the requesting agent like every other
+          response of the service: it MUST NOT enumerate named graphs, counts, or dataset
+          statistics beyond the agent's authorized view (see
+          <a href="#security-authorization"></a>).
+        </p>
+      </section>
+    </section>
+
+    <section id="queryable-dataset">
+      <h2>The Queryable Dataset</h2>
+
+      <p>
+        Every request is evaluated against a <a>queryable dataset</a>: an RDF dataset
+        [[!rdf11-concepts]] derived from the storage and filtered by the requesting
+        agent's current authorization. The queryable dataset is constructed as follows:
+      </p>
+
+      <ul>
+        <li>
+          For each data resource in the storage that the requesting agent is authorized to
+          read and that is an <a>RDF-bearing resource</a>, the dataset contains one named
+          graph. The graph name is the resource's URI &mdash; the same URI by which the
+          resource is identified for the operations of [[!LWS10-CORE]] &mdash; and the
+          graph is the RDF graph expressed by the resource's representation.
+        </li>
+        <li>
+          The default graph is the union of the graphs of all named graphs in the
+          queryable dataset. A blank node in the default graph is the same blank node as
+          in the named graph it originates from, and blank nodes contributed by different
+          resources are always distinct.
+        </li>
+        <li>
+          A server MAY additionally include server-managed graphs &mdash; for example, a
+          named graph for a container, named by the container's URI and containing the RDF
+          expressed by its container representation (containment and membership
+          metadata), or a named graph for an auxiliary resource such as a metadata
+          resource. Server-managed graphs are subject to the same authorization filtering
+          as every other graph and, when present, contribute to the default graph like any
+          other named graph.
+        </li>
+      </ul>
+
+      <p>
+        An <a>RDF-bearing resource</a> is a data resource whose representation the server
+        can parse as an RDF concrete syntax. A server implementing this service MUST treat
+        representations served as <code>text/turtle</code> [[!turtle]] and as
+        <code>application/ld+json</code> [[!json-ld11]] &mdash; including the
+        <code>application/lws+json</code> profile defined by [[!LWS10-CORE]] &mdash; as
+        RDF-bearing, and MAY treat additional RDF serializations (for example
+        <code>application/n-triples</code> or <code>application/rdf+xml</code>) as
+        RDF-bearing. A resource that is not RDF-bearing contributes no graph to the
+        dataset, and a representation that fails to parse likewise contributes no graph;
+        neither case is an error for a query &mdash; the resource's data is simply absent
+        from the dataset.
+      </p>
+
+      <p class="note">
+        An IRI carrying a fragment identifier, such as
+        <code>https://example.org/data/people/person-4872#me</code>, denotes something
+        described by the document at the fragmentless URI; triples about it therefore
+        occur in the named graph named by that document URI.
+      </p>
+
+      <p>
+        The queryable dataset MAY be eventually consistent with respect to writes.
+        Following a write that changes a resource's contribution to the dataset (creation,
+        update, or deletion), a server SHOULD reflect the change within a bounded,
+        implementation-defined interval; until it does, a query MAY fail to observe a
+        recent write or MAY briefly observe data that has since been removed. Clients MUST
+        NOT assume read-your-writes consistency and SHOULD tolerate transient staleness.
+        This allowance applies only to dataset derivation and MUST NOT be applied to
+        authorization filtering (see <a href="#security-authorization"></a>).
+      </p>
+
+      <p class="note">
+        A server will typically maintain a materialized index &mdash; for example, a quad
+        store mirroring the storage &mdash; rather than parsing resources at query time.
+        Such an index is an implementation detail: the observable dataset is the one
+        defined here, and the authorization requirements of
+        <a href="#security-authorization"></a> apply to every response regardless of how
+        the dataset is materialized.
+      </p>
+
+      <section id="dataset-clauses">
+        <h3>Dataset Clauses (<code>FROM</code>, <code>FROM NAMED</code>)</h3>
+
+        <p>
+          A query MAY carry dataset clauses (<code>FROM</code>, <code>FROM NAMED</code>)
+          [[!sparql11-query]]. Dataset clauses select from the queryable dataset; they
+          never extend it. A <code>FROM</code> or <code>FROM NAMED</code> IRI that equals
+          the graph name of a graph in the queryable dataset selects that graph. Any other
+          IRI &mdash; one identifying a resource the requesting agent is not authorized to
+          read, a resource that is not RDF-bearing, a resource that does not exist, or a
+          URI outside the storage entirely &mdash; MUST be treated as naming an empty
+          graph, and these cases MUST be indistinguishable from one another in every
+          observable aspect of the response. A server MUST NOT dereference an IRI in order
+          to construct a graph for a dataset clause.
+        </p>
+
+        <p class="note">
+          Treating out-of-scope and unauthorized graph IRIs identically to empty graphs
+          keeps dataset clauses from serving as an oracle for the existence of resources
+          the client cannot read; see <a href="#security-authorization"></a>.
+        </p>
+      </section>
+
+      <section id="federated-query">
+        <h3>Federated Query (<code>SERVICE</code>)</h3>
+
+        <p>
+          The <code>SERVICE</code> clause of federated query [[sparql11-federated-query]]
+          instructs a query processor to contact a remote endpoint during evaluation. A
+          server MUST NOT evaluate <code>SERVICE</code> clauses unless it has been
+          explicitly configured to do so; in the absence of such configuration, a query
+          containing a <code>SERVICE</code> clause &mdash; <code>SILENT</code> or not
+          &mdash; MUST be rejected with <code>422</code> (Unprocessable Content) (see
+          <a href="#query-errors"></a>). A server that does evaluate <code>SERVICE</code>
+          clauses MUST NOT forward the requesting agent's credentials to the remote
+          endpoint and SHOULD restrict the set of endpoints it will contact; see
+          <a href="#security-considerations"></a>.
+        </p>
+      </section>
+    </section>
+
+    <section id="sparql-query-operation">
+      <h2>SPARQL Query Operation</h2>
+
+      <section id="query-operation">
+        <h3>QUERY [SparqlQueryService]</h3>
+
+        <p>
+          A client queries by sending an HTTP <code>QUERY</code> request [[!RFC10008]] to
+          the service endpoint, carrying the SPARQL query in the request content. The
+          query format is identified by the request's <code>Content-Type</code> header
+          field, which MUST be present; per [[!RFC10008]], a server fails the request if
+          the <code>Content-Type</code> is missing or inconsistent with the content (see
+          <a href="#query-errors"></a>). Every server MUST support the
+          <code>application/sparql-query</code> format [[!sparql11-protocol]], whose
+          content is a single query string in the SPARQL query language
+          [[!sparql11-query]], encoded in UTF-8; a server MAY additionally accept other
+          query formats, each identified by its own media type, and the authorization
+          requirements of <a href="#security-authorization"></a> apply regardless of the
+          format used. The <code>QUERY</code> method is both safe and idempotent
+          [[!RFC10008]], in the sense of those terms as defined by [[!RFC9110]]: a SPARQL
+          query never alters server state, and it MAY be repeated, retried, and/or cached.
+          Because the query travels in the request content rather than the request URI, it
+          is not subject to the request-URI length limits that constrain the query-string
+          binding of the SPARQL Protocol [[sparql11-protocol]].
+        </p>
+
+        <p>
+          This binding defines no URI query parameters. In particular, the SPARQL Protocol
+          parameters <code>default-graph-uri</code> and <code>named-graph-uri</code> are
+          not used: the dataset a query is evaluated against is the <a>queryable
+          dataset</a> (<a href="#queryable-dataset"></a>), possibly restricted by dataset
+          clauses inside the query itself (<a href="#dataset-clauses"></a>). A client
+          requests the advertised <code>serviceEndpoint</code> URI as-is.
+        </p>
+
+        <p>
+          The SPARQL query language defines four query forms [[!sparql11-query]]. A server
+          MUST support the <code>SELECT</code>, <code>ASK</code>, and
+          <code>CONSTRUCT</code> forms. A server SHOULD support the <code>DESCRIBE</code>
+          form; because the content of a <code>DESCRIBE</code> result is
+          implementation-defined by [[!sparql11-query]], a server MAY instead decline it,
+          and a server that does not support a query form MUST reject a query using it
+          with <code>422</code> (Unprocessable Content) (see
+          <a href="#query-errors"></a>).
+        </p>
+
+        <p>
+          SPARQL update operations are outside the scope of this specification. The SPARQL
+          update language is a distinct language with its own media type, and a request
+          carrying <code>application/sparql-update</code> MUST be rejected with
+          <code>415</code> (Unsupported Media Type): the <code>QUERY</code> method is
+          safe, and a server MUST NOT execute any state-changing operation in response to
+          it [[!RFC10008]].
+        </p>
+
+        <p>
+          The baseline query language is SPARQL 1.1 Query [[!sparql11-query]]. A server
+          MAY implement a later version of SPARQL; it SHOULD advertise the language
+          versions it supports in its service description (see
+          <a href="#service-description"></a>), and a portable client MUST NOT rely on
+          language features beyond SPARQL 1.1 unless it has confirmed their support there.
+        </p>
+
+        <p>
+          A server SHOULD advertise the query formats it accepts using the
+          <code>Accept-Query</code> response header field [[!RFC10008]] &mdash; for
+          example in response to an <code>OPTIONS</code> request on the service endpoint,
+          whose <code>Allow</code> header also signals that the <code>QUERY</code> method
+          is supported. The <code>Accept-Query</code> value MUST include
+          <code>application/sparql-query</code>. <code>Accept-Query</code> enumerates only
+          query-format media types; it says nothing about the language features, query
+          forms, or dataset contents the service supports. A client that receives a
+          <code>415</code> (Unsupported Media Type) response MAY consult its
+          <code>Accept-Query</code> value to select a supported format.
+        </p>
+
+        <p class="note">
+          The <code>QUERY</code> method is not a safelisted method for cross-origin
+          requests, so browser-based clients trigger a CORS preflight
+          (<code>OPTIONS</code>) before sending it [[RFC10008]]. A server intended for use
+          by browser-based LWS clients therefore needs to answer preflight requests for
+          the service endpoint appropriately.
+        </p>
+      </section>
+
+      <section id="query-responses">
+        <h3>Responses</h3>
+
+        <p>
+          A successful query returns <code>200</code> (OK), whatever the size of the
+          result: an empty solution sequence, an empty graph, and an <code>ASK</code>
+          result of <code>false</code> are all successful results. The response media type
+          is determined by the query form and the request's <code>Accept</code> header
+          field:
+        </p>
+
+        <ul>
+          <li>
+            For <code>SELECT</code> and <code>ASK</code>, every server MUST be able to
+            produce <code>application/sparql-results+json</code>
+            [[!sparql11-results-json]], and MAY offer additional result formats such as
+            <code>application/sparql-results+xml</code>, <code>text/csv</code>, or
+            <code>text/tab-separated-values</code> [[sparql11-results-csv-tsv]].
+          </li>
+          <li>
+            For <code>CONSTRUCT</code> and <code>DESCRIBE</code>, every server MUST be
+            able to produce <code>text/turtle</code> [[!turtle]], and MAY offer additional
+            RDF serializations such as <code>application/ld+json</code> [[json-ld11]] or
+            <code>application/n-triples</code>.
+          </li>
+        </ul>
+
+        <p>
+          A request that sends no <code>Accept</code> header field, or one that admits the
+          mandatory format for its query form, receives that format. A server MAY honor an
+          <code>Accept</code> header field requesting a different media type and return
+          the result in that format instead [[!RFC10008]]; if it can satisfy none of the
+          media types the request finds acceptable, it responds <code>406</code> (Not
+          Acceptable) (see <a href="#query-errors"></a>).
+        </p>
+
+        <p>
+          This specification defines no pagination for query results: the LWS pagination
+          model of [[!LWS10-CORE]] does not apply to the <a>SPARQL Query Service</a>.
+          Clients page through large result sets with the solution modifiers of the query
+          language itself &mdash; <code>ORDER BY</code>, <code>LIMIT</code>, and
+          <code>OFFSET</code> [[!sparql11-query]] &mdash; which is also the approach
+          [[!RFC10008]] recommends in preference to HTTP range requests. This
+          specification defines no range-request handling for query results.
+        </p>
+
+        <p class="note">
+          <code>OFFSET</code>-based paging is only as stable as the dataset underneath it;
+          a concurrent write can shift solutions between pages. Clients that need a stable
+          enumeration should impose a total order with <code>ORDER BY</code>.
+        </p>
+
+        <p>
+          A server MAY bound the resources a query is allowed to consume &mdash;
+          execution time, memory, or result size. A server that cannot complete a query
+          within its bounds MUST fail the request (see <a href="#query-errors"></a>); it
+          MUST NOT return a truncated result presented as complete.
+        </p>
+
+        <p>
+          A server MAY implement conditional <code>QUERY</code> requests: per
+          [[!RFC10008]], the selected representation of a <code>QUERY</code> is the same
+          as for a <code>GET</code> of the equivalent resource, so a server MAY emit a
+          validator (such as an <code>ETag</code>) with a query response and honor
+          conditional header fields such as <code>If-None-Match</code> on a repeated
+          query. Any such validator MUST be scoped to the requesting agent's authorized
+          view, in line with <a href="#security-authorization"></a>.
+        </p>
+      </section>
+
+      <section id="query-errors">
+        <h3>Errors</h3>
+
+        <p>
+          Servers indicate request outcomes using standard HTTP status codes [[!RFC9110]].
+          In particular:
+        </p>
+        <ul>
+          <li>
+            Request content that is not a syntactically valid SPARQL query
+            [[!sparql11-query]] MUST be rejected with <code>400</code> (Bad Request). A
+            SPARQL update string is not a valid query &mdash; the update language is a
+            separate grammar &mdash; so an update submitted as
+            <code>application/sparql-query</code> is likewise rejected with
+            <code>400</code>.
+          </li>
+          <li>
+            A request that omits the <code>Content-Type</code> header field, which
+            [[!RFC10008]] requires a server to reject, MUST be rejected with
+            <code>400</code> (Bad Request), as MUST a request whose
+            <code>Content-Type</code> is inconsistent with its content.
+          </li>
+          <li>
+            A request whose <code>Content-Type</code> identifies a query format the server
+            does not support MUST be rejected with <code>415</code> (Unsupported Media
+            Type), and such a response SHOULD include an <code>Accept-Query</code> header
+            field [[!RFC10008]] listing the query formats the server does accept; every
+            server supports at least <code>application/sparql-query</code> (see
+            <a href="#query-operation"></a>). A request carrying
+            <code>application/sparql-update</code> is always rejected this way.
+          </li>
+          <li>
+            A request whose <code>Accept</code> header field excludes every response media
+            type the server can produce for the query's form MUST be rejected with
+            <code>406</code> (Not Acceptable) [[!RFC10008]]. Because every server can
+            produce <code>application/sparql-results+json</code> for <code>SELECT</code>
+            and <code>ASK</code> and <code>text/turtle</code> for <code>CONSTRUCT</code>
+            and <code>DESCRIBE</code>, a request that omits <code>Accept</code>, or admits
+            the mandatory format for its form, never results in <code>406</code>.
+          </li>
+          <li>
+            A query that is syntactically valid but that the server declines or fails to
+            process MUST be rejected with <code>422</code> (Unprocessable Content), the
+            status [[!RFC9110]] defines and [[!RFC10008]] suggests for a query that is
+            understood but cannot be processed due to its actual contents. This includes a
+            query form the server does not support (see
+            <a href="#query-operation"></a>), a <code>SERVICE</code> clause the server
+            will not evaluate (see <a href="#federated-query"></a>), a query exceeding the
+            complexity the server chooses to support, and a query whose evaluation
+            exceeded the server's execution-time or result-size bounds. A server MUST NOT
+            silently truncate a result set or otherwise narrow a query, as doing so would
+            misrepresent the result as complete.
+          </li>
+          <li>
+            Referencing data the requesting agent is not authorized to read is never an
+            error: such data is simply absent from the <a>queryable dataset</a>, and every
+            observable aspect of the response MUST be indistinguishable from the data not
+            existing (see <a href="#queryable-dataset"></a> and
+            <a href="#security-authorization"></a>).
+          </li>
+        </ul>
+        <p class="note">
+          Error responses may include a representation describing the problem &mdash; for
+          example, a parser diagnostic; this specification does not define its format.
+          <a href="#security-authorization"></a> applies to diagnostics as it does to
+          results.
+        </p>
+      </section>
+
+      <section id="query-caching">
+        <h3>Caching</h3>
+
+        <p>
+          A <code>QUERY</code> response is cacheable [[!RFC10008]]. Because the query
+          travels in the request content, it forms part of the cache key itself
+          ([[!RFC10008]], Section 2.7) and cannot be conveyed through the
+          <code>Vary</code> header field, which names only request header fields. A server
+          that negotiates the response representation on <code>Accept</code> (see
+          <a href="#query-responses"></a>) MUST list <code>Accept</code> in
+          <code>Vary</code> so that caches do not reuse a representation across response
+          formats. Because every result is evaluated against an authorization-filtered
+          dataset and is therefore client-specific, the cross-client caching requirements
+          in <a href="#security-authorization"></a> also apply.
+        </p>
+
+        <p>
+          [[!RFC10008]] permits a cache to normalize request content when computing the
+          cache key &mdash; for a SPARQL query, for example, by collapsing insignificant
+          whitespace or comments. Normalization affects only cache-key computation, never
+          the request itself, and an incorrect normalization risks serving one query's
+          results for another; a cache without specific knowledge of the
+          <code>application/sparql-query</code> media type is safest treating the content
+          byte-for-byte.
+        </p>
+      </section>
+
+      <section id="equivalent-resources">
+        <h3>Equivalent Resources and Result Resources</h3>
+
+        <p>
+          [[!RFC10008]] allows a response to identify related resources: a
+          <code>Content-Location</code> header field naming a resource that represents the
+          results of the query, and a <code>Location</code> header field naming an
+          equivalent resource from which the same query's results can later be retrieved
+          with <code>GET</code>. Because every result set is authorization-filtered and
+          client-specific (see <a href="#security-authorization"></a>), this specification
+          does not define such resources. A server that nonetheless exposes one MUST
+          subject every access to it to the same authorization filtering, MUST prevent its
+          reuse across clients, and SHOULD ensure its URI embeds no sensitive portion of
+          the query [[!RFC10008]].
+        </p>
+      </section>
+    </section>
+
+    <section id="resource-scoped">
+      <h2>Resource-Scoped Queries</h2>
+
+      <p>
+        The service endpoint of <a href="#discovery"></a> evaluates queries against the
+        whole storage. A server MAY additionally accept <code>QUERY</code> requests
+        carrying <code>application/sparql-query</code> directly on Storage Resources,
+        scoping the dataset to the request target:
+      </p>
+
+      <ul>
+        <li>
+          on the storage root, with the same <a>queryable dataset</a> as the service
+          endpoint;
+        </li>
+        <li>
+          on a container, with the queryable dataset restricted to the graph of the
+          container itself (where the server includes container graphs) and the graphs of
+          every resource transitively contained by it;
+        </li>
+        <li>
+          on a data resource, with the queryable dataset restricted to that resource's
+          graph.
+        </li>
+      </ul>
+
+      <p>
+        In every case the restricted dataset is derived and authorization-filtered exactly
+        as in <a href="#queryable-dataset"></a> &mdash; the default graph is the union of
+        the graphs remaining in scope &mdash; and all other requirements of this
+        specification apply unchanged. A target that is not RDF-bearing yields an empty
+        dataset; a query over it succeeds with an empty result. Access to the target
+        resource itself is governed by [[!LWS10-CORE]]: a request whose target the
+        requesting agent is not permitted to read fails as any read of that resource
+        would, before any query evaluation.
+      </p>
+
+      <p>
+        Support for resource-scoped queries is OPTIONAL and per-resource. A server
+        advertises it as [[!RFC10008]] provides: by including <code>QUERY</code> in the
+        <code>Allow</code> header field of responses to the resource (for example to
+        <code>OPTIONS</code>) and by the <code>Accept-Query</code> response header field.
+        A <code>QUERY</code> request on a resource for which the server does not implement
+        this section fails as any unsupported method does &mdash; <code>405</code>
+        (Method Not Allowed) with an <code>Allow</code> header field, per [[!RFC9110]].
+      </p>
+
+      <p class="note">
+        Resource-scoped queries give SPARQL the target-scoping the <code>QUERY</code>
+        method natively has &mdash; "a query over the data reachable from this resource"
+        &mdash; without minting per-scope endpoints, and compose naturally with the LWS
+        containment hierarchy.
+      </p>
+    </section>
+
+    <section id="security-authorization">
+      <h2>Security and Authorization</h2>
+
+      <p>
+        Servers MUST enforce authorization. The <a>queryable dataset</a> from which every
+        response is computed contains only the content of resources the requesting agent
+        is authorized to read (see <a href="#queryable-dataset"></a>), and this holds
+        equally for the service endpoint and for resource-scoped queries.
+      </p>
+      <p>
+        Unauthorized data MUST be omitted entirely. A server MUST NOT allow a client to
+        learn, from any observable aspect of the service's responses &mdash; solutions,
+        constructed triples, graph names enumerated through a <code>GRAPH</code> variable,
+        boolean <code>ASK</code> results, error responses, or diagnostics &mdash; the
+        existence of a specific resource, graph, or triple, or that a specific term occurs
+        in the storage at all, without the required authorization. This implicit filtering
+        yields a dynamically evaluated, client-specific view of the storage.
+      </p>
+      <p>
+        Every value a response exposes, including every aggregate (such as
+        <code>COUNT</code>, <code>SUM</code>, or <code>GROUP_CONCAT</code>), MUST be
+        computed over this client-specific, authorization-filtered dataset: an aggregate
+        is the value over the data the requesting agent is authorized to see, never over
+        the storage as a whole. A value that reflected unauthorized data would itself
+        reveal that data's existence and is therefore prohibited.
+      </p>
+      <p>
+        Authorization filtering MUST be evaluated against the requesting agent's
+        <em>current</em> access at the time the request is served, not against any cached
+        or precomputed view. Once an authorization (such as an access grant) is revoked or
+        narrowed, the affected graphs and triples MUST NOT contribute to any subsequent
+        response; the eventual-consistency allowance for dataset derivation (see
+        <a href="#queryable-dataset"></a>) MUST NOT be extended to authorization. A server
+        MAY maintain a materialized dataset or index for performance, but it MUST apply
+        current authorization as a filter over it on every request.
+      </p>
+      <p>
+        Responses are authorization-filtered and therefore client-specific, yet cacheable
+        by default per [[!RFC10008]], whose cache key is computed over the request content
+        rather than the requesting client. A server MUST ensure that an
+        authorization-filtered response is never served from a shared cache to a different
+        client. A server MUST mark such responses so that they are not reused across
+        clients (for example with <code>Cache-Control: private</code> or
+        <code>no-store</code>) and MUST vary any cached entry on the credential that
+        scopes the result.
+      </p>
+      <p>
+        Any additional query format a server accepts at the service endpoint, and any
+        other query surface it exposes over the storage, MUST uphold these requirements,
+        so that no query mechanism can become a discovery oracle for resources or data the
+        client is not authorized to read. This is the same requirement
+        [[LWS10-INDEX]] places on extension query mechanisms; a <a>SPARQL Query
+        Service</a> deployed alongside a Type Search Service satisfies it by conforming to
+        this section.
+      </p>
+    </section>
+
+    <section id="examples" class="informative">
+      <h2>Examples</h2>
+
+      <pre class="example" title="Discovering QUERY support and accepted formats (OPTIONS)">
+Request
+OPTIONS /sparql
+
+Response
+HTTP/1.1 204 No Content
+Allow: OPTIONS, GET, QUERY
+Accept-Query: application/sparql-query
+
+GET is offered because the endpoint also serves its service description.
+A server that accepted further query formats would list them in Accept-Query.
+      </pre>
+
+      <pre class="example" title="Service description (GET on the service endpoint)">
+Request
+GET /sparql
+Authorization: Bearer &lt;token&gt;
+Accept: text/turtle
+
+Response
+HTTP/1.1 200 OK
+Content-Type: text/turtle
+Cache-Control: private
+
+@prefix sd: &lt;http://www.w3.org/ns/sparql-service-description#&gt; .
+
+&lt;https://example.org/sparql&gt; a sd:Service ;
+    sd:endpoint &lt;https://example.org/sparql&gt; ;
+    sd:supportedLanguage sd:SPARQL11Query ;
+    sd:feature sd:UnionDefaultGraph ;
+    sd:resultFormat &lt;http://www.w3.org/ns/formats/SPARQL_Results_JSON&gt; ,
+                    &lt;http://www.w3.org/ns/formats/Turtle&gt; .
+
+The description is itself authorization-filtered: it enumerates no named
+graphs and no dataset statistics beyond the requesting client's view.
+      </pre>
+
+      <pre class="example" title="SELECT joining data across resources">
+Request
+QUERY /sparql
+Authorization: Bearer &lt;token&gt;
+Content-Type: application/sparql-query
+Accept: application/sparql-results+json
+
+PREFIX schema: &lt;https://schema.org/&gt;
+
+SELECT ?person ?name ?event
+WHERE {
+  ?person a schema:Person ;
+          schema:name ?name .
+  ?event a schema:Event ;
+         schema:attendee ?person .
+}
+ORDER BY ?name
+LIMIT 100
+
+The join spans resources: the person and the event live in different data
+resources and meet in the union default graph.
+
+Response
+HTTP/1.1 200 OK
+Content-Type: application/sparql-results+json
+Cache-Control: private
+Vary: Accept
+
+{
+  "head": { "vars": ["person", "name", "event"] },
+  "results": {
+    "bindings": [
+      {
+        "person": { "type": "uri", "value": "https://example.org/data/people/person-4872#me" },
+        "name": { "type": "literal", "value": "Alice Carroll" },
+        "event": { "type": "uri", "value": "https://example.org/data/events/lws-f2f#event" }
+      },
+      {
+        "person": { "type": "uri", "value": "https://example.org/data/people/person-4873#me" },
+        "name": { "type": "literal", "value": "Bob Hart" },
+        "event": { "type": "uri", "value": "https://example.org/data/events/lws-f2f#event" }
+      }
+    ]
+  }
+}
+      </pre>
+
+      <pre class="example" title="Locating resources with GRAPH (generalizing Type Search)">
+Request
+QUERY /sparql
+Authorization: Bearer &lt;token&gt;
+Content-Type: application/sparql-query
+
+PREFIX schema: &lt;https://schema.org/&gt;
+PREFIX foaf: &lt;http://xmlns.com/foaf/0.1/&gt;
+
+SELECT DISTINCT ?resource
+WHERE {
+  GRAPH ?resource {
+    { ?s a schema:Person } UNION { ?s a foaf:Person }
+  }
+}
+
+Each named graph is named by its resource's URI, so this generalizes the
+Type Search filter {"type": [["https://schema.org/Person",
+"http://xmlns.com/foaf/0.1/Person"]]} &mdash; matching on types asserted in
+resource content, and free to go further (names, dates, any graph pattern)
+where the CNF filter stops.
+
+Response
+HTTP/1.1 200 OK
+Content-Type: application/sparql-results+json
+Cache-Control: private
+Vary: Accept
+
+{
+  "head": { "vars": ["resource"] },
+  "results": {
+    "bindings": [
+      { "resource": { "type": "uri", "value": "https://example.org/data/people/person-4872" } },
+      { "resource": { "type": "uri", "value": "https://example.org/data/contacts/contact-2208" } }
+    ]
+  }
+}
+      </pre>
+
+      <pre class="example" title="CONSTRUCT returning an RDF graph">
+Request
+QUERY /sparql
+Authorization: Bearer &lt;token&gt;
+Content-Type: application/sparql-query
+Accept: text/turtle
+
+PREFIX schema: &lt;https://schema.org/&gt;
+PREFIX vcard: &lt;http://www.w3.org/2006/vcard/ns#&gt;
+
+CONSTRUCT { ?person vcard:fn ?name }
+WHERE { ?person a schema:Person ; schema:name ?name }
+
+Response
+HTTP/1.1 200 OK
+Content-Type: text/turtle
+Cache-Control: private
+Vary: Accept
+
+@prefix vcard: &lt;http://www.w3.org/2006/vcard/ns#&gt; .
+
+&lt;https://example.org/data/people/person-4872#me&gt; vcard:fn "Alice Carroll" .
+&lt;https://example.org/data/contacts/contact-2208#me&gt; vcard:fn "Danielle Ortiz" .
+      </pre>
+
+      <pre class="example" title="ASK with a dataset clause (FROM)">
+Request
+QUERY /sparql
+Authorization: Bearer &lt;token&gt;
+Content-Type: application/sparql-query
+
+PREFIX schema: &lt;https://schema.org/&gt;
+
+ASK
+FROM &lt;https://example.org/data/people/person-4872&gt;
+WHERE { ?s schema:email "alice.carroll@example.org" }
+
+The FROM clause restricts the default graph to a single resource's graph.
+A FROM naming a resource the client cannot read behaves as an empty graph:
+the ASK is then false, indistinguishable from the data being absent.
+
+Response
+HTTP/1.1 200 OK
+Content-Type: application/sparql-results+json
+Cache-Control: private
+Vary: Accept
+
+{ "head": {}, "boolean": true }
+      </pre>
+
+      <pre class="example" title="Resource-scoped QUERY on a container">
+Request (QUERY on a container rather than the service endpoint)
+QUERY /data/contacts/
+Authorization: Bearer &lt;token&gt;
+Content-Type: application/sparql-query
+
+PREFIX vcard: &lt;http://www.w3.org/2006/vcard/ns#&gt;
+
+SELECT ?card ?fn
+WHERE { ?card vcard:fn ?fn }
+
+Evaluated only against the graphs of resources transitively contained by
+/data/contacts/; a matching resource elsewhere in the storage is out of
+scope. Support for resource-scoped targets is optional.
+
+Response
+HTTP/1.1 200 OK
+Content-Type: application/sparql-results+json
+Cache-Control: private
+Vary: Accept
+
+{
+  "head": { "vars": ["card", "fn"] },
+  "results": {
+    "bindings": [
+      {
+        "card": { "type": "uri", "value": "https://example.org/data/contacts/contact-2208#me" },
+        "fn": { "type": "literal", "value": "Danielle Ortiz" }
+      }
+    ]
+  }
+}
+      </pre>
+    </section>
+
+    <section id="security-considerations" class="informative">
+      <h2>Security Considerations</h2>
+
+      <ul>
+        <li>
+          <strong>Resource Exhaustion</strong>: SPARQL is far more expressive than the
+          baseline Type Search filter of [[LWS10-INDEX]], and adversarial or merely
+          ambitious queries &mdash; cross products, unanchored property paths, regular
+          expressions over large literals &mdash; can consume unbounded time and memory.
+          Servers are encouraged to bound execution time, memory, and result size, to
+          apply rate limiting (responding <code>429</code>), and to reject over-budget
+          queries with <code>422</code> as required by <a href="#query-errors"></a>
+          rather than truncating them.
+        </li>
+        <li>
+          <strong>Discovery Oracle</strong>: A single query can aggregate what would
+          otherwise require crawling an entire storage. The requirements in
+          <a href="#security-authorization"></a> are what keep the service from
+          disclosing resources or data a client is not authorized to read.
+          Implementations are encouraged to apply the same filtering to every observable
+          surface &mdash; results, diagnostics, and error detail alike &mdash; and to
+          take care that response timing does not become such an oracle: evaluation time
+          that depends on unauthorized data can reveal its existence.
+        </li>
+        <li>
+          <strong>Federation and Dereferencing</strong>: A <code>SERVICE</code> clause
+          turns the storage into an HTTP client, and a dataset clause dereferenced at
+          query time would do the same: a crafted query could probe internal networks or
+          amplify traffic (server-side request forgery). For this reason
+          <a href="#dataset-clauses"></a> forbids dereferencing dataset-clause IRIs and
+          <a href="#federated-query"></a> forbids <code>SERVICE</code> evaluation absent
+          explicit configuration, and forbids forwarding the requesting agent's
+          credentials when it is enabled. Deployments that enable federation are
+          encouraged to restrict egress to an allowlist of endpoints.
+        </li>
+        <li>
+          <strong>Shared Caches</strong>: Query responses are client-specific by
+          construction, yet cacheable by default per [[RFC10008]], whose cache key is
+          computed over the request content rather than the requesting client. Serving
+          them through a shared cache risks delivering one client's
+          authorization-filtered view to another, and an over-eager cache-key
+          normalization risks conflating two different queries. The requirements in
+          <a href="#security-authorization"></a> and <a href="#query-caching"></a> exist
+          to prevent both, and deserve particular attention when a shared cache sits in
+          front of the service.
+        </li>
+        <li>
+          <strong>Query Construction</strong>: A client that assembles query strings by
+          concatenating untrusted input invites SPARQL injection. The consequences are
+          bounded by this service's read-only, authorization-filtered evaluation, but
+          real nonetheless: a broadened query can exfiltrate anything the client itself
+          is authorized to read. Clients are encouraged to use parameterization or strict
+          escaping. Conversely, query results can carry attacker-authored data stored in
+          the storage &mdash; IRIs, literals, language tags &mdash; and consumers should
+          treat them as untrusted input.
+        </li>
+        <li>
+          <strong>Request Content in Logs</strong>: Carrying the query in the request
+          content keeps it out of typical URI-based access logs [[RFC10008]], an
+          improvement over the <code>GET</code> binding of the SPARQL Protocol. Servers
+          that log request content anyway should protect those logs accordingly, since
+          queries can embed sensitive constants (names, identifiers, locations).
+        </li>
+      </ul>
+    </section>
+
+    <section id="privacy-considerations" class="informative">
+      <h2>Privacy Considerations</h2>
+
+      <ul>
+        <li>
+          <strong>Aggregation and Profiling</strong>: A single SPARQL query can join,
+          filter, and aggregate across everything the client is authorized to read,
+          assembling a profile that resource-by-resource retrieval would make laborious.
+          Resource managers should understand a read grant as a grant to query: granting
+          read access to resources also makes them joinable, aggregable, and analyzable
+          in combination.
+        </li>
+        <li>
+          <strong>Inference</strong>: Joins can derive facts no single resource states
+          &mdash; linking a pseudonymous profile to an identified one through a shared
+          identifier, or inferring a sensitive attribute from co-occurring innocuous
+          triples. The service cannot distinguish inference from retrieval; resource
+          managers granting access to individual resources should consider what those
+          resources disclose jointly.
+        </li>
+        <li>
+          <strong>Observation over Time</strong>: Repeated queries reveal when data
+          appears, changes, or disappears, exposing activity patterns within the client's
+          authorized view even when contents are not retrieved.
+        </li>
+        <li>
+          <strong>Queries as Personal Data</strong>: A query itself discloses the
+          interests of the agent posing it. Queries retained in server logs, caches, or
+          equivalent-resource URIs (see <a href="#equivalent-resources"></a>) are
+          personal data in their own right and warrant corresponding retention and access
+          controls.
+        </li>
+      </ul>
+    </section>
+
+    <section id="vocabulary">
+      <h2>Vocabulary</h2>
+
+      <p>
+        This document defines the following term in the
+        <code>https://www.w3.org/ns/lws#</code> namespace:
+      </p>
+
+      <table class="simple">
+        <thead>
+          <tr>
+            <th>Term</th>
+            <th>URI</th>
+            <th>Description</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><code>SparqlQueryService</code></td>
+            <td><code>lws:SparqlQueryService</code></td>
+            <td>Service type for SPARQL query evaluation over a storage</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <p>
+        This document also uses the terms <code>Storage</code>, <code>service</code>, and
+        <code>serviceEndpoint</code> defined by [[!LWS10-CORE]] and the LWS JSON-LD
+        context.
+      </p>
+    </section>
+
+    <section id="iana-considerations" class="informative">
+      <h2>IANA Considerations</h2>
+
+      <p>
+        This specification registers no media types and requires no IANA actions. The
+        media types it uses are registered by the specifications that define them:
+        <code>application/sparql-query</code> by [[sparql11-protocol]],
+        <code>application/sparql-results+json</code> by [[sparql11-results-json]], and
+        <code>text/turtle</code> by [[turtle]]. The <code>QUERY</code> method and the
+        <code>Accept-Query</code> header field are registered by [[RFC10008]].
+      </p>
+    </section>
+  </body>
+</html>
