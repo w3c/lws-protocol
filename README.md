@@ -16,6 +16,10 @@ To see the most recent HTML rendered version of the specification from this repo
 - [`notifications-webhook`](lws10-notifications-webhook/): Notification Suite: Webhooks
 - [`index`](lws10-index/): Search and Type Index Services
 
+## Proposals (not part of 1.0):
+
+- [`sparql`](lws-sparql/): SPARQL Query Service
+
 ## (1.0) Implementations:
 
 [Implementations.md](Implementations.md) <- please signal interest and progress via PR
