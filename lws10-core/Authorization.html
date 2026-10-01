@@ -46,20 +46,16 @@ client (called in this specification <dfn data-cite="RFC6749#section-1.1">author
 
     <p>
       A storage server generating a 401 (Unauthorized) response MUST send a <code>WWW-Authenticate</code> header
-      field containing at least one conforming challenge. A conforming challenge will include the parameters described below:
+      field containing at least one conforming challenge. A conforming challenge MUST include the
+      <code>resource_metadata</code> parameter defined in Section 5.1 of [[!RFC9728]], whose value is the URL of the
+      <a>protected resource metadata</a> document for the requested resource.
     </p>
 
-    <ul>
-      <li>
-        <strong><code>as_uri</code> REQUIRED</strong> — The value of this parameter is a URI identifying the authorization server
-        where a client can retrieve an access token. The value of this parameter will be the same as the <code>iss</code> claim of a valid access token.
-      </li>
-      <li>
-        <strong><code>realm</code> REQUIRED</strong> — The value of this parameter is a URI indicating the scope of protection.
-        This value will be included in the audience (<code>aud</code>) claim of an access token. A client MUST verify that
-        the URI of the originating request is logically contained within the <code>realm</code> presented in this response.
-      </li>
-    </ul>
+    <p>
+      The response MUST also include a <code>Link</code> header identifying the <a>storage</a> that contains the requested
+      resource, as described in <a href="#storage-description-binding"></a>. A client supplies this URI as the <code>resource</code>
+      parameter when requesting an access token, as described in <a href="#authorization-token-exchange-request"></a>.
+    </p>
 
     <p>
       Other headers and parameters MAY be included.
@@ -72,9 +68,40 @@ client (called in this specification <dfn data-cite="RFC6749#section-1.1">author
     <pre id="example-unauthorized-response" class="example">
 HTTP/2 401 Unauthorized
 Link: &lt;https://storage.example/storage_1&gt;; rel="https://www.w3.org/ns/lws#storage"
-WWW-Authenticate: Bearer as_uri="https://authorization.example",
-                realm="https://storage.example/storage_1",
+WWW-Authenticate: Bearer resource_metadata="https://storage.example/.well-known/oauth-protected-resource/storage_1/photos/img.jpg",
                 error="invalid_token"
+    </pre>
+  </section>
+
+  <section id="protected-resource-metadata">
+    <h4>Protected Resource Metadata</h4>
+
+    <p>
+      A <dfn>protected resource metadata</dfn> document describes how a client can obtain an access token for a resource.
+      It MUST conform to OAuth 2.0 Protected Resource Metadata [[!RFC9728]].
+    </p>
+
+    <p>
+      This specification extends [[RFC9728]] as follows: the <code>authorization_servers</code> parameter is REQUIRED
+      in a protected resource metadata document, and its value MUST contain the issuer identifier of at
+      least one authorization server.
+    </p>
+
+    <p class="note">
+      The <code>resource</code> value in a protected resource metadata document identifies the requested resource, not
+      the <a>storage</a> that contains it. By contrast, the <code>resource</code> parameter of a token request identifies
+      the storage, which becomes the audience of the access token.
+    </p>
+
+    <p>
+      An example protected resource metadata document is included below.
+    </p>
+
+    <pre id="example-protected-resource-metadata" class="example">
+{
+    "resource": "https://storage.example/storage_1/photos/img.jpg",
+    "authorization_servers": ["https://authorization.example"]
+}
     </pre>
   </section>
 
@@ -163,9 +190,9 @@ WWW-Authenticate: Bearer as_uri="https://authorization.example",
 
       <ul>
         <li>The <code>resource</code> parameter is REQUIRED. The value of this parameter MUST be a URI and will be used to populate the
-        <code>aud</code> (audience) claim in the resulting access token. The supplied value will be the same as the
-        <code>realm</code> parameter response in a <code>WWW-Authenticate</code> challenge. The authorization server
-        MUST reject any request in which the resource parameter identifies an unknown or untrusted <a>storage</a>.
+        <code>aud</code> (audience) claim in the resulting access token. The supplied value MUST be the URI of the <a>storage</a>
+        that contains the requested resource, as provided in the <code>Link</code> header of an unauthorized response.
+        The authorization server MUST reject any request in which the resource parameter identifies an unknown or untrusted <a>storage</a>.
         </li>
 
         <li>
@@ -219,8 +246,8 @@ grant_type=urn%3Aietf%3Aparams%3Aoauth%3Agrant-type%3Atoken-exchange
         </li>
         <li>
           <code>aud</code> (audience) — <strong>REQUIRED</strong>. This claim MUST include the URI supplied by the client
-          in the resource parameter. This value will be used to restrict the entities for which the access token is valid. This will
-          be the same value as provided by a storage server in the <code>realm</code> parameter of a <code>WWW-Authenticate</code> challenge.
+          in the resource parameter, which is the URI of a <a>storage</a>. This value will be used to restrict the entities
+          for which the access token is valid.
         </li>
         <li>
           <code>exp</code> (expiration) — <strong>REQUIRED</strong>. Authorization servers SHOULD issue tokens with short lifetimes
@@ -284,7 +311,7 @@ Content-Type: application/json
   "sub": "https://id.example/agent",
   "iss": "https://authorization.example",
   "client_id": "https://app.example/id",
-  "aud": "https://storage.example",
+  "aud": "https://storage.example/storage_1",
   "exp": 1735686300,
   "iat": 1735686000,
   "jti": "550e8400-e29b-41d4-a716-446655440000"
@@ -332,7 +359,7 @@ Authorization: Bearer eyJ0eXAiOiJhcytqd3QiLCJhbGciOiJFUzI1NiIs...DeWt4QuZXso
           Issuer Validation: Verify the <code>iss</code> claim matches the expected authorization server identifier.
         </li>
         <li>
-          Audience Validation: Verify the <code>aud</code> claim contains exactly one value and this value is a URI identifying the storage server which logically contains the target resource.
+          Audience Validation: Verify the <code>aud</code> claim includes the URI of the <a>storage</a> that contains the target resource.
         </li>
         <li>
           Temporal Validation, subject to an allowable clock skew between systems.
@@ -352,7 +379,7 @@ Authorization: Bearer eyJ0eXAiOiJhcytqd3QiLCJhbGciOiJFUzI1NiIs...DeWt4QuZXso
 
       <p>
         If validation fails, the storage server MUST return 401 Unauthorized with a <code>WWW-Authenticate</code> header
-        containing an appropriate error parameter (e.g., invalid_token, invalid_request, or insufficient_scope).
+        containing the <code>resource_metadata</code> parameter and an appropriate error parameter (e.g., invalid_token, invalid_request, or insufficient_scope).
       </p>
 
       <p>

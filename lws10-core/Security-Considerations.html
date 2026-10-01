@@ -23,10 +23,61 @@
       Short Lifetimes: Authorization servers that assign lifetimes of 300 seconds (5 minutes) or less to access tokens can limit the potential exposure of an exfiltrated credential.
     </li>
     <li>
-      Audience Binding: Access tokens that are bound to a specific destination server, by means such as the <code>aud</code> claim, can rely on that binding to protect against token replay. Applications that handle credentials with an unrestricted audience need to be careful when sending these credentials to other entities, especially untrusted authorization servers. If a credential issuer is unable to restrict the audience of a token, clients can use a mechanism such as OAuth 2.0 Token Exchange [[RFC8693]] to create audience-constrained credentials before interacting with an authorization server in a different security domain.
+      Audience Binding: Binding an access token to a specific destination server, by means such as the <code>aud</code>
+      claim, protects against the token being replayed to a different server. An access token whose audience includes
+      more than one server can be replayed by any of those servers to the others, which authorization servers avoid by
+      issuing tokens with a single storage URI as the audience. Applications that handle credentials with an
+      unrestricted audience need to be careful when sending these credentials to other entities, especially untrusted
+      authorization servers. If a credential issuer is unable to restrict the audience of a token, clients can use a
+      mechanism such as OAuth 2.0 Token Exchange [[RFC8693]] to create audience-constrained credentials before
+      interacting with an authorization server in a different security domain.
+    </li>
+    <li>
+      Sender-Constrained Tokens: A bearer token can be used by any party that obtains it, and an audience restriction
+      does not prevent an exfiltrated token from being replayed to the intended storage server. Because the audience is
+      a storage, a stolen token is usable for every resource within that storage that the agent is authorized to access.
+      Binding an access token to a client key, such as with OAuth 2.0 Demonstrating Proof of Possession (DPoP)
+      [[RFC9449]], limits use of a stolen token to the holder of that key. A protected resource metadata document can
+      advertise the DPoP proof algorithms that a storage server supports and whether it requires DPoP-bound access
+      tokens, using the <code>dpop_signing_alg_values_supported</code> and
+      <code>dpop_bound_access_tokens_required</code> parameters defined in [[RFC9728]].
     </li>
     <li>
       Secure Storage: Applications that persist credentials need to ensure that these objects are stored safely. Any time an unencrypted token is stored in a browser's <code>localStorage</code>, in URLs, or in logs, that token is more susceptible to an exfiltration attack.
+    </li>
+  </ul>
+</section>
+
+<section id="security-resource-discovery" class="informative">
+  <h4>Resource Discovery</h4>
+
+  <p>
+    A client learns the location of an authorization server from a response sent by a storage server that the client
+    might not trust. The following considerations apply to this discovery process.
+  </p>
+
+  <ul>
+    <li>
+      Untrusted Metadata: A malicious storage server can direct a client to an authorization server that the client does
+      not trust, and a client that presents an <a>authentication credential</a> to that authorization server discloses
+      the credential. Clients can reduce this risk by applying their own policy about which authorization servers to
+      trust and by verifying, as described in Section 3.3 of [[RFC9728]], that the <code>resource</code> value of a
+      protected resource metadata document matches the URI of the requested resource. The impact of disclosure is also
+      reduced when a client uses an <a>authentication credential</a> whose audience is limited to the authorization
+      server to which it is sent.
+    </li>
+    <li>
+      Storage Binding: A client obtains the storage URI from a <code>Link</code> header in a response from the storage
+      server. A malicious server can supply the URI of a different storage, causing the client to obtain an access token
+      for that storage and present it to the malicious server, which can then replay it. Clients that confirm that the
+      requested URI is logically contained within the storage URI before requesting an access token avoid this attack.
+    </li>
+    <li>
+      Server-Side Request Forgery: The <code>resource_metadata</code> URL in a challenge and the issuer identifiers in
+      a protected resource metadata document are chosen by the storage server, and a client retrieves the documents
+      they identify. Clients that perform this retrieval on behalf of other parties, such as a server-side application,
+      are exposed to server-side request forgery, as described in Section 7.7 of [[RFC9728]]. Precautions include
+      restricting retrieval to the <code>https</code> scheme and blocking requests to internal IP address ranges.
     </li>
   </ul>
 </section>
