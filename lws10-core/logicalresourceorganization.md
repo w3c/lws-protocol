@@ -22,7 +22,7 @@ The <a>containment</a> relationship between a resource and its parent <a>contain
 Link: </alice/notes/>; rel="up"
 ```
 
-A <a>container</a>'s members are listed in its representation using the `items` property. The server manages this list; clients cannot modify it directly. Membership changes occur as a side effect of resource creation and deletion.
+A <a>container</a>'s members are listed in its representation using the `items` property. The server manages this list; clients cannot modify it directly. Membership changes occur as a side effect of resource creation and deletion, and, on servers that allow the `up` link of a resource to be modified, of moving a resource between <a>containers</a> as described in [](#moving-resources).
 
 ### Containment Integrity
 
@@ -30,6 +30,7 @@ The server MUST maintain <a>containment</a> integrity at all times:
 
 - **Creation**: When a new resource is created in a <a>container</a>, the server MUST atomically add the resource to the <a>container</a>'s `items` list.
 - **Deletion**: When a resource is deleted, the server MUST atomically remove it from its parent <a>container</a>'s `items` list. Deleting a <a>container</a> requires the <a>container</a> to be empty, unless recursive deletion is explicitly requested.
+- **Move**: When the `up` link of a resource is changed, the server MUST atomically remove the resource from the `items` list of its former parent <a>container</a> and add it to the `items` list of the destination <a>container</a>. Support for changing the `up` link is OPTIONAL, and the resulting requirements are defined in [](#moving-resources).
 - **No orphans**: Every non-root resource MUST be reachable from the <a>storage root</a> through the <a>containment</a> hierarchy.
 - **No cycles**: A <a>container</a> MUST NOT directly or indirectly contain itself.
 

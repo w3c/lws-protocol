@@ -83,6 +83,51 @@
     <p>
       A <a>storage description</a> may contain descriptions of additional capabilities supported by the <a>storage</a>.
     </p>
+
+    <p>
+      A <a>storage</a> that allows clients to change the <code>up</code> link of a <a>Storage Resource</a>,
+      and thereby to move resources between <a>containers</a> as described in
+      <a href="#moving-resources"></a>, MUST describe a capability whose <code>type</code> equals
+      <code>MoveResource</code>. Clients MUST NOT assume that the <code>up</code> link is modifiable in
+      the absence of this capability. The following properties are defined for a
+      <code>MoveResource</code> capability:
+    </p>
+
+    <ul>
+      <li>
+        <strong>`appliesTo`</strong> - the <code>appliesTo</code> property is OPTIONAL. If present, its value MUST be a
+        set of strings naming the types of <a>Storage Resource</a> the capability applies to, such as
+        <code>DataResource</code> or <code>Container</code>. If the property is absent, the capability applies
+        to <a>data resources</a> only.
+      </li>
+      <li>
+        <strong>`preservesIdentifier`</strong> - the <code>preservesIdentifier</code> property is OPTIONAL.
+        If present, its value MUST be a boolean indicating whether the <a>storage</a> preserves the identifier
+        of a moved resource. If the property is absent, clients MUST NOT assume that identifiers are
+        preserved, and MUST rely on the response to the update to determine the identifier of the
+        resource.
+      </li>
+    </ul>
+
+    <pre id="example-storage-description-move" class="example" title="Storage description resource advertising that clients may move resources between containers">
+{
+  "@context": [
+    "https://www.w3.org/ns/cid/v1",
+    "https://www.w3.org/ns/lws/v1"
+  ],
+  "id": "https://storage.example/",
+  "type": "Storage",
+  "capability": [{
+    "type": "MoveResource",
+    "appliesTo": ["DataResource", "Container"],
+    "preservesIdentifier": true
+  }],
+  "service": [{
+    "type": "StorageRoot",
+    "serviceEndpoint": "https://storage.example/root/"
+  }]
+}
+    </pre>
   </section>
 
   <section id="storage-description-services">

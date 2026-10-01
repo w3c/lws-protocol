@@ -149,11 +149,11 @@
       </li>
       <li>
         <code>target</code> &mdash; a URI identifying the container into which the
-        resource was added. Used with <code>Create</code> activities.
+        resource was added. Used with <code>Create</code> and <code>Move</code> activities.
       </li>
       <li>
         <code>origin</code> &mdash; a URI identifying the container from which the
-        resource was removed. Used with <code>Delete</code> activities.
+        resource was removed. Used with <code>Delete</code> and <code>Move</code> activities.
       </li>
     </ul>
   </section>
@@ -177,6 +177,20 @@
       <li>
         <code>Delete</code> &mdash; a resource was removed. The <code>origin</code> field
         indicates the container from which the resource was removed.
+      </li>
+    </ul>
+
+    <p>
+      A server that allows clients to move resources between containers, as described in
+      <a href="#moving-resources"></a>, MUST support the following activity type:
+    </p>
+
+    <ul>
+      <li>
+        <code>Move</code> &mdash; a resource was moved from one container to another. The
+        <code>origin</code> field indicates the container from which the resource was removed,
+        and the <code>target</code> field indicates the container into which it was added. The
+        <code>object</code> field describes the resource as it exists after the move.
       </li>
     </ul>
 
