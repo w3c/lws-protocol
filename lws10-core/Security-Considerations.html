@@ -61,23 +61,26 @@
       Untrusted Metadata: A malicious storage server can direct a client to an authorization server that the client does
       not trust, and a client that presents an <a>authentication credential</a> to that authorization server discloses
       the credential. Clients can reduce this risk by applying their own policy about which authorization servers to
-      trust and by verifying, as described in Section 3.3 of [[RFC9728]], that the <code>resource</code> value of a
-      protected resource metadata document matches the URI of the requested resource. The impact of disclosure is also
-      reduced when a client uses an <a>authentication credential</a> whose audience is limited to the authorization
-      server to which it is sent.
+      trust. The checks in <a href="#authorization-discovery-validation"></a>, which require that the protected resource
+      metadata describe the requested resource on the same server, prevent a server from presenting metadata that
+      belongs to a different resource server. The impact of disclosure is also reduced when a client uses an
+      <a>authentication credential</a> whose audience is limited to the authorization server to which it is sent.
     </li>
     <li>
       Storage Binding: A client obtains the storage URI from a <code>Link</code> header in a response from the storage
       server. A malicious server can supply the URI of a different storage, causing the client to obtain an access token
-      for that storage and present it to the malicious server, which can then replay it. Clients that confirm that the
-      requested URI is logically contained within the storage URI before requesting an access token avoid this attack.
+      for that storage and present it to the malicious server, which can then replay it. For this reason, a client is
+      required to confirm, using the <a>storage description</a>, that the requested URI is served from the same origin
+      as the <a>storage root</a> before requesting an access token, as described in
+      <a href="#authorization-discovery-validation"></a>.
     </li>
     <li>
-      Server-Side Request Forgery: The <code>resource_metadata</code> URL in a challenge and the issuer identifiers in
-      a protected resource metadata document are chosen by the storage server, and a client retrieves the documents
-      they identify. Clients that perform this retrieval on behalf of other parties, such as a server-side application,
-      are exposed to server-side request forgery, as described in Section 7.7 of [[RFC9728]]. Precautions include
-      restricting retrieval to the <code>https</code> scheme and blocking requests to internal IP address ranges.
+      Server-Side Request Forgery: The <code>resource_metadata</code> URL in a challenge, the <a>storage</a> URI in a
+      <code>Link</code> header, and the issuer identifiers in a protected resource metadata document are chosen by the
+      storage server, and a client retrieves the documents they identify. Clients that perform this retrieval on behalf
+      of other parties, such as a server-side application, are exposed to server-side request forgery, as described in
+      Section 7.7 of [[RFC9728]]. Precautions include restricting retrieval to the <code>https</code> scheme and
+      blocking requests to internal IP address ranges.
     </li>
   </ul>
 </section>
