@@ -195,10 +195,10 @@ property:
     range: xsd:anyURI
     comment: A URL to which notifications are delivered via HTTP POST.
 
-  - id: schema:expires
-    label: expires
+  - id: dcterms:valid
+    label: valid
     range: xsd:dateTime
-    comment: The date and time at which a subscription expires.
+    comment: A single xsd:dateTime value that indicates the upper bound of the validity period.
 
   - id: access
     label: access
