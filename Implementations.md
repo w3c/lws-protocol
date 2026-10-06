@@ -6,16 +6,17 @@
 * ◐ Partially Applicable
 * ○ Not Applicable
 
-| Name | Contact | License | Client | Server |
-|------|---------|---------|--------|--------|
-| [lws-server](https://github.com/ebremer/lws-server) | [@ebremer](https://github.com/ebremer) | Apache License 2.0 |  ○  |  ●  |
-| [lws-authn](https://github.com/ebremer/lws-authn) | [@ebremer](https://github.com/ebremer) | Apache License 2.0 |  ○  |  ●  |
-| [Halcyon](https://github.com/halcyon-project/Halcyon) | [@ebremer](https://github.com/ebremer) | Apache License 2.0 |  ○  |  ●  |
-| [sparq](https://sparq.jeswr.org/) | [Jesse Wright](https://jeswr.org/#me) | MIT | ○ | ● |
-| [Community Solid Server](https://communitysolidserver.github.io/CommunitySolidServer/) | [@jeswr](https://github.com/jeswr) | MIT | ○ | ● |
-| [sai-js](https://sai.js.org) | [@elf-pavlik](https://github.com/elf-pavlik) | MIT | ● | ◐ [^1] |
-|      |         |         |        |        |
-|      |         |         |        |        |
+| Name | Language | Contact | License | Client | Server |
+|------|----------|---------|---------|--------|--------|
+| [lws-server](https://github.com/ebremer/lws-server) | Java | [@ebremer](https://github.com/ebremer) | Apache License 2.0 |  ○  |  ●  |
+| [lws-authn](https://github.com/ebremer/lws-authn) | Java | [@ebremer](https://github.com/ebremer) | Apache License 2.0 |  ○  |  ●  |
+| [Halcyon](https://github.com/halcyon-project/Halcyon) | Java, JavaScript | [@ebremer](https://github.com/ebremer) | Apache License 2.0 |  ○  |  ●  |
+| [sparq](https://sparq.jeswr.org/) | Rust, Python, TypeScript | [Jesse Wright](https://jeswr.org/#me) | MIT | ○ | ● |
+| [Community Solid Server](https://communitysolidserver.github.io/CommunitySolidServer/) | TypeScript | [@jeswr](https://github.com/jeswr) | MIT | ○ | ● |
+| [sai-js](https://sai.js.org) | TypeScript | [@elf-pavlik](https://github.com/elf-pavlik) | MIT | ● | ◐ [^1] |
+| [lws-client](https://github.com/ebremer/lws-client) | Java, JavaScript/TypeScript, C++, Rust, Go, Python | [@ebremer](https://github.com/ebremer) | MIT | ● | ○ |
+|      |          |         |         |        |        |
+|      |          |         |         |        |        |
 
 ## Features
 
@@ -39,6 +40,7 @@
 | lws-server | | 🚧| [branch](https://github.com/ebremer/lws-server/tree/master) · [conformance](https://ebremer.com/lws/conformance) |
 | Halcyon | | 🚧| [branch](https://github.com/halcyon-project/Halcyon/tree/next) · [conformance](https://ebremer.com/lws/conformance) |
 | CommunitySolidServer | | 🚧| [branch](https://github.com/jeswr/CommunitySolidServer/tree/feat/lws) |
+| lws-client | 🚧 | | [repo](https://github.com/ebremer/lws-client) |
 |  |  |  |  |
 
 
@@ -54,6 +56,7 @@
 | lws-server | | 🚧| [branch](https://github.com/ebremer/lws-server/tree/master) · [conformance](https://ebremer.com/lws/conformance) |
 | Halcyon | | 🚧| [branch](https://github.com/halcyon-project/Halcyon/tree/next) · [conformance](https://ebremer.com/lws/conformance) |
 | lws-authn  | | 🚧|
+| lws-client | 🚧 | | [repo](https://github.com/ebremer/lws-client) |
 |  |  |  |  |
 
 
@@ -67,6 +70,7 @@
 | Halcyon | | 🚧| [branch](https://github.com/halcyon-project/Halcyon/tree/next) · [conformance](https://ebremer.com/lws/conformance) |
 | lws-authn  | | 🚧|
 | sai-js | | 💡|
+| lws-client | 🚧 | | [repo](https://github.com/ebremer/lws-client) |
 |  |  |  |  |
 
 #### SAML 2.0
@@ -76,6 +80,7 @@
 | Name | Client | Server |
 |------|--------|--------|
 | lws-authn  | | 🚧|
+| lws-client | 🚧 | |
 |  |  |  |
 
 #### Self-signed Controlled Identifier
@@ -88,6 +93,7 @@
 | Halcyon | | 🚧| https, did:key · [branch](https://github.com/halcyon-project/Halcyon/tree/next) · [conformance](https://ebremer.com/lws/conformance) |
 | lws-authn  | | 🚧| https, did:key |
 | sai-js | | 💡|
+| lws-client | 🚧 | | [repo](https://github.com/ebremer/lws-client) |
 |  |  |  |  |
 
 ### Access Requests and Grants
@@ -99,6 +105,7 @@
 | lws-server | | 🚧| [branch](https://github.com/ebremer/lws-server/tree/master) · [conformance](https://ebremer.com/lws/conformance) |
 | Halcyon | | 🚧| [branch](https://github.com/halcyon-project/Halcyon/tree/next) · [conformance](https://ebremer.com/lws/conformance) |
 | sai-js | | 🚧|
+| lws-client | 🚧 | | [repo](https://github.com/ebremer/lws-client) |
 |  |  |  |  |
 
 #### ODRL Access Profile
@@ -110,6 +117,7 @@
 | lws-server | | 🚧| [branch](https://github.com/ebremer/lws-server/tree/master) · [conformance](https://ebremer.com/lws/conformance) |
 | Halcyon | | 🚧| [branch](https://github.com/halcyon-project/Halcyon/tree/next) · [conformance](https://ebremer.com/lws/conformance) |
 | sai-js | | 💡|
+| lws-client | 🚧 | | [repo](https://github.com/ebremer/lws-client) |
 |  |  |  |  |
 
 ### Notifications
@@ -121,6 +129,7 @@
 | lws-server | | 🚧| [branch](https://github.com/ebremer/lws-server/tree/master) · [conformance](https://ebremer.com/lws/conformance) |
 | Halcyon | | 🚧| [branch](https://github.com/halcyon-project/Halcyon/tree/next) · [conformance](https://ebremer.com/lws/conformance) |
 | sai-js | | 🚧|
+| lws-client | 🚧 | | [repo](https://github.com/ebremer/lws-client) |
 |  |  |  |  |
 
 #### Webhook
@@ -132,6 +141,7 @@
 | lws-server | | 🚧| [branch](https://github.com/ebremer/lws-server/tree/master) · [conformance](https://ebremer.com/lws/conformance) |
 | Halcyon | | 🚧| [branch](https://github.com/halcyon-project/Halcyon/tree/next) · [conformance](https://ebremer.com/lws/conformance) |
 | sai-js | | 🚧|
+| lws-client | 🚧 | | [repo](https://github.com/ebremer/lws-client) |
 |  |  |  |  |
 
 #### Streaming HTTP
@@ -150,6 +160,7 @@
 | Name | Client | Server | Notes |
 |------|--------|--------|-------|
 | sai-js | | 💡|
+| lws-client | 🚧 | | [repo](https://github.com/ebremer/lws-client) |
 |  |  |  |
 
 #### Type Index and Type Search
@@ -161,6 +172,7 @@
 | lws-server | | 🚧| [branch](https://github.com/ebremer/lws-server/tree/master) · [conformance](https://ebremer.com/lws/conformance) |
 | Halcyon | | 🚧| [branch](https://github.com/halcyon-project/Halcyon/tree/next) · [conformance](https://ebremer.com/lws/conformance) |
 | sai-js | 💡| 💡|
+| lws-client | 🚧 | | [repo](https://github.com/ebremer/lws-client) |
 |  |  |  |  |
 
 ## Notes
