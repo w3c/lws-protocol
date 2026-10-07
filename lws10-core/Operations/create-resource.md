@@ -15,7 +15,7 @@ The **create resource** operation adds a new [served resource](#dfn-served-resou
 **Possible Responses:**
 
 * <strong id="dfn-created">Created:</strong> The operation succeeded. The server returns the final identifier of the newly created resource.
-* **Target Not Found:** The specified target <a>container</a> does not exist.
+* <strong id="dfn-target-not-found">Target Not Found:</strong> The specified target <a>container</a> does not exist.
 * **Not Permitted:** The client's identity is known, but they do not have permission to create resources in this <a>container</a>.
 * **Unknown Requester:** The server does not recognize the client's identity and requires authentication.
 * **Conflict:** A resource with the generated identifier already exists, or there is another state conflict.
@@ -58,8 +58,23 @@ Link: </alice/notes/>; rel="up"
 Link: <https://www.w3.org/ns/lws#DataResource>; rel="type"
 Content-Length: 0
 ```
-On success, return 201 Created with the new URI in the `Location` header. The body may be empty or a minimal representation.
-If the target <a>container</a> `/alice/notes/` does not exist, the server MUST return a 404 error status unless another status code is more appropriate.
+
+**Example (POST to a container that does not exist):**
+```
+POST /alice/notes/ HTTP/1.1
+Host: example.com
+Authorization: Bearer <token>
+Content-Type: text/plain
+Content-Length: 4
+
+test
+```
+If `/alice/notes/` does not exist, the server reports the [Target Not Found](#dfn-target-not-found) outcome:
+```
+HTTP/1.1 404 Not Found
+```
+
+**Note:** The create resource operation adds a resource to a single existing <a>container</a>. Because <a>containment</a> is expressed through metadata rather than URI path structure (see [](#logical-resource-organization)), this specification does not define creating multiple levels of <a>containers</a> in one operation; clients create each <a>container</a> with its own create resource operation.
 
 **Creating <a>Containers</a>:** To create a new <a>container</a>, a client uses POST to an existing parent <a>container</a> with a `Link` header indicating the Container type. For example:
 ```
