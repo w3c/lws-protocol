@@ -5,15 +5,116 @@ The `application/lws+cid` media type identifies a document that is a specializat
 
 An LWS <a>container representation</a> MUST support the media type `application/lws+json`.
 
-While LWS container representations use JSON-LD conventions, the constraints and requirements for LWS justify the use of a specific media type. Because LWS containers can be considered a restricted profile of JSON-LD, implementations SHOULD consider the `application/ld+json; profile="https://www.w3.org/ns/lws/v1"` media type as equivalent to `application/lws+json`.
+While LWS container representations use JSON-LD conventions, the constraints and requirements for LWS justify the use of a specific media type.
+
+#### LWS Profile
+
+The URI `https://www.w3.org/ns/lws/v1` identifies the <dfn>LWS profile</dfn> [[RFC6906]]. The <dfn>LWS dataset</dfn> of a <a>container</a> is the RDF dataset obtained by interpreting its `application/lws+json` <a>container representation</a> as JSON-LD [[!JSON-LD11]].
+
+A representation of a <a>container</a> conforms to the <a>LWS profile</a> when it encodes an RDF dataset that is isomorphic to the <a>LWS dataset</a> for the same <a>container</a> state, requesting <a>agent</a>, and page (see [Pagination](#pagination)). Isomorphism is defined in [RDF Dataset Comparison](https://www.w3.org/TR/rdf11-concepts/#section-dataset-isomorphism) [[!RDF11-CONCEPTS]]; a representation that encodes a single RDF graph is compared as a dataset with that graph as its default graph and no named graphs. Conforming representations can differ in serialization, JSON structure, and blank node labels.
 
 #### Content Negotiation
 
-Servers MUST honor a request for `application/lws+json` on <a>containers</a> and MUST respond with `Content-Type: application/lws+json`. The response body MUST conform to the <a>container representation</a> structure defined in [](#container-representation).
+Servers MUST honor requests for `application/lws+json` and for `application/ld+json` on <a>containers</a>, and MUST set the `Content-Type` response header to the media type of the selected representation.
+
+A response with `Content-Type: application/lws+json` MUST conform to the <a>container representation</a> structure defined in [](#container-representation). Such a response conforms to the <a>LWS profile</a>.
+
+A client requests a representation in the <a>LWS profile</a> by including the <a>LWS profile</a> URI in the `profile` parameter of an RDF media type in its `Accept` header. The media types that define this parameter include `application/ld+json` [[!JSON-LD11]] and `text/turtle`, `application/trig`, `application/n-triples`, and `application/n-quads` [[RDF12-TURTLE]] [[RDF12-TRIG]] [[RDF12-N-TRIPLES]] [[RDF12-N-QUADS]]. When the server selects a media type for which such a `profile` parameter was requested, the response MUST conform to the <a>LWS profile</a>, and its `Content-Type` header MUST include the <a>LWS profile</a> URI in the `profile` parameter. A server that cannot produce a representation in the <a>LWS profile</a> in a media type MUST NOT select that media type for such a request. An `application/ld+json` response in the <a>LWS profile</a> SHOULD be the same document as the `application/lws+json` representation.
+
+For an RDF media type that does not define a `profile` parameter, a server MAY indicate that a representation conforms to the <a>LWS profile</a> with a `Link` header whose relation type is `profile` and whose target is the <a>LWS profile</a> URI [[!RFC6906]]. Such a representation MUST conform to the <a>LWS profile</a>. A server MUST NOT indicate the <a>LWS profile</a> for a media type that cannot encode the <a>LWS dataset</a>, such as a media type that cannot express named graphs when that dataset has any.
+
+Representations of a <a>container</a> that are not indicated to conform to the <a>LWS profile</a>, such as responses to requests for `application/ld+json` or `text/turtle` without the <a>LWS profile</a>, are not required to be isomorphic to the <a>LWS dataset</a>.
 
 When the selected representation depends on the request's `Accept` header, responses SHOULD include a `Vary: Accept` header [[!RFC9110]].
 
-**Note (non-normative):** A server can offer additional representations of a container (for example, `text/turtle`) through standard content negotiation [[RFC9110]]; this specification neither requires nor precludes such support.
+**Note (non-normative):** A server can offer additional representations of a container (for example, `text/turtle`) through standard content negotiation [[RFC9110]]; this specification neither requires nor precludes such support. Because only representations in the <a>LWS profile</a> are bound to the <a>LWS dataset</a>, a server that also implements another protocol, such as the Solid Protocol, can keep serving that protocol's container representation for RDF media types requested without the <a>LWS profile</a>. Clients that rely on the LWS data model request `application/lws+json`, or an RDF media type with the <a>LWS profile</a>.
+
+##### Content Negotiation Examples
+
+The following examples use the <a>container</a> shown in [](#container-representation), at `https://storage.example/alice/notes/`.
+
+A client requests Turtle in the <a>LWS profile</a>:
+
+```
+GET /alice/notes/ HTTP/1.1
+Host: storage.example
+Accept: text/turtle; profile="https://www.w3.org/ns/lws/v1"
+```
+
+The server responds with Turtle that encodes the <a>LWS dataset</a>:
+
+```
+HTTP/1.1 200 OK
+Content-Type: text/turtle; profile="https://www.w3.org/ns/lws/v1"
+Vary: Accept
+
+@prefix lws: <https://www.w3.org/ns/lws#> .
+@prefix dcterms: <http://purl.org/dc/terms/> .
+@prefix schema: <http://schema.org/> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+
+<> a lws:Container ;
+  lws:totalItems 2 ;
+  lws:items <shoppinglist.txt>, <todo.json> .
+
+<shoppinglist.txt> a lws:DataResource ;
+  dcterms:format "text/plain" ;
+  schema:size "47"^^xsd:long ;
+  dcterms:modified "2025-11-24T12:00:00Z"^^xsd:dateTime .
+
+<todo.json> a lws:DataResource, <http://example.org/customType> ;
+  dcterms:format "application/json" ;
+  schema:size "2048"^^xsd:long ;
+  dcterms:modified "2025-11-24T13:00:00Z"^^xsd:dateTime .
+```
+
+A client requests JSON-LD in the <a>LWS profile</a>:
+
+```
+GET /alice/notes/ HTTP/1.1
+Host: storage.example
+Accept: application/ld+json; profile="https://www.w3.org/ns/lws/v1"
+```
+
+The server responds with the same document as the `application/lws+json` representation:
+
+```
+HTTP/1.1 200 OK
+Content-Type: application/ld+json; profile="https://www.w3.org/ns/lws/v1"
+Vary: Accept
+
+{
+  "@context": "https://www.w3.org/ns/lws/v1",
+  "id": "/alice/notes/",
+  "type": "Container",
+  "totalItems": 2,
+  "items": [ ... ]
+}
+```
+
+A client requests JSON-LD without a profile from a server that also implements the Solid Protocol. The server is not required to return a representation in the <a>LWS profile</a>, and in this example it returns its Solid container representation:
+
+```
+GET /alice/notes/ HTTP/1.1
+Host: storage.example
+Accept: application/ld+json
+```
+
+```
+HTTP/1.1 200 OK
+Content-Type: application/ld+json
+Vary: Accept
+
+{
+  "@context": { "ldp": "http://www.w3.org/ns/ldp#" },
+  "@id": "/alice/notes/",
+  "@type": [ "ldp:Container", "ldp:BasicContainer" ],
+  "ldp:contains": [
+    { "@id": "/alice/notes/shoppinglist.txt" },
+    { "@id": "/alice/notes/todo.json" }
+  ]
+}
+```
 
 
 #### Pagination
