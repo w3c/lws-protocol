@@ -9,41 +9,115 @@ While LWS container representations use JSON-LD conventions, the constraints and
 
 #### LWS Profile
 
-The URI `https://www.w3.org/ns/lws/v1` identifies the <dfn>LWS profile</dfn> [[RFC6906]]. The <dfn>LWS dataset</dfn> of a <a>container</a> is the RDF dataset obtained by interpreting its `application/lws+json` <a>container representation</a> as JSON-LD [[!JSON-LD11]].
-
-A representation of a <a>container</a> conforms to the <a>LWS profile</a> when it encodes an RDF dataset that is isomorphic to the <a>LWS dataset</a> for the same <a>container</a> state, requesting <a>agent</a>, and page (see [Pagination](#pagination)). Isomorphism is defined in [RDF Dataset Comparison](https://www.w3.org/TR/rdf11-concepts/#section-dataset-isomorphism) [[!RDF11-CONCEPTS]]; a representation that encodes a single RDF graph is compared as a dataset with that graph as its default graph and no named graphs. Conforming representations can differ in serialization, JSON structure, and blank node labels.
+The URI `https://www.w3.org/ns/lws/v1` identifies the <dfn>LWS profile</dfn> [[RFC6906]]. A representation of a <a>container</a> conforms to the <a>LWS profile</a> when the RDF it encodes is isomorphic, as defined in [RDF Dataset Comparison](https://www.w3.org/TR/rdf11-concepts/#section-dataset-isomorphism) [[!RDF11-CONCEPTS]], to the RDF that the `application/lws+json` representation of the same <a>container</a> state and page encodes when interpreted as JSON-LD [[!JSON-LD11]]. An `application/lws+json` representation always conforms to the <a>LWS profile</a>.
 
 #### Content Negotiation
 
-Servers MUST honor requests for `application/lws+json` and for `application/ld+json` on <a>containers</a>, and MUST set the `Content-Type` response header to the media type of the selected representation.
+Servers MUST honor requests for `application/lws+json` and `application/ld+json` on <a>containers</a>, and MUST set the `Content-Type` response header to the media type of the selected representation.
 
-A response with `Content-Type: application/lws+json` MUST conform to the <a>container representation</a> structure defined in [](#container-representation). Such a response conforms to the <a>LWS profile</a>.
+A client requests a representation in the <a>LWS profile</a> by including the <a>LWS profile</a> URI in the `profile` parameter of an RDF media type. RDF media types that define this parameter include `application/ld+json` [[JSON-LD11]], `text/turtle` [[RDF12-TURTLE]], `application/trig` [[RDF12-TRIG]], `application/n-triples` [[RDF12-N-TRIPLES]], and `application/n-quads` [[RDF12-N-QUADS]]. If the server selects such a media type, the response MUST conform to the <a>LWS profile</a> and its `Content-Type` MUST include the same `profile` parameter. A server MUST NOT select such a media type if it cannot produce a representation in the <a>LWS profile</a> in it.
 
-A client requests a representation in the <a>LWS profile</a> by including the <a>LWS profile</a> URI in the `profile` parameter of an RDF media type in its `Accept` header. The media types that define this parameter include `application/ld+json` [[!JSON-LD11]] and `text/turtle`, `application/trig`, `application/n-triples`, and `application/n-quads` [[RDF12-TURTLE]] [[RDF12-TRIG]] [[RDF12-N-TRIPLES]] [[RDF12-N-QUADS]]. When the server selects a media type for which such a `profile` parameter was requested, the response MUST conform to the <a>LWS profile</a>, and its `Content-Type` header MUST include the <a>LWS profile</a> URI in the `profile` parameter. A server that cannot produce a representation in the <a>LWS profile</a> in a media type MUST NOT select that media type for such a request. An `application/ld+json` response in the <a>LWS profile</a> SHOULD be the same document as the `application/lws+json` representation.
+For an RDF media type that does not define a `profile` parameter, such as `application/rdf+xml`, a server MAY indicate that a representation conforms to the <a>LWS profile</a> with a `Link` header whose relation type is `profile` and whose target is the <a>LWS profile</a> URI [[!RFC6906]]. Such a representation MUST conform to the <a>LWS profile</a>.
 
-For an RDF media type that does not define a `profile` parameter, a server MAY indicate that a representation conforms to the <a>LWS profile</a> with a `Link` header whose relation type is `profile` and whose target is the <a>LWS profile</a> URI [[!RFC6906]]. Such a representation MUST conform to the <a>LWS profile</a>. A server MUST NOT indicate the <a>LWS profile</a> for a media type that cannot encode the <a>LWS dataset</a>, such as a media type that cannot express named graphs when that dataset has any.
-
-Representations of a <a>container</a> that are not indicated to conform to the <a>LWS profile</a>, such as responses to requests for `application/ld+json` or `text/turtle` without the <a>LWS profile</a>, are not required to be isomorphic to the <a>LWS dataset</a>.
+Other representations of a <a>container</a> need not conform to the <a>LWS profile</a>. A server that also implements another protocol, such as the Solid Protocol, can therefore serve that protocol's container representations to clients that do not request the <a>LWS profile</a>.
 
 When the selected representation depends on the request's `Accept` header, responses SHOULD include a `Vary: Accept` header [[!RFC9110]].
 
-**Note (non-normative):** A server can offer additional representations of a container (for example, `text/turtle`) through standard content negotiation [[RFC9110]]; this specification neither requires nor precludes such support. Because only representations in the <a>LWS profile</a> are bound to the <a>LWS dataset</a>, a server that also implements another protocol, such as the Solid Protocol, can keep serving that protocol's container representation for RDF media types requested without the <a>LWS profile</a>. Clients that rely on the LWS data model request `application/lws+json`, or an RDF media type with the <a>LWS profile</a>.
-
 ##### Content Negotiation Examples
 
-The following examples use the <a>container</a> shown in [](#container-representation), at `https://storage.example/alice/notes/`.
+Each tab shows a request for the <a>container</a> in [](#container-representation) and the server's response.
 
-A client requests Turtle in the <a>LWS profile</a>:
+<div class="example-tabs">
+<div data-tab="application/lws+json">
 
+```http
+GET /alice/notes/ HTTP/1.1
+Host: storage.example
+Accept: application/lws+json
 ```
+
+
+```http
+HTTP/1.1 200 OK
+Content-Type: application/lws+json
+Vary: Accept
+
+{
+  "@context": "https://www.w3.org/ns/lws/v1",
+  "id": "/alice/notes/",
+  "type": "Container",
+  "totalItems": 2,
+  "items": [
+    {
+      "type": "DataResource",
+      "id": "/alice/notes/shoppinglist.txt",
+      "format": "text/plain",
+      "size": 47,
+      "modified": "2025-11-24T12:00:00Z"
+    },
+    {
+      "type": ["DataResource", "http://example.org/customType"],
+      "id": "/alice/notes/todo.json",
+      "format": "application/json",
+      "size": 2048,
+      "modified": "2025-11-24T13:00:00Z"
+    }
+  ]
+}
+```
+
+</div>
+
+<div data-tab="application/ld+json (LWS profile)">
+
+```http
+GET /alice/notes/ HTTP/1.1
+Host: storage.example
+Accept: application/ld+json; profile="https://www.w3.org/ns/lws/v1"
+```
+
+
+```http
+HTTP/1.1 200 OK
+Content-Type: application/ld+json; profile="https://www.w3.org/ns/lws/v1"
+Vary: Accept
+
+{
+  "@context": "https://www.w3.org/ns/lws/v1",
+  "id": "/alice/notes/",
+  "type": "Container",
+  "totalItems": 2,
+  "items": [
+    {
+      "type": "DataResource",
+      "id": "/alice/notes/shoppinglist.txt",
+      "format": "text/plain",
+      "size": 47,
+      "modified": "2025-11-24T12:00:00Z"
+    },
+    {
+      "type": ["DataResource", "http://example.org/customType"],
+      "id": "/alice/notes/todo.json",
+      "format": "application/json",
+      "size": 2048,
+      "modified": "2025-11-24T13:00:00Z"
+    }
+  ]
+}
+```
+
+</div>
+
+<div data-tab="text/turtle (LWS profile)">
+
+```http
 GET /alice/notes/ HTTP/1.1
 Host: storage.example
 Accept: text/turtle; profile="https://www.w3.org/ns/lws/v1"
 ```
 
-The server responds with Turtle that encodes the <a>LWS dataset</a>:
 
-```
+```http
 HTTP/1.1 200 OK
 Content-Type: text/turtle; profile="https://www.w3.org/ns/lws/v1"
 Vary: Accept
@@ -68,39 +142,61 @@ Vary: Accept
   dcterms:modified "2025-11-24T13:00:00Z"^^xsd:dateTime .
 ```
 
-A client requests JSON-LD in the <a>LWS profile</a>:
+</div>
 
-```
+<div data-tab="application/rdf+xml">
+
+```http
 GET /alice/notes/ HTTP/1.1
 Host: storage.example
-Accept: application/ld+json; profile="https://www.w3.org/ns/lws/v1"
+Accept: application/rdf+xml
 ```
 
-The server responds with the same document as the `application/lws+json` representation:
 
-```
+```http
 HTTP/1.1 200 OK
-Content-Type: application/ld+json; profile="https://www.w3.org/ns/lws/v1"
+Content-Type: application/rdf+xml
+Link: <https://www.w3.org/ns/lws/v1>; rel="profile"
 Vary: Accept
 
-{
-  "@context": "https://www.w3.org/ns/lws/v1",
-  "id": "/alice/notes/",
-  "type": "Container",
-  "totalItems": 2,
-  "items": [ ... ]
-}
+<?xml version="1.0" encoding="utf-8"?>
+<rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+         xmlns:lws="https://www.w3.org/ns/lws#"
+         xmlns:dcterms="http://purl.org/dc/terms/"
+         xmlns:schema="http://schema.org/">
+  <lws:Container rdf:about="">
+    <lws:totalItems rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">2</lws:totalItems>
+    <lws:items>
+      <lws:DataResource rdf:about="shoppinglist.txt">
+        <dcterms:format>text/plain</dcterms:format>
+        <schema:size rdf:datatype="http://www.w3.org/2001/XMLSchema#long">47</schema:size>
+        <dcterms:modified rdf:datatype="http://www.w3.org/2001/XMLSchema#dateTime">2025-11-24T12:00:00Z</dcterms:modified>
+      </lws:DataResource>
+    </lws:items>
+    <lws:items>
+      <lws:DataResource rdf:about="todo.json">
+        <rdf:type rdf:resource="http://example.org/customType"/>
+        <dcterms:format>application/json</dcterms:format>
+        <schema:size rdf:datatype="http://www.w3.org/2001/XMLSchema#long">2048</schema:size>
+        <dcterms:modified rdf:datatype="http://www.w3.org/2001/XMLSchema#dateTime">2025-11-24T13:00:00Z</dcterms:modified>
+      </lws:DataResource>
+    </lws:items>
+  </lws:Container>
+</rdf:RDF>
 ```
 
-A client requests JSON-LD without a profile from a server that also implements the Solid Protocol. The server is not required to return a representation in the <a>LWS profile</a>, and in this example it returns its Solid container representation:
+</div>
 
-```
+<div data-tab="application/ld+json (no profile)">
+
+```http
 GET /alice/notes/ HTTP/1.1
 Host: storage.example
 Accept: application/ld+json
 ```
 
-```
+
+```http
 HTTP/1.1 200 OK
 Content-Type: application/ld+json
 Vary: Accept
@@ -116,6 +212,11 @@ Vary: Accept
 }
 ```
 
+</div>
+
+</div>
+
+In the last tab, the client does not request the <a>LWS profile</a>, and a server that also implements the Solid Protocol returns its Solid container representation.
 
 #### Pagination
 
@@ -157,15 +258,19 @@ property in the response body SHOULD reflect the total number of items across al
 
 ##### Example: Paginated Container
 
-Request:
-```
+First page:
+
+<div class="example-tabs">
+<div data-tab="application/lws+json">
+
+```http
 GET /alice/photos/ HTTP/1.1
 Authorization: Bearer <token>
 Accept: application/lws+json
 ```
 
-Response (first page):
-```
+
+```http
 HTTP/1.1 200 OK
 Content-Type: application/lws+json
 ETag: "photos-page1-etag"
@@ -200,15 +305,65 @@ Link: </alice/photos/?page=2>; rel="next"
 }
 ```
 
-Request (next page):
+</div>
+
+<div data-tab="text/turtle (LWS profile)">
+
+```http
+GET /alice/photos/ HTTP/1.1
+Authorization: Bearer <token>
+Accept: text/turtle; profile="https://www.w3.org/ns/lws/v1"
 ```
+
+
+```http
+HTTP/1.1 200 OK
+Content-Type: text/turtle; profile="https://www.w3.org/ns/lws/v1"
+ETag: "photos-page1-etag"
+Link: </alice/photos/.meta>; rel="linkset"; type="application/linkset+json"
+Link: </alice/>; rel="up"
+Link: <https://www.w3.org/ns/lws#Container>; rel="type"
+Link: </alice/photos/?page=1>; rel="first"
+Link: </alice/photos/?page=3>; rel="last"
+Link: </alice/photos/?page=2>; rel="next"
+
+@prefix lws: <https://www.w3.org/ns/lws#> .
+@prefix dcterms: <http://purl.org/dc/terms/> .
+@prefix schema: <http://schema.org/> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+
+</alice/photos/> a lws:Container ;
+  lws:totalItems 150 ;
+  lws:items </alice/photos/vacation.jpg>, </alice/photos/portrait.png> .
+
+</alice/photos/vacation.jpg> a lws:DataResource ;
+  dcterms:format "image/jpeg" ;
+  schema:size "248392"^^xsd:long ;
+  dcterms:modified "2025-11-20T10:30:00Z"^^xsd:dateTime .
+
+</alice/photos/portrait.png> a lws:DataResource ;
+  dcterms:format "image/png" ;
+  schema:size "102400"^^xsd:long ;
+  dcterms:modified "2025-11-21T14:15:00Z"^^xsd:dateTime .
+```
+
+</div>
+
+</div>
+
+Next page:
+
+<div class="example-tabs">
+<div data-tab="application/lws+json">
+
+```http
 GET /alice/photos/?page=2 HTTP/1.1
 Authorization: Bearer <token>
 Accept: application/lws+json
 ```
 
-Response (middle page):
-```
+
+```http
 HTTP/1.1 200 OK
 Content-Type: application/lws+json
 ETag: "photos-page2-etag"
@@ -236,3 +391,45 @@ Link: </alice/photos/?page=3>; rel="last"
   ]
 }
 ```
+
+</div>
+
+<div data-tab="text/turtle (LWS profile)">
+
+```http
+GET /alice/photos/?page=2 HTTP/1.1
+Authorization: Bearer <token>
+Accept: text/turtle; profile="https://www.w3.org/ns/lws/v1"
+```
+
+
+```http
+HTTP/1.1 200 OK
+Content-Type: text/turtle; profile="https://www.w3.org/ns/lws/v1"
+ETag: "photos-page2-etag"
+Link: </alice/photos/.meta>; rel="linkset"; type="application/linkset+json"
+Link: </alice/>; rel="up"
+Link: <https://www.w3.org/ns/lws#Container>; rel="type"
+Link: </alice/photos/?page=1>; rel="first"
+Link: </alice/photos/?page=1>; rel="prev"
+Link: </alice/photos/?page=3>; rel="next"
+Link: </alice/photos/?page=3>; rel="last"
+
+@prefix lws: <https://www.w3.org/ns/lws#> .
+@prefix dcterms: <http://purl.org/dc/terms/> .
+@prefix schema: <http://schema.org/> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+
+</alice/photos/> a lws:Container ;
+  lws:totalItems 150 ;
+  lws:items </alice/photos/sunset.jpg> .
+
+</alice/photos/sunset.jpg> a lws:DataResource ;
+  dcterms:format "image/jpeg" ;
+  schema:size "315000"^^xsd:long ;
+  dcterms:modified "2025-11-22T09:00:00Z"^^xsd:dateTime .
+```
+
+</div>
+
+</div>

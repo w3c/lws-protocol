@@ -18,3 +18,23 @@
 .editors-notes {
   background-color: lightYellow;
 }
+
+/* Tabbed examples: one pane per media type (see tabs.js). */
+.example-tabs { margin: 1em 0; }
+.example-tabs > .tab-bar { display: flex; flex-wrap: wrap; gap: .25em; margin-bottom: -1px; }
+.example-tabs > .tab-bar button {
+  font: inherit; font-size: .85em; padding: .3em .7em; cursor: pointer;
+  border: 1px solid #ccc; border-bottom: none; border-radius: .3em .3em 0 0;
+  background: #f4f4f4; color: inherit;
+}
+.example-tabs > .tab-bar button[aria-selected="true"] { background: #fff; font-weight: bold; }
+.example-tabs > [data-tab] { border: 1px solid #ccc; padding: 0 .5em; }
+.example-tabs > [data-tab] > pre { margin: .5em 0; }
+/* Without script (and in print), show every pane under its label. */
+.example-tabs:not(.ready) > [data-tab]::before {
+  content: attr(data-tab); display: block; font-weight: bold; padding-top: .3em;
+}
+@media print {
+  .example-tabs > .tab-bar { display: none; }
+  .example-tabs > [data-tab][hidden] { display: block; }
+}
