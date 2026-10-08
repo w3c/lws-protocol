@@ -19,8 +19,6 @@ A client requests a representation in the <a>LWS profile</a> by including the <a
 
 For an RDF media type that does not define a `profile` parameter, such as `application/rdf+xml`, a server MAY indicate that a representation conforms to the <a>LWS profile</a> with a `Link` header whose relation type is `profile` and whose target is the <a>LWS profile</a> URI [[!RFC6906]]. Such a representation MUST conform to the <a>LWS profile</a>.
 
-Other representations of a <a>container</a> need not conform to the <a>LWS profile</a>. A server that also implements another protocol, such as the Solid Protocol, can therefore serve that protocol's container representations to clients that do not request the <a>LWS profile</a>.
-
 When the selected representation depends on the request's `Accept` header, responses SHOULD include a `Vary: Accept` header [[!RFC9110]].
 
 ##### Content Negotiation Examples
@@ -187,36 +185,7 @@ Vary: Accept
 
 </div>
 
-<div data-tab="application/ld+json (no profile)">
-
-```http
-GET /alice/notes/ HTTP/1.1
-Host: storage.example
-Accept: application/ld+json
-```
-
-
-```http
-HTTP/1.1 200 OK
-Content-Type: application/ld+json
-Vary: Accept
-
-{
-  "@context": { "ldp": "http://www.w3.org/ns/ldp#" },
-  "@id": "/alice/notes/",
-  "@type": [ "ldp:Container", "ldp:BasicContainer" ],
-  "ldp:contains": [
-    { "@id": "/alice/notes/shoppinglist.txt" },
-    { "@id": "/alice/notes/todo.json" }
-  ]
-}
-```
-
 </div>
-
-</div>
-
-In the last tab, the client does not request the <a>LWS profile</a>, and a server that also implements the Solid Protocol returns its Solid container representation.
 
 #### Pagination
 
