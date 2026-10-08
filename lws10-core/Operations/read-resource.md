@@ -126,6 +126,52 @@ Link: <https://www.w3.org/ns/lws#Container>; rel="type"
 
 </div>
 
+<div data-tab="application/rdf+xml">
+
+```http
+GET /alice/notes/ HTTP/1.1
+Authorization: Bearer <token>
+Accept: application/rdf+xml
+```
+
+
+```http
+HTTP/1.1 200 OK
+Content-Type: application/rdf+xml
+Link: <https://www.w3.org/ns/lws/v1>; rel="profile"
+ETag: "container-etag-789"
+Link: </alice/notes/.meta>; rel="linkset"; type="application/linkset+json"
+Link: </alice/>; rel="up"
+Link: <https://www.w3.org/ns/lws#Container>; rel="type"
+
+<?xml version="1.0" encoding="utf-8"?>
+<rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+         xmlns:lws="https://www.w3.org/ns/lws#"
+         xmlns:dcterms="http://purl.org/dc/terms/"
+         xmlns:schema="http://schema.org/">
+  <lws:Container rdf:about="">
+    <lws:totalItems rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">2</lws:totalItems>
+    <lws:items>
+      <lws:DataResource rdf:about="shoppinglist.txt">
+        <dcterms:format>text/plain</dcterms:format>
+        <schema:size rdf:datatype="http://www.w3.org/2001/XMLSchema#long">47</schema:size>
+        <dcterms:modified rdf:datatype="http://www.w3.org/2001/XMLSchema#dateTime">2025-11-24T12:00:00Z</dcterms:modified>
+      </lws:DataResource>
+    </lws:items>
+    <lws:items>
+      <lws:DataResource rdf:about="todo.json">
+        <rdf:type rdf:resource="http://example.org/customType"/>
+        <dcterms:format>application/json</dcterms:format>
+        <schema:size rdf:datatype="http://www.w3.org/2001/XMLSchema#long">2048</schema:size>
+        <dcterms:modified rdf:datatype="http://www.w3.org/2001/XMLSchema#dateTime">2025-11-24T13:00:00Z</dcterms:modified>
+      </lws:DataResource>
+    </lws:items>
+  </lws:Container>
+</rdf:RDF>
+```
+
+</div>
+
 </div>
 
 In this example, `/alice/notes/` is a <a>container</a>. The response uses JSON-LD with the LWS context, listing members with required metadata. Each item includes its `type`, `id`, `format`, `size`, and `modified` timestamp as flat properties.

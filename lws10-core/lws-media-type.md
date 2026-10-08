@@ -21,172 +21,6 @@ For an RDF media type that does not define a `profile` parameter, such as `appli
 
 When the selected representation depends on the request's `Accept` header, responses SHOULD include a `Vary: Accept` header [[!RFC9110]].
 
-##### Content Negotiation Examples
-
-Each tab shows a request for the <a>container</a> in [](#container-representation) and the server's response.
-
-<div class="example-tabs">
-<div data-tab="application/lws+json">
-
-```http
-GET /alice/notes/ HTTP/1.1
-Host: storage.example
-Accept: application/lws+json
-```
-
-
-```http
-HTTP/1.1 200 OK
-Content-Type: application/lws+json
-Vary: Accept
-
-{
-  "@context": "https://www.w3.org/ns/lws/v1",
-  "id": "/alice/notes/",
-  "type": "Container",
-  "totalItems": 2,
-  "items": [
-    {
-      "type": "DataResource",
-      "id": "/alice/notes/shoppinglist.txt",
-      "format": "text/plain",
-      "size": 47,
-      "modified": "2025-11-24T12:00:00Z"
-    },
-    {
-      "type": ["DataResource", "http://example.org/customType"],
-      "id": "/alice/notes/todo.json",
-      "format": "application/json",
-      "size": 2048,
-      "modified": "2025-11-24T13:00:00Z"
-    }
-  ]
-}
-```
-
-</div>
-
-<div data-tab="application/ld+json (LWS profile)">
-
-```http
-GET /alice/notes/ HTTP/1.1
-Host: storage.example
-Accept: application/ld+json; profile="https://www.w3.org/ns/lws/v1"
-```
-
-
-```http
-HTTP/1.1 200 OK
-Content-Type: application/ld+json; profile="https://www.w3.org/ns/lws/v1"
-Vary: Accept
-
-{
-  "@context": "https://www.w3.org/ns/lws/v1",
-  "id": "/alice/notes/",
-  "type": "Container",
-  "totalItems": 2,
-  "items": [
-    {
-      "type": "DataResource",
-      "id": "/alice/notes/shoppinglist.txt",
-      "format": "text/plain",
-      "size": 47,
-      "modified": "2025-11-24T12:00:00Z"
-    },
-    {
-      "type": ["DataResource", "http://example.org/customType"],
-      "id": "/alice/notes/todo.json",
-      "format": "application/json",
-      "size": 2048,
-      "modified": "2025-11-24T13:00:00Z"
-    }
-  ]
-}
-```
-
-</div>
-
-<div data-tab="text/turtle (LWS profile)">
-
-```http
-GET /alice/notes/ HTTP/1.1
-Host: storage.example
-Accept: text/turtle; profile="https://www.w3.org/ns/lws/v1"
-```
-
-
-```http
-HTTP/1.1 200 OK
-Content-Type: text/turtle; profile="https://www.w3.org/ns/lws/v1"
-Vary: Accept
-
-@prefix lws: <https://www.w3.org/ns/lws#> .
-@prefix dcterms: <http://purl.org/dc/terms/> .
-@prefix schema: <http://schema.org/> .
-@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
-
-<> a lws:Container ;
-  lws:totalItems 2 ;
-  lws:items <shoppinglist.txt>, <todo.json> .
-
-<shoppinglist.txt> a lws:DataResource ;
-  dcterms:format "text/plain" ;
-  schema:size "47"^^xsd:long ;
-  dcterms:modified "2025-11-24T12:00:00Z"^^xsd:dateTime .
-
-<todo.json> a lws:DataResource, <http://example.org/customType> ;
-  dcterms:format "application/json" ;
-  schema:size "2048"^^xsd:long ;
-  dcterms:modified "2025-11-24T13:00:00Z"^^xsd:dateTime .
-```
-
-</div>
-
-<div data-tab="application/rdf+xml">
-
-```http
-GET /alice/notes/ HTTP/1.1
-Host: storage.example
-Accept: application/rdf+xml
-```
-
-
-```http
-HTTP/1.1 200 OK
-Content-Type: application/rdf+xml
-Link: <https://www.w3.org/ns/lws/v1>; rel="profile"
-Vary: Accept
-
-<?xml version="1.0" encoding="utf-8"?>
-<rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
-         xmlns:lws="https://www.w3.org/ns/lws#"
-         xmlns:dcterms="http://purl.org/dc/terms/"
-         xmlns:schema="http://schema.org/">
-  <lws:Container rdf:about="">
-    <lws:totalItems rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">2</lws:totalItems>
-    <lws:items>
-      <lws:DataResource rdf:about="shoppinglist.txt">
-        <dcterms:format>text/plain</dcterms:format>
-        <schema:size rdf:datatype="http://www.w3.org/2001/XMLSchema#long">47</schema:size>
-        <dcterms:modified rdf:datatype="http://www.w3.org/2001/XMLSchema#dateTime">2025-11-24T12:00:00Z</dcterms:modified>
-      </lws:DataResource>
-    </lws:items>
-    <lws:items>
-      <lws:DataResource rdf:about="todo.json">
-        <rdf:type rdf:resource="http://example.org/customType"/>
-        <dcterms:format>application/json</dcterms:format>
-        <schema:size rdf:datatype="http://www.w3.org/2001/XMLSchema#long">2048</schema:size>
-        <dcterms:modified rdf:datatype="http://www.w3.org/2001/XMLSchema#dateTime">2025-11-24T13:00:00Z</dcterms:modified>
-      </lws:DataResource>
-    </lws:items>
-  </lws:Container>
-</rdf:RDF>
-```
-
-</div>
-
-</div>
-
 #### Pagination
 
 Certain composite resources, like <a>containers</a>, may hold a large number of resources. 
@@ -227,19 +61,15 @@ property in the response body SHOULD reflect the total number of items across al
 
 ##### Example: Paginated Container
 
-First page:
-
-<div class="example-tabs">
-<div data-tab="application/lws+json">
-
-```http
+Request:
+```
 GET /alice/photos/ HTTP/1.1
 Authorization: Bearer <token>
 Accept: application/lws+json
 ```
 
-
-```http
+Response (first page):
+```
 HTTP/1.1 200 OK
 Content-Type: application/lws+json
 ETag: "photos-page1-etag"
@@ -274,65 +104,15 @@ Link: </alice/photos/?page=2>; rel="next"
 }
 ```
 
-</div>
-
-<div data-tab="text/turtle (LWS profile)">
-
-```http
-GET /alice/photos/ HTTP/1.1
-Authorization: Bearer <token>
-Accept: text/turtle; profile="https://www.w3.org/ns/lws/v1"
+Request (next page):
 ```
-
-
-```http
-HTTP/1.1 200 OK
-Content-Type: text/turtle; profile="https://www.w3.org/ns/lws/v1"
-ETag: "photos-page1-etag"
-Link: </alice/photos/.meta>; rel="linkset"; type="application/linkset+json"
-Link: </alice/>; rel="up"
-Link: <https://www.w3.org/ns/lws#Container>; rel="type"
-Link: </alice/photos/?page=1>; rel="first"
-Link: </alice/photos/?page=3>; rel="last"
-Link: </alice/photos/?page=2>; rel="next"
-
-@prefix lws: <https://www.w3.org/ns/lws#> .
-@prefix dcterms: <http://purl.org/dc/terms/> .
-@prefix schema: <http://schema.org/> .
-@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
-
-</alice/photos/> a lws:Container ;
-  lws:totalItems 150 ;
-  lws:items </alice/photos/vacation.jpg>, </alice/photos/portrait.png> .
-
-</alice/photos/vacation.jpg> a lws:DataResource ;
-  dcterms:format "image/jpeg" ;
-  schema:size "248392"^^xsd:long ;
-  dcterms:modified "2025-11-20T10:30:00Z"^^xsd:dateTime .
-
-</alice/photos/portrait.png> a lws:DataResource ;
-  dcterms:format "image/png" ;
-  schema:size "102400"^^xsd:long ;
-  dcterms:modified "2025-11-21T14:15:00Z"^^xsd:dateTime .
-```
-
-</div>
-
-</div>
-
-Next page:
-
-<div class="example-tabs">
-<div data-tab="application/lws+json">
-
-```http
 GET /alice/photos/?page=2 HTTP/1.1
 Authorization: Bearer <token>
 Accept: application/lws+json
 ```
 
-
-```http
+Response (middle page):
+```
 HTTP/1.1 200 OK
 Content-Type: application/lws+json
 ETag: "photos-page2-etag"
@@ -360,45 +140,3 @@ Link: </alice/photos/?page=3>; rel="last"
   ]
 }
 ```
-
-</div>
-
-<div data-tab="text/turtle (LWS profile)">
-
-```http
-GET /alice/photos/?page=2 HTTP/1.1
-Authorization: Bearer <token>
-Accept: text/turtle; profile="https://www.w3.org/ns/lws/v1"
-```
-
-
-```http
-HTTP/1.1 200 OK
-Content-Type: text/turtle; profile="https://www.w3.org/ns/lws/v1"
-ETag: "photos-page2-etag"
-Link: </alice/photos/.meta>; rel="linkset"; type="application/linkset+json"
-Link: </alice/>; rel="up"
-Link: <https://www.w3.org/ns/lws#Container>; rel="type"
-Link: </alice/photos/?page=1>; rel="first"
-Link: </alice/photos/?page=1>; rel="prev"
-Link: </alice/photos/?page=3>; rel="next"
-Link: </alice/photos/?page=3>; rel="last"
-
-@prefix lws: <https://www.w3.org/ns/lws#> .
-@prefix dcterms: <http://purl.org/dc/terms/> .
-@prefix schema: <http://schema.org/> .
-@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
-
-</alice/photos/> a lws:Container ;
-  lws:totalItems 150 ;
-  lws:items </alice/photos/sunset.jpg> .
-
-</alice/photos/sunset.jpg> a lws:DataResource ;
-  dcterms:format "image/jpeg" ;
-  schema:size "315000"^^xsd:long ;
-  dcterms:modified "2025-11-22T09:00:00Z"^^xsd:dateTime .
-```
-
-</div>
-
-</div>
