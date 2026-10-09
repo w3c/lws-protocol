@@ -135,8 +135,8 @@
           notification messages are delivered.
         </li>
         <li>
-          <code>expires</code> &mdash; OPTIONAL. A datetime value indicating when the
-          subscription expires.
+          <code>valid</code> &mdash; OPTIONAL. A single <code>xsd:dateTime</code> value
+          that indicates the upper bound of the validity period.
         </li>
       </ul>
 
@@ -154,7 +154,7 @@ Content-Type: application/lws+json
     "https://storage.example/alice/profile"
   ],
   "inbox": "https://receiver.example/hooks/lws",
-  "expires": "2026-06-09T12:00:00Z"
+  "valid": "2026-06-09T12:00:00Z"
 }
       </pre>
 
@@ -172,8 +172,8 @@ Content-Type: application/lws+json
           the subscription.
         </li>
         <li>
-          <code>expires</code> &mdash; OPTIONAL. A datetime value indicating when the
-          subscription expires.
+          <code>valid</code> &mdash; OPTIONAL. A single <code>xsd:dateTime</code> value
+          that indicates the upper bound of the validity period.
         </li>
       </ul>
 
@@ -186,7 +186,7 @@ Location: https://notification.example/subscriptions/9e8d7c6b5a4f
   "@context": ["https://www.w3.org/ns/lws/v1"],
   "type": "WebhookSubscription",
   "subscription": "https://notification.example/subscriptions/9e8d7c6b5a4f",
-  "expires": "2026-06-09T12:00:00Z"
+  "valid": "2026-06-09T12:00:00Z"
 }
       </pre>
     </section>
