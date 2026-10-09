@@ -46,7 +46,7 @@ butter
 apples
 orange juice
 ```
-In this example, the client is posting to the <a>container</a> `/alice/notes/`. It provides `text/plain` content (a grocery list) and suggests the name `shoppinglist.txt` for the new resource. If `/alice/notes/` exists and the client is authorized, the server will create a new <a>data resource</a> and add it to the <a>container</a>'s membership.
+In this example, the client is posting to the <a>container</a> `/alice/notes/`. It provides `text/plain` content (a grocery list). If `/alice/notes/` exists and the client is authorized, the server will create a new <a>data resource</a> and add it to the <a>container</a>'s membership.
 
 **Example (Response to POST — Data Resource):**
 ```
