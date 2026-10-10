@@ -96,7 +96,7 @@ Accept: text/turtle; profile="https://www.w3.org/ns/lws/v1"
 ```
 
 
-```http
+```nohighlight
 HTTP/1.1 200 OK
 Content-Type: text/turtle; profile="https://www.w3.org/ns/lws/v1"
 ETag: "container-etag-789"
