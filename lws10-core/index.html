@@ -5,6 +5,110 @@
     <title>Linked Web Storage Protocol 1.0</title>
     <script src="https://www.w3.org/Tools/respec/respec-w3c" class="remove"></script>
     <link rel="stylesheet" href="local.css"/>
+    <style>
+      /* Tabbed examples: one pane per media type (see the script below). */
+      .example-tabs { margin: 1em 0; }
+      .example-tabs > .tab-bar { display: flex; flex-wrap: wrap; gap: .25em; margin-bottom: -1px; }
+      .example-tabs > .tab-bar button {
+        font: inherit; font-size: .85em; padding: .3em .7em; cursor: pointer;
+        border: 1px solid #ccc; border-bottom: none; border-radius: .3em .3em 0 0;
+        background: #f4f4f4; color: inherit;
+      }
+      .example-tabs > .tab-bar button[aria-selected="true"] { background: #fff; font-weight: bold; }
+      .example-tabs > [data-tab] { border: 1px solid #ccc; padding: 0 .5em; }
+      .example-tabs > [data-tab] > pre { margin: .5em 0; }
+      /* Without script (and in print), show every pane under its label. */
+      .example-tabs:not(.ready) > [data-tab]::before {
+        content: attr(data-tab); display: block; font-weight: bold; padding-top: .3em;
+      }
+      @media print {
+        .example-tabs > .tab-bar { display: none; }
+        .example-tabs > [data-tab][hidden] { display: block; }
+      }
+    </style>
+    <script>
+      // Tabbed examples: each .example-tabs block gets one tab per child with
+      // a data-tab label. Turtle and N-Triples panes are highlighted here,
+      // because ReSpec's highlighter has no Turtle grammar. Inline so that it
+      // works in PR previews and published copies, which carry no local files.
+      (function () {
+        const esc = (t) => t.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
+        const span = (c, t) => '<span class="hljs-' + c + '">' + esc(t) + "</span>";
+        const TURTLE = /(#[^\n]*)|(<[^>\s]*>)|("(?:[^"\\\n]|\\.)*")(\^\^|@[A-Za-z-]+)?|(@prefix|@base|\ba\b)|([A-Za-z][\w-]*:[\w.-]*|:[\w.-]+)|(\b\d+\b)/g;
+        function turtle(text) {
+          let out = "", last = 0, m;
+          TURTLE.lastIndex = 0;
+          while ((m = TURTLE.exec(text))) {
+            out += esc(text.slice(last, m.index));
+            if (m[1]) out += span("comment", m[1]);
+            else if (m[2]) out += span("link", m[2]);
+            else if (m[3]) out += span("string", m[3]) + (m[4] ? esc(m[4]) : "");
+            else if (m[5]) out += span("keyword", m[5]);
+            else if (m[6]) out += span("attr", m[6]);
+            else out += span("number", m[7]);
+            last = TURTLE.lastIndex;
+          }
+          return out + esc(text.slice(last));
+        }
+        function http(head) {
+          return head.split("\n").map((line, i) => {
+            const h = /^([\w-]+):(.*)$/.exec(line);
+            if (i === 0) return span("keyword", line);
+            return h ? span("attribute", h[1]) + ":" + esc(h[2]) : esc(line);
+          }).join("\n");
+        }
+        function highlight(code) {
+          const text = code.textContent;
+          const split = /^(?:HTTP\/|[A-Z]+ \S+ HTTP\/)/.test(text) ? text.indexOf("\n\n") : -1;
+          code.innerHTML = split < 0 ? turtle(text)
+            : http(text.slice(0, split)) + "\n\n" + turtle(text.slice(split + 2));
+          code.classList.add("hljs");
+          code.dataset.lwsHighlighted = "";
+        }
+        function build() {
+          let n = 0;
+          for (const box of document.querySelectorAll(".example-tabs")) {
+            for (const old of box.querySelectorAll(":scope > .tab-bar")) old.remove();
+            const panes = [...box.querySelectorAll(":scope > [data-tab]")];
+            if (!panes.length) continue;
+            for (const pane of panes) {
+              if (!/turtle|n-triples/.test(pane.dataset.tab)) continue;
+              for (const code of pane.querySelectorAll("pre code.nohighlight:not([data-lws-highlighted])")) highlight(code);
+            }
+            const bar = document.createElement("div");
+            bar.className = "tab-bar";
+            bar.setAttribute("role", "tablist");
+            const select = (i) => panes.forEach((pane, j) => {
+              pane.hidden = i !== j;
+              bar.children[j].setAttribute("aria-selected", String(i === j));
+            });
+            panes.forEach((pane, i) => {
+              const button = document.createElement("button");
+              button.type = "button";
+              const id = "lws-tab-" + n++;
+              button.id = id;
+              button.setAttribute("role", "tab");
+              button.setAttribute("aria-controls", id + "-panel");
+              pane.id = id + "-panel";
+              pane.setAttribute("role", "tabpanel");
+              pane.setAttribute("aria-labelledby", id);
+              button.textContent = pane.dataset.tab;
+              button.addEventListener("click", () => select(i));
+              bar.append(button);
+            });
+            box.prepend(bar);
+            box.classList.add("ready");
+            select(0);
+          }
+        }
+        function start() {
+          if (document.respec) document.respec.ready.then(build);
+          else build();
+        }
+        if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", start);
+        else start();
+      })();
+    </script>
     <script class='remove'>
       // See https://respec.org/docs/ for how to configure ReSpec
       var respecConfig = {

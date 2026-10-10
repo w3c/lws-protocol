@@ -39,16 +39,21 @@ eggs
 The server returned the text content (34 bytes in total, as indicated by `Content-Length`). The content is exactly the stored data in the file. The `ETag: "abc123456"` is a validator for caching and conditional request purposes. The response includes `Link` headers for metadata discoverability, with mandatory fields such as `up` and `type`.
 
 **GET (<a>container</a> resource)** – *List a <a>container</a>'s contents:*
-When the target URI corresponds to a <a>container</a> (determined via metadata type), a GET request returns a listing of the <a>container</a>'s members. The response body is a <a>container representation</a> as defined in the [Container Representation](#container-representation) section, using the LWS container media type. The listing includes metadata for each member: resource identifiers (MUST), types (MUST), media types (MUST for DataResources), sizes (SHOULD), and modification timestamps (SHOULD).
+When the target URI corresponds to a <a>container</a> (determined via metadata type), a GET request returns a listing of the <a>container</a>'s members. A response with `Content-Type: application/lws+json` is a <a>container representation</a> as defined in the [Container Representation](#container-representation) section; for this representation, the listing includes metadata for each member: resource identifiers (MUST), types (MUST), media types (MUST for DataResources), sizes (SHOULD), and modification timestamps (SHOULD).
 
-**Example (GET a container):**
-```
+**Example (GET a container):** assuming the <a>container</a> exists and the client has access. The tabs show the same request in different media types; see [](#content-negotiation).
+
+<div class="example-tabs">
+<div data-tab="application/lws+json">
+
+```http
 GET /alice/notes/ HTTP/1.1
 Authorization: Bearer <token>
 Accept: application/lws+json
 ```
-Assuming the container exists and the client has access:
-```
+
+
+```http
 HTTP/1.1 200 OK
 Content-Type: application/lws+json
 ETag: "container-etag-789"
@@ -79,6 +84,96 @@ Link: <https://www.w3.org/ns/lws#Container>; rel="type"
   ]
 }
 ```
+
+</div>
+
+<div data-tab="text/turtle (LWS profile)">
+
+```http
+GET /alice/notes/ HTTP/1.1
+Authorization: Bearer <token>
+Accept: text/turtle; profile="https://www.w3.org/ns/lws/v1"
+```
+
+
+```nohighlight
+HTTP/1.1 200 OK
+Content-Type: text/turtle; profile="https://www.w3.org/ns/lws/v1"
+ETag: "container-etag-789"
+Link: </alice/notes/.meta>; rel="linkset"; type="application/linkset+json"
+Link: </alice/>; rel="up"
+Link: <https://www.w3.org/ns/lws#Container>; rel="type"
+
+@prefix lws: <https://www.w3.org/ns/lws#> .
+@prefix dcterms: <http://purl.org/dc/terms/> .
+@prefix schema: <http://schema.org/> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+
+<> a lws:Container ;
+  lws:totalItems 2 ;
+  lws:items <shoppinglist.txt>, <todo.json> .
+
+<shoppinglist.txt> a lws:DataResource ;
+  dcterms:format "text/plain" ;
+  schema:size "47"^^xsd:long ;
+  dcterms:modified "2025-11-24T12:00:00Z"^^xsd:dateTime .
+
+<todo.json> a lws:DataResource, <http://example.org/customType> ;
+  dcterms:format "application/json" ;
+  schema:size "2048"^^xsd:long ;
+  dcterms:modified "2025-11-24T13:00:00Z"^^xsd:dateTime .
+```
+
+</div>
+
+<div data-tab="application/rdf+xml">
+
+```http
+GET /alice/notes/ HTTP/1.1
+Authorization: Bearer <token>
+Accept: application/rdf+xml
+```
+
+
+```http
+HTTP/1.1 200 OK
+Content-Type: application/rdf+xml
+Link: <https://www.w3.org/ns/lws/v1>; rel="profile"
+ETag: "container-etag-789"
+Link: </alice/notes/.meta>; rel="linkset"; type="application/linkset+json"
+Link: </alice/>; rel="up"
+Link: <https://www.w3.org/ns/lws#Container>; rel="type"
+
+<?xml version="1.0" encoding="utf-8"?>
+<rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+         xmlns:lws="https://www.w3.org/ns/lws#"
+         xmlns:dcterms="http://purl.org/dc/terms/"
+         xmlns:schema="http://schema.org/">
+  <lws:Container rdf:about="">
+    <lws:totalItems rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">2</lws:totalItems>
+    <lws:items>
+      <lws:DataResource rdf:about="shoppinglist.txt">
+        <dcterms:format>text/plain</dcterms:format>
+        <schema:size rdf:datatype="http://www.w3.org/2001/XMLSchema#long">47</schema:size>
+        <dcterms:modified rdf:datatype="http://www.w3.org/2001/XMLSchema#dateTime">2025-11-24T12:00:00Z</dcterms:modified>
+      </lws:DataResource>
+    </lws:items>
+    <lws:items>
+      <lws:DataResource rdf:about="todo.json">
+        <rdf:type rdf:resource="http://example.org/customType"/>
+        <dcterms:format>application/json</dcterms:format>
+        <schema:size rdf:datatype="http://www.w3.org/2001/XMLSchema#long">2048</schema:size>
+        <dcterms:modified rdf:datatype="http://www.w3.org/2001/XMLSchema#dateTime">2025-11-24T13:00:00Z</dcterms:modified>
+      </lws:DataResource>
+    </lws:items>
+  </lws:Container>
+</rdf:RDF>
+```
+
+</div>
+
+</div>
+
 In this example, `/alice/notes/` is a <a>container</a>. The response uses JSON-LD with the LWS context, listing members with required metadata. Each item includes its `type`, `id`, `format`, `size`, and `modified` timestamp as flat properties.
 
 In all cases, the server MUST include the following metadata in the response headers: an `ETag` header as defined in [[RFC9110]], and `Link` headers with `rel="linkset"`, `rel="up"`, and `rel="type"` indicating it is a <a>container</a>.

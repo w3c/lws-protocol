@@ -5,16 +5,21 @@ The `application/lws+cid` media type identifies a document that is a specializat
 
 An LWS <a>container representation</a> MUST support the media type `application/lws+json`.
 
-While LWS container representations use JSON-LD conventions, the constraints and requirements for LWS justify the use of a specific media type. Because LWS containers can be considered a restricted profile of JSON-LD, implementations SHOULD consider the `application/ld+json; profile="https://www.w3.org/ns/lws/v1"` media type as equivalent to `application/lws+json`.
+While LWS container representations use JSON-LD conventions, the constraints and requirements for LWS justify the use of a specific media type.
 
-#### Media Type Equivalence
+#### LWS Profile
 
-For <a>container representations</a>, the media types `application/lws+json`, `application/ld+json`, and `application/json` are equivalent: the response body is the same JSON-LD document conforming to the <a>container representation</a> structure defined in [](#container-representation), and only the `Content-Type` response header varies. Servers MUST honor a request for any of these media types and MUST set the `Content-Type` response header to the requested media type.
+The URI `https://www.w3.org/ns/lws/v1` identifies the <dfn>LWS profile</dfn> [[RFC6906]]. A representation of a <a>container</a> conforms to the <a>LWS profile</a> if it is RDF isomorphic to the `application/lws+json` representation of the same <a>container</a> state and page; that is, if the RDF it encodes is isomorphic, as defined in [RDF Dataset Comparison](https://www.w3.org/TR/rdf12-concepts/#section-dataset-isomorphism) [[!RDF12-CONCEPTS]], to the RDF that the `application/lws+json` representation encodes when interpreted as JSON-LD [[!JSON-LD11]]. An `application/lws+json` representation always conforms to the <a>LWS profile</a>.
 
-Because the `Content-Type` of a container response depends on the request's `Accept` header, these responses SHOULD include a `Vary: Accept` header [[!RFC9110]].
+#### Content Negotiation
 
-**Note (non-normative):** This equivalence applies only to the three media types above. As with any HTTP resource, a server can offer additional representations of a container (for example, `text/turtle`) through standard content negotiation [[RFC9110]]; this specification neither requires nor precludes such support.
+Servers MUST honor requests for `application/lws+json` on <a>containers</a>, and MUST set the `Content-Type` response header to the media type of the selected representation.
 
+A client requests a representation in the <a>LWS profile</a> by including the <a>LWS profile</a> URI in the `profile` parameter of an RDF media type. RDF media types that define this parameter include `application/ld+json` [[JSON-LD11]], `text/turtle` [[RDF12-TURTLE]], `application/trig` [[RDF12-TRIG]], `application/n-triples` [[RDF12-N-TRIPLES]], and `application/n-quads` [[RDF12-N-QUADS]]. If the server selects such a media type, the response MUST conform to the <a>LWS profile</a>, that is, it MUST be RDF isomorphic to the `application/lws+json` representation, and its `Content-Type` MUST include the same `profile` parameter. A server MUST NOT select such a media type if it cannot produce a representation in the <a>LWS profile</a> in it.
+
+For an RDF media type that does not define a `profile` parameter, such as `application/rdf+xml`, a server MAY indicate that a representation conforms to the <a>LWS profile</a> with a `Link` header whose relation type is `profile` and whose target is the <a>LWS profile</a> URI [[!RFC6906]]. Such a representation MUST be RDF isomorphic to the `application/lws+json` representation.
+
+When the selected representation depends on the request's `Accept` header, responses SHOULD include a `Vary: Accept` header [[!RFC9110]].
 
 #### Pagination
 

@@ -1,6 +1,6 @@
 ### Container Representation
 
-When a client retrieves a <a>container</a>, the server returns a structured <dfn>container representation</dfn> describing the <a>container</a> and its contents. This section defines the required and optional properties of a container representation.
+An LWS <dfn>container representation</dfn> describes a <a>container</a> and its contents. This section defines its required and optional properties when served as `application/lws+json`. Representations in other RDF media types can be requested through [content negotiation](#content-negotiation).
 
 #### Container Properties
 
@@ -37,7 +37,10 @@ A contained resource description SHOULD include:
 
 #### Example Container Representation
 
-The following example shows a <a>container</a> at `/alice/notes/` containing two resources:
+The following example shows a <a>container</a> at `https://storage.example/alice/notes/` containing two resources. The other tabs show the same container in other RDF media types in the <a>LWS profile</a>.
+
+<div class="example-tabs">
+<div data-tab="application/lws+json">
 
 ```json
 {
@@ -63,3 +66,83 @@ The following example shows a <a>container</a> at `/alice/notes/` containing two
   ]
 }
 ```
+
+</div>
+
+<div data-tab="text/turtle">
+
+```nohighlight
+@prefix lws: <https://www.w3.org/ns/lws#> .
+@prefix dcterms: <http://purl.org/dc/terms/> .
+@prefix schema: <http://schema.org/> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+
+<> a lws:Container ;
+  lws:totalItems 2 ;
+  lws:items <shoppinglist.txt>, <todo.json> .
+
+<shoppinglist.txt> a lws:DataResource ;
+  dcterms:format "text/plain" ;
+  schema:size "47"^^xsd:long ;
+  dcterms:modified "2025-11-24T12:00:00Z"^^xsd:dateTime .
+
+<todo.json> a lws:DataResource, <http://example.org/customType> ;
+  dcterms:format "application/json" ;
+  schema:size "2048"^^xsd:long ;
+  dcterms:modified "2025-11-24T13:00:00Z"^^xsd:dateTime .
+```
+
+</div>
+
+<div data-tab="application/n-triples">
+
+```nohighlight
+<https://storage.example/alice/notes/> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <https://www.w3.org/ns/lws#Container> .
+<https://storage.example/alice/notes/> <https://www.w3.org/ns/lws#totalItems> "2"^^<http://www.w3.org/2001/XMLSchema#integer> .
+<https://storage.example/alice/notes/> <https://www.w3.org/ns/lws#items> <https://storage.example/alice/notes/shoppinglist.txt> .
+<https://storage.example/alice/notes/> <https://www.w3.org/ns/lws#items> <https://storage.example/alice/notes/todo.json> .
+<https://storage.example/alice/notes/shoppinglist.txt> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <https://www.w3.org/ns/lws#DataResource> .
+<https://storage.example/alice/notes/shoppinglist.txt> <http://purl.org/dc/terms/format> "text/plain" .
+<https://storage.example/alice/notes/shoppinglist.txt> <http://schema.org/size> "47"^^<http://www.w3.org/2001/XMLSchema#long> .
+<https://storage.example/alice/notes/shoppinglist.txt> <http://purl.org/dc/terms/modified> "2025-11-24T12:00:00Z"^^<http://www.w3.org/2001/XMLSchema#dateTime> .
+<https://storage.example/alice/notes/todo.json> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <https://www.w3.org/ns/lws#DataResource> .
+<https://storage.example/alice/notes/todo.json> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://example.org/customType> .
+<https://storage.example/alice/notes/todo.json> <http://purl.org/dc/terms/format> "application/json" .
+<https://storage.example/alice/notes/todo.json> <http://schema.org/size> "2048"^^<http://www.w3.org/2001/XMLSchema#long> .
+<https://storage.example/alice/notes/todo.json> <http://purl.org/dc/terms/modified> "2025-11-24T13:00:00Z"^^<http://www.w3.org/2001/XMLSchema#dateTime> .
+```
+
+</div>
+
+<div data-tab="application/rdf+xml">
+
+```xml
+<?xml version="1.0" encoding="utf-8"?>
+<rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+         xmlns:lws="https://www.w3.org/ns/lws#"
+         xmlns:dcterms="http://purl.org/dc/terms/"
+         xmlns:schema="http://schema.org/">
+  <lws:Container rdf:about="">
+    <lws:totalItems rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">2</lws:totalItems>
+    <lws:items>
+      <lws:DataResource rdf:about="shoppinglist.txt">
+        <dcterms:format>text/plain</dcterms:format>
+        <schema:size rdf:datatype="http://www.w3.org/2001/XMLSchema#long">47</schema:size>
+        <dcterms:modified rdf:datatype="http://www.w3.org/2001/XMLSchema#dateTime">2025-11-24T12:00:00Z</dcterms:modified>
+      </lws:DataResource>
+    </lws:items>
+    <lws:items>
+      <lws:DataResource rdf:about="todo.json">
+        <rdf:type rdf:resource="http://example.org/customType"/>
+        <dcterms:format>application/json</dcterms:format>
+        <schema:size rdf:datatype="http://www.w3.org/2001/XMLSchema#long">2048</schema:size>
+        <dcterms:modified rdf:datatype="http://www.w3.org/2001/XMLSchema#dateTime">2025-11-24T13:00:00Z</dcterms:modified>
+      </lws:DataResource>
+    </lws:items>
+  </lws:Container>
+</rdf:RDF>
+```
+
+</div>
+
+</div>
