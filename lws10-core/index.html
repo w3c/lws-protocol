@@ -66,6 +66,7 @@
           code.dataset.lwsHighlighted = "";
         }
         function build() {
+          let n = 0;
           for (const box of document.querySelectorAll(".example-tabs")) {
             for (const old of box.querySelectorAll(":scope > .tab-bar")) old.remove();
             const panes = [...box.querySelectorAll(":scope > [data-tab]")];
@@ -84,7 +85,13 @@
             panes.forEach((pane, i) => {
               const button = document.createElement("button");
               button.type = "button";
+              const id = "lws-tab-" + n++;
+              button.id = id;
               button.setAttribute("role", "tab");
+              button.setAttribute("aria-controls", id + "-panel");
+              pane.id = id + "-panel";
+              pane.setAttribute("role", "tabpanel");
+              pane.setAttribute("aria-labelledby", id);
               button.textContent = pane.dataset.tab;
               button.addEventListener("click", () => select(i));
               bar.append(button);
