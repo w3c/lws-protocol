@@ -39,7 +39,7 @@ A contained resource description SHOULD include:
 
 The following example shows a <a>container</a> at `https://storage.example/alice/notes/` containing two resources. The other tabs show the same container in other RDF media types in the <a>LWS profile</a>.
 
-<div class="example-tabs">
+<div class="example-tabs" data-base="https://storage.example/alice/notes/">
 <div data-tab="application/lws+json">
 
 ```json
