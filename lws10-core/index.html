@@ -50,18 +50,8 @@
           }
           return out + esc(text.slice(last));
         }
-        function http(head) {
-          return head.split("\n").map((line, i) => {
-            const h = /^([\w-]+):(.*)$/.exec(line);
-            if (i === 0) return span("keyword", line);
-            return h ? span("attribute", h[1]) + ":" + esc(h[2]) : esc(line);
-          }).join("\n");
-        }
         function highlight(code) {
-          const text = code.textContent;
-          const split = /^(?:HTTP\/|[A-Z]+ \S+ HTTP\/)/.test(text) ? text.indexOf("\n\n") : -1;
-          code.innerHTML = split < 0 ? turtle(text)
-            : http(text.slice(0, split)) + "\n\n" + turtle(text.slice(split + 2));
+          code.innerHTML = turtle(code.textContent);
           code.classList.add("hljs");
           code.dataset.lwsHighlighted = "";
         }

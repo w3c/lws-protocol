@@ -46,12 +46,15 @@ When the target URI corresponds to a <a>container</a> (determined via metadata t
 <div class="example-tabs">
 <div data-tab="application/lws+json">
 
+Request:
+
 ```http
 GET /alice/notes/ HTTP/1.1
 Authorization: Bearer <token>
 Accept: application/lws+json
 ```
 
+Response headers:
 
 ```http
 HTTP/1.1 200 OK
@@ -60,7 +63,11 @@ ETag: "container-etag-789"
 Link: </alice/notes/.meta>; rel="linkset"; type="application/linkset+json"
 Link: </alice/>; rel="up"
 Link: <https://www.w3.org/ns/lws#Container>; rel="type"
+```
 
+Response body:
+
+```json
 {
   "@context": "https://www.w3.org/ns/lws/v1",
   "id": "/alice/notes/",
@@ -89,21 +96,28 @@ Link: <https://www.w3.org/ns/lws#Container>; rel="type"
 
 <div data-tab="text/turtle (LWS profile)">
 
+Request:
+
 ```http
 GET /alice/notes/ HTTP/1.1
 Authorization: Bearer <token>
 Accept: text/turtle; profile="https://www.w3.org/ns/lws/v1"
 ```
 
+Response headers:
 
-```nohighlight
+```http
 HTTP/1.1 200 OK
 Content-Type: text/turtle; profile="https://www.w3.org/ns/lws/v1"
 ETag: "container-etag-789"
 Link: </alice/notes/.meta>; rel="linkset"; type="application/linkset+json"
 Link: </alice/>; rel="up"
 Link: <https://www.w3.org/ns/lws#Container>; rel="type"
+```
 
+Response body:
+
+```nohighlight
 @prefix lws: <https://www.w3.org/ns/lws#> .
 @prefix dcterms: <http://purl.org/dc/terms/> .
 @prefix schema: <http://schema.org/> .
@@ -128,12 +142,15 @@ Link: <https://www.w3.org/ns/lws#Container>; rel="type"
 
 <div data-tab="application/rdf+xml">
 
+Request:
+
 ```http
 GET /alice/notes/ HTTP/1.1
 Authorization: Bearer <token>
 Accept: application/rdf+xml
 ```
 
+Response headers:
 
 ```http
 HTTP/1.1 200 OK
@@ -143,7 +160,11 @@ ETag: "container-etag-789"
 Link: </alice/notes/.meta>; rel="linkset"; type="application/linkset+json"
 Link: </alice/>; rel="up"
 Link: <https://www.w3.org/ns/lws#Container>; rel="type"
+```
 
+Response body:
+
+```xml
 <?xml version="1.0" encoding="utf-8"?>
 <rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
          xmlns:lws="https://www.w3.org/ns/lws#"
