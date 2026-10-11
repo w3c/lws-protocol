@@ -44,7 +44,10 @@
             else if (m[2]) out += span("link", m[2]);
             else if (m[3]) out += span("string", m[3]) + (m[4] ? esc(m[4]) : "");
             else if (m[5]) out += span("keyword", m[5]);
-            else if (m[6]) out += span("attr", m[6]);
+            else if (m[6]) {
+              const i = m[6].indexOf(":") + 1;
+              out += span("literal", m[6].slice(0, i)) + (i < m[6].length ? span("attr", m[6].slice(i)) : "");
+            }
             else out += span("number", m[7]);
             last = TURTLE.lastIndex;
           }
