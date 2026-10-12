@@ -36,7 +36,7 @@ Core metadata MAY be modified by clients. To ensure interoperability, servers MU
 
 1. Method Discovery: Servers MUST advertise support for GET and PATCH operations on the <a>linkset resource</a> via the Allow header.
 
-2. Patch Format Discovery: Servers MUST advertise support for JSON Merge Patch [[!RFC7386]] via the Accept-Patch header: `Accept-Patch: application/merge-patch+json`.
+2. Patch Format Discovery: Servers MUST advertise support for JSON Patch [[!RFC6902]] via the Accept-Patch header: `Accept-Patch: application/json-patch+json`.
 
 3. Optional Methods: Servers MAY support PUT or alternative patch formats; if supported, these MUST be included in the Allow and Accept-Patch headers respectively.
 
@@ -45,7 +45,7 @@ Core metadata MAY be modified by clients. To ensure interoperability, servers MU
 **Managing Metadata**
 Metadata is managed by interacting with the resource's associated <a>linkset resource</a> URI. Servers MUST include an `ETag` header as defined in [[RFC9110]] in responses to GET and HEAD requests.
 
-- Partial Updates (PATCH): This is the primary mechanism for metadata management. Servers MUST support PATCH using `application/merge-patch+json`.
+- Partial Updates (PATCH): This is the primary mechanism for metadata management. Servers MUST support PATCH using `application/json-patch+json`.
 
 - Replacement (PUT): If advertised in the Allow header, a client MAY replace the entire linkset. If the server does not support PUT, it MUST reject the request with 405 Method Not Allowed.
 

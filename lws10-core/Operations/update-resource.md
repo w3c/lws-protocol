@@ -30,7 +30,7 @@ HTTP/1.1 204 No Content
 ```
 * **Error responses:** If the `If-Match` precondition did not match (concurrent modification), the server responds with `412 Precondition Failed`. If the resource did not exist, a PUT meant as an update will result in `404 Not Found`. If the client is not authorized, `403 Forbidden` (or `401 Unauthorized` if no valid credentials were provided). If the request payload is not valid, `400 Bad Request`.
 
-**PATCH (partial update)** – The HTTP PATCH method [[RFC5789]] allows a client to specify partial modifications to a resource, rather than sending the whole new content. This is useful for large resources where sending the entire content would be inefficient if only a small part changed, or for concurrent editing where you want to apply specific changes. LWS server MUST minimally support JSON Merge Patch (application/merge-patch+json) as defined in [[RFC7386]].
+**PATCH (partial update)** – The HTTP PATCH method [[RFC5789]] allows a client to specify partial modifications to a resource, rather than sending the whole new content. This is useful for large resources where sending the entire content would be inefficient if only a small part changed, or for concurrent editing where you want to apply specific changes. LWS server MUST minimally support JSON Patch (`application/json-patch+json`) as defined in [[!RFC6902]].
 
 **Update Resource Metadata (HTTP PUT / PATCH on Linkset)**
 A resource's metadata is updated by modifying its corresponding <a>linkset resource</a>, discovered via the Link header with rel="linkset".
