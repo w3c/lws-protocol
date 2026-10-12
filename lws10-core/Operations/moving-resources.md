@@ -8,13 +8,13 @@ A move cannot be reduced to a <a href="#create-resource">create resource</a> ope
 The `up` link is managed by the server, and servers are not required to allow clients to modify it, as described in [](#metadata). A server that allows clients to modify the `up` link of a resource, and thereby to move resources between <a>containers</a>, MUST describe a `MoveResource` capability in its <a>storage description</a>, as described in [](#storage-description-capabilities), and MUST implement the requirements in this section. A server that does not allow it MUST reject the request with an appropriate 4xx status code, such as 409 Conflict, and MUST NOT describe a `MoveResource` capability.
 
 **Requesting a move:**
-A client moves a resource by applying a partial update to the resource's <a>linkset resource</a>, replacing the target of the `up` link with the identifier of the destination <a>container</a>. As required by [](#metadata), servers MUST support `application/merge-patch+json` [[RFC7386]] for this update. As for any modification of a <a>linkset resource</a>, clients SHOULD make the request conditional by including an `If-Match` header field carrying the current ETag of the <a>linkset resource</a>, as described in [](#update-resource); servers MAY require a conditional request and reject an unconditional one with 428 Precondition Required.
+A client moves a resource by applying a partial update to the resource's <a>linkset resource</a>, replacing the target of the `up` link with the identifier of the destination <a>container</a>. As required by [](#metadata), servers MUST support `application/json-patch+json` [[RFC6902]] for this update. As for any modification of a <a>linkset resource</a>, clients SHOULD make the request conditional by including an `If-Match` header field carrying the current ETag of the <a>linkset resource</a>, as described in [](#update-resource); servers MAY require a conditional request and reject an unconditional one with 428 Precondition Required.
 
-The destination MUST be an existing <a>container</a> within the same <a>storage</a>. Servers MUST reject a patch whose `up` link does not identify such a <a>container</a> with an appropriate 4xx status code, such as 409 Conflict. Servers MUST likewise reject a patch that would leave the resource without an `up` link, as every non-root resource is reachable from the <a>storage root</a>.
+The destination MUST be an existing <a>container</a> within the same <a>storage</a>. Servers MUST reject a patch that would set the target of the `up` link to anything other than such a <a>container</a> with an appropriate 4xx status code, such as 409 Conflict. Servers MUST likewise reject a patch that would leave the resource without an `up` link, as every non-root resource is reachable from the <a>storage root</a>.
 
-<p class="issue" data-number="254">
-JSON Merge Patch replaces arrays as a whole, so a patch that carries the `linkset` array replaces every link context in the <a>linkset resource</a>, not only the `up` link. This specification requires servers to preserve the links a client is not permitted to modify, but a client that also maintains user-defined links has to restate them in every patch. The requirements in this section are independent of the patch format, and the Working Group is reconsidering which formats a server is required to support.
-</p>
+<div class="note">
+JSON Patch identifies the value to change with a JSON Pointer [[RFC6901]], in which the members of an array are addressed by their position. A patch that replaces the target of the `up` link therefore depends on the position of the resource's link context in the `linkset` array, and on the position of the target object in the `up` array. A client learns these positions by reading the <a>linkset resource</a>, and a conditional request ensures that they still hold when the patch is applied. A client can additionally guard the change with a `test` operation, for example on the `anchor` of the link context or on the current target of the `up` link. Unlike a full replacement of the <a>linkset resource</a>, such a patch leaves every other link untouched, so a client does not have to restate the links it is not changing.
+</div>
 
 **Effect on <a>containment</a>:**
 On a successful update, the server MUST atomically remove the resource from the `items` list of its former parent <a>container</a> and add it to the `items` list of the destination <a>container</a>. The `totalItems` count of both <a>containers</a> SHOULD be updated accordingly, and the ETag of both <a>containers</a> MUST be updated to reflect the change.
@@ -44,20 +44,18 @@ Access to a resource is frequently governed by policies that are expressed in te
 In this example the <a>storage</a> assigns opaque identifiers that do not reflect <a>containment</a>. The
 resource being moved is identified by `https://storage.example/f8c3de3d`, its <a>linkset resource</a> by
 `https://storage.example/9b1e07a4`, and the source and destination <a>containers</a> by
-`https://storage.example/1d4f8a02` and `https://storage.example/c2a71f60` respectively.
+`https://storage.example/1d4f8a02` and `https://storage.example/c2a71f60` respectively. The client has
+read the <a>linkset resource</a>, in which the `up` link is the first target object of the first link context.
 ```
 PATCH /9b1e07a4 HTTP/1.1
 Host: storage.example
 Authorization: Bearer <token>
-Content-Type: application/merge-patch+json
+Content-Type: application/json-patch+json
 If-Match: "meta-v3"
 
-{
-  "linkset": [{
-    "anchor": "https://storage.example/f8c3de3d",
-    "up": [{ "href": "https://storage.example/c2a71f60" }]
-  }]
-}
+[
+  { "op": "replace", "path": "/linkset/0/up/0/href", "value": "https://storage.example/c2a71f60" }
+]
 ```
 Assuming the client is authorized and the destination <a>container</a> exists, the server removes the resource from the `items` list of `https://storage.example/1d4f8a02`, adds it to the `items` list of `https://storage.example/c2a71f60`, and updates the <a>linkset resource</a>, atomically:
 ```
@@ -74,15 +72,12 @@ the hierarchy, the move is observable only in the <a>containment</a> metadata.
 PATCH /alice/notes/shoppinglist.txt.meta HTTP/1.1
 Host: example.com
 Authorization: Bearer <token>
-Content-Type: application/merge-patch+json
+Content-Type: application/json-patch+json
 If-Match: "meta-v3"
 
-{
-  "linkset": [{
-    "anchor": "/alice/notes/shoppinglist.txt",
-    "up": [{ "href": "/alice/archive/" }]
-  }]
-}
+[
+  { "op": "replace", "path": "/linkset/0/up/0/href", "value": "/alice/archive/" }
+]
 ```
 A server that derives identifiers from the <a>containment</a> hierarchy, and that therefore advertises <code>"preservesIdentifier": false</code>, cannot preserve the identifier. It reports the resulting identifiers in the updated <a>linkset resource</a>:
 ```
@@ -106,15 +101,12 @@ ETag: "meta-v4"
 PATCH /alice/notes/.meta HTTP/1.1
 Host: example.com
 Authorization: Bearer <token>
-Content-Type: application/merge-patch+json
+Content-Type: application/json-patch+json
 If-Match: "meta-v7"
 
-{
-  "linkset": [{
-    "anchor": "/alice/notes/",
-    "up": [{ "href": "/alice/notes/2026/" }]
-  }]
-}
+[
+  { "op": "replace", "path": "/linkset/0/up/0/href", "value": "/alice/notes/2026/" }
+]
 ```
 The server refuses the update, as it would introduce a cycle in the <a>containment</a> hierarchy:
 ```
