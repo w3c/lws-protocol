@@ -12,7 +12,6 @@ import { fileURLToPath } from "node:url";
 import jsonld from "jsonld";
 import { Parser } from "n3";
 import { isomorphic } from "rdf-isomorphic";
-import { RdfXmlParser } from "rdfxml-streaming-parser";
 
 const here = fileURLToPath(new URL(".", import.meta.url));
 const root = resolve(here, "../..");
@@ -43,7 +42,6 @@ async function documentLoader(url) {
 function syntaxOf(label) {
   const l = label.toLowerCase();
   if (l.includes("lws+json") || l.includes("ld+json") || l.includes("json-ld")) return "jsonld";
-  if (l.includes("rdf+xml")) return "rdfxml";
   if (l.includes("n-triples")) return "N-Triples";
   if (l.includes("n-quads")) return "N-Quads";
   if (l.includes("trig")) return "TriG";
@@ -60,17 +58,6 @@ async function parse(syntax, text, base) {
       safe: true,
     });
     return new Parser({ format: "N-Quads" }).parse(nquads);
-  }
-  if (syntax === "rdfxml") {
-    return new Promise((ok, fail) => {
-      const quads = [];
-      const parser = new RdfXmlParser({ baseIRI: base });
-      parser.on("data", (q) => quads.push(q));
-      parser.on("error", fail);
-      parser.on("end", () => ok(quads));
-      parser.write(text);
-      parser.end();
-    });
   }
   return new Parser({ format: syntax, baseIRI: base }).parse(text);
 }

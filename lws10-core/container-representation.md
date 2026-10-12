@@ -114,35 +114,4 @@ The following example shows a <a>container</a> at `https://storage.example/alice
 
 </div>
 
-<div data-tab="application/rdf+xml">
-
-```xml
-<?xml version="1.0" encoding="utf-8"?>
-<rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
-         xmlns:lws="https://www.w3.org/ns/lws#"
-         xmlns:dcterms="http://purl.org/dc/terms/"
-         xmlns:schema="http://schema.org/">
-  <lws:Container rdf:about="">
-    <lws:totalItems rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">2</lws:totalItems>
-    <lws:items>
-      <lws:DataResource rdf:about="shoppinglist.txt">
-        <dcterms:format>text/plain</dcterms:format>
-        <schema:size rdf:datatype="http://www.w3.org/2001/XMLSchema#long">47</schema:size>
-        <dcterms:modified rdf:datatype="http://www.w3.org/2001/XMLSchema#dateTime">2025-11-24T12:00:00Z</dcterms:modified>
-      </lws:DataResource>
-    </lws:items>
-    <lws:items>
-      <lws:DataResource rdf:about="todo.json">
-        <rdf:type rdf:resource="http://example.org/customType"/>
-        <dcterms:format>application/json</dcterms:format>
-        <schema:size rdf:datatype="http://www.w3.org/2001/XMLSchema#long">2048</schema:size>
-        <dcterms:modified rdf:datatype="http://www.w3.org/2001/XMLSchema#dateTime">2025-11-24T13:00:00Z</dcterms:modified>
-      </lws:DataResource>
-    </lws:items>
-  </lws:Container>
-</rdf:RDF>
-```
-
-</div>
-
 </div>

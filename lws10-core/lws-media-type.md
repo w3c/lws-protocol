@@ -17,8 +17,6 @@ Servers MUST honor requests for `application/lws+json` on <a>containers</a>, and
 
 A client requests a representation in the <a>LWS profile</a> by including the <a>LWS profile</a> URI in the `profile` parameter of an RDF media type. RDF media types that define this parameter include `application/ld+json` [[JSON-LD11]], `text/turtle` [[RDF12-TURTLE]], `application/trig` [[RDF12-TRIG]], `application/n-triples` [[RDF12-N-TRIPLES]], and `application/n-quads` [[RDF12-N-QUADS]]. If the server selects such a media type, the response MUST conform to the <a>LWS profile</a>, that is, it MUST be RDF isomorphic to the `application/lws+json` representation, and its `Content-Type` MUST include the same `profile` parameter. A server MUST NOT select such a media type if it cannot produce a representation in the <a>LWS profile</a> in it.
 
-For an RDF media type that does not define a `profile` parameter, such as `application/rdf+xml`, a server MAY indicate that a representation conforms to the <a>LWS profile</a> with a `Link` header whose relation type is `profile` and whose target is the <a>LWS profile</a> URI [[!RFC6906]]. Such a representation MUST be RDF isomorphic to the `application/lws+json` representation.
-
 When the selected representation depends on the request's `Accept` header, responses SHOULD include a `Vary: Accept` header [[!RFC9110]].
 
 #### Pagination
