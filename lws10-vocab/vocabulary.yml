@@ -95,6 +95,11 @@ class:
     label: Access Request Service
     comment: A service endpoint for managing access requests.
 
+  - id: as:Activity
+    label: Activity
+    comment: Superclass of all activites.
+    context: none
+
   - id: as:Create
     label: Create
     comment: An activity representing the creation of a resource.
@@ -159,6 +164,8 @@ property:
   - id: activity
     label: activity
     domain: lws:Notification
+    range: as:Activity
+    property_scope: as:Activity
     comment: The Activity Streams 2.0 activity payload within a notification.
     defined_by: https://www.w3.org/TR/lws-core/
 
@@ -179,23 +186,32 @@ property:
 
   - id: as:object
     label: object
+    range: IRI
+    scope: as:Activity
     comment: The primary object of an activity.
 
   - id: as:actor
     label: actor
+    range: IRI
+    scope: as:Activity
     comment: The agent that performed the activity.
 
   - id: as:target
     label: target
+    range: IRI
+    scope: as:Activity
     comment: The target of the activity.
 
   - id: as:origin
     label: origin
+    range: IRI
+    scope: as:Activity
     comment: The origin of a Move activity.
 
   - id: as:published
     label: published
     range: xsd:dateTime
+    scope: as:Activity
     comment: The date and time the activity was published.
 
   - id: ldp:inbox
