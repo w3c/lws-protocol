@@ -217,6 +217,9 @@ property:
   - id: ldp:inbox
     label: inbox
     range: IRI
+    scope:
+      - AccessGrant
+      - AccessRequest
     comment: A URL to which notifications are delivered via HTTP POST.
 
   - id: schema:expires
