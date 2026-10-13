@@ -225,6 +225,7 @@ property:
   - id: schema:expires
     label: expires
     range: xsd:dateTime
+    scope: WebhookSubscription
     comment: The date and time at which a subscription expires.
 
   - id: access
