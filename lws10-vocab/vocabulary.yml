@@ -91,6 +91,18 @@ class:
     label: Access Request Service
     comment: A service endpoint for managing access requests.
 
+  - id: as:Create
+    label: Create
+    comment: An activity representing the creation of a resource.
+
+  - id: as:Update
+    label: Update
+    comment: An activity representing the update of a resource.
+
+  - id: as:Delete
+    label: Delete
+    comment: An activity representing the deletion of a resource.
+
 property:
   - id: items
     label: items
@@ -156,18 +168,6 @@ property:
     label: storage
     range: xsd:anyURI
     comment: The canonical URI identifying an LWS storage.
-
-  - id: as:Create
-    label: Create
-    comment: An activity representing the creation of a resource.
-
-  - id: as:Update
-    label: Update
-    comment: An activity representing the update of a resource.
-
-  - id: as:Delete
-    label: Delete
-    comment: An activity representing the deletion of a resource.
 
   - id: as:object
     label: object
