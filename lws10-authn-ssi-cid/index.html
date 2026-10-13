@@ -52,7 +52,7 @@
       <h2>Introduction</h2>
       <p>
         Self-issued identity is important for cases where applications act on their own behalf. This includes autonomous bots as well as server-side scripts, among others.
-        In these cases, the <a>agent</a> is able to securely manage the private portion of a keypair, which it uses to generate signed JSON Web Tokens (JWT).
+        In these cases, the <a>agent</a> is able to securely manage the private portion of a key pair, which it uses to generate signed JSON Web Tokens (JWT).
         This specification describes how this class of <a>agents</a> can generate <a>authentication credentials</a> that can be used with a Linked Web Storage.
       </p>
 
@@ -80,7 +80,7 @@
       </p>
 
       <p>
-        The terms "<dfn data-cite="LWS10-CORE#dfn-agent">agent</dfn>", "<dfn data-cite="LWS10-CORE#dfn-authentication-credential">authentication credential</dfn>", and "<dfn data-cite="LWS10-CORE#dfn-authentication-suite">authentication suite</dfn>" are defined by Linked Web Storage Protocol [[!LWS10-CORE]]
+        The terms "<dfn data-cite="LWS10-CORE#dfn-agent">agent</dfn>", "<dfn data-cite="LWS10-CORE#dfn-authentication-credential">authentication credential</dfn>", and "<dfn data-cite="LWS10-CORE#dfn-authentication-suite">authentication suite</dfn>" are defined by Linked Web Storage Protocol [[!LWS10-CORE]].
       </p>
     </section>
 
@@ -112,7 +112,7 @@
       </p>
 
       <p>
-        Any audience restriction in the ID Token MUST use the <code>aud</code> (audience) claim. The <code>aud</code> claim MUST include the target authorization server.
+        Any audience restriction in the JWT MUST use the <code>aud</code> (audience) claim. The <code>aud</code> claim MUST include the target authorization server.
       </p>
 
       <p>
@@ -170,7 +170,7 @@ signature
       </p>
 
       <p>
-        The verifier MUST use the <code>kid</code> (key id) value from the signed JWT header to identify a verification method from the subject's controlled identifier document.
+        The verifier MUST use the <code>kid</code> (key ID) value from the signed JWT header to identify a verification method from the subject's controlled identifier document.
         This process is described in [[!CID-1.0]] Section 3.3.
         Using the selected verification method from the controlled identifier document, the signature of the JWT MUST be validated as described in [[!RFC7515]], Section 5.2.
       </p>
