@@ -148,7 +148,7 @@ property:
 
   - id: subscription
     label: subscription
-    range: xsd:anyURI
+    range: IRI
     comment: The URL of the subscription resource or connection endpoint.
     defined_by: https://www.w3.org/TR/lws-core/
 
@@ -160,13 +160,13 @@ property:
 
   - id: topic
     label: topic
-    range: xsd:anyURI
+    range: IRI
     comment: An array of resource URIs covered by a subscription.
     defined_by: https://www.w3.org/TR/lws-core/
 
   - id: storage
     label: storage
-    range: xsd:anyURI
+    range: IRI
     comment: The canonical URI identifying an LWS storage.
 
   - id: as:object
@@ -192,7 +192,7 @@ property:
 
   - id: ldp:inbox
     label: inbox
-    range: xsd:anyURI
+    range: IRI
     comment: A URL to which notifications are delivered via HTTP POST.
 
   - id: schema:expires
