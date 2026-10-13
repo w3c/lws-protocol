@@ -87,6 +87,10 @@ class:
     label: Access Grant Service
     comment: A service endpoint for managing access grants.
 
+  - id: AccessRequest
+    label: Access Request
+    comment: An request by an agent to access to resources.
+
   - id: AccessRequestService
     label: Access Request Service
     comment: A service endpoint for managing access requests.
@@ -168,6 +172,10 @@ property:
     label: storage
     range: IRI
     comment: The canonical URI identifying an LWS storage.
+    scope:
+      - AccessGrant
+      - AccessRequest
+      - Notification
 
   - id: as:object
     label: object
