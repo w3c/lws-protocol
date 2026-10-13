@@ -158,6 +158,7 @@ property:
   - id: subscription
     label: subscription
     range: IRI
+    scope: WebhookSubscription
     comment: The URL of the subscription resource or connection endpoint.
     defined_by: https://www.w3.org/TR/lws-core/
 
