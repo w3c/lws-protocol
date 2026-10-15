@@ -89,4 +89,4 @@ The LWS server MUST support HEAD [[RFC9110]] for both <a>containers</a> and non-
 **Caching and Conditional Requests:** LWS leverages HTTP caching semantics. Servers SHOULD support conditional requests as defined in [[RFC9110]], including mechanisms such as entity tags (`ETags`) and date-based validators (like `If-Modified-Since` headers). If the resource or <a>container</a> listing has not changed, respond with `304 Not Modified` to avoid redundant transfers.
 
 
-**Discoverability and Authorization:** For enhanced discoverability, servers SHOULD include `WWW-Authenticate` headers on `401 Unauthorized` responses with parameters to guide clients without hardcoded URIs. Metadata links SHOULD be included where applicable.
+**Discoverability and Authorization:** For enhanced discoverability, `401 Unauthorized` responses include a `WWW-Authenticate` header with a `resource_metadata` parameter, as described in [Authorization Server Discovery](#authorization-server-discovery), so that clients can locate an authorization server without hardcoded URIs.
