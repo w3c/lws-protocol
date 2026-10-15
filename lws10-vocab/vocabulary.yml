@@ -25,13 +25,13 @@ ontology:
     value: RDFS [[RDF-SCHEMA]] vocabulary used by the Linked Web Storage Protocol [[lws-core]]
 
   - property: rdfs:seeAlso
-    value: https://www.w3.org/TR/lws-protocol/
+    value: https://www.w3.org/TR/lws10-core/
 
 class:
   - id: StorageResource
     label: Storage Resource
     comment: An HTTP resource that supports the read operations defined by the Linked Web Storage Protocol.
-    defined_by: https://www.w3.org/TR/lws-core/#dfn-storage-resource
+    defined_by: https://www.w3.org/TR/lws10-core/#dfn-storage-resources
 
   - id: Container
     label: Container
@@ -54,22 +54,22 @@ class:
   - id: OpenIdProvider
     label: OpenID Provider
     comment: An OpenID Connect identity provider service.
-    defined_by: https://www.w3.org/TR/lws-authn-openid/
+    defined_by: https://www.w3.org/TR/lws10-authn-openid/
 
   - id: Notification
     label: Notification
     comment: A notification envelope describing an event that occurred on a resource.
-    defined_by: https://www.w3.org/TR/lws-core/
+    defined_by: https://www.w3.org/TR/lws10-core/
 
   - id: NotificationService
     label: Notification Service
     comment: A service through which clients subscribe to resource change notifications.
-    defined_by: https://www.w3.org/TR/lws-core/
+    defined_by: https://www.w3.org/TR/lws10-core/
 
   - id: WebhookSubscription
     label: Webhook Subscription
     comment: A subscription type that delivers notifications via HTTP POST to a subscriber-provided inbox URL.
-    defined_by: https://www.w3.org/TR/lws-core/
+    defined_by: https://www.w3.org/TR/lws10-core/
 
   - id: AccessProfile
     label: Access Profile
@@ -132,25 +132,25 @@ property:
     label: subscription type
     domain: lws:NotificationService
     comment: The subscription types supported by a notification service.
-    defined_by: https://www.w3.org/TR/lws-core/
+    defined_by: https://www.w3.org/TR/lws10-core/
 
   - id: subscription
     label: subscription
     range: xsd:anyURI
     comment: The URI of the subscription resource or connection endpoint.
-    defined_by: https://www.w3.org/TR/lws-core/
+    defined_by: https://www.w3.org/TR/lws10-core/
 
   - id: activity
     label: activity
     domain: lws:Notification
     comment: The Activity Streams 2.0 activity payload within a notification.
-    defined_by: https://www.w3.org/TR/lws-core/
+    defined_by: https://www.w3.org/TR/lws10-core/
 
   - id: topic
     label: topic
     range: xsd:anyURI
     comment: One or more resource URIs covered by a subscription.
-    defined_by: https://www.w3.org/TR/lws-core/
+    defined_by: https://www.w3.org/TR/lws10-core/
 
   - id: storage
     label: storage
