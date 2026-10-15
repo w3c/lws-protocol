@@ -84,23 +84,23 @@
       <h2>Authentication Credential Serialization</h2>
 
       <p>
-        SAML tokens used as <a>authentication credentials</a> MUST be signed. In addition, a valid SAML token MUST include the following assertions:
+        SAML tokens used as <a>authentication credentials</a> MUST be signed. In addition, a valid SAML token MUST include the following elements and attributes:
       </p>
 
       <p>
-        The SAML token MUST use the <code>saml:NameID</code> assertion for the LWS subject identifier.
+        The SAML token MUST use the <code>saml:NameID</code> element for the LWS subject identifier.
       </p>
 
       <p>
-        The SAML token MUST use the <code>saml:Issuer</code> assertion for the LWS issuer identifier.
+        The SAML token MUST use the <code>saml:Issuer</code> element for the LWS issuer identifier.
       </p>
 
       <p>
-        The SAML token MUST use the <code>Recipient</code> parameter within a <code>saml:SubjectConfirmationData</code> assertion for the LWS client identifier.
+        The SAML token MUST use the <code>Recipient</code> attribute within a <code>saml:SubjectConfirmationData</code> element for the LWS client identifier.
       </p>
 
       <p>
-        Any audience restriction in the SAML token MUST use the <code>saml:Audience</code> assertion. The <code>saml:Audience</code> assertion SHOULD include a client identifier and any additional target audience such as an authorization server.
+        Any audience restriction in the SAML token MUST use the <code>saml:Audience</code> element. The <code>saml:Audience</code> element SHOULD include a client identifier and any additional target audience such as an authorization server.
       </p>
 
       <p>
