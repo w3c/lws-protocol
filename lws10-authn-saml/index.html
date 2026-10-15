@@ -84,23 +84,23 @@
       <h2>Authentication Credential Serialization</h2>
 
       <p>
-        SAML tokens used as <a>authentication credentials</a> MUST be signed. In addition, a valid SAML token MUST include the following assertions:
+        SAML tokens used as <a>authentication credentials</a> MUST be signed. In addition, a valid SAML token MUST include the following elements and attributes:
       </p>
 
       <p>
-        The SAML token MUST use the <code>saml:NameID</code> assertion for the LWS subject identifier.
+        The SAML token MUST use the <code>saml:NameID</code> element for the LWS subject identifier.
       </p>
 
       <p>
-        The SAML token MUST use the <code>saml:Issuer</code> assertion for the LWS issuer identifier.
+        The SAML token MUST use the <code>saml:Issuer</code> element for the LWS issuer identifier.
       </p>
 
       <p>
-        The SAML token MUST use the <code>Recipient</code> parameter within a <code>saml:SubjectConfirmationData</code> assertion for the LWS client identifier.
+        The SAML token MUST use the <code>Recipient</code> attribute within a <code>saml:SubjectConfirmationData</code> element for the LWS client identifier.
       </p>
 
       <p>
-        Any audience restriction in the SAML token MUST use the <code>saml:Audience</code> assertion. The <code>saml:Audience</code> assertion SHOULD include a client identifier and any additional target audience such as an authorization server.
+        Any audience restriction in the SAML token MUST use the <code>saml:Audience</code> element. The <code>saml:Audience</code> element SHOULD include a client identifier and any additional target audience such as an authorization server.
       </p>
 
       <p>
@@ -115,38 +115,38 @@
     Version="2.0"
     IssueInstant="2025-10-25T01:01:16Z"&gt;
 
-  &lt;saml:Issuer&gt;https://idp.example</saml:Issuer>
+  &lt;saml:Issuer&gt;https://idp.example&lt;/saml:Issuer&gt;
 
   &lt;ds:Signature&gt;
     &lt;ds:SignedInfo&gt;
       ...
-    &lt;ds:SignedInfo&gt;
-  &lt;ds:SignedInfo&gt;
+    &lt;/ds:SignedInfo&gt;
+  &lt;/ds:SignedInfo&gt;
 
   &lt;samlp:Status&gt;
     &lt;samlp:StatusCode Value="urn:oasis:names:tc:SAML:2.0:status:Success"/&gt;
-  &lt;samlp:Status&gt;
+  &lt;/samlp:Status&gt;
 
   &lt;saml:Assertion Version="2.0" IssueInstant="2025-10-25T01:01:16Z"&gt;
     &lt;saml:Issuer&gt;https://idp.example&lt;/saml:Issuer&gt;
     &lt;saml:Subject&gt;
       &lt;saml:NameID Format="urn:oasis:names:tc:SAML:2.0:nameid-format:persistent"&gt;
           https://id.example/end-user
-      &lt;saml:NameID&gt;
+      &lt;/saml:NameID&gt;
       &lt;saml:SubjectConfirmation Method="urn:oasis:names:tc:SAML:2.0:cm:bearer"&gt;
         &lt;saml:SubjectConfirmationData NotOnOrAfter="2025-10-25T02:01:16Z"
                                       Recipient="https://app.example/SAML"/&gt;
-      &lt;saml:SubjectConfirmation&gt;
-    &lt;saml:Subject&gt;
+      &lt;/saml:SubjectConfirmation&gt;
+    &lt;/saml:Subject&gt;
     &lt;saml:Conditions NotBefore="2025-10-25T01:01:16Z"
                      NotOnOrAfter="2025-10-25T02:01:16Z"&gt;
       &lt;saml:AudienceRestriction&gt;
-        &lt;saml:Audience&gt;https://app.example/SAML</saml:Audience>
-        &lt;saml:Audience&gt;https://as.example</saml:Audience>
-      &lt;saml:AudienceRestriction&gt;
-    &lt;saml:Conditions&gt;
-  &lt;saml:Assertion&gt;
-&lt;samlp:Response&gt;
+        &lt;saml:Audience&gt;https://app.example/SAML&lt;/saml:Audience&gt;
+        &lt;saml:Audience&gt;https://as.example&lt;/saml:Audience&gt;
+      &lt;/saml:AudienceRestriction&gt;
+    &lt;/saml:Conditions&gt;
+  &lt;/saml:Assertion&gt;
+&lt;/samlp:Response&gt;
       </pre>
     </section>
 
