@@ -137,7 +137,7 @@ property:
   - id: subscription
     label: subscription
     range: xsd:anyURI
-    comment: The URL of the subscription resource or connection endpoint.
+    comment: The URI of the subscription resource or connection endpoint.
     defined_by: https://www.w3.org/TR/lws10-core/
 
   - id: activity
@@ -149,7 +149,7 @@ property:
   - id: topic
     label: topic
     range: xsd:anyURI
-    comment: An array of resource URIs covered by a subscription.
+    comment: One or more resource URIs covered by a subscription.
     defined_by: https://www.w3.org/TR/lws10-core/
 
   - id: storage
@@ -193,7 +193,7 @@ property:
   - id: ldp:inbox
     label: inbox
     range: xsd:anyURI
-    comment: A URL to which notifications are delivered via HTTP POST.
+    comment: A URI to which notifications are delivered via HTTP POST.
 
   - id: schema:expires
     label: expires
