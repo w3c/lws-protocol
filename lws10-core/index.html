@@ -35,7 +35,7 @@
         // It is OK to have unused definition in a Working Draft
         // In the editors' draft we keep these warnings for awareness.
         // And of course, we keep them in more mature state, as we don't want them to exist in the end.
-        if (cfg.specStatus === "FPWD" || cfg.specSTatus === "WD") {
+        if (cfg.specStatus === "FPWD" || cfg.specStatus === "WD") {
           respecConfig.lint['no-unused-dfns'] = false;
         }
       }
@@ -124,7 +124,7 @@
         The protocol defines standard operations on these resources to create, read, update, and delete. Each resource is identified by a URI. A client navigates the resource hierarchy from a root container, discovering contained resources and their relations through links provided in server responses.
       </p>
       <p>
-        A agent's identity is confirmed through an identity provider that can be external to the Linked Web Storage server. This loose coupling means the server does not necessarily manage credentials directly; rather, it can receive and validate a signed authentication credential as a token issued by a trusted identity provider. A user can therefore present an existing identity to a compliant server, without always needing a new or existing account just for that server. LWS makes use of user authentication as defined in specifications for OpenID Connect, SAML 2.0, and self-signed controlled identifiers (CIDs), for example.
+        An agent's identity is confirmed through an identity provider that can be external to the Linked Web Storage server. This loose coupling means the server does not necessarily manage credentials directly; rather, it can receive and validate a signed authentication credential as a token issued by a trusted identity provider. A user can therefore present an existing identity to a compliant server, without always needing a new or existing account just for that server. LWS makes use of user authentication as defined in specifications for OpenID Connect, SAML 2.0, and self-signed controlled identifiers (CIDs), for example.
       </p>
       <p>
         Authorization determines whether a requesting agent has permission to access a resource or perform an operation on it. A compliant LWS server designates a resource manager for each resource that determines whether a resource is private (i.e., available only to its owner), restricted (i.e., available to a defined set of users), or public (i.e., available to any user). The server enforces the access decisions of the resource manager when handling each client request.
@@ -145,8 +145,8 @@
         </p>
 
         <ul>
-          <li><dfn>served resource</dfn> - (<span class="TOOD">available resource? published resource?</span>) (<span class="TOOD"><a href="https://github.com/w3c/lws-ucs/issues/160">not defined in UCS</a></span>) A network-accessible entity exposed by a service for interaction, retrieval, or manipulation using the protocol defined in this document.</li>
-          <li><dfn>requesting agent</dfn> - (<span class="TOOD"><a href="https://w3c.github.io/lws-ucs/spec/#dfn-entity">entity</a> in UCS</span>) An entity (e.g., client, user, or process) that initiates a request to interact with a servable resource.</li>
+          <li><dfn>served resource</dfn> - (<span class="TODO">available resource? published resource?</span>) (<span class="TODO"><a href="https://github.com/w3c/lws-ucs/issues/160">not defined in UCS</a></span>) A network-accessible entity exposed by a service for interaction, retrieval, or manipulation using the protocol defined in this document.</li>
+          <li><dfn>requesting agent</dfn> - (<span class="TODO"><a href="https://w3c.github.io/lws-ucs/spec/#dfn-entity">entity</a> in UCS</span>) An entity (e.g., client, user, or process) that initiates a request to interact with a servable resource.</li>
         </ul>
 
         <p>
