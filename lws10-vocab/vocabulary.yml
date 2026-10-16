@@ -87,9 +87,30 @@ class:
     label: Access Grant Service
     comment: A service endpoint for managing access grants.
 
+  - id: AccessRequest
+    label: Access Request
+    comment: An request by an agent to access to resources.
+
   - id: AccessRequestService
     label: Access Request Service
     comment: A service endpoint for managing access requests.
+
+  - id: as:Activity
+    label: Activity
+    comment: Superclass of all activites.
+    context: none
+
+  - id: as:Create
+    label: Create
+    comment: An activity representing the creation of a resource.
+
+  - id: as:Update
+    label: Update
+    comment: An activity representing the update of a resource.
+
+  - id: as:Delete
+    label: Delete
+    comment: An activity representing the deletion of a resource.
 
 property:
   - id: items
@@ -136,72 +157,83 @@ property:
 
   - id: subscription
     label: subscription
-    range: xsd:anyURI
+    range: IRI
+    scope: WebhookSubscription
     comment: The URI of the subscription resource or connection endpoint.
     defined_by: https://www.w3.org/TR/lws10-core/
 
   - id: activity
     label: activity
     domain: lws:Notification
+    range: as:Activity
+    property_scope: as:Activity
     comment: The Activity Streams 2.0 activity payload within a notification.
     defined_by: https://www.w3.org/TR/lws10-core/
 
   - id: topic
     label: topic
-    range: xsd:anyURI
+    range: IRI
     comment: One or more resource URIs covered by a subscription.
     defined_by: https://www.w3.org/TR/lws10-core/
 
   - id: storage
     label: storage
-    range: xsd:anyURI
+    range: IRI
     comment: The canonical URI identifying an LWS storage.
-
-  - id: as:Create
-    label: Create
-    comment: An activity representing the creation of a resource.
-
-  - id: as:Update
-    label: Update
-    comment: An activity representing the update of a resource.
-
-  - id: as:Delete
-    label: Delete
-    comment: An activity representing the deletion of a resource.
+    scope:
+      - AccessGrant
+      - AccessRequest
+      - Notification
 
   - id: as:object
     label: object
+    range: IRI
+    scope: as:Activity
     comment: The primary object of an activity.
 
   - id: as:actor
     label: actor
+    range: IRI
+    scope: as:Activity
     comment: The agent that performed the activity.
 
   - id: as:target
     label: target
+    range: IRI
+    scope: as:Activity
     comment: The target of the activity.
 
   - id: as:origin
     label: origin
+    range: IRI
+    scope: as:Activity
     comment: The origin of a Move activity.
 
   - id: as:published
     label: published
     range: xsd:dateTime
+    scope: as:Activity
     comment: The date and time the activity was published.
 
   - id: ldp:inbox
     label: inbox
-    range: xsd:anyURI
+    range: IRI
+    scope:
+      - AccessGrant
+      - AccessRequest
     comment: A URI to which notifications are delivered via HTTP POST.
 
   - id: schema:expires
     label: expires
     range: xsd:dateTime
+    scope: WebhookSubscription
     comment: The date and time at which a subscription expires.
 
   - id: access
     label: access
+    scope:
+      - AccessGrant
+      - AccessRequest
     comment: The access policies associated with an access request or grant.
 
   - id: dcterms:conformsTo

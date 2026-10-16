@@ -5,6 +5,6 @@
     "build": "yml2vocab -v vocabulary -t template.html -c && mv vocabulary.html index.html"
   },
   "devDependencies": {
-    "yml2vocab": "^1"
+    "yml2vocab": "^1.12.0"
   }
 }
