@@ -1,0 +1,29 @@
+name: Check examples
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+
+jobs:
+  rdf-isomorphism:
+    name: Tabbed examples are RDF isomorphic
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+
+      - uses: actions/setup-node@v7
+        with:
+          node-version: "20"
+
+      - name: Build the LWS JSON-LD context
+        working-directory: lws10-vocab
+        run: |
+          npm ci
+          npx yml2vocab -v vocabulary -t template.html -c
+
+      - name: Check that every tab in a tabbed example shows the same RDF
+        working-directory: tools/check-examples
+        run: |
+          npm ci
+          npm run check
