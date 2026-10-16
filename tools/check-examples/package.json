@@ -1,0 +1,13 @@
+{
+  "name": "lws-check-examples",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "check": "node check-examples.js"
+  },
+  "dependencies": {
+    "jsonld": "^8.3.3",
+    "n3": "^1.26.0",
+    "rdf-isomorphic": "^2.0.1"
+  }
+}
