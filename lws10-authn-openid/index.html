@@ -39,7 +39,7 @@
   <body>
     <section id="abstract">
       <p>
-        This document defines an OpenID Connect-based authentication suite for the Linked Web Storage (LWS) protocol, enabling LWS applications to integrate with OpenID providers.
+        This document defines an OpenID Connect-based authentication suite for the Linked Web Storage (LWS) protocol, enabling LWS applications to integrate with OpenID Providers.
       </p>
     </section>
     <section id="sotd">
@@ -51,7 +51,7 @@
     <section id="introduction">
       <h2>Introduction</h2>
       <p>
-        OpenID Connect is a widely used mechanism for web-based authentication. This authentication suite describes how an OpenID provider can be used with Linked Web Storage-conforming applications.
+        OpenID Connect is a widely used mechanism for web-based authentication. This authentication suite describes how an OpenID Provider can be used with Linked Web Storage-conforming applications.
       </p>
     </section>
     <section id="conformance"></section>
@@ -64,11 +64,11 @@
       </p>
 
       <p>
-        The terms "OpenID provider", "id token", "end-user", and "issuer" are defined by OpenID Connect Core 1.0 [[!OPENID-CONNECT-CORE]].
+        The terms "OpenID Provider", "ID Token", "end-user", and "issuer" are defined by OpenID Connect Core 1.0 [[!OPENID-CONNECT-CORE]].
       </p>
 
       <p>
-        The term "openid connect discovery" is defined by OpenID Connect Discovery 1.0 [[!OPENID-CONNECT-DISCOVERY]].
+        The term "OpenID Connect Discovery" is defined by OpenID Connect Discovery 1.0 [[!OPENID-CONNECT-DISCOVERY]].
       </p>
 
       <p>
@@ -84,7 +84,7 @@
       </p>
 
       <p>
-        The terms "<dfn data-cite="LWS10-CORE#dfn-agent">agent</dfn>", "<dfn data-cite="LWS10-CORE#dfn-authentication-credential">authentication credential</dfn>", and "<dfn data-cite="LWS10-CORE#dfn-authentication-suite">authentication suite</dfn>" are defined by Linked Web Storage Protocol [[!LWS10-CORE]]
+        The terms "<dfn data-cite="LWS10-CORE#dfn-agent">agent</dfn>", "<dfn data-cite="LWS10-CORE#dfn-authentication-credential">authentication credential</dfn>", and "<dfn data-cite="LWS10-CORE#dfn-authentication-suite">authentication suite</dfn>" are defined by Linked Web Storage Protocol [[!LWS10-CORE]].
       </p>
     </section>
 
@@ -151,7 +151,7 @@ signature
       <h2>Authentication Credential Validation</h2>
 
       <p>
-        For an ID Token to validate as an LWS <a>authentication credential</a>,
+        For an ID Token to be valid as an LWS <a>authentication credential</a>,
         there must be a trust relationship between the verifier and the issuing party.
       </p>
 
@@ -202,17 +202,17 @@ signature
       </p>
 
       <p>
-        An OpenID provider should support a mechanism to restrict the audience of an <a>authentication credential</a> to a limited set of entities, including an authorization server.
+        An OpenID Provider should support a mechanism to restrict the audience of an <a>authentication credential</a> to a limited set of entities, including an authorization server.
         One mechanism for achieving this is to use Resource Indicators for OAuth 2.0 [[RFC8707]].
         A client in possession of an <a>authentication credential</a> with no audience restrictions should exchange this token for an equivalent audience-restricted token by using, for example, OAuth 2.0 Token Exchange [[RFC8693]].
       </p>
 
       <p>
-        An OpenID provider should provide support for "OAuth 2.0 Authorization Server Issuer Identification" [[RFC9207]] by including an <code>iss</code> parameter in the authorization response of an OAuth flow.
+        An OpenID Provider should provide support for "OAuth 2.0 Authorization Server Issuer Identification" [[RFC9207]] by including an <code>iss</code> parameter in the authorization response of an OAuth flow.
       </p>
 
       <p>
-        An OpenID provider should provide support for end-user logout, such as RP-Initiated Logout 1.0.
+        An OpenID Provider should provide support for end-user logout, such as RP-Initiated Logout 1.0.
       </p>
 
       <p>
@@ -221,7 +221,7 @@ signature
       </p>
 
       <p>
-        It is recommended that OpenID providers support WebAuthn [[WEBAUTHN-3]] as a mechanism for authenticating users.
+        It is recommended that OpenID Providers support WebAuthn [[WEBAUTHN-3]] as a mechanism for authenticating users.
       </p>
     </section>
     <section id="privacy-considerations" class="informative">
@@ -234,7 +234,7 @@ signature
       <p>
         An ID Token used as an <a>authentication credential</a> can contain claims that reveal
         personally identifiable information about the end-user, such as email addresses,
-        names, or other profile attributes. OpenID providers are encouraged to issue ID Tokens
+        names, or other profile attributes. OpenID Providers are encouraged to issue ID Tokens
         that contain only the claims necessary for LWS authentication &mdash; specifically, the
         <code>sub</code>, <code>iss</code>, <code>azp</code>, and <code>aud</code> claims &mdash;
         and to avoid including additional identity attributes unless explicitly required.
@@ -245,7 +245,7 @@ signature
         can be dereferenced during validation, the choice of subject identifier has privacy
         implications. A persistent, globally unique subject identifier allows verifiers and
         storage servers to correlate an end-user's activity across sessions and resources.
-        OpenID providers that support pairwise subject identifiers (as described in
+        OpenID Providers that support pairwise subject identifiers (as described in
         [[OPENID-CONNECT-CORE]] Section 8) can reduce the potential for cross-provider
         correlation, though the LWS validation model requires the subject identifier
         to resolve to a controlled identifier document.

@@ -25,13 +25,13 @@ ontology:
     value: RDFS [[RDF-SCHEMA]] vocabulary used by the Linked Web Storage Protocol [[lws-core]]
 
   - property: rdfs:seeAlso
-    value: https://www.w3.org/TR/lws-protocol/
+    value: https://www.w3.org/TR/lws10-core/
 
 class:
   - id: StorageResource
     label: Storage Resource
     comment: An HTTP resource that supports the read operations defined by the Linked Web Storage Protocol.
-    defined_by: https://www.w3.org/TR/lws-core/#dfn-storage-resource
+    defined_by: https://www.w3.org/TR/lws10-core/#dfn-storage-resources
 
   - id: Container
     label: Container
@@ -54,22 +54,22 @@ class:
   - id: OpenIdProvider
     label: OpenID Provider
     comment: An OpenID Connect identity provider service.
-    defined_by: https://www.w3.org/TR/lws-authn-openid/
+    defined_by: https://www.w3.org/TR/lws10-authn-openid/
 
   - id: Notification
     label: Notification
     comment: A notification envelope describing an event that occurred on a resource.
-    defined_by: https://www.w3.org/TR/lws-core/
+    defined_by: https://www.w3.org/TR/lws10-core/
 
   - id: NotificationService
     label: Notification Service
     comment: A service through which clients subscribe to resource change notifications.
-    defined_by: https://www.w3.org/TR/lws-core/
+    defined_by: https://www.w3.org/TR/lws10-core/
 
   - id: WebhookSubscription
     label: Webhook Subscription
     comment: A subscription type that delivers notifications via HTTP POST to a subscriber-provided inbox URL.
-    defined_by: https://www.w3.org/TR/lws-core/
+    defined_by: https://www.w3.org/TR/lws10-core/
 
   - id: AccessProfile
     label: Access Profile
@@ -87,6 +87,10 @@ class:
     label: Access Grant Service
     comment: A service endpoint for managing access grants.
 
+  - id: AccessRequest
+    label: Access Request
+    comment: An request by an agent to access to resources.
+
   - id: AccessRequestService
     label: Access Request Service
     comment: A service endpoint for managing access requests.
@@ -95,6 +99,23 @@ class:
     label: Move Resource
     comment: A capability indicating that clients are allowed to change the up link of a resource, and thereby to move resources between containers.
     defined_by: https://www.w3.org/TR/lws-core/
+    
+  - id: as:Activity
+    label: Activity
+    comment: Superclass of all activites.
+    context: none
+
+  - id: as:Create
+    label: Create
+    comment: An activity representing the creation of a resource.
+
+  - id: as:Update
+    label: Update
+    comment: An activity representing the update of a resource.
+
+  - id: as:Delete
+    label: Delete
+    comment: An activity representing the deletion of a resource.
 
 property:
   - id: items
@@ -150,42 +171,37 @@ property:
     label: subscription type
     domain: lws:NotificationService
     comment: The subscription types supported by a notification service.
-    defined_by: https://www.w3.org/TR/lws-core/
+    defined_by: https://www.w3.org/TR/lws10-core/
 
   - id: subscription
     label: subscription
-    range: xsd:anyURI
-    comment: The URL of the subscription resource or connection endpoint.
-    defined_by: https://www.w3.org/TR/lws-core/
+    range: IRI
+    scope: WebhookSubscription
+    comment: The URI of the subscription resource or connection endpoint.
+    defined_by: https://www.w3.org/TR/lws10-core/
 
   - id: activity
     label: activity
     domain: lws:Notification
+    range: as:Activity
+    property_scope: as:Activity
     comment: The Activity Streams 2.0 activity payload within a notification.
-    defined_by: https://www.w3.org/TR/lws-core/
+    defined_by: https://www.w3.org/TR/lws10-core/
 
   - id: topic
     label: topic
-    range: xsd:anyURI
-    comment: An array of resource URIs covered by a subscription.
-    defined_by: https://www.w3.org/TR/lws-core/
+    range: IRI
+    comment: One or more resource URIs covered by a subscription.
+    defined_by: https://www.w3.org/TR/lws10-core/
 
   - id: storage
     label: storage
-    range: xsd:anyURI
+    range: IRI
     comment: The canonical URI identifying an LWS storage.
-
-  - id: as:Create
-    label: Create
-    comment: An activity representing the creation of a resource.
-
-  - id: as:Update
-    label: Update
-    comment: An activity representing the update of a resource.
-
-  - id: as:Delete
-    label: Delete
-    comment: An activity representing the deletion of a resource.
+    scope:
+      - AccessGrant
+      - AccessRequest
+      - Notification
 
   - id: as:Move
     label: Move
@@ -193,37 +209,53 @@ property:
 
   - id: as:object
     label: object
+    range: IRI
+    scope: as:Activity
     comment: The primary object of an activity.
 
   - id: as:actor
     label: actor
+    range: IRI
+    scope: as:Activity
     comment: The agent that performed the activity.
 
   - id: as:target
     label: target
+    range: IRI
+    scope: as:Activity
     comment: The target of the activity.
 
   - id: as:origin
     label: origin
+    range: IRI
+    scope: as:Activity
     comment: The origin of a Move activity.
 
   - id: as:published
     label: published
     range: xsd:dateTime
+    scope: as:Activity
     comment: The date and time the activity was published.
 
   - id: ldp:inbox
     label: inbox
-    range: xsd:anyURI
-    comment: A URL to which notifications are delivered via HTTP POST.
+    range: IRI
+    scope:
+      - AccessGrant
+      - AccessRequest
+    comment: A URI to which notifications are delivered via HTTP POST.
 
   - id: schema:expires
     label: expires
     range: xsd:dateTime
+    scope: WebhookSubscription
     comment: The date and time at which a subscription expires.
 
   - id: access
     label: access
+    scope:
+      - AccessGrant
+      - AccessRequest
     comment: The access policies associated with an access request or grant.
 
   - id: dcterms:conformsTo
