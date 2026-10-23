@@ -5,6 +5,103 @@
     <title>Linked Web Storage Protocol 1.0</title>
     <script src="https://www.w3.org/Tools/respec/respec-w3c" class="remove"></script>
     <link rel="stylesheet" href="local.css"/>
+    <style>
+      /* Tabbed examples: one pane per media type (see the script below). */
+      .example-tabs { margin: 1em 0; }
+      .example-tabs > .tab-bar { display: flex; flex-wrap: wrap; gap: .25em; margin-bottom: -1px; }
+      .example-tabs > .tab-bar button {
+        font: inherit; font-size: .85em; padding: .3em .7em; cursor: pointer;
+        border: 1px solid #ccc; border-bottom: none; border-radius: .3em .3em 0 0;
+        background: #f4f4f4; color: inherit;
+      }
+      .example-tabs > .tab-bar button[aria-selected="true"] { background: #fff; font-weight: bold; }
+      .example-tabs > [data-tab] { border: 1px solid #ccc; padding: 0 .5em; }
+      .example-tabs > [data-tab] > pre { margin: .5em 0; }
+      /* Without script (and in print), show every pane under its label. */
+      .example-tabs:not(.ready) > [data-tab]::before {
+        content: attr(data-tab); display: block; font-weight: bold; padding-top: .3em;
+      }
+      @media print {
+        .example-tabs > .tab-bar { display: none; }
+        .example-tabs > [data-tab][hidden] { display: block; }
+      }
+    </style>
+    <script>
+      // Tabbed examples: each .example-tabs block gets one tab per child with
+      // a data-tab label. Turtle and N-Triples panes are highlighted here,
+      // because ReSpec's highlighter has no Turtle grammar. Inline so that it
+      // works in PR previews and published copies, which carry no local files.
+      (function () {
+        const esc = (t) => t.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
+        const span = (c, t) => '<span class="hljs-' + c + '">' + esc(t) + "</span>";
+        const TURTLE = /(#[^\n]*)|(<[^>\s]*>)|("(?:[^"\\\n]|\\.)*")(\^\^|@[A-Za-z-]+)?|(@prefix|@base|\ba\b)|([A-Za-z][\w-]*:[\w.-]*|:[\w.-]+)|(\b\d+\b)/g;
+        function turtle(text) {
+          let out = "", last = 0, m;
+          TURTLE.lastIndex = 0;
+          while ((m = TURTLE.exec(text))) {
+            out += esc(text.slice(last, m.index));
+            if (m[1]) out += span("comment", m[1]);
+            else if (m[2]) out += span("link", m[2]);
+            else if (m[3]) out += span("string", m[3]) + (m[4] ? esc(m[4]) : "");
+            else if (m[5]) out += span("keyword", m[5]);
+            else if (m[6]) {
+              const i = m[6].indexOf(":") + 1;
+              out += span("literal", m[6].slice(0, i)) + (i < m[6].length ? span("attr", m[6].slice(i)) : "");
+            }
+            else out += span("number", m[7]);
+            last = TURTLE.lastIndex;
+          }
+          return out + esc(text.slice(last));
+        }
+        function highlight(code) {
+          code.innerHTML = turtle(code.textContent);
+          code.classList.add("hljs");
+          code.dataset.lwsHighlighted = "";
+        }
+        function build() {
+          let n = 0;
+          for (const box of document.querySelectorAll(".example-tabs")) {
+            for (const old of box.querySelectorAll(":scope > .tab-bar")) old.remove();
+            const panes = [...box.querySelectorAll(":scope > [data-tab]")];
+            if (!panes.length) continue;
+            for (const pane of panes) {
+              if (!/turtle|n-triples/.test(pane.dataset.tab)) continue;
+              for (const code of pane.querySelectorAll("pre code.nohighlight:not([data-lws-highlighted])")) highlight(code);
+            }
+            const bar = document.createElement("div");
+            bar.className = "tab-bar";
+            bar.setAttribute("role", "tablist");
+            const select = (i) => panes.forEach((pane, j) => {
+              pane.hidden = i !== j;
+              bar.children[j].setAttribute("aria-selected", String(i === j));
+            });
+            panes.forEach((pane, i) => {
+              const button = document.createElement("button");
+              button.type = "button";
+              const id = "lws-tab-" + n++;
+              button.id = id;
+              button.setAttribute("role", "tab");
+              button.setAttribute("aria-controls", id + "-panel");
+              pane.id = id + "-panel";
+              pane.setAttribute("role", "tabpanel");
+              pane.setAttribute("aria-labelledby", id);
+              button.textContent = pane.dataset.tab;
+              button.addEventListener("click", () => select(i));
+              bar.append(button);
+            });
+            box.prepend(bar);
+            box.classList.add("ready");
+            select(0);
+          }
+        }
+        function start() {
+          if (document.respec) document.respec.ready.then(build);
+          else build();
+        }
+        if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", start);
+        else start();
+      })();
+    </script>
     <script class='remove'>
       // See https://respec.org/docs/ for how to configure ReSpec
       var respecConfig = {
@@ -35,7 +132,7 @@
         // It is OK to have unused definition in a Working Draft
         // In the editors' draft we keep these warnings for awareness.
         // And of course, we keep them in more mature state, as we don't want them to exist in the end.
-        if (cfg.specStatus === "FPWD" || cfg.specSTatus === "WD") {
+        if (cfg.specStatus === "FPWD" || cfg.specStatus === "WD") {
           respecConfig.lint['no-unused-dfns'] = false;
         }
       }
@@ -124,7 +221,7 @@
         The protocol defines standard operations on these resources to create, read, update, and delete. Each resource is identified by a URI. A client navigates the resource hierarchy from a root container, discovering contained resources and their relations through links provided in server responses.
       </p>
       <p>
-        A agent's identity is confirmed through an identity provider that can be external to the Linked Web Storage server. This loose coupling means the server does not necessarily manage credentials directly; rather, it can receive and validate a signed authentication credential as a token issued by a trusted identity provider. A user can therefore present an existing identity to a compliant server, without always needing a new or existing account just for that server. LWS makes use of user authentication as defined in specifications for OpenID Connect, SAML 2.0, and self-signed controlled identifiers (CIDs), for example.
+        An agent's identity is confirmed through an identity provider that can be external to the Linked Web Storage server. This loose coupling means the server does not necessarily manage credentials directly; rather, it can receive and validate a signed authentication credential as a token issued by a trusted identity provider. A user can therefore present an existing identity to a compliant server, without always needing a new or existing account just for that server. LWS makes use of user authentication as defined in specifications for OpenID Connect, SAML 2.0, and self-signed controlled identifiers (CIDs), for example.
       </p>
       <p>
         Authorization determines whether a requesting agent has permission to access a resource or perform an operation on it. A compliant LWS server designates a resource manager for each resource that determines whether a resource is private (i.e., available only to its owner), restricted (i.e., available to a defined set of users), or public (i.e., available to any user). The server enforces the access decisions of the resource manager when handling each client request.
@@ -145,8 +242,8 @@
         </p>
 
         <ul>
-          <li><dfn>served resource</dfn> - (<span class="TOOD">available resource? published resource?</span>) (<span class="TOOD"><a href="https://github.com/w3c/lws-ucs/issues/160">not defined in UCS</a></span>) A network-accessible entity exposed by a service for interaction, retrieval, or manipulation using the protocol defined in this document.</li>
-          <li><dfn>requesting agent</dfn> - (<span class="TOOD"><a href="https://w3c.github.io/lws-ucs/spec/#dfn-entity">entity</a> in UCS</span>) An entity (e.g., client, user, or process) that initiates a request to interact with a servable resource.</li>
+          <li><dfn>served resource</dfn> - (<span class="TODO">available resource? published resource?</span>) (<span class="TODO"><a href="https://github.com/w3c/lws-ucs/issues/160">not defined in UCS</a></span>) A network-accessible entity exposed by a service for interaction, retrieval, or manipulation using the protocol defined in this document.</li>
+          <li><dfn>requesting agent</dfn> - (<span class="TODO"><a href="https://w3c.github.io/lws-ucs/spec/#dfn-entity">entity</a> in UCS</span>) An entity (e.g., client, user, or process) that initiates a request to interact with a servable resource.</li>
         </ul>
 
         <p>
@@ -306,7 +403,11 @@
 	  <div data-include="operations.md" data-include-format="markdown" data-include-replace="true"></div>
 	  
 	  <div data-include="Operations/restbinding.md" data-include-format="markdown" data-include-replace="true"></div>
-	  <div data-include="Operations/metadata.md" data-include-format="markdown" data-include-replace="true"></div>
+
+      <section id="metadata">
+        <h2>Resource metadata</h2>
+		<div data-include="Operations/metadata.md" data-include-format="markdown" data-include-replace="true"></div>
+      </section>
 
       <section id="create-resource">
         <h2>Create resource</h2>
@@ -326,6 +427,11 @@
       <section id="delete-resource">
         <h2>Delete resource</h2>
 		<div data-include="Operations/delete-resource.md" data-include-format="markdown" data-include-replace="true"></div>
+      </section>
+
+      <section id="moving-resources">
+        <h2>Moving resources between containers</h2>
+		<div data-include="Operations/moving-resources.md" data-include-format="markdown" data-include-replace="true"></div>
       </section>
 	  <div data-include="Operations/rest-table.md" data-include-format="markdown" data-include-replace="true"></div>
     </section>
