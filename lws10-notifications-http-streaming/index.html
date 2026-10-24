@@ -85,8 +85,19 @@
       </p>
 
       <p class="note">
+        This suite covers notification delivery over streaming HTTP response bodies.
+        Server-Sent Events and WebSocket are separate notification channels with their own
+        message boundaries and keepalive mechanisms.
+      </p>
+
+      <p class="note">
         An experimental prototype is available in
         <a href="https://github.com/elf-pavlik/lws-http-stream#readme">elf-pavlik/lws-http-stream</a>.
+      </p>
+
+      <p class="issue">
+        Incorporate remaining feedback from
+        <a href="https://lists.w3.org/Archives/Public/public-solid/2026Oct/0027.html">https://lists.w3.org/Archives/Public/public-solid/2026Oct/0027.html</a>.
       </p>
     </section>
 
@@ -182,7 +193,7 @@ Location: https://notification.example/ise0sx
       </p>
       <p>
         <a href="https://w3c.github.io/lws-protocol/lws10-core/#notifications">Notifications</a>
-        section of [[LWS10-CORE]] defines the notification envelope and subscription model.
+        section of [[!LWS10-CORE]] defines the notification envelope and subscription model.
       </p>
 
       <pre class="example" title="HTTP streaming request">
@@ -197,6 +208,13 @@ Accept: application/json-seq
         envelopes defined by [[!LWS10-CORE]] as changes occur. The envelopes form an ordered
         sequence. HTTP chunk boundaries do not define notification boundaries. The stream
         ends when the server closes the response or the subscriber aborts the request.
+      </p>
+
+      <p>
+        An HTTP streaming response is a notification message stream, not a single document
+        or RDF dataset. The representation and stream mode are fixed by the media type or
+        profile before the first byte. A response cannot switch representation or stream
+        mode after the first byte.
       </p>
 
       <p>
@@ -224,6 +242,7 @@ Accept: application/json-seq, application/x-ndjson, application/jsonl, applicati
         An HTTP streaming response uses one of the following representations. The server
         selects the representation with HTTP content negotiation.
       </p>
+
       <p>
         A server MUST support JSON Sequence. The other representations are optional.
       </p>
@@ -254,7 +273,7 @@ Accept: application/json-seq, application/x-ndjson, application/jsonl, applicati
           </tr>
           <tr>
             <td><code>application/x-jelly-rdf</code></td>
-            <td>RDF representations</td>
+            <td>Jelly-RDF</td>
             <td>optional</td>
           </tr>
         </tbody>
@@ -279,10 +298,24 @@ Accept: application/json-seq, application/x-ndjson, application/jsonl, applicati
         <h3>JSON Sequence</h3>
 
         <p>
-          Each notification is a JSON text in an RFC 7464 JSON Text Sequence [[!RFC7464]].
-          The server writes one RS byte, <code>0x1e</code>, then one compact JSON object
-          encoded as UTF-8, then one LF byte, <code>0x0a</code>. The response body contains
-          no byte order mark and no blank line.
+          Each notification MUST be one JSON text in an RFC 7464 JSON Text Sequence
+          [[!RFC7464]], preceded by RS <code>0x1e</code> and followed by LF
+          <code>0x0a</code>. The server writes one compact JSON object encoded as UTF-8
+          between those bytes. A receiver MUST process the notification only after receiving
+          the terminating LF. The response body contains no byte order mark and no blank
+          line.
+        </p>
+
+        <p>
+          A final JSON text without its terminating LF MUST be treated as truncated and
+          discarded. A receiver MUST treat successful completion of the HTTP response as the
+          clean end of the stream. An aborted response or network failure MUST NOT be treated
+          as a clean end.
+        </p>
+
+        <p>
+          The server MUST flush each JSON Sequence notification to the underlying transport,
+          including when <code>Content-Encoding</code> is used.
         </p>
       </section>
 
@@ -290,11 +323,16 @@ Accept: application/json-seq, application/x-ndjson, application/jsonl, applicati
         <h3>NDJSON/JSONL</h3>
 
         <p>
-          NDJSON/JSONL uses <code>application/x-ndjson</code> for NDJSON [[?NDJSON]] and
-          <code>application/jsonl</code> for JSONL [[?JSONL]]. Both use the same framing.
-          Each notification is a compact JSON object encoded as UTF-8 and terminated by one
-          LF byte, <code>0x0a</code>. The response body contains no byte order mark, no blank
-          line, and no trailing partial line.
+          NDJSON uses <code>application/x-ndjson</code> [[?NDJSON]] and JSONL uses
+          <code>application/jsonl</code> [[?JSONL]]. Both carry one notification per line.
+          Their framing is defined by those specifications.
+        </p>
+
+        <p class="note">
+          <code>application/x-ndjson</code> and <code>application/jsonl</code> are plain JSON
+          media types, not JSON-LD media types. They do not use a JSON-LD context Link
+          relation. RDF context messages, if any, are defined by RDF Messages
+          [[?RSP-MESSAGES]].
         </p>
       </section>
 
@@ -302,13 +340,9 @@ Accept: application/json-seq, application/x-ndjson, application/jsonl, applicati
         <h3>CBOR Sequence</h3>
 
         <p>
-          Each notification is one complete CBOR item. Items are written back-to-back. The
-          sequence has no delimiter, length prefix, enclosing array, or self-described CBOR
-          tag. The result is an RFC 8742 CBOR Sequence [[?RFC8742]].
-        </p>
-
-        <p>
-          Each item is a plain CBOR object or a CBOR-LD item. See [[?CBOR-LD-10]].
+          CBOR Sequence uses <code>application/cbor-seq</code> [[?RFC8742]]. Each
+          notification is one CBOR item. The sequence framing and item encoding are defined
+          by RFC 8742. A CBOR item can use CBOR-LD [[?CBOR-LD-10]].
         </p>
 
         <p class="issue">
@@ -316,14 +350,12 @@ Accept: application/json-seq, application/x-ndjson, application/jsonl, applicati
         </p>
       </section>
 
-      <section id="rdf-representations" class="informative">
+      <section id="jelly-rdf" class="informative">
         <h3>Jelly-RDF</h3>
 
         <p>
-          Section 6.4 of [[JELLY-RDF]] defines this variant. Each notification is one
-          <code>RdfStreamFrame</code> Protobuf message. Each frame is preceded by a Protobuf
-          varint containing its length in bytes. The stream has no newline delimiter and no
-          gRPC message envelope.
+          Jelly-RDF uses <code>application/x-jelly-rdf</code>. Section 6.4 of
+          [[?JELLY-RDF]] defines the delimited variant.
         </p>
       </section>
     </section>
