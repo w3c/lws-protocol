@@ -1,0 +1,409 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <title>LWS 1.0 Notification Suite: HTTP Streaming</title>
+    <script src="https://www.w3.org/Tools/respec/respec-w3c" class="remove"></script>
+    <link rel="stylesheet" href="../lws10-core/local.css"/>
+    <script class='remove'>
+      // See https://respec.org/docs/ for how to configure ReSpec
+      var respecConfig = {
+        specStatus: "ED",
+        shortName: "lws10-notifications-http-streaming",
+        edDraftURI: "https://w3c.github.io/lws-protocol/lws10-notifications-http-streaming/",
+        thisVersion: "https://w3c.github.io/lws-protocol/lws10-notifications-http-streaming/",
+        editors: [{
+          name: "elf Pavlik",
+          w3cid: "46577"
+        }],
+        authors: [{
+          name: "elf Pavlik",
+          w3cid: "46577"
+        }],
+        github: "w3c/lws-protocol",
+        xref: ["web-platform"],
+        group: "lws",
+        maxTocLevel: 3,
+        localBiblio: {
+          "LWS10-CORE": {
+            title: "Linked Web Storage Protocol 1.0",
+            href: "https://www.w3.org/TR/lws10-core/",
+            publisher: "W3C",
+            status: "FPWD",
+          },
+          "NDJSON": {
+            title: "NDJSON - Newline delimited JSON",
+            href: "https://github.com/ndjson/ndjson-spec",
+          },
+          "JSONL": {
+            title: "JSON Lines: Documentation for the JSON Lines text file format",
+            href: "https://github.com/wardi/jsonlines",
+          },
+          "RSP-MESSAGES": {
+            title: "RDF Messages",
+            href: "https://w3c-cg.github.io/rsp/spec/messages",
+            publisher: "W3C",
+            status: "Living Document",
+          },
+          "JELLY-RDF": {
+            title: "Jelly-RDF serialization",
+            href: "https://jelly-rdf.github.io/dev/specification/serialization/#delimited-variant-of-jelly",
+          },
+        },
+      };
+    </script>
+  </head>
+  <body>
+    <section id="abstract">
+      <p>
+        This document defines an HTTP streaming notification suite for the Linked Web Storage
+        protocol. A subscriber obtains an <a>outbox</a> URL from a subscription and
+        reads notification envelopes from a long-lived HTTP response as JSON Sequence and other
+        optional representations.
+      </p>
+    </section>
+    <section id="sotd">
+      <p>
+        This is an unofficial proposal.
+      </p>
+    </section>
+
+    <section id="introduction" class="informative">
+      <h2>Introduction</h2>
+
+      <p>
+        The [[LWS10-CORE|Linked Web Storage]] protocol defines a notification data model and
+        a subscription mechanism. This document describes the HTTP streaming notification
+        suite. A subscriber creates an HTTP streaming <a>subscription</a> and receives an
+        <a>outbox</a> URL. The subscriber sends an HTTP <code>GET</code> request to the outbox
+        and keeps the response open while the server writes notification envelopes.
+      </p>
+
+      <p>
+        The response uses HTTP content negotiation to select JSON Sequence or an optional
+        representation.
+      </p>
+
+      <p class="note">
+        This suite covers notification delivery over streaming HTTP response bodies.
+        Server-Sent Events and WebSocket are separate notification channels with their own
+        message boundaries and keepalive mechanisms.
+      </p>
+
+      <p class="note">
+        An experimental prototype is available in
+        <a href="https://github.com/elf-pavlik/lws-http-stream#readme">elf-pavlik/lws-http-stream</a>.
+      </p>
+
+      <p class="issue">
+        Incorporate remaining feedback from
+        <a href="https://lists.w3.org/Archives/Public/public-solid/2026Oct/0027.html">https://lists.w3.org/Archives/Public/public-solid/2026Oct/0027.html</a>.
+      </p>
+    </section>
+
+    <section id="conformance"></section>
+
+    <section id="terminology">
+      <h2>Terminology</h2>
+
+      <p>
+        The terms "<dfn data-cite="LWS10-CORE#dfn-notification">notification</dfn>",
+        "<dfn data-cite="LWS10-CORE#dfn-subscription">subscription</dfn>",
+        "<dfn data-cite="LWS10-CORE#dfn-subscriber">subscriber</dfn>",
+        "<dfn data-cite="LWS10-CORE#dfn-notification-suite">notification suite</dfn>",
+        "<dfn data-cite="LWS10-CORE#dfn-storage-description-resource">storage description resource</dfn>",
+        and "<dfn data-cite="LWS10-CORE#dfn-agent">agent</dfn>"
+        are defined by the Linked Web Storage Protocol [[!LWS10-CORE]].
+      </p>
+
+      <p>
+        This specification defines the following additional terms:
+      </p>
+
+      <ul>
+        <li>
+          <dfn>Outbox</dfn> is a URL returned in a subscription response. A
+          <a>subscriber</a> reads notifications from the outbox with an HTTP
+          <code>GET</code> request.
+        </li>
+      </ul>
+    </section>
+
+    <section id="http-streaming-subscription">
+      <h2>Creating an HTTP Streaming Subscription</h2>
+
+      <p>
+        When a client creates an HTTP streaming notification <a>subscription</a>, the
+        value of the <code>type</code> field MUST be
+        <code>HttpStreamingSubscription</code>. This subscription type does not define
+        additional request fields.
+      </p>
+
+      <pre class="example" title="HTTP streaming subscription request">
+POST /subscriptions HTTP/2
+Host: notification.example
+Authorization: Bearer &lt;access-token&gt;
+Content-Type: application/lws+json
+
+{
+  "@context": ["https://www.w3.org/ns/lws/v1"],
+  "type": "HttpStreamingSubscription",
+  "topic": ["https://storage.example/st793u"]
+}
+      </pre>
+
+      <p>
+        A successful response body has these additional requirements:
+      </p>
+
+      <ul>
+        <li>
+          <code>type</code>: the value of this property MUST be a string equal to
+          <code>HttpStreamingSubscription</code>.
+        </li>
+        <li>
+          <code>outbox</code>: REQUIRED. The URL from which the subscriber reads the
+          notification stream. The subscriber selects a representation with the
+          <code>Accept</code> request header.
+        </li>
+      </ul>
+
+      <pre class="example" title="HTTP streaming subscription response">
+HTTP/2 200 OK
+Content-Type: application/lws+json
+Accept: application/x-ndjson, application/jsonl, application/cbor-seq, application/x-jelly-rdf
+Location: https://notification.example/ise0sx
+
+{
+  "@context": ["https://www.w3.org/ns/lws/v1"],
+  "type": "HttpStreamingSubscription",
+  "subscription": "https://notification.example/ise0sx",
+  "outbox": "https://notification.example/mnmmkr"
+}
+      </pre>
+    </section>
+
+    <section id="http-streaming-connection">
+      <h2>Establishing an HTTP Streaming Connection</h2>
+
+      <p>
+        After obtaining an <a>outbox</a> URL, the <a>subscriber</a> sends an HTTP
+        <code>GET</code> request to that URL with an <code>Accept</code> header that lists
+        one or more supported media types.
+      </p>
+      <p>
+        <a href="https://w3c.github.io/lws-protocol/lws10-core/#notifications">Notifications</a>
+        section of [[!LWS10-CORE]] defines the notification envelope and subscription model.
+      </p>
+
+      <pre class="example" title="HTTP streaming request">
+GET /mnmmkr HTTP/2
+Host: notification.example
+Accept: application/json-seq
+      </pre>
+
+      <p>
+        A successful response MUST use status <code>200</code> and the media type selected by
+        content negotiation. The server keeps the response body open and writes notification
+        envelopes defined by [[!LWS10-CORE]] as changes occur. The envelopes form an ordered
+        sequence. HTTP chunk boundaries do not define notification boundaries. The stream
+        ends when the server closes the response or the subscriber aborts the request.
+      </p>
+
+      <p>
+        An HTTP streaming response is a notification message stream, not a single document
+        or RDF dataset. The representation and stream mode are fixed by the media type or
+        profile before the first byte. A response cannot switch representation or stream
+        mode after the first byte.
+      </p>
+
+      <p>
+        The response MUST include <code>Cache-Control: no-store</code> and
+        <code>Vary: Accept</code>.
+      </p>
+
+      <pre class="example" title="HTTP streaming response, headers only">
+HTTP/2 200 OK
+Content-Type: application/json-seq
+Cache-Control: no-store
+Vary: Accept
+Accept: application/json-seq, application/x-ndjson, application/jsonl, application/cbor-seq, application/x-jelly-rdf
+      </pre>
+
+      <p class="issue">
+        Clarify heartbeat messages that keep connections alive.
+      </p>
+    </section>
+
+    <section id="representations">
+      <h2>Representations</h2>
+
+      <p>
+        An HTTP streaming response uses one of the following representations. The server
+        selects the representation with HTTP content negotiation.
+      </p>
+
+      <p>
+        A server MUST support JSON Sequence. The other representations are optional.
+      </p>
+
+      <table class="simple">
+        <thead>
+          <tr>
+            <th>Media type</th>
+            <th>Representation</th>
+            <th>Requirement</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><code>application/json-seq</code></td>
+            <td>JSON Sequence</td>
+            <td>required</td>
+          </tr>
+          <tr>
+            <td><code>application/x-ndjson</code>, <code>application/jsonl</code></td>
+            <td>NDJSON/JSONL</td>
+            <td>optional</td>
+          </tr>
+          <tr>
+            <td><code>application/cbor-seq</code></td>
+            <td>CBOR Sequence</td>
+            <td>optional</td>
+          </tr>
+          <tr>
+            <td><code>application/x-jelly-rdf</code></td>
+            <td>Jelly-RDF</td>
+            <td>optional</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <p>
+        An HTTP streaming subscription response MAY include an <code>Accept</code> response
+        header that lists the media types supported by the outbox.
+      </p>
+
+      <p>
+        RDF representations MUST follow the RDF isomorphism requirement in the
+        <a href="https://w3c.github.io/lws-protocol/lws10-core/#lws-profile">LWS Profile</a>
+        section of [[!LWS10-CORE]].
+      </p>
+
+      <p class="note">
+        RDF representations can refer to RDF Messages [[?RSP-MESSAGES]].
+      </p>
+
+      <section id="json-sequence">
+        <h3>JSON Sequence</h3>
+
+        <p>
+          Each notification MUST be one JSON text in an RFC 7464 JSON Text Sequence
+          [[!RFC7464]], preceded by RS <code>0x1e</code> and followed by LF
+          <code>0x0a</code>. The server writes one compact JSON object encoded as UTF-8
+          between those bytes. A receiver MUST process the notification only after receiving
+          the terminating LF. The response body contains no byte order mark and no blank
+          line.
+        </p>
+
+        <p>
+          A final JSON text without its terminating LF MUST be treated as truncated and
+          discarded. A receiver MUST treat successful completion of the HTTP response as the
+          clean end of the stream. An aborted response or network failure MUST NOT be treated
+          as a clean end.
+        </p>
+
+        <p>
+          The server MUST flush each JSON Sequence notification to the underlying transport,
+          including when <code>Content-Encoding</code> is used.
+        </p>
+      </section>
+
+      <section id="ndjson-jsonl" class="informative">
+        <h3>NDJSON/JSONL</h3>
+
+        <p>
+          NDJSON uses <code>application/x-ndjson</code> [[?NDJSON]] and JSONL uses
+          <code>application/jsonl</code> [[?JSONL]]. Both carry one notification per line.
+          Their framing is defined by those specifications.
+        </p>
+
+        <p class="note">
+          <code>application/x-ndjson</code> and <code>application/jsonl</code> are plain JSON
+          media types, not JSON-LD media types. They do not use a JSON-LD context Link
+          relation. RDF context messages, if any, are defined by RDF Messages
+          [[?RSP-MESSAGES]].
+        </p>
+      </section>
+
+      <section id="cbor-sequence" class="informative">
+        <h3>CBOR Sequence</h3>
+
+        <p>
+          CBOR Sequence uses <code>application/cbor-seq</code> [[?RFC8742]]. Each
+          notification is one CBOR item. The sequence framing and item encoding are defined
+          by RFC 8742. A CBOR item can use CBOR-LD [[?CBOR-LD-10]].
+        </p>
+
+        <p class="issue">
+          <code>application/ld+cbor-seq</code> may be needed.
+        </p>
+      </section>
+
+      <section id="jelly-rdf" class="informative">
+        <h3>Jelly-RDF</h3>
+
+        <p>
+          Jelly-RDF uses <code>application/x-jelly-rdf</code>. Section 6.4 of
+          [[?JELLY-RDF]] defines the delimited variant.
+        </p>
+      </section>
+    </section>
+
+    <section id="content-negotiation">
+      <h2>Content Negotiation</h2>
+
+      <p>
+        The subscriber selects a representation with the <code>Accept</code> request header
+        using HTTP content negotiation [[!RFC9110]]. The server MUST select one of the supported
+        media types listed in <a href="#representations"></a>. Standard HTTP quality values
+        and media ranges apply.
+      </p>
+
+      <p>
+        A request with no <code>Accept</code> header, or an empty <code>Accept</code> header,
+        selects <code>application/json-seq</code>. When more than one representation is
+        equally acceptable, the server selects <code>application/json-seq</code>. If no
+        supported representation is acceptable, the server MUST return
+        <code>406 Not Acceptable</code>.
+      </p>
+    </section>
+
+    <section id="subscription-type">
+      <h2>Subscription Type Identifier</h2>
+
+      <p>
+        An HTTP streaming <a>subscription</a> MUST use the
+        <code>HttpStreamingSubscription</code> string as its subscription type when
+        interacting with the <code>NotificationService</code>.
+      </p>
+    </section>
+
+    <section id="security-considerations" class="informative">
+      <h2>Security Considerations</h2>
+
+      <p class="issue">
+        TODO
+      </p>
+
+    </section>
+
+    <section id="privacy-considerations" class="informative">
+      <h2>Privacy Considerations</h2>
+
+      <p class="issue">
+        TODO
+      </p>
+    </section>
+  </body>
+</html>
