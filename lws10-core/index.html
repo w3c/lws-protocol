@@ -126,6 +126,14 @@
         preProcess: [allowUnusedDfnInWd],
         postProcess: [cleanEditorsDraft],
         lint: { "no-unused-dfns": true},
+        localBiblio: {
+          "ZCAP": {
+            title: "Authorization Capabilities (ZCAP)",
+            href: "https://w3c-ccg.github.io/zcap-spec/",
+            publisher: "W3C Credentials Community Group",
+            status: "CG-DRAFT",
+          },
+        },
       };
 
       function allowUnusedDfnInWd(cfg) {
@@ -243,7 +251,7 @@
 
         <ul>
           <li><dfn>served resource</dfn> - (<span class="TODO">available resource? published resource?</span>) (<span class="TODO"><a href="https://github.com/w3c/lws-ucs/issues/160">not defined in UCS</a></span>) A network-accessible entity exposed by a service for interaction, retrieval, or manipulation using the protocol defined in this document.</li>
-          <li><dfn>requesting agent</dfn> - (<span class="TODO"><a href="https://w3c.github.io/lws-ucs/spec/#dfn-entity">entity</a> in UCS</span>) An entity (e.g., client, user, or process) that initiates a request to interact with a servable resource.</li>
+          <li><dfn>requesting agent</dfn> - (<span class="TODO"><a href="https://w3c.github.io/lws-ucs/spec/#dfn-entity">entity</a> in UCS</span>) An entity (e.g., client, user, or process) that initiates a request to interact with a <a>served resource</a>.</li>
         </ul>
 
         <p>
@@ -269,7 +277,7 @@
       <section id="conformance">
         <!-- Respec automagically adds the heading. -->
         <p>
-          A <dfn>LWS Server</dfn> is an HTTP server [[!rfc9112]] that complies with all of the relevant "MUST" statements in this specification. Specifically, the relevant normative "MUST" statements in <a href="#operations"></a> of this document MUST be respected.
+          An <dfn>LWS Server</dfn> is an HTTP server [[!rfc9112]] that complies with all of the relevant "MUST" statements in this specification. Specifically, the relevant normative "MUST" statements in <a href="#operations"></a> of this document MUST be respected.
         </p>
 
         <p>
@@ -277,16 +285,16 @@
         </p>
       </section>
 
-      <section id="scope-diagrams">    <!-- becomes 2.4 Scope Diagrams -->
+      <section id="scope-diagrams">
         <h2>Scope Diagrams</h2>
         <p>
-          The following diagrams are platform-independent models 
+          The following diagrams are platform-independent models
           to guide implementation.
         </p>
         <figure id="fig-system-context">
-          <img src="diagrams/fig-container-diagram.svg" 
-              alt="Figure: System Context shows the LWS System and its major components"/>
-          <figcaption>System Context shows the LWS System and its major components.</figcaption>
+          <img src="diagrams/fig-container-diagram.svg"
+              alt="An agent, identified by a controlled identifier, makes requests through an LWS client. The client authenticates with an identity provider, requests an access token from the authorization server, and sends requests to the storage. The storage and the authorization server form the LWS server. The authorization server validates credentials with the identity provider, and verifies the identity provider through the controlled identifier."/>
+          <figcaption>The components of an LWS server, its storage and authorization server, and how they interact with an LWS client, an identity provider, a controlled identifier, and an agent.</figcaption>
         </figure>
 
       </section>
@@ -319,7 +327,7 @@
         <li><dfn data-lt="agents">agent</dfn> &mdash; a person, social entity, or software identified by a URI.</li>
         <li><dfn data-lt="authentication credentials">authentication credential</dfn> &mdash; a security token that asserts claims about an <a>agent</a> or end-user. This token is secured with a cryptographic proof.
           Examples of authentication credentials include assertions of identity such as OpenID Connect ID Tokens and SAML-based assertions as well as assertions of
-          capability such as ZCAPs.
+          capability such as ZCAPs [[ZCAP]].
         </li>
         <li><dfn data-lt="authentication suites">authentication suite</dfn> &mdash; a defined validation mechanism for a concrete serialization of an <a>authentication credential</a>.</li>
         <li><dfn>auxiliary resource</dfn> &mdash; a <a>Storage Resource</a> that plays a particular role with respect to a <a>Storage Resource</a>, called its <dfn>primary resource</dfn>,
