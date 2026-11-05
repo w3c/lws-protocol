@@ -150,6 +150,3 @@ In all cases, the server MUST include the following metadata in the response hea
 The LWS server MUST support HEAD [[RFC9110]] for both <a>containers</a> and non-containers, returning the same headers as GET (including `Content-Type`, `Link` for metadata) but without a body. This enables metadata retrieval without transferring content.
 
 **Caching and Conditional Requests:** LWS leverages HTTP caching semantics. Servers SHOULD support conditional requests as defined in [[RFC9110]], including mechanisms such as entity tags (`ETags`) and date-based validators (like `If-Modified-Since` headers). If the resource or <a>container</a> listing has not changed, respond with `304 Not Modified` to avoid redundant transfers.
-
-
-**Discoverability and Authorization:** For enhanced discoverability, `401 Unauthorized` responses include a `WWW-Authenticate` header with a `resource_metadata` parameter, as described in [Authorization Server Discovery](#authorization-server-discovery), so that clients can locate an authorization server without hardcoded URIs.
