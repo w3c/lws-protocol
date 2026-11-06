@@ -126,6 +126,14 @@
         preProcess: [allowUnusedDfnInWd],
         postProcess: [cleanEditorsDraft],
         lint: { "no-unused-dfns": true},
+        localBiblio: {
+          "LWS10-OAUTH": {
+            title: "Linked Web Storage OAuth Profile 1.0",
+            href: "https://w3c.github.io/lws-protocol/lws10-oauth/",
+            publisher: "W3C",
+            status: "ED",
+          },
+        },
       };
 
       function allowUnusedDfnInWd(cfg) {
@@ -269,11 +277,11 @@
       <section id="conformance">
         <!-- Respec automagically adds the heading. -->
         <p>
-          A <dfn>LWS Server</dfn> is an HTTP server [[!rfc9112]] that complies with all of the relevant "MUST" statements in this specification. Specifically, the relevant normative "MUST" statements in <a href="#operations"></a> of this document MUST be respected.
+          A <dfn>LWS Server</dfn> is an HTTP server [[!rfc9112]] that complies with all of the relevant "MUST" statements in this specification. Specifically, the relevant normative "MUST" statements in <a href="#operations"></a> and <a href="#authentication-authorization"></a> of this document MUST be respected.
         </p>
 
         <p>
-          An <dfn>LWS Client</dfn> is an HTTP client [[!rfc9112]] that complies with all of the relevant "MUST" statements in this specification. Specifically, the relevant normative "MUST" statements in <a href="#operations"></a> of this document MUST be respected.
+          An <dfn>LWS Client</dfn> is an HTTP client [[!rfc9112]] that complies with all of the relevant "MUST" statements in this specification. Specifically, the relevant normative "MUST" statements in <a href="#operations"></a> and <a href="#authentication-authorization"></a> of this document MUST be respected.
         </p>
       </section>
 
@@ -295,13 +303,6 @@
     <section id="terminology">
       <h2>Terminology</h2>
       <p>
-        The terms "authorization server" and "client" are defined by the OAuth 2.0 Authorization Framework [[!RFC6749]].
-      </p>
-      <p>
-        The terms "end-user" and "issuer" are defined by OpenID Connect Core 1.0 [[!OPENID-CONNECT-CORE]].
-      </p>
-
-      <p>
         This specification defines the following terms:
       </p>
       <ul>
@@ -317,11 +318,6 @@
         request to perform specific actions on <a>Storage Resources</a>, including the desired scope
         and constraints.</li>
         <li><dfn data-lt="agents">agent</dfn> &mdash; a person, social entity, or software identified by a URI.</li>
-        <li><dfn data-lt="authentication credentials">authentication credential</dfn> &mdash; a security token that asserts claims about an <a>agent</a> or end-user. This token is secured with a cryptographic proof.
-          Examples of authentication credentials include assertions of identity such as OpenID Connect ID Tokens and SAML-based assertions as well as assertions of
-          capability such as ZCAPs.
-        </li>
-        <li><dfn data-lt="authentication suites">authentication suite</dfn> &mdash; a defined validation mechanism for a concrete serialization of an <a>authentication credential</a>.</li>
         <li><dfn>auxiliary resource</dfn> &mdash; a <a>Storage Resource</a> that plays a particular role with respect to a <a>Storage Resource</a>, called its <dfn>primary resource</dfn>,
         and whose lifetime is bound to the primary resource.
         This specification defines <a>linkset resource</a> and <a>metadata resource</a> as types of auxiliary resources,
@@ -373,14 +369,21 @@
       </div>
     </section>
 
-    <section id="authentication">
-      <h2>Authentication</h2>
-      <div data-include="Authentication.html" data-include-replace="true"></div>
-    </section>
-
-    <section id="authorization">
-      <h2>Authorization</h2>
-      <div data-include="Authorization.html" data-include-replace="true"></div>
+    <section id="authentication-authorization">
+      <h2>Authentication and Authorization</h2>
+      <p>
+        <a>Authentication</a> and <a>authorization</a> of requests to an <a>LWS Server</a> are defined by the
+        Linked Web Storage OAuth Profile [[!LWS10-OAUTH]]. That profile describes how <a>agents</a> are
+        authenticated, how a client discovers an authorization server and obtains an access token for a
+        <a>storage</a>, and how a storage server validates that access token.
+      </p>
+      <p>
+        An <a>LWS Server</a> MUST conform to the requirements for a storage server in [[!LWS10-OAUTH]].
+        An <a>LWS Client</a> MUST conform to the requirements for a client in [[!LWS10-OAUTH]].
+      </p>
+      <p>
+        An <a>LWS Server</a> MAY support additional authorization mechanisms beyond this baseline.
+      </p>
     </section>
 
     <section id="discovery">
