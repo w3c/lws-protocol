@@ -316,6 +316,12 @@ Content-Type: application/lws+json
     </p>
 
     <p>
+      Every resource in the <code>topic</code> array MUST <a>belong to</a> the <a>storage</a> whose
+      <a>storage description resource</a> lists the notification service. A server MUST reject a
+      subscription request whose <code>topic</code> array names a resource of another <a>storage</a>.
+    </p>
+
+    <p>
       Authorization MUST also be enforced at notification delivery time. A server MUST
       NOT deliver a <a>notification</a> about a resource that the <a>subscriber</a> is
       not authorized to read at the time the event occurs. This applies to all resources

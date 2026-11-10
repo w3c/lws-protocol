@@ -52,8 +52,8 @@ client (called in this specification <dfn data-cite="RFC6749#section-1.1">author
     </p>
 
     <p>
-      The response MUST also include a <code>Link</code> header identifying the <a>storage</a> that contains the
-      requested resource, as described in <a href="#storage-description-binding"></a>. A client supplies this URI as the
+      The response MUST also include a <code>Link</code> header identifying the <a>storage</a> the requested resource
+      <a>belongs to</a>, as described in <a href="#storage-description-binding"></a>. A client supplies this URI as the
       <code>resource</code> parameter when requesting an access token, as described in
       <a href="#authorization-token-exchange-request"></a>.
     </p>
@@ -231,7 +231,7 @@ WWW-Authenticate: Bearer resource_metadata="https://storage.example/.well-known/
       <ul>
         <li>The <code>resource</code> parameter is REQUIRED. The value of this parameter MUST be a URI and will be used
         to populate the <code>aud</code> (audience) claim in the resulting access token. The supplied value MUST be the
-        URI of the <a>storage</a> that contains the requested resource, as provided in the <code>Link</code> header of
+        URI of the <a>storage</a> the requested resource <a>belongs to</a>, as provided in the <code>Link</code> header of
         an unauthorized response. The authorization server MUST reject any request in which the resource parameter
         identifies an unknown or untrusted <a>storage</a>.
         </li>
@@ -381,6 +381,12 @@ signature
       <pre id="example-authorization-token-presentation" class="example">
 Authorization: Bearer eyJ0eXAiOiJhcytqd3QiLCJhbGciOiJFUzI1NiIs...DeWt4QuZXso
       </pre>
+
+      <p>
+        A client MAY present an access token for a <a>storage</a> to any URI that has the same scheme and authority as
+        the <code>serviceEndpoint</code> of that storage's <code>StorageRoot</code> service. A client MUST NOT present it
+        to any other URI.
+      </p>
     </section>
 
     <section id="authorization-token-validation-verification">
@@ -400,8 +406,8 @@ Authorization: Bearer eyJ0eXAiOiJhcytqd3QiLCJhbGciOiJFUzI1NiIs...DeWt4QuZXso
           Issuer Validation: Verify the <code>iss</code> claim matches the expected authorization server identifier.
         </li>
         <li>
-          Audience Validation: Verify the <code>aud</code> claim includes the URI of the <a>storage</a> that contains
-          the target resource.
+          Audience Validation: Verify the <code>aud</code> claim includes the URI of the <a>storage</a> the target
+          resource <a>belongs to</a>.
         </li>
         <li>
           Temporal Validation, subject to an allowable clock skew between systems.
