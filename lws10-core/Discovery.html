@@ -45,6 +45,16 @@
       </li>
     </ul>
 
+    <p>
+      A resource <dfn data-lt="belongs to|belong to">belongs to</dfn> a <a>storage</a> when the <a>storage</a>
+      contains it, when it is the <code>serviceEndpoint</code> of a service in the <a>storage description resource</a>
+      that has the same scheme and authority as the <code>serviceEndpoint</code> of its <code>StorageRoot</code>
+      service, or when it is a resource that such a service manages, such as a <a>subscription</a>, an
+      <a>access request</a> or an <a>access grant</a>. A service on another origin, such as an authorization server,
+      can still be listed, but nothing it serves belongs to the <a>storage</a>. A <code>serviceEndpoint</code> MUST NOT
+      appear in the <a>storage description resource</a> of more than one <a>storage</a>.
+    </p>
+
     <pre id="example-storage-description-minimal" class="example" title="Minimum storage description resource">
 {
   "@context": [
