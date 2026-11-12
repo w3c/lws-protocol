@@ -87,15 +87,19 @@ Link: </alice/photos/?page=2>; rel="next"
     {
       "type": "DataResource",
       "id": "/alice/photos/vacation.jpg",
-      "format": "image/jpeg",
-      "size": 248392,
+      "representations": [{
+        "format": "image/jpeg",
+        "size": 248392
+      }],
       "modified": "2025-11-20T10:30:00Z"
     },
     {
       "type": "DataResource",
       "id": "/alice/photos/portrait.png",
-      "format": "image/png",
-      "size": 102400,
+      "representations": [{
+        "format": "image/png",
+        "size": 102400
+      }],
       "modified": "2025-11-21T14:15:00Z"
     }
   ]
@@ -131,8 +135,10 @@ Link: </alice/photos/?page=3>; rel="last"
     {
       "type": "DataResource",
       "id": "/alice/photos/sunset.jpg",
-      "format": "image/jpeg",
-      "size": 315000,
+      "representations": [{
+        "format": "image/jpeg",
+        "size": 315000
+      }],
       "modified": "2025-11-22T09:00:00Z"
     }
   ]
