@@ -1,0 +1,43 @@
+name: Specification topic
+description: Propose a change or raise a question about an area of the LWS specifications.
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Select the closest topic so the relevant participants are notified.
+
+  - type: dropdown
+    id: topic
+    attributes:
+      label: Topic
+      description: Which part of the specifications does this issue concern?
+      options:
+        - Authentication
+        - CRUD operations
+        - Metadata and linksets
+        - Notifications
+        - Access requests and grants
+        - CI and publication tooling
+        - Vocabulary and JSON-LD
+        - Test suite
+        - Threat model
+        - Introduction
+        - Search index
+    validations:
+      required: true
+
+  - type: textarea
+    id: proposal
+    attributes:
+      label: Proposal or question
+      description: Describe the change, problem, or question and why it matters.
+    validations:
+      required: true
+
+  - type: textarea
+    id: references
+    attributes:
+      label: Relevant references
+      description: Link related specification text, issues, pull requests, or implementations.
+    validations:
+      required: false
