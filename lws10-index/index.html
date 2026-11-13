@@ -214,7 +214,7 @@
       <section id="type-index-get">
         <h3>GET [TypeIndexService]</h3>
 
-        <p>Returns a paginated <code>TypeIndex</code> as <code>application/lws+json</code>,
+        <p>Returns a paginated <code>TypeIndex</code> as <code>application/ld+json; profile="https://www.w3.org/ns/lws/v1"</code>,
           following the standard LWS pagination model defined by [[!LWS10-CORE]]: page URIs
           are conveyed in <code>Link</code> headers&mdash;not in the response body&mdash;and
           are opaque to the client. The body lists the unique types of resources that
@@ -238,7 +238,7 @@ Authorization: Bearer &lt;token&gt;
 
 Response
 HTTP/1.1 200 OK
-Content-Type: application/lws+json
+Content-Type: application/ld+json; profile="https://www.w3.org/ns/lws/v1"
 Cache-Control: private
 Link: &lt;https://example.org/types/index?page=1&gt;; rel="first"
 Link: &lt;https://example.org/types/index?page=2&gt;; rel="next"
@@ -293,7 +293,7 @@ Link: &lt;https://example.org/types/index?page=4&gt;; rel="last"
           [[!RFC8259]] whose members express constraints: the <code>type</code> member and,
           optionally, one member per filtered link relation, each carrying the
           conjunctive-normal-form value grammar defined below. Unlike the
-          <code>application/lws+json</code> representations defined by [[!LWS10-CORE]] &mdash;
+          JSON-LD representations in the LWS profile defined by [[!LWS10-CORE]] &mdash;
           which this service still uses for its <em>responses</em> &mdash; a filter document is
           plain JSON rather than JSON-LD: it carries no <code>@context</code>, its member names
           are not JSON-LD terms, and its nested-array groups are not subject to JSON-LD
@@ -384,9 +384,9 @@ Link: &lt;https://example.org/types/index?page=4&gt;; rel="last"
         </p>
         <p>
           A successful search returns <code>200</code> (OK). The default response is an
-          <code>application/lws+json</code> <code>ContainerPage</code> whose items describe the
+          <code>application/ld+json; profile="https://www.w3.org/ns/lws/v1"</code> <code>ContainerPage</code> whose items describe the
           matching Storage Resources, and every server MUST be able to produce it: a request that sends
-          no <code>Accept</code> header field, or one that admits <code>application/lws+json</code>,
+          no <code>Accept</code> header field, or one that admits that media type,
           receives this representation. A server MAY honor an <code>Accept</code> header field that
           requests a different response media type and return the result set in that format instead
           [[!RFC10008]]; if it can satisfy none of the media types the request finds acceptable, it
@@ -431,7 +431,7 @@ Link: &lt;https://example.org/types/index?page=4&gt;; rel="last"
             A request whose <code>Content-Type</code> identifies a query format the server does not support MUST be rejected with <code>415</code> (Unsupported Media Type), and such a response SHOULD include an <code>Accept-Query</code> header field [[!RFC10008]] listing the query formats the server does accept; every server supports at least <code>application/lws-query+json</code> (see <a href="#type-search-query"></a>). A request that omits the <code>Content-Type</code> header field, which [[!RFC10008]] requires a server to reject, MUST be rejected with <code>400</code> (Bad Request).
           </li>
           <li>
-            A request whose <code>Accept</code> header field excludes every response media type the server can produce for the result set MUST be rejected with <code>406</code> (Not Acceptable) [[!RFC10008]]. Because every server can produce the <code>application/lws+json</code> <code>ContainerPage</code>, a request that omits <code>Accept</code> or admits that media type never results in <code>406</code>.
+            A request whose <code>Accept</code> header field excludes every response media type the server can produce for the result set MUST be rejected with <code>406</code> (Not Acceptable) [[!RFC10008]]. Because every server can produce the <code>application/ld+json; profile="https://www.w3.org/ns/lws/v1"</code> <code>ContainerPage</code>, a request that omits <code>Accept</code> or admits that media type never results in <code>406</code>.
           </li>
           <li>
             A <code>type</code> value, or any relation target value, that does not match the
@@ -521,7 +521,7 @@ Authorization: Bearer &lt;token&gt;
 
 Response
 HTTP/1.1 200 OK
-Content-Type: application/lws+json
+Content-Type: application/ld+json; profile="https://www.w3.org/ns/lws/v1"
 Cache-Control: private
 Link: &lt;https://example.org/types/index?page=1&gt;; rel="first"
 Link: &lt;https://example.org/types/index?page=2&gt;; rel="next"
@@ -566,7 +566,7 @@ Content-Type: application/lws-query+json
 
 Response
 HTTP/1.1 200 OK
-Content-Type: application/lws+json
+Content-Type: application/ld+json; profile="https://www.w3.org/ns/lws/v1"
 Cache-Control: private
 Link: &lt;https://example.org/types/search?cursor=8f2a1c&gt;; rel="first"
 Link: &lt;https://example.org/types/search?cursor=b71e90&gt;; rel="next"

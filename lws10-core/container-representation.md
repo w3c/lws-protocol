@@ -1,6 +1,6 @@
 ### Container Representation
 
-An LWS <dfn>container representation</dfn> describes a <a>container</a> and its contents. This section defines its required and optional properties when served as `application/lws+json`. Representations in other RDF media types can be requested through [content negotiation](#content-negotiation).
+An LWS <dfn>container representation</dfn> describes a <a>container</a> and its contents. This section defines its required and optional properties when served as `application/ld+json` with the <a>LWS profile</a> (`application/ld+json; profile="https://www.w3.org/ns/lws/v1"`). Representations in other RDF media types can be requested through [content negotiation](#content-negotiation).
 
 #### Container Properties
 
@@ -40,7 +40,7 @@ A contained resource description SHOULD include:
 The following example shows a <a>container</a> at `https://storage.example/alice/notes/` containing two resources. The other tabs show the same container in other RDF media types in the <a>LWS profile</a>.
 
 <div class="example-tabs" data-base="https://storage.example/alice/notes/">
-<div data-tab="application/lws+json">
+<div data-tab="application/ld+json (LWS profile)">
 
 ```json
 {
