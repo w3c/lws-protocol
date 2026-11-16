@@ -1,23 +1,5 @@
 <p>
-  Credentials carry information about users and <a>agents</a>. While digital signatures can protect against tampering,
-  it is possible for clients or third parties to read the values inside an unencrypted credential.
-</p>
-
-<p>
-  As a result, credential issuers are encouraged to create tokens that contain only the information necessary for
-  authentication or authorization, and to avoid including sensitive attributes unless required.
-</p>
-
-<p>
-  In general, it is an anti-pattern to write unencrypted credential data to a log. In cases where this is necessary,
-  implementations can truncate or hash a credential to preserve the privacy of the credential subject.
-</p>
-
-<p>
-  When using pseudonymous identifiers in JWTs, a storage server may still be able to correlate requests from the same <a>agent</a> over time.
-  To preserve user privacy in this case, a client application can request a batch issuance of JWTs where each JWT is used only one time.
-  This does not prevent the storage server from using other information such as similarities in JWT content or originating IP address
-  to correlate requests. When using pseudonymous identifiers, the authorization server will need to be careful not to issue the same identifier more than once.
+  Privacy considerations for authentication credentials and access tokens are described in [[LWS10-OAUTH]].
 </p>
 
 <section id="privacy-access-requests" class="informative">
