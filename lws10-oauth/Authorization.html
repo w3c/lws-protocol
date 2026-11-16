@@ -4,8 +4,8 @@
 </p>
 
 <p>
-  This section defines an authorization framework based on OAuth 2.0 [[!RFC6749]] as the baseline mechanism for obtaining and presenting
-  access tokens. A server MAY support additional authorization mechanisms beyond this baseline.
+  This section defines an authorization framework based on OAuth 2.0 [[!RFC6749]] for obtaining and presenting
+  access tokens.
 </p>
 
 <section id="authorization-roles">
@@ -17,7 +17,7 @@
 <dfn data-cite="RFC6749#section-1.1">resource server</dfn>,
 client (called in this specification <dfn data-cite="RFC6749#section-1.1">authorization client</dfn> to avoid ambiguity), and
 <dfn data-cite="RFC6749#section-1.1">authorization server</dfn>.
-    A storage server is a type of resource server that also conforms to the LWS storage specification.
+    A storage server is an <a>LWS Server</a> [[!LWS10-CORE]] acting in the OAuth 2.0 resource server role.
   </p>
 </section>
 
@@ -31,8 +31,10 @@ client (called in this specification <dfn data-cite="RFC6749#section-1.1">author
   </p>
 
   <p>
-    The interaction between the authorization server and the storage server is out of scope of this specification.
-    The authorization server may be the same server as the storage server or it may be a separate entity.
+    A storage server validates access tokens using the authorization server's metadata and signing keys, as described
+    in <a href="#authorization-token-validation"></a>. The authorization server can be the same server as the storage
+    server or it can be a separate entity. How a storage server and an authorization server establish trust in each
+    other is out of scope of this specification.
   </p>
 
   <section id="authorization-server-discovery">
@@ -53,7 +55,8 @@ client (called in this specification <dfn data-cite="RFC6749#section-1.1">author
 
     <p>
       The response MUST also include a <code>Link</code> header identifying the <a>storage</a> that contains the
-      requested resource, as described in <a href="#storage-description-binding"></a>. A client supplies this URI as the
+      requested resource, as described in
+      <a data-cite="LWS10-CORE#storage-description-binding">Discovery and Binding</a> [[!LWS10-CORE]]. A client supplies this URI as the
       <code>resource</code> parameter when requesting an access token, as described in
       <a href="#authorization-token-exchange-request"></a>.
     </p>
