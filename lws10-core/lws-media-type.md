@@ -1,7 +1,7 @@
 ### LWS Media Type
 
 An LWS <a>storage description</a> MUST be serializable with the media type `application/cid` [[!CID-1.0]].
-A <a>storage description</a> is a W3C Controlled Identifier document extended with the LWS vocabulary, which is identified by the inclusion of the LWS context in the document's `@context` property.
+A <a>storage description</a> is a W3C Controlled Identifier document that describes an LWS storage with terms from the LWS vocabulary as defined in the [LWS context](#jsonld-context).
 
 An LWS <a>container representation</a> MUST support the media type `application/ld+json` [[!JSON-LD11]] with the <a>LWS profile</a>, that is, `application/ld+json; profile="https://www.w3.org/ns/lws/v1"`.
 
