@@ -71,6 +71,11 @@ class:
     comment: A subscription type that delivers notifications via HTTP POST to a subscriber-provided inbox URL.
     defined_by: https://www.w3.org/TR/lws10-core/
 
+  - id: HttpStreamingSubscription
+    label: HTTP Streaming Subscription
+    comment: A subscription type that delivers notifications over a long-lived HTTP response.
+    defined_by: https://www.w3.org/TR/lws10-notifications-http-streaming/
+
   - id: AccessProfile
     label: Access Profile
     comment: An access profile describes the requirements for expressing a valid access policy.
@@ -176,9 +181,18 @@ property:
   - id: subscription
     label: subscription
     range: IRI
-    scope: WebhookSubscription
+    scope:
+      - WebhookSubscription
+      - HttpStreamingSubscription
     comment: The URI of the subscription resource or connection endpoint.
     defined_by: https://www.w3.org/TR/lws10-core/
+
+  - id: outbox
+    label: outbox
+    range: IRI
+    scope: HttpStreamingSubscription
+    comment: The URI of the HTTP stream from which notifications are read.
+    defined_by: https://www.w3.org/TR/lws10-notifications-http-streaming/
 
   - id: activity
     label: activity
