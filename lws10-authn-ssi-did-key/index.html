@@ -2,22 +2,43 @@
 <html lang="en">
   <head>
     <meta charset="utf-8">
-    <title>LWS Authentication Suite: Self-signed Identity using did:key</title>
+    <title>LWS 1.0 Authentication Suite: Self-signed Identity using did:key</title>
     <script src="https://www.w3.org/Tools/respec/respec-w3c" class="remove"></script>
     <link rel="stylesheet" href="local.css"/>
     <script class='remove'>
       // See https://respec.org/docs/ for how to configure ReSpec
       var respecConfig = {
-        specStatus: "ED",
-        shortName: "lws-authn-ssi-did-key",
+        specStatus: "DISC",
+        publishDate: "2026-09-01",
+        shortName: "lws10-authn-ssi-did-key",
+        edDraftURI: "https://w3c.github.io/lws-protocol/lws10-authn-ssi-did-key/",
         editors: [{
-          name: "Jesse Wright"
-        }, {
-          name: "Aaron Coburn"
+          name: "Jesse Wright",
+          w3cid: "132252",
+          company: "University of Oxford",
+          companyURL: "https://www.ox.ac.uk/"
+        }],
+        authors: [{
+          name: "Aaron Coburn",
+          company: "Inrupt Inc.",
+          companyURL: "https://www.inrupt.com/"
         }],
         github: "w3c/lws-protocol",
         xref: ["web-platform"],
         group: "lws",
+        localBiblio: {
+          "did-key": {
+            title: "The did:key Method v0.9",
+            href: "https://w3c-ccg.github.io/did-key-spec/",
+            publisher: "W3C",
+          },
+          "LWS10-CORE": {
+            title: "Linked Web Storage Protocol 1.0",
+            href: "https://www.w3.org/TR/lws10-core/",
+            publisher: "W3C",
+            status: "FPWD",
+          },
+        },
       };
     </script>
   </head>
@@ -29,7 +50,9 @@
     </section>
     <section id="sotd">
       <p>
-        This is an unofficial proposal.
+        This draft is discontinued in favor of [[[lws10-authn-ssi-cid]]],
+        which subsumes this specification by specifying a generalization
+        of the mechanism described here.
       </p>
     </section>
 
@@ -38,8 +61,8 @@
       <p>
         Self-issued identity is important for cases where applications act on their own behalf.
         This includes autonomous bots as well as server-side scripts, among others.
-        In these cases, the agent is able to securely manage the private portion of a keypair, which it uses to generate signed JSON Web Tokens (JWT).
-        This specification describes how this class of agents can generate authentication credentials that can be used with a Linked Web Storage while using agent identifers with the `did:key:` method.
+        In these cases, the <a>agent</a> is able to securely manage the private portion of a keypair, which it uses to generate signed JSON Web Tokens (JWT).
+        This specification describes how this class of <a>agents</a> can generate <a>authentication credentials</a> that can be used with a Linked Web Storage while using <a>agent</a> identifiers with the `did:key:` method.
       </p>
     </section>
 
@@ -57,7 +80,7 @@
       </p>
 
       <p>
-        The terms "authentication credential" and "authentication suite" are defined by Linked Web Storage Protocol [[!LWS-PROTOCOL]]
+        The terms "<dfn data-cite="LWS10-CORE#dfn-agent">agent</dfn>", "<dfn data-cite="LWS10-CORE#dfn-authentication-credential">authentication credential</dfn>", and "<dfn data-cite="LWS10-CORE#dfn-authentication-suite">authentication suite</dfn>" are defined by Linked Web Storage Protocol [[!LWS10-CORE]]
       </p>
     </section>
 
@@ -65,7 +88,7 @@
       <h2>Authentication Credential Serialization</h2>
 
       <p>
-        A self-issued authentication credential is serialized as a signed JSON Web Token (JWT). In order to use a JWT as an LWS authentication credential, the following additional requirements apply.
+        A self-issued <a>authentication credential</a> is serialized as a signed JSON Web Token (JWT). In order to use a JWT as an LWS <a>authentication credential</a>, the following additional requirements apply.
       </p>
 
       <ul>
@@ -103,7 +126,7 @@
       </ul>
 
       <p>
-        An example JWT that is also an LWS authentication credential is included below.
+        An example JWT that is also an LWS <a>authentication credential</a> is included below.
       </p>
 
       <pre id="example-authentication-token" class="example">
@@ -135,7 +158,7 @@ signature
       </p>
 
       <p>
-        A verifier MUST validate all claims described by the authentication credential data model.
+        A verifier MUST validate all claims described by the <a>authentication credential</a> data model.
       </p>
 
       <p>
@@ -147,7 +170,7 @@ signature
       <h2>Token Type Identifier</h2>
 
       <p>
-        A self-issued JSON Web Token used as an authentication credential MUST use the <code>urn:ietf:params:oauth:token-type:jwt</code> URI when interacting with an authorization server.
+        A self-issued JSON Web Token used as an <a>authentication credential</a> MUST use the <code>urn:ietf:params:oauth:token-type:jwt</code> URI when interacting with an authorization server.
       </p>
     </section>
 
@@ -156,6 +179,39 @@ signature
 
       <p>
         All security considerations described in "Best Current Practice for OAuth 2.0 Security" [[RFC9700]] and "OpenID Connect Core 1.0" Section 16 [[OPENID-CONNECT-CORE]] apply to this specification.
+      </p>
+    </section>
+    <section id="privacy-considerations" class="informative">
+      <h2>Privacy Considerations</h2>
+
+      <p>
+        A self-issued <a>authentication credential</a> using the <code>did:key</code>
+        method embeds the public key directly in the subject identifier. Because the
+        <code>sub</code>, <code>iss</code>, and <code>client_id</code> claims all share the
+        same <code>did:key:</code> URI, verifiers and storage servers can correlate all
+        activity from a given <a>agent</a> across sessions and resources.
+      </p>
+
+      <p>
+        Unlike the other authentication suites, the <code>did:key</code> method does not
+        require dereferencing a remote resource during validation &mdash; the public key is
+        derived directly from the identifier. This avoids the metadata leakage associated
+        with network-based validation, as no third-party server is contacted during the
+        credential verification process.
+      </p>
+
+      <p>
+        However, because the public key is encoded in the identifier itself, the
+        <code>did:key</code> identifier is inherently long-lived and cannot be rotated
+        without changing the <a>agent</a>'s identity. An <a>agent</a> that needs to rotate
+        keys while maintaining a stable identity is encouraged to use a different
+        authentication suite, such as one based on controlled identifier documents.
+      </p>
+
+      <p>
+        Self-issued tokens presented to a storage server or authorization server can be
+        read by those parties. The use of TLS is essential for protecting authentication
+        credentials during transmission.
       </p>
     </section>
   </body>

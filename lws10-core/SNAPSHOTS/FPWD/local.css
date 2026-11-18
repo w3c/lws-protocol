@@ -1,0 +1,16 @@
+/* CSS here rather than doc simplifies editing but complicated caching.
+   Forewarned, I force-reload the css when I need.
+   --
+   -ericP
+*/
+
+.TODO { background-color: #fcc }
+
+.informative { border-left: .3em solid #ccf; margin-left: -.3em; }
+/* doesn't work
+.informative::before {
+    text-orientation: upright;
+    content: "informative";
+    text-decoration: none;
+    color: var(--heading-text);
+} */

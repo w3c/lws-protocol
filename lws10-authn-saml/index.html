@@ -2,22 +2,49 @@
 <html lang="en">
   <head>
     <meta charset="utf-8">
-    <title>LWS Authentication Suite: SAML 2.0</title>
+    <title>LWS 1.0 Authentication Suite: SAML 2.0</title>
     <script src="https://www.w3.org/Tools/respec/respec-w3c" class="remove"></script>
     <link rel="stylesheet" href="local.css"/>
     <script class='remove'>
       // See https://respec.org/docs/ for how to configure ReSpec
       var respecConfig = {
         specStatus: "ED",
-        shortName: "lws-authn-saml",
+        shortName: "lws10-authn-saml",
+        edDraftURI: "https://w3c.github.io/lws-protocol/lws10-authn-saml/",
         editors: [{
-          name: "Jesse Wright"
-        }, {
-          name: "Aaron Coburn"
+          name: "Jesse Wright",
+          w3cid: "132252",
+          company: "University of Oxford",
+          companyURL: "https://www.ox.ac.uk/"
+        }],
+        authors: [{
+          name: "Aaron Coburn",
+          company: "Inrupt Inc.",
+          companyURL: "https://www.inrupt.com/"
         }],
         github: "w3c/lws-protocol",
         xref: ["web-platform"],
         group: "lws",
+        localBiblio: {
+          "LWS10-CORE": {
+            title: "Linked Web Storage Protocol 1.0",
+            href: "https://www.w3.org/TR/lws10-core/",
+            publisher: "W3C",
+            status: "FPWD",
+          },
+          "LWS10-OAUTH": {
+            title: "Linked Web Storage OAuth Profile 1.0",
+            href: "https://w3c.github.io/lws-protocol/lws10-oauth/",
+            publisher: "W3C",
+            status: "ED",
+          },
+          "SAML2-SEC": {
+            title: "Security and Privacy Considerations for the OASIS Security Assertion Markup Language (SAML) V2.0",
+            href: "https://docs.oasis-open.org/security/saml/v2.0/saml-sec-consider-2.0-os.pdf",
+            publisher: "OASIS",
+            date: "March 2005",
+          },
+        },
       };
     </script>
   </head>
@@ -55,7 +82,7 @@
       </p>
 
       <p>
-        The terms "authentication credential" and "authentication suite" are defined by Linked Web Storage Protocol [[!LWS-PROTOCOL]]
+        The terms "<dfn data-cite="LWS10-OAUTH#dfn-authentication-credential">authentication credential</dfn>" and "<dfn data-cite="LWS10-OAUTH#dfn-authentication-suite">authentication suite</dfn>" are defined by Linked Web Storage OAuth Profile [[!LWS10-OAUTH]]
       </p>
     </section>
 
@@ -63,23 +90,23 @@
       <h2>Authentication Credential Serialization</h2>
 
       <p>
-        SAML tokens used as authentication credentials MUST be signed. In addition, a valid SAML token MUST include the following assertions:
+        SAML tokens used as <a>authentication credentials</a> MUST be signed. In addition, a valid SAML token MUST include the following elements and attributes:
       </p>
 
       <p>
-        The SAML token MUST use the <code>saml:NameID</code> assertion for the LWS subject identifier.
+        The SAML token MUST use the <code>saml:NameID</code> element for the LWS subject identifier.
       </p>
 
       <p>
-        The SAML token MUST use the <code>saml:Issuer</code> assertion for the LWS issuer identifier.
+        The SAML token MUST use the <code>saml:Issuer</code> element for the LWS issuer identifier.
       </p>
 
       <p>
-        The SAML token MUST use the <code>Recipient</code> parameter within a <code>saml:SubjectConfirmationData</code> assertion for the LWS client identifier.
+        The SAML token MUST use the <code>Recipient</code> attribute within a <code>saml:SubjectConfirmationData</code> element for the LWS client identifier.
       </p>
 
       <p>
-        Any audience restriction in the SAML token MUST use the <code>saml:Audience</code> assertion. The <code>saml:Audience</code> assertion SHOULD include a client identifier and any additional target audience such as an authorization server.
+        Any audience restriction in the SAML token MUST use the <code>saml:Audience</code> element. The <code>saml:Audience</code> element SHOULD include a client identifier and any additional target audience such as an authorization server.
       </p>
 
       <p>
@@ -94,38 +121,38 @@
     Version="2.0"
     IssueInstant="2025-10-25T01:01:16Z"&gt;
 
-  &lt;saml:Issuer&gt;https://idp.example</saml:Issuer>
+  &lt;saml:Issuer&gt;https://idp.example&lt;/saml:Issuer&gt;
 
   &lt;ds:Signature&gt;
     &lt;ds:SignedInfo&gt;
       ...
-    &lt;ds:SignedInfo&gt;
-  &lt;ds:SignedInfo&gt;
+    &lt;/ds:SignedInfo&gt;
+  &lt;/ds:Signature&gt;
 
   &lt;samlp:Status&gt;
     &lt;samlp:StatusCode Value="urn:oasis:names:tc:SAML:2.0:status:Success"/&gt;
-  &lt;samlp:Status&gt;
+  &lt;/samlp:Status&gt;
 
   &lt;saml:Assertion Version="2.0" IssueInstant="2025-10-25T01:01:16Z"&gt;
     &lt;saml:Issuer&gt;https://idp.example&lt;/saml:Issuer&gt;
     &lt;saml:Subject&gt;
       &lt;saml:NameID Format="urn:oasis:names:tc:SAML:2.0:nameid-format:persistent"&gt;
           https://id.example/end-user
-      &lt;saml:NameID&gt;
+      &lt;/saml:NameID&gt;
       &lt;saml:SubjectConfirmation Method="urn:oasis:names:tc:SAML:2.0:cm:bearer"&gt;
         &lt;saml:SubjectConfirmationData NotOnOrAfter="2025-10-25T02:01:16Z"
                                       Recipient="https://app.example/SAML"/&gt;
-      &lt;saml:SubjectConfirmation&gt;
-    &lt;saml:Subject&gt;
+      &lt;/saml:SubjectConfirmation&gt;
+    &lt;/saml:Subject&gt;
     &lt;saml:Conditions NotBefore="2025-10-25T01:01:16Z"
                      NotOnOrAfter="2025-10-25T02:01:16Z"&gt;
       &lt;saml:AudienceRestriction&gt;
-        &lt;saml:Audience&gt;https://app.example/SAML</saml:Audience>
-        &lt;saml:Audience&gt;https://as.example</saml:Audience>
-      &lt;saml:AudienceRestriction&gt;
-    &lt;saml:Conditions&gt;
-  &lt;saml:Assertion&gt;
-&lt;samlp:Response&gt;
+        &lt;saml:Audience&gt;https://app.example/SAML&lt;/saml:Audience&gt;
+        &lt;saml:Audience&gt;https://as.example&lt;/saml:Audience&gt;
+      &lt;/saml:AudienceRestriction&gt;
+    &lt;/saml:Conditions&gt;
+  &lt;/saml:Assertion&gt;
+&lt;/samlp:Response&gt;
       </pre>
     </section>
 
@@ -133,7 +160,7 @@
       <h2>Authentication Credential Validation</h2>
 
       <p>
-        In order to validate a SAML authentication credential, there must be a trust relationship with the issuing identity provider.
+        In order to validate a SAML <a>authentication credential</a>, there must be a trust relationship with the issuing identity provider.
         This specification does not define how a validating entity establishes a trust relationship with an identity provider,
         expecting these relationships to be established out-of-band.
       </p>
@@ -147,7 +174,7 @@
       <h2>Token Type Identifier</h2>
 
       <p>
-        A SAML 2.0 assertion used as an authentication credential MUST use the <code>urn:ietf:params:oauth:token-type:saml2</code> URI when interacting with an authorization server.
+        A SAML 2.0 assertion used as an <a>authentication credential</a> MUST use the <code>urn:ietf:params:oauth:token-type:saml2</code> URI when interacting with an authorization server.
       </p>
     </section>
 
@@ -155,13 +182,56 @@
       <h2>Security Considerations</h2>
 
       <p>
-        All security considerations described in "Security and Privacy Considerations for the OASIS Security Assertion Markup Language (SAML) V2.0" apply to this specification.
+        All security considerations described in "[[[SAML2-SEC]]]" [[SAML2-SEC]] apply to this specification.
       </p>
 
       <p>
-        A SAML identity provider should support a mechanism to restrict the audience of an authentication credential to a limited set of entities,
-        including an authorization server. A client in possession of an authentication credential with no audience restrictions
+        A SAML identity provider should support a mechanism to restrict the audience of an <a>authentication credential</a> to a limited set of entities,
+        including an authorization server. A client in possession of an <a>authentication credential</a> with no audience restrictions
         should exchange this token for an equivalent audience-restricted token by using, for example, OAuth 2.0 Token Exchange [[RFC8693]].
+      </p>
+    </section>
+    <section id="privacy-considerations" class="informative">
+      <h2>Privacy Considerations</h2>
+
+      <p>
+        All privacy considerations described in "[[[SAML2-SEC]]]" [[SAML2-SEC]]
+        apply to this specification.
+      </p>
+
+      <p>
+        A SAML assertion used as an <a>authentication credential</a> can contain attributes
+        that reveal personally identifiable information about the end-user. Identity providers
+        are encouraged to issue assertions that contain only the information necessary for LWS
+        authentication &mdash; specifically, the <code>saml:NameID</code>, <code>saml:Issuer</code>,
+        and <code>saml:Audience</code> elements and the <code>Recipient</code> attribute of
+        <code>saml:SubjectConfirmationData</code> &mdash; and to avoid including additional identity
+        attributes unless explicitly required.
+      </p>
+
+      <p>
+        The <code>saml:NameID</code> element is used as the LWS subject identifier. When a
+        persistent name identifier format is used, it enables verifiers and storage servers
+        to correlate an end-user's activity across sessions and resources. Identity providers
+        that support transient name identifiers can reduce this correlation, though deployers
+        will need to evaluate whether transient identifiers are compatible with the access
+        control requirements of their LWS deployment.
+      </p>
+
+      <p>
+        The trust model for SAML in this
+        specification relies on out-of-band trust establishment with identity providers.
+        This means there is no subject identifier dereference step during validation, which
+        avoids the associated metadata leakage. However, the out-of-band trust relationship
+        itself reveals which identity providers are used within a deployment.
+      </p>
+
+      <p>
+        SAML assertions presented to a storage server or authorization server can be read by
+        those parties. Audience restriction (via the <code>saml:AudienceRestriction</code>
+        element) limits which parties the assertion is intended for but does not prevent an
+        intermediary from reading the assertion's contents in transit. The use of TLS is
+        essential for protecting authentication credentials during transmission.
       </p>
     </section>
   </body>

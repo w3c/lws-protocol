@@ -1,22 +1,81 @@
 <p>
-  Credentials carry information about users and agents. While digital signatures can protect against tampering,
-  it is possible for clients or third parties to read the values inside an unencrypted credential.
+  Privacy considerations for authentication credentials and access tokens are described in [[LWS10-OAUTH]].
 </p>
 
-<p>
-  As a result, credential issuers are encouraged to create tokens that contain only the information necessary for
-  authentication or authorization, and to avoid including sensitive attributes unless required.
-</p>
+<section id="privacy-access-requests" class="informative">
+  <h4>Access Requests and Grants</h4>
 
-<p>
-  In general, it is an anti-pattern to write unencrypted credential data to a log. In cases where this is necessary,
-  implementations can truncate or hash a credential to preserve the privacy of the credential subject.
-</p>
+  <ul>
+    <li>
+      An <a>access request</a> or <a>access grant</a> can reveal sensitive information
+      about the resources, agents, and purposes involved. Servers are encouraged to limit
+      the visibility of these resources to authorized parties, such as the storage controller
+      and the assignee identified in the document. For example, a storage controller might
+      have the ability to read and delete all resources, while other agents would only have
+      access to the resources for which they are the assignee.
+    </li>
+    <li>
+      When an <a>access grant</a> includes a client constraint, it is advisable for a
+      server to filter that grant from responses to requests made by other clients. For
+      example, if an agent is granted access to a resource only when using a specific
+      client, that grant would not be visible when the agent uses a different client.
+    </li>
+  </ul>
+</section>
 
-<p>
-  When using pseudonymous identifiers in JWTs, a storage server may still be able to correlate requests from the same agent over time.
-  To preserve user privacy in this case, a client application can request a batch issuance of JWTs where each JWT is used only one time.
-  This does not prevent the storage server from using other information such as similarities in JWT content or originating IP address
-  to correlate requests. When using pseudonymous identifiers, the authorization server will need to be careful not to issue the same identifier more than once.
-</p>
+<section id="privacy-notifications" class="informative">
+  <h4>Notifications</h4>
 
+  <ul>
+    <li>
+      <strong>Activity Tracking</strong>: Notifications inherently reveal when resources
+      change. <a>Subscribers</a> SHOULD only receive notifications for resources they are
+      authorized to access.
+    </li>
+    <li>
+      <strong>Actor Disclosure</strong>: Including the <code>actor</code> property in
+      notifications reveals who made changes. This may be inappropriate in some contexts.
+      The <code>actor</code> property SHOULD be omitted by default. Servers MAY make
+      its inclusion configurable.
+    </li>
+    <li>
+      <strong>Timing Analysis</strong>: The timing of notifications can reveal usage
+      patterns even when content is not disclosed.
+    </li>
+  </ul>
+</section>
+
+<section id="privacy-moving-resources" class="informative">
+  <h4>Moving Resources Between Containers</h4>
+
+  <ul>
+    <li>
+      <strong>Unintended Exposure</strong>: An <a>agent</a> moving a resource may not realize
+      that the destination <a>container</a> is governed by more permissive policies than the
+      source. Surfacing the difference in applicable policies before the <code>up</code> link of
+      a resource is changed is a useful mitigation, though how a client does so is outside the
+      scope of this specification.
+    </li>
+    <li>
+      <strong>Retained Identifiers</strong>: This consideration applies only where a server
+      derives identifiers from the <a>containment</a> hierarchy. Such a server, if it preserves
+      the identifier of a moved resource, leaves an identifier that continues to disclose the
+      <a>container</a> in which the resource was originally created. Servers that treat
+      identifiers as opaque, as this specification recommends, do not make this disclosure,
+      because their identifiers never encoded a position in the hierarchy.
+      <p class="issue" data-number="207">
+        A concrete example for this consideration is best given once the Working Group has
+        decided how a <a>storage</a> describes its approach to allocating identifiers.
+      </p>
+    </li>
+    <li>
+      <strong>Redirects</strong>: A 301 Moved Permanently response left behind at a previous
+      identifier discloses the new identifier of a resource to <a>agents</a> that may not be
+      authorized to access it. Where identifiers are derived from the <a>containment</a>
+      hierarchy, it additionally discloses the new position of the resource in that hierarchy,
+      and hence the <a>container</a> it was moved into; where identifiers are opaque, only the
+      new identifier is disclosed. Servers SHOULD apply the same access control to such
+      responses as to the moved resource itself, and MAY respond with 404 Not Found instead.
+    </li>
+  </ul>
+</section>

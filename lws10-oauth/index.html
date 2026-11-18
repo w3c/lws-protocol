@@ -1,0 +1,133 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <title>Linked Web Storage OAuth Profile 1.0</title>
+    <script src="https://www.w3.org/Tools/respec/respec-w3c" class="remove"></script>
+    <link rel="stylesheet" href="local.css"/>
+    <script class='remove'>
+      // See https://respec.org/docs/ for how to configure ReSpec
+      var respecConfig = {
+        specStatus: "ED",
+        shortName: "lws10-oauth",
+        edDraftURI: "https://w3c.github.io/lws-protocol/lws10-oauth/",
+        editors: [{
+          name: "Jesse Wright",
+          w3cid: "132252",
+          company: "University of Oxford",
+          companyURL: "https://www.ox.ac.uk/",
+        }, {
+          name: "Erich Bremer",
+          w3cid: "45759",
+          company: "Stony Brook University",
+          companyURL: "https://www.stonybrook.edu/",
+        }],
+        github: "w3c/lws-protocol",
+        xref: ["web-platform"],
+        group: "lws",
+        localBiblio: {
+          "LWS10-CORE": {
+            title: "Linked Web Storage Protocol 1.0",
+            href: "https://www.w3.org/TR/lws10-core/",
+            publisher: "W3C",
+            status: "FPWD",
+          },
+        },
+      };
+    </script>
+  </head>
+  <body>
+    <section id="abstract">
+      <p>
+        This document defines an OAuth profile for the Linked Web Storage (LWS) protocol. It describes how
+        <a>agents</a> are authenticated, how a client discovers an authorization server and obtains an access token
+        for a <a>storage</a>, and how a storage server validates that access token.
+      </p>
+    </section>
+    <section id="sotd">
+      <p>
+        This is an unofficial proposal.
+      </p>
+    </section>
+
+    <section id="introduction">
+      <h2>Introduction</h2>
+      <p>
+        The Linked Web Storage Protocol [[!LWS10-CORE]] defines how client applications access and manage resources
+        in a <a>storage</a>. Access to those resources is governed by the identity and permissions of an <a>agent</a>.
+        This specification profiles the OAuth 2.0 Authorization Framework [[!RFC6749]] and related specifications to
+        define the interactions among a client, an authorization server, and a storage server, so that a client can
+        obtain and present an access token for a <a>storage</a>.
+      </p>
+      <p>
+        An <a>LWS Server</a> and an <a>LWS Client</a> are required to conform to this profile by [[!LWS10-CORE]].
+      </p>
+    </section>
+
+    <section id="conformance">
+      <p>
+        This specification defines conformance criteria for three classes of product: a client, an authorization
+        server, and a storage server. A product conforms to this specification if it complies with all of the
+        "MUST" statements that apply to its class.
+      </p>
+    </section>
+
+    <section id="terminology">
+      <h2>Terminology</h2>
+
+      <p>
+        The terms "authorization server" and "client" are defined by the OAuth 2.0 Authorization Framework [[!RFC6749]].
+      </p>
+
+      <p>
+        The terms "JSON Web Token (JWT)" and "claim" are defined by JSON Web Token [[!RFC7519]].
+      </p>
+
+      <p>
+        The terms "<dfn data-cite="LWS10-CORE#dfn-agent" data-lt="agents">agent</dfn>",
+        "<dfn data-cite="LWS10-CORE#dfn-lws-server">LWS Server</dfn>",
+        "<dfn data-cite="LWS10-CORE#dfn-lws-client">LWS Client</dfn>",
+        "<dfn data-cite="LWS10-CORE#dfn-storage">storage</dfn>",
+        "<dfn data-cite="LWS10-CORE#dfn-storage-description">storage description</dfn>", and
+        "<dfn data-cite="LWS10-CORE#dfn-storage-root">storage root</dfn>" are defined by the Linked Web Storage
+        Protocol [[!LWS10-CORE]].
+      </p>
+
+      <p>
+        This specification defines the following terms:
+      </p>
+      <ul>
+        <li><dfn data-lt="authentication credentials">authentication credential</dfn> &mdash; a security token that asserts claims about an <a>agent</a> or end user. This token is secured with a cryptographic proof.
+          Examples of authentication credentials include assertions of identity such as OpenID Connect ID Tokens and SAML-based assertions as well as assertions of
+          capability such as ZCAPs.
+        </li>
+        <li><dfn data-lt="authentication suites">authentication suite</dfn> &mdash; a defined validation mechanism for a concrete serialization of an <a>authentication credential</a>.</li>
+      </ul>
+    </section>
+
+    <section id="authentication">
+      <h2>Authentication</h2>
+      <div data-include="Authentication.html" data-include-replace="true"></div>
+    </section>
+
+    <section id="authorization">
+      <h2>Authorization</h2>
+      <div data-include="Authorization.html" data-include-replace="true"></div>
+    </section>
+
+    <section id="security-considerations" class="informative">
+      <h2>Security Considerations</h2>
+      <div data-include="Security-Considerations.html" data-include-replace="true"></div>
+    </section>
+
+    <section id="privacy-considerations" class="informative">
+      <h2>Privacy Considerations</h2>
+      <div data-include="Privacy-Considerations.html" data-include-replace="true"></div>
+    </section>
+
+    <section id="iana-considerations" class="informative">
+      <h2>IANA Considerations</h2>
+      <div data-include="IANA-Considerations.html" data-include-replace="true"></div>
+    </section>
+  </body>
+</html>

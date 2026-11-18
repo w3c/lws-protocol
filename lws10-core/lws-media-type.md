@@ -1,0 +1,140 @@
+### LWS Media Type
+
+An LWS <a>storage description</a> MUST be serializable with the media type `application/lws+cid`.
+The `application/lws+cid` media type identifies a document that is a specialization of a W3C Controlled Identifier document [[!CID-1.0]], extended with the LWS vocabulary.
+
+An LWS <a>container representation</a> MUST support the media type `application/lws+json`.
+
+While LWS container representations use JSON-LD conventions, the constraints and requirements for LWS justify the use of a specific media type.
+
+#### LWS Profile
+
+The URI `https://www.w3.org/ns/lws/v1` identifies the <dfn>LWS profile</dfn> [[RFC6906]]. A representation of a <a>container</a> conforms to the <a>LWS profile</a> if it is RDF isomorphic to the `application/lws+json` representation of the same <a>container</a> state and page; that is, if the RDF it encodes is isomorphic, as defined in [RDF Dataset Comparison](https://www.w3.org/TR/rdf12-concepts/#section-dataset-isomorphism) [[!RDF12-CONCEPTS]], to the RDF that the `application/lws+json` representation encodes when interpreted as JSON-LD [[!JSON-LD11]]. An `application/lws+json` representation always conforms to the <a>LWS profile</a>.
+
+#### Content Negotiation
+
+Servers MUST honor requests for `application/lws+json` on <a>containers</a>, and MUST set the `Content-Type` response header to the media type of the selected representation.
+
+A client requests a representation in the <a>LWS profile</a> by including the <a>LWS profile</a> URI in the `profile` parameter of an RDF media type. RDF media types that define this parameter include `application/ld+json` [[JSON-LD11]], `text/turtle` [[RDF12-TURTLE]], `application/trig` [[RDF12-TRIG]], `application/n-triples` [[RDF12-N-TRIPLES]], and `application/n-quads` [[RDF12-N-QUADS]]. If the server selects such a media type, the response MUST conform to the <a>LWS profile</a>, that is, it MUST be RDF isomorphic to the `application/lws+json` representation, and its `Content-Type` MUST include the same `profile` parameter. A server MUST NOT select such a media type if it cannot produce a representation in the <a>LWS profile</a> in it.
+
+When the selected representation depends on the request's `Accept` header, responses SHOULD include a `Vary: Accept` header [[!RFC9110]].
+
+#### Pagination
+
+Certain composite resources, like <a>containers</a>, may hold a large number of resources. 
+To allow clients to retrieve listings incrementally, servers SHOULD support
+pagination for <a>containers</a> whose membership exceeds a server-determined threshold.
+
+##### Pagination Model
+
+Pagination is link-based: the server provides pagination URIs via HTTP `Link` headers [[!RFC8288]],
+allowing clients to navigate the full listing without relying on numeric offsets.
+
+When a listing is paginated, the response body contains only the current page of items. The
+composite resource's `id`, `type`, and `totalItems` properties reflect the full membership, while `items`
+contains only the resources on the current page.
+
+##### Pagination Link Relations
+
+Pagination URIs are conveyed in `Link` headers using the following standard link relations:
+
+- **`rel="first"`**: The URI of the first page of results. MUST be present on paginated responses.
+- **`rel="last"`**: The URI of the last page of results. MAY be present on paginated responses.
+- **`rel="next"`**: The URI of the next page of results. MUST be present when there are subsequent
+pages. MUST be omitted on the last page.
+- **`rel="prev"`**: The URI of the previous page of results. MAY be present when there are preceding
+pages. MUST be omitted on the first page.
+
+All pagination URIs are opaque to the client. Clients SHOULD NOT construct or modify pagination
+URIs; they SHOULD use the URIs provided by the server.
+
+##### Requesting Pages
+
+A client requests the composite resource's URI to obtain the first page. The response includes pagination
+Link headers that the client follows to retrieve subsequent pages. Servers MAY also support
+direct access to specific pages via the pagination URIs obtained during a previous scan.
+
+When a paginated response is returned, the server MUST respond with 200 OK. The `totalItems`
+property in the response body SHOULD reflect the total number of items across all pages, not just the current page.
+
+##### Example: Paginated Container
+
+Request:
+```
+GET /alice/photos/ HTTP/1.1
+Authorization: Bearer <token>
+Accept: application/lws+json
+```
+
+Response (first page):
+```
+HTTP/1.1 200 OK
+Content-Type: application/lws+json
+ETag: "photos-page1-etag"
+Link: </alice/photos/.meta>; rel="linkset"; type="application/linkset+json"
+Link: </alice/>; rel="up"
+Link: <https://www.w3.org/ns/lws#Container>; rel="type"
+Link: </alice/photos/?page=1>; rel="first"
+Link: </alice/photos/?page=3>; rel="last"
+Link: </alice/photos/?page=2>; rel="next"
+
+{
+  "@context": "https://www.w3.org/ns/lws/v1",
+  "id": "/alice/photos/",
+  "type": "Container",
+  "totalItems": 150,
+  "items": [
+    {
+      "type": "DataResource",
+      "id": "/alice/photos/vacation.jpg",
+      "format": "image/jpeg",
+      "size": 248392,
+      "modified": "2025-11-20T10:30:00Z"
+    },
+    {
+      "type": "DataResource",
+      "id": "/alice/photos/portrait.png",
+      "format": "image/png",
+      "size": 102400,
+      "modified": "2025-11-21T14:15:00Z"
+    }
+  ]
+}
+```
+
+Request (next page):
+```
+GET /alice/photos/?page=2 HTTP/1.1
+Authorization: Bearer <token>
+Accept: application/lws+json
+```
+
+Response (middle page):
+```
+HTTP/1.1 200 OK
+Content-Type: application/lws+json
+ETag: "photos-page2-etag"
+Link: </alice/photos/.meta>; rel="linkset"; type="application/linkset+json"
+Link: </alice/>; rel="up"
+Link: <https://www.w3.org/ns/lws#Container>; rel="type"
+Link: </alice/photos/?page=1>; rel="first"
+Link: </alice/photos/?page=1>; rel="prev"
+Link: </alice/photos/?page=3>; rel="next"
+Link: </alice/photos/?page=3>; rel="last"
+
+{
+  "@context": "https://www.w3.org/ns/lws/v1",
+  "id": "/alice/photos/",
+  "type": "Container",
+  "totalItems": 150,
+  "items": [
+    {
+      "type": "DataResource",
+      "id": "/alice/photos/sunset.jpg",
+      "format": "image/jpeg",
+      "size": 315000,
+      "modified": "2025-11-22T09:00:00Z"
+    }
+  ]
+}
+```

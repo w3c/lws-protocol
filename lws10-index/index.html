@@ -1,0 +1,824 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <title>LWS Search and Type Index Services</title>
+    <script src="https://www.w3.org/Tools/respec/respec-w3c" class="remove"></script>
+    <script class='remove'>
+      // See https://respec.org/docs/ for how to configure ReSpec
+      var respecConfig = {
+        specStatus: "ED",
+        shortName: "lws10-index",
+        editors: [{
+          name: "Jesse Wright",
+          w3cid: "132252",
+          company: "University of Oxford",
+          companyURL: "https://www.ox.ac.uk/",
+        }, {
+          name: "Erich Bremer",
+          w3cid: "45759",
+          company: "Stony Brook University",
+          companyURL: "https://www.stonybrook.edu/",
+        }],
+        github: "w3c/lws-protocol",
+        xref: ["web-platform"],
+        group: "lws",
+        maxTocLevel: 3,
+        localBiblio: {
+          "LWS10-CORE": {
+            title: "Linked Web Storage Protocol 1.0",
+            href: "https://www.w3.org/TR/lws10-core/",
+            publisher: "W3C",
+            status: "FPWD",
+          },
+          "RFC10008": {
+            title: "The HTTP QUERY Method",
+            href: "https://www.rfc-editor.org/rfc/rfc10008",
+            authors: ["J. Reschke", "J. M. Snell", "M. Bishop"],
+            publisher: "IETF",
+            status: "Proposed Standard",
+            date: "June 2026",
+          },
+        },
+      };
+    </script>
+  </head>
+  <body>
+    <section id="abstract">
+      <p>
+        This document extends the Linked Web Storage (LWS) protocol with server-managed
+        services for type-based discovery: a Type Index Service that enumerates the distinct
+        resource types present within a storage, and a Type Search Service that returns the
+        resources matching a type filter. The specification defines how servers derive types,
+        the query model and its error handling, and the authorization requirements that keep
+        responses client-specific. Both services are discoverable via the storage description
+        resource.
+      </p>
+    </section>
+    <section id="sotd">
+      <p>
+        This is an unofficial proposal.
+      </p>
+    </section>
+
+    <section id="introduction">
+      <h2>Introduction</h2>
+
+      <p>
+        The [[!LWS10-CORE|Linked Web Storage]] protocol defines a resource-centric storage
+        system built on HTTP. While the core protocol supports creating, reading, updating,
+        and deleting resources, and containers enumerate the resources they contain, it does
+        not define a mechanism for a client to learn which kinds of resources exist within a
+        storage, or to locate the resources of a given kind, other than by traversing the
+        containment hierarchy one resource at a time.
+      </p>
+
+      <p>
+        This specification extends LWS with two server-managed services, discoverable via
+        the storage description resource. The <code>TypeIndexService</code> provides a
+        server-managed discovery mechanism to query the distinct resource types available
+        within a storage, while the <code>TypeSearchService</code> allows clients to retrieve
+        the specific resource URIs matching those types.
+      </p>
+    </section>
+
+    <section id="conformance"></section>
+
+    <section id="terminology">
+      <h2>Terminology</h2>
+
+      <p>
+        The terms "storage", "storage description resource", "container", "data resource",
+        "resource manager", and "requesting agent" are defined by [[!LWS10-CORE]].
+      </p>
+
+      <p>
+        This specification defines the following additional terms:
+      </p>
+
+      <ul>
+        <li>
+          <dfn>Type Index Service</dfn> &mdash; a server-managed service, identified by the
+          <code>TypeIndexService</code> service type, that enumerates the distinct resource
+          types present within a storage as visible to the requesting client.
+        </li>
+        <li>
+          <dfn>Type Search Service</dfn> &mdash; a server-managed service, identified by the
+          <code>TypeSearchService</code> service type, that returns descriptions of the
+          resources within a storage matching a filter over types and
+          <a>indexed relations</a>, as visible to the requesting client.
+        </li>
+        <li>
+          <dfn data-lt="indexed relations">indexed relation</dfn> &mdash; a descriptive link
+          relation that a server has chosen to index, making it available as a filter in
+          <a>Type Search Service</a> requests in addition to <code>type</code>.
+        </li>
+      </ul>
+    </section>
+
+    <section id="discovery">
+      <h2>Discovery</h2>
+
+      <p>
+        A storage MAY support the <a>Type Index Service</a>, the
+        <a>Type Search Service</a>, or both. A storage that supports one of these services
+        MUST advertise it with a service object in the <code>service</code> array of its
+        storage description resource: the entry for the <a>Type Index Service</a> MUST have
+        a <code>type</code> equal to <code>TypeIndexService</code>, and the entry for the
+        <a>Type Search Service</a> MUST have a <code>type</code> equal to
+        <code>TypeSearchService</code>.
+      </p>
+
+      <p>
+        Each service object MUST include a <code>serviceEndpoint</code> property whose value
+        is the URI of the corresponding service endpoint. Additional properties MAY be
+        present on a service object.
+      </p>
+
+      <pre class="example" title="Services advertised in storage description">
+{
+  "@context": "https://www.w3.org/ns/lws/v1",
+  "id": "https://example.org/storage/alice/",
+  "type": "Storage",
+  "service": [
+    {
+      "type": "TypeIndexService",
+      "serviceEndpoint": "https://example.org/types/index"
+    },
+    {
+      "type": "TypeSearchService",
+      "serviceEndpoint": "https://example.org/types/search"
+    }
+  ]
+}
+      </pre>
+
+      <p class="note">
+        The storage description advertises only the service endpoints. In particular, the
+        set of additional <a>indexed relations</a> a server supports is deliberately not
+        enumerated there or anywhere else; see <a href="#type-search-query"></a>.
+      </p>
+    </section>
+
+    <section id="type-derivation">
+      <h2>Type and Relation Derivation</h2>
+
+      <p>
+        To prevent inadvertent or malicious corruption by clients, these services are
+        strictly populated and managed by the server. To mitigate security and performance
+        risks associated with deep-parsing arbitrary resource bodies, servers are not
+        required to parse resource content to discover types. Instead, servers SHOULD derive
+        resource types from HTTP Link headers provided by the client during resource creation
+        or modification, combined with the server's intrinsic knowledge of the resource's
+        state (such as native LWS classes like
+        <code>https://www.w3.org/ns/lws#Container</code>).
+      </p>
+
+      <p>
+        Servers MAY additionally derive types from the resource representation itself when
+        they are able to parse it. Implementations are encouraged to do so where feasible,
+        as richer type discovery improves the utility of the Type Index and Type Search
+        services. When a server enriches the type index from resource content, the types it
+        surfaces MUST be treated identically to those derived from Link headers for the
+        purposes of indexing, search, and authorization filtering.
+      </p>
+
+      <p>
+        Type and indexed-relation membership in these services MAY be eventually consistent.
+        Following a write that changes a resource's derivable types or relation targets
+        (creation, update, or deletion), a server SHOULD reflect the change within a bounded,
+        implementation-defined interval; until it does, a response MAY omit a newly matching
+        resource or briefly retain one that no longer matches. Clients MUST NOT assume
+        read-your-writes consistency and SHOULD tolerate transient staleness. This allowance
+        applies only to derivation and MUST NOT be applied to authorization filtering (see
+        <a href="#security-authorization"></a>).
+      </p>
+
+      <p class="note">
+        Because servers are not required to parse the resource body, the Type Search Service
+        relies heavily on the types explicitly declared via HTTP headers or managed by the
+        server. If a client includes a type exclusively within a resource's internal graph
+        but fails to provide the corresponding <code>Link</code> header, that type may not
+        be discoverable via these services.
+      </p>
+    </section>
+
+    <section id="type-index-service">
+      <h2>Type Index Service</h2>
+
+      <p>
+        The <a>Type Index Service</a> provides a server-managed discovery mechanism to query
+        the distinct resource types available within a storage.
+      </p>
+
+      <section id="type-index-get">
+        <h3>GET [TypeIndexService]</h3>
+
+        <p>Returns a paginated <code>TypeIndex</code> as <code>application/lws+json</code>,
+          following the standard LWS pagination model defined by [[!LWS10-CORE]]: page URIs
+          are conveyed in <code>Link</code> headers&mdash;not in the response body&mdash;and
+          are opaque to the client. The body lists the unique types of resources that
+          currently exist within the storage and that the authenticated user is authorized to
+          see. This specification defines no query parameters for the endpoint: a client
+          requests the advertised <code>serviceEndpoint</code> URI as-is, and any parameters
+          appearing in server-issued pagination URIs (such as <code>?page=</code> in the
+          example below) are server-internal parts of those opaque URIs, not part of this
+          interface. A page reference may expire or cease to be recognized; the
+          pagination-expiry rule of <a href="#type-search-errors"></a> applies to
+          <code>TypeIndex</code> pages as it does to search result pages.</p>
+        <p class="note">
+          The Type Index takes no filter, so it is retrieved with a <code>GET</code>. The
+          <a>Type Search Service</a>, which carries a filter, instead uses the HTTP
+          <code>QUERY</code> method [[!RFC10008]] (see <a href="#type-search-query"></a>).
+        </p>
+        <pre class="example">
+Request
+GET /types/index
+Authorization: Bearer &lt;token&gt;
+
+Response
+HTTP/1.1 200 OK
+Content-Type: application/lws+json
+Cache-Control: private
+Link: &lt;https://example.org/types/index?page=1&gt;; rel="first"
+Link: &lt;https://example.org/types/index?page=2&gt;; rel="next"
+Link: &lt;https://example.org/types/index?page=4&gt;; rel="last"
+
+{
+  "@context": "https://www.w3.org/ns/lws/v1",
+  "type": "TypeIndex",
+  "totalItems": 142,
+  "items": [
+    { "id": "https://schema.org/Person" },
+    { "id": "https://schema.org/Event" },
+    { "id": "https://schema.org/Message" }
+  ]
+}
+        </pre>
+      </section>
+    </section>
+
+    <section id="type-search-service">
+      <h2>Type Search Service</h2>
+
+      <p>
+        The <a>Type Search Service</a> allows clients to retrieve descriptions of the
+        resources within a storage matching a filter over types and
+        <a>indexed relations</a>.
+      </p>
+
+      <section id="type-search-query">
+        <h3>QUERY [TypeSearchService]</h3>
+
+        <p>
+          A client searches by sending an HTTP <code>QUERY</code> request [[!RFC10008]] to the
+          service endpoint, carrying the filter in the request body. The query format is identified
+          by the request's <code>Content-Type</code> header field, which MUST be present; per
+          [[!RFC10008]], a server fails the request if the <code>Content-Type</code> is missing or
+          inconsistent with the body (see <a href="#type-search-errors"></a>). Every server MUST
+          support the <code>application/lws-query+json</code> filter format defined here as its baseline query
+          format; a server MAY additionally accept other query formats, each identified by its own
+          media type, and the authorization requirements of <a href="#security-authorization"></a>
+          apply regardless of the format used. The <code>QUERY</code> method is both safe and
+          idempotent [[!RFC10008]], in the sense of those terms as defined by [[!RFC9110]]: a
+          search never alters server state, and it MAY be repeated, retried, and/or cached.
+          Because the filter travels in the body rather than the request URI, it is not subject to the
+          request-URI length limits that constrain a query string.
+        </p>
+
+        <p>
+          The baseline filter format is identified by the media type
+          <code>application/lws-query+json</code>, registered in
+          <a href="#iana-considerations"></a>. A filter document is a single JSON object
+          [[!RFC8259]] whose members express constraints: the <code>type</code> member and,
+          optionally, one member per filtered link relation, each carrying the
+          conjunctive-normal-form value grammar defined below. Unlike the
+          <code>application/lws+json</code> representations defined by [[!LWS10-CORE]] &mdash;
+          which this service still uses for its <em>responses</em> &mdash; a filter document is
+          plain JSON rather than JSON-LD: it carries no <code>@context</code>, its member names
+          are not JSON-LD terms, and its nested-array groups are not subject to JSON-LD
+          constraints on <code>@type</code> values. A member whose name begins with
+          <code>@</code> (a JSON-LD keyword such as <code>@context</code>) MUST be ignored; it
+          is neither a constraint nor a relation key.
+        </p>
+
+        <p>
+          A server SHOULD advertise the query formats it accepts using the
+          <code>Accept-Query</code> response header field [[!RFC10008]] &mdash; for example in
+          response to an <code>OPTIONS</code> request on the service endpoint, whose <code>Allow</code>
+          header also signals that the <code>QUERY</code> method is supported. <code>Accept-Query</code>
+          enumerates only the query-format media types the server understands; it MUST NOT be used to
+          disclose which <a>indexed relations</a> or filter capabilities a server supports, which
+          remain deliberately unobservable (see <a href="#security-authorization"></a>). A client that
+          receives a <code>415</code> (Unsupported Media Type) response MAY consult its
+          <code>Accept-Query</code> value to select a supported format.
+        </p>
+
+        <pre class="example" title="QUERY request body (application/lws-query+json)">
+{
+  "type": [
+    ["https://schema.org/Person", "http://xmlns.com/foaf/0.1/Person"],
+    "https://www.w3.org/ns/lws#DataResource"
+  ]
+}
+        </pre>
+
+        <p>
+          The <code>type</code> key is OPTIONAL and selects resources by their <code>rdf:type</code>
+          (as declared via <code>rel="type"</code> <code>Link</code> headers, server-intrinsic
+          classes, or content; see <a href="#type-derivation"></a>). Its value is an array whose
+          elements are combined with logical <strong>AND</strong>; each element is either a single
+          type IRI [[!RFC3987]] or an array of type IRIs combined with logical <strong>OR</strong>. The example
+          above selects resources matching
+          <code>(schema:Person OR foaf:Person) AND lws:DataResource</code> &mdash; the filter is a
+          conjunction of disjunctions; that is, conjunctive normal form. A request whose body has no
+          <code>type</code> key and no relation keys (or all of whose keys have values of empty arrays)
+          matches all resources visible to the client.
+        </p>
+        <p>
+          A single-type query &mdash; a <code>type</code> value containing one IRI and no OR group,
+          for example <code>{"type": ["https://schema.org/Person"]}</code> &mdash; matches every
+          resource that declares that type, even if the resource also declares other types.
+        </p>
+        <p>A <code>type</code> filter always denotes the <code>type</code> the matched resource itself bears; it never denotes the types of a container's members. The native LWS classes <code>https://www.w3.org/ns/lws#DataResource</code> and <code>https://www.w3.org/ns/lws#Container</code> are ordinary <code>type</code> values: filtering on them selects resources that are themselves data resources or containers, respectively (for example, a <code>type</code> of <code>https://www.w3.org/ns/lws#Container</code> matches container resources, and a filter of <code>https://schema.org/Person</code> AND <code>https://www.w3.org/ns/lws#DataResource</code> matches data resources that are also <code>schema:Person</code>).</p>
+        <p>
+          This conjunctive-normal-form filter is the complete query expressiveness the service is
+          required to provide. It is also the complete expressiveness of the
+          <code>application/lws-query+json</code> format itself: a server MUST NOT extend this
+          grammar. Richer expressiveness &mdash; such as nesting, negation, comparison, ordering, or
+          text matching &mdash; is offered only through an alternate query format identified by its
+          own media type and advertised in <code>Accept-Query</code>, and a portable client MUST NOT
+          rely on any query format beyond this baseline. A type IRI that matches no
+          resource yields no results and MUST NOT be treated as an error, and duplicate groups MUST
+          be ignored. An empty group &mdash; an empty array appearing as an element of a filter
+          key's value &mdash; MUST be rejected with <code>400</code> (Bad Request): an empty
+          disjunction can match nothing, so ignoring it would silently broaden the query beyond its
+          logical meaning (see <a href="#type-search-errors"></a>). A filter key whose entire value
+          is an empty array expresses no constraint and is treated as if the key were absent.
+        </p>
+        <p>
+          The <code>type</code> key is the mandatory baseline and MUST be supported by every server
+          that implements the <code>TypeSearchService</code>. A server MAY additionally index other
+          <em>descriptive</em> link relations. Such a relation is filtered by using the relation
+          itself as a key alongside <code>type</code> &mdash; a registered relation name per
+          [[!RFC8288]] or, for an extension relation, its URI &mdash; with exactly the same
+          conjunctive-normal-form semantics as <code>type</code> (a nested array is an OR group,
+          sibling array elements form AND groups, target values matched against the link targets the
+          resource declares for that relation). Groups belonging to different relations are combined
+          with logical AND. Relation targets are derived by the server in the same way as types (HTTP
+          <code>Link</code> headers, server-intrinsic state, or parsed content) and all sources MUST
+          be treated identically.
+        </p>
+        <p>
+          A server MUST NOT enumerate its set of additional <a>indexed relations</a> &mdash; not in
+          the storage description nor elsewhere. A relation the server does not index, like a target
+          value that matches nothing, yields no results for that constraint: this MUST NOT be treated
+          as an error, and the two cases MUST be indistinguishable to the client (consistent with the
+          type-matching rule above). Only <em>descriptive</em> relations are eligible for indexing;
+          servers MUST NOT index structural or protocol relations.
+        </p>
+        <p class="note">
+          Withholding the set of indexed relations keeps the filter interface from serving as a
+          discovery oracle for the server's configuration; see
+          <a href="#security-authorization"></a>.
+        </p>
+        <p>
+          A successful search returns <code>200</code> (OK). The default response is an
+          <code>application/lws+json</code> <code>ContainerPage</code> whose items describe the
+          matching Storage Resources, and every server MUST be able to produce it: a request that sends
+          no <code>Accept</code> header field, or one that admits <code>application/lws+json</code>,
+          receives this representation. A server MAY honor an <code>Accept</code> header field that
+          requests a different response media type and return the result set in that format instead
+          [[!RFC10008]]; if it can satisfy none of the media types the request finds acceptable, it
+          responds <code>406</code> (Not Acceptable) (see <a href="#type-search-errors"></a>).
+        </p>
+        <p>
+          Each item in a <code>ContainerPage</code> result MUST carry at least the matched
+          resource's <code>id</code> and its <code>type</code>, mirroring a container member; a
+          server MAY include additional descriptive metadata (such as <code>format</code>,
+          <code>size</code>, or <code>modified</code>) but is not required to.
+        </p>
+        <p>
+          Whatever the response format, the result set is paginated according to the standard LWS
+          pagination model defined by [[!LWS10-CORE]]: page URIs are conveyed in <code>Link</code>
+          headers (not in the response body), are opaque to the client, and are
+          dereferenced to retrieve subsequent pages. Aside from <code>type</code> and any additional
+          relation keys described above, no other filter inputs are defined.
+        </p>
+        <p class="note">A <code>ContainerPage</code> returned by the <code>TypeSearchService</code> is a <em>synthetic</em> result set, not a representation of a container resource. The <code>ContainerPage</code> media type and pagination model are reused only for client convenience; the response does not identify a container, has no containment relationship to its members, is not retrievable or mutable as a resource, and its membership reflects the query rather than any stored hierarchy.</p>
+        <p>
+          [[!RFC10008]] permits a response to carry a <code>Content-Location</code> header field
+          identifying a resource that represents the query results. Because a Type Search result set
+          is synthetic and client-specific (see the note above and
+          <a href="#security-authorization"></a>), this specification does not define such a resource;
+          a server that nonetheless exposes one MUST subject it to the same authorization filtering on
+          every access and MUST prevent its reuse across clients.
+        </p>
+      </section>
+
+      <section id="type-search-errors">
+        <h3>Errors</h3>
+
+        <p>
+          Servers indicate request outcomes using standard HTTP status codes [[!RFC9110]]. In particular:
+        </p>
+        <ul>
+          <li>
+            A request body that is not well-formed <code>application/lws-query+json</code>, or whose
+            <code>type</code> is not an array, or any of whose elements is neither a string nor a non-empty array of strings, MUST be rejected with <code>400</code> (Bad Request). In particular, an empty group is rejected, not ignored (see <a href="#type-search-query"></a>).
+          </li>
+          <li>
+            A request whose <code>Content-Type</code> identifies a query format the server does not support MUST be rejected with <code>415</code> (Unsupported Media Type), and such a response SHOULD include an <code>Accept-Query</code> header field [[!RFC10008]] listing the query formats the server does accept; every server supports at least <code>application/lws-query+json</code> (see <a href="#type-search-query"></a>). A request that omits the <code>Content-Type</code> header field, which [[!RFC10008]] requires a server to reject, MUST be rejected with <code>400</code> (Bad Request).
+          </li>
+          <li>
+            A request whose <code>Accept</code> header field excludes every response media type the server can produce for the result set MUST be rejected with <code>406</code> (Not Acceptable) [[!RFC10008]]. Because every server can produce the <code>application/lws+json</code> <code>ContainerPage</code>, a request that omits <code>Accept</code> or admits that media type never results in <code>406</code>.
+          </li>
+          <li>
+            A <code>type</code> value, or any relation target value, that does not match the
+            <code>IRI</code> production of [[!RFC3987]] &mdash; an absolute IRI, optionally carrying
+            a fragment identifier, the form of every IRI in the RDF abstract syntax
+            [[rdf11-concepts]] &mdash; MUST be rejected with <code>400</code> (Bad Request). This is distinct from a
+            well-formed IRI that matches no resource, and from a relation the server does not index, both of which yield no results and are not errors (see above).
+          </li>
+          <li>
+            A filter that is well-formed but exceeds the complexity a server chooses to support
+            (consistent with the expressiveness ceiling above) MUST be rejected with <code>422</code> (Unprocessable Content), the status [[!RFC9110]] defines and [[!RFC10008]] suggests for a query that is understood but cannot be processed due to its actual contents. A server MUST NOT silently truncate or otherwise narrow such a filter, as doing so could return a superset of the intended results.
+          </li>
+          <li>
+            A pagination reference (a previously issued page link) that the server no longer
+            recognizes or that has expired MUST result in <code>404</code> (Not Found) or
+            <code>410</code> (Gone). This rule applies to the pages of both services: those of a
+            <a>Type Search Service</a> result set and those of a <a>Type Index Service</a> listing
+            alike. Clients SHOULD restart &mdash; a search by re-sending the <code>QUERY</code>
+            request, a type index listing by re-requesting the service endpoint.
+          </li>
+        </ul>
+        <p class="note">
+          Error responses may include a representation describing the problem; this specification does
+          not define its format.
+        </p>
+        <p>
+          A <code>QUERY</code> response is cacheable [[!RFC10008]]. Because the filter travels in the
+          request body, it forms part of the cache key itself ([[!RFC10008]], Section 2.7) and cannot
+          be conveyed through the <code>Vary</code> header field, which names only request header
+          fields. A server that negotiates the response representation on <code>Accept</code> (see
+          <a href="#type-search-query"></a>) MUST list <code>Accept</code> in <code>Vary</code> so that
+          caches do not reuse a representation across response formats. Because every result set is
+          authorization-filtered and therefore client-specific, the cross-client caching requirements
+          in <a href="#security-authorization"></a> also apply.
+        </p>
+      </section>
+    </section>
+
+    <section id="security-authorization">
+      <h2>Security and Authorization</h2>
+
+      <p>
+        Servers MUST enforce authorization. Responses from the <code>TypeIndexService</code> (a
+        <code>GET</code>) and the <code>TypeSearchService</code> (a <code>QUERY</code>) include only
+        types and resource URIs that the authenticated client is explicitly authorized to read.
+      </p>
+      <p>
+        Unauthorized entries MUST be omitted entirely. A server MUST NOT allow a client to discover, from the responses of these services, the existence of a specific resource instance, or that a specific type exists in the storage at all, without the required authorization. This implicit filtering yields a dynamically generated, client-specific type index and search result.
+      </p>
+      <p>
+        Any count a response exposes, including <code>totalItems</code>, MUST be computed over this
+        client-specific, authorization-filtered view: it is the number of entries the requesting client
+        is authorized to see, never a count of the types or resources present in the storage as a whole.
+        A count that included unauthorized entries would itself reveal their existence and is therefore
+        prohibited.
+      </p>
+      <p>
+        Authorization filtering MUST be evaluated against the requesting client's <em>current</em> access at the time the request is served, not against any cached or precomputed view. Once an authorization (such as an access grant) is revoked or narrowed, the affected types and resource URIs MUST NOT appear in any subsequent response; the eventual-consistency allowance for type and relation derivation MUST NOT be extended to authorization. A server MAY maintain a derived index for performance, but it MUST apply current authorization as a filter over that index on every request.
+      </p>
+      <p>
+        Responses from both services are authorization-filtered and therefore client-specific, yet
+        both are cacheable by default: a <code>TypeIndexService</code> response under the ordinary
+        HTTP caching rules for <code>GET</code> [[!RFC9110]], and a <code>TypeSearchService</code>
+        response per [[!RFC10008]], whose cache key is computed over the request body rather than
+        the requesting client. A server MUST ensure that an authorization-filtered response from
+        either service is never served from a shared cache to a different client. A server MUST mark
+        such responses so that they are not reused across clients (for example with
+        <code>Cache-Control: private</code> or <code>no-store</code>) and MUST vary any cached entry
+        on the credential that scopes the result.
+      </p>
+      <p>
+        Any extension query mechanism a server exposes over the storage &mdash; for example an
+        alternative query format accepted by the <code>TypeSearchService</code>, or a separate query
+        service &mdash; MUST uphold these authorization-filtering requirements and the
+        indistinguishability requirements of this specification, so that no extension can become a
+        discovery oracle for resources or types the client is not authorized to read.
+      </p>
+    </section>
+
+    <section id="examples" class="informative">
+      <h2>Examples</h2>
+
+      <pre class="example" title="GET TypeIndex (Discovering available types)">
+Request
+GET /types/index
+Authorization: Bearer &lt;token&gt;
+
+Response
+HTTP/1.1 200 OK
+Content-Type: application/lws+json
+Cache-Control: private
+Link: &lt;https://example.org/types/index?page=1&gt;; rel="first"
+Link: &lt;https://example.org/types/index?page=2&gt;; rel="next"
+Link: &lt;https://example.org/types/index?page=4&gt;; rel="last"
+
+{
+  "@context": "https://www.w3.org/ns/lws/v1",
+  "type": "TypeIndex",
+  "totalItems": 142,
+  "items": [
+    { "id": "https://schema.org/Person" },
+    { "id": "https://schema.org/Event" }
+  ]
+}
+      </pre>
+
+      <pre class="example" title="Discovering QUERY support and accepted formats (OPTIONS)">
+Request
+OPTIONS /types/search
+
+Response
+HTTP/1.1 204 No Content
+Allow: OPTIONS, QUERY
+Accept-Query: application/lws-query+json
+
+A server that also accepted other query formats would list them in Accept-Query,
+for example: Accept-Query: application/lws-query+json, application/sparql-query
+      </pre>
+
+      <pre class="example" title="QUERY Search for instances (schema:Person AND lws:DataResource)">
+Request
+QUERY /types/search
+Authorization: Bearer &lt;token&gt;
+Content-Type: application/lws-query+json
+
+{
+  "type": [
+    "https://schema.org/Person",
+    "https://www.w3.org/ns/lws#DataResource"
+  ]
+}
+
+Response
+HTTP/1.1 200 OK
+Content-Type: application/lws+json
+Cache-Control: private
+Link: &lt;https://example.org/types/search?cursor=8f2a1c&gt;; rel="first"
+Link: &lt;https://example.org/types/search?cursor=b71e90&gt;; rel="next"
+
+{
+  "@context": "https://www.w3.org/ns/lws/v1",
+  "type": "ContainerPage",
+  "totalItems": 27,
+  "items": [
+    { "type": ["DataResource", "https://schema.org/Person"], "id": "https://example.org/data/person-4872" },
+    { "type": ["DataResource", "https://schema.org/Person"], "id": "https://example.org/data/person-4873" },
+    { "type": ["DataResource", "https://schema.org/Person"], "id": "https://example.org/data/person-5882" }
+  ]
+}
+      </pre>
+
+      <pre class="example" title="QUERY Search for container resources (is-a)">
+Request
+QUERY /types/search
+Authorization: Bearer &lt;token&gt;
+Content-Type: application/lws-query+json
+
+{
+  "type": ["https://www.w3.org/ns/lws#Container"]
+}
+
+Matches resources whose type includes lws:Container. This does NOT mean
+"containers that contain something" - the service has no containment query.
+The returned URIs are container resources because each is itself a lws:Container.
+
+Response
+{
+  "@context": "https://www.w3.org/ns/lws/v1",
+  "type": "ContainerPage",
+  "totalItems": 2,
+  "items": [
+    { "type": "Container", "id": "https://example.org/data/people/" },
+    { "type": "Container", "id": "https://example.org/data/contacts/" }
+  ]
+}
+      </pre>
+
+      <pre class="example" title="CNF Filter (OR within a group, AND across groups)">
+Request (nested array = OR group, outer array = AND)
+QUERY /types/search
+Authorization: Bearer &lt;token&gt;
+Content-Type: application/lws-query+json
+
+{
+  "type": [
+    ["https://schema.org/Person", "http://xmlns.com/foaf/0.1/Person"],
+    "https://www.w3.org/ns/lws#DataResource"
+  ]
+}
+
+Selects resources matching (schema:Person OR foaf:Person) AND lws:DataResource.
+
+Response
+{
+  "@context": "https://www.w3.org/ns/lws/v1",
+  "type": "ContainerPage",
+  "totalItems": 2,
+  "items": [
+    { "type": ["DataResource", "https://schema.org/Person"], "id": "https://example.org/data/person-4872" },
+    { "type": ["DataResource", "http://xmlns.com/foaf/0.1/Person"], "id": "https://example.org/data/contact-2208" }
+  ]
+}
+      </pre>
+
+      <pre class="example" title="Filtering on an indexed relation (describedby)">
+Request (type AND a 'describedby' relation, the relation name used as a key)
+QUERY /types/search
+Authorization: Bearer &lt;token&gt;
+Content-Type: application/lws-query+json
+
+{
+  "type": ["https://schema.org/Person"],
+  "describedby": ["https://shapes.example/PersonShape"]
+}
+
+Selects resources that are schema:Person AND declare a 'describedby' link to the given shape.
+If the server does not index 'describedby', the constraint yields no results (not an error,
+and indistinguishable from no resource declaring that link).
+
+Response
+{
+  "@context": "https://www.w3.org/ns/lws/v1",
+  "type": "ContainerPage",
+  "totalItems": 2,
+  "items": [
+    { "type": ["DataResource", "https://schema.org/Person"], "id": "https://example.org/data/person-4872" },
+    { "type": ["DataResource", "https://schema.org/Person"], "id": "https://example.org/data/person-5012" }
+  ]
+}
+      </pre>
+    </section>
+
+    <section id="security-considerations" class="informative">
+      <h2>Security Considerations</h2>
+
+      <ul>
+        <li>
+          <strong>Discovery Oracle</strong>: These services aggregate, in a single response,
+          information that would otherwise require crawling an entire storage. The
+          authorization requirements in <a href="#security-authorization"></a> are what keep
+          them from disclosing resources or types a client is not authorized to read.
+          Implementations are encouraged to apply the same filtering to every observable
+          surface, including error messages and any diagnostic detail returned to clients.
+        </li>
+        <li>
+          <strong>Configuration Probing</strong>: If a server's behavior distinguished a
+          relation it does not index from a target value that matches nothing, clients could
+          map the server's indexing configuration. The indistinguishability requirements of
+          this specification extend to observable behavior generally; implementations are
+          encouraged to take care that response timing differences do not become such an
+          oracle.
+        </li>
+        <li>
+          <strong>Resource Exhaustion</strong>: Conjunctive filters across multiple types and
+          indexed relations can be expensive to evaluate. Servers are encouraged to bound
+          filter complexity and page sizes and to apply rate limiting, rejecting over-limit
+          filters with <code>422</code> as required by
+          <a href="#type-search-errors"></a> rather than narrowing them.
+        </li>
+        <li>
+          <strong>Shared Caches</strong>: Responses from both services are client-specific by
+          construction, yet both are cacheable by default: a <code>TypeIndexService</code>
+          <code>GET</code> response under the ordinary HTTP caching rules [[RFC9110]], and a
+          <code>TypeSearchService</code> <code>QUERY</code> response per [[RFC10008]], whose cache
+          key is computed over the request body rather than the requesting client. Serving either
+          through a shared cache risks delivering one client's authorization-filtered view to
+          another. The cache requirements in <a href="#security-authorization"></a> exist to prevent
+          this, and deserve particular attention when a shared cache sits in front of either
+          service.
+        </li>
+      </ul>
+    </section>
+
+    <section id="privacy-considerations" class="informative">
+      <h2>Privacy Considerations</h2>
+
+      <ul>
+        <li>
+          <strong>Type Fingerprinting</strong>: The distinct types present in a storage can
+          themselves be sensitive (for example, health, financial, or relationship
+          vocabularies), even when resource contents are not exposed. Granting read access
+          to a resource also reveals its types and indexed relation targets through these
+          services.
+        </li>
+        <li>
+          <strong>Profiling and Aggregation</strong>: A single search response can assemble
+          a view of a storage's contents that would otherwise require enumerating containers
+          resource by resource. Resource managers should consider that granting read access
+          to resources also makes them discoverable and aggregable by type.
+        </li>
+        <li>
+          <strong>Observation over Time</strong>: Repeated queries reveal when resources of
+          a given type appear, change, or disappear, exposing activity patterns within the
+          client's authorized view even when contents are not retrieved.
+        </li>
+      </ul>
+    </section>
+
+    <section id="vocabulary">
+      <h2>Vocabulary</h2>
+
+      <p>
+        This document defines the following terms in the
+        <code>https://www.w3.org/ns/lws#</code> namespace:
+      </p>
+
+      <table class="simple">
+        <thead>
+          <tr>
+            <th>Term</th>
+            <th>URI</th>
+            <th>Description</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><code>TypeIndexService</code></td>
+            <td><code>lws:TypeIndexService</code></td>
+            <td>Service type for type index discovery</td>
+          </tr>
+          <tr>
+            <td><code>TypeSearchService</code></td>
+            <td><code>lws:TypeSearchService</code></td>
+            <td>Service type for type search discovery</td>
+          </tr>
+          <tr>
+            <td><code>TypeIndex</code></td>
+            <td><code>lws:TypeIndex</code></td>
+            <td>Document type returned by the Type Index Service</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <p>
+        This document also uses the terms <code>Storage</code>, <code>ContainerPage</code>,
+        <code>service</code>, <code>serviceEndpoint</code>, <code>totalItems</code>, and
+        <code>items</code> defined by [[!LWS10-CORE]] and the LWS JSON-LD context.
+      </p>
+    </section>
+
+    <section id="iana-considerations" class="informative">
+      <h2>IANA Considerations</h2>
+
+      <section id="media-type-lws-query-json">
+        <h3>The <code>application/lws-query+json</code> Media Type</h3>
+
+        <p>
+          This specification registers the <code>application/lws-query+json</code> media type,
+          identifying the baseline Type Search filter format defined in
+          <a href="#type-search-query"></a>.
+        </p>
+
+        <ul>
+          <li>Type name: application</li>
+          <li>Subtype name: lws-query+json</li>
+          <li>Required parameters: N/A</li>
+          <li>Optional parameters: N/A</li>
+          <li>Encoding considerations: Resources that use the <code>application/lws-query+json</code>
+            media type are required to conform to all of the requirements for the
+            <code>application/json</code> media type and are therefore subject to the same encoding
+            considerations specified in Section 11 of [[RFC8259]].</li>
+          <li>Security considerations: As defined in this specification. A filter document is a
+            declarative constraint expression and contains no executable content; see
+            <a href="#security-authorization"></a> and <a href="#security-considerations"></a>.</li>
+          <li>Interoperability considerations: A filter document is plain JSON, not JSON-LD; members
+            whose names begin with <code>@</code> are ignored (see
+            <a href="#type-search-query"></a>).</li>
+          <li>Published specification: This document.</li>
+          <li>Applications that use this media type: Clients and servers implementing the Linked Web
+            Storage <a>Type Search Service</a>.</li>
+          <li>Fragment identifier considerations: N/A</li>
+          <li>Additional information:
+            <ul>
+              <li>Magic number(s): N/A</li>
+              <li>File extension(s): N/A</li>
+              <li>Macintosh file type code(s): N/A</li>
+            </ul>
+          </li>
+          <li>Person &amp; email address to contact for further information: W3C Linked Web Storage
+            Working Group &lt;public-lws-wg@w3.org&gt;</li>
+          <li>Intended usage: COMMON</li>
+          <li>Restrictions on usage: N/A. This media type is intended for use as the request content
+            of HTTP <code>QUERY</code> messages, but is not restricted to that context.</li>
+          <li>Author: W3C Linked Web Storage Working Group</li>
+          <li>Change controller: W3C</li>
+        </ul>
+      </section>
+    </section>
+  </body>
+</html>

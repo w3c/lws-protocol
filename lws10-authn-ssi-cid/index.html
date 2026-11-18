@@ -2,22 +2,43 @@
 <html lang="en">
   <head>
     <meta charset="utf-8">
-    <title>LWS Authentication Suite: Self-signed Identity using Controlled Identifiers</title>
+    <title>LWS 1.0 Authentication Suite: Self-signed Identity using Controlled Identifiers</title>
     <script src="https://www.w3.org/Tools/respec/respec-w3c" class="remove"></script>
     <link rel="stylesheet" href="local.css"/>
     <script class='remove'>
       // See https://respec.org/docs/ for how to configure ReSpec
       var respecConfig = {
         specStatus: "ED",
-        shortName: "lws-authn-ssi-cid",
+        shortName: "lws10-authn-ssi-cid",
+        edDraftURI: "https://w3c.github.io/lws-protocol/lws10-authn-ssi-cid/",
         editors: [{
-          name: "Jesse Wright"
-        }, {
-          name: "Aaron Coburn"
+          name: "Jesse Wright",
+          w3cid: "132252",
+          company: "University of Oxford",
+          companyURL: "https://www.ox.ac.uk/"
+        }],
+        authors: [{
+          name: "Aaron Coburn",
+          company: "Inrupt Inc.",
+          companyURL: "https://www.inrupt.com/"
         }],
         github: "w3c/lws-protocol",
         xref: ["web-platform"],
         group: "lws",
+        localBiblio: {
+          "LWS10-CORE": {
+            title: "Linked Web Storage Protocol 1.0",
+            href: "https://www.w3.org/TR/lws10-core/",
+            publisher: "W3C",
+            status: "FPWD",
+          },
+          "LWS10-OAUTH": {
+            title: "Linked Web Storage OAuth Profile 1.0",
+            href: "https://w3c.github.io/lws-protocol/lws10-oauth/",
+            publisher: "W3C",
+            status: "ED",
+          },
+        },
       };
     </script>
   </head>
@@ -37,9 +58,15 @@
       <h2>Introduction</h2>
       <p>
         Self-issued identity is important for cases where applications act on their own behalf. This includes autonomous bots as well as server-side scripts, among others.
-        In these cases, the agent is able to securely manage the private portion of a keypair, which it uses to generate signed JSON Web Tokens (JWT).
-        This specification describes how this class of agents can generate authentication credentials that can be used with a Linked Web Storage.
+        In these cases, the <a>agent</a> is able to securely manage the private portion of a key pair, which it uses to generate signed JSON Web Tokens (JWT).
+        This specification describes how this class of <a>agents</a> can generate <a>authentication credentials</a> that can be used with a Linked Web Storage.
       </p>
+
+      <div class="note">
+        <p>
+          This authentication suite is designed to work with subject identifiers that use HTTPS URIs as well as DID URIs. Since DID documents, as defined in Decentralized Identifiers (DIDs) 1.1 [[DID-1.1]] Section 5.1.2, extend controlled identifier documents [[CID-1.0]], they are compatible with the validation process described in this specification.
+        </p>
+      </div>
     </section>
     <section id="conformance"></section>
 
@@ -59,7 +86,11 @@
       </p>
 
       <p>
-        The terms "authentication credential" and "authentication suite" are defined by Linked Web Storage Protocol [[!LWS-PROTOCOL]]
+        The term "<dfn data-cite="LWS10-CORE#dfn-agent">agent</dfn>" is defined by Linked Web Storage Protocol [[!LWS10-CORE]].
+      </p>
+
+      <p>
+        The terms "<dfn data-cite="LWS10-OAUTH#dfn-authentication-credential">authentication credential</dfn>" and "<dfn data-cite="LWS10-OAUTH#dfn-authentication-suite">authentication suite</dfn>" are defined by Linked Web Storage OAuth Profile [[!LWS10-OAUTH]].
       </p>
     </section>
 
@@ -67,7 +98,7 @@
       <h2>Authentication Credential Serialization</h2>
 
       <p>
-        A self-issued authentication credential is serialized as a signed JSON Web Token (JWT). In order to use a JWT as an LWS authentication credential, the following additional requirements apply.
+        A self-issued <a>authentication credential</a> is serialized as a signed JSON Web Token (JWT). In order to use a JWT as an LWS <a>authentication credential</a>, the following additional requirements apply.
       </p>
 
       <p>
@@ -91,7 +122,7 @@
       </p>
 
       <p>
-        Any audience restriction in the ID Token MUST use the <code>aud</code> (audience) claim. The <code>aud</code> claim MUST include the target authorization server.
+        Any audience restriction in the JWT MUST use the <code>aud</code> (audience) claim. The <code>aud</code> claim MUST include the target authorization server.
       </p>
 
       <p>
@@ -103,7 +134,7 @@
       </p>
 
       <p>
-        An example JWT that is also an LWS authentication credential is included below.
+        An example JWT that is also an LWS <a>authentication credential</a> is included below.
       </p>
 
       <pre id="example-authentication-token" class="example">
@@ -132,11 +163,11 @@ signature
       <h2>Authentication Credential Validation</h2>
 
       <p>
-        In order to validate a JWT as an LWS authentication credential, there must be a trust relationship between the verifier and the issuing party.
+        In order to validate a JWT as an LWS <a>authentication credential</a>, there must be a trust relationship between the verifier and the issuing party.
       </p>
 
       <p>
-        In the absence of a pre-existing trust relationship, the verifier MUST dereference the <code>sub</code> (subject) claim in the authentication credential.
+        In the absence of a pre-existing trust relationship, the verifier MUST dereference the <code>sub</code> (subject) claim in the <a>authentication credential</a>.
         The resulting resource MUST be formatted as a valid controlled identifier document [[!CID-1.0]] with an <code>id</code> value equal to the subject identifier.
       </p>
 
@@ -145,11 +176,11 @@ signature
       </p>
 
       <p>
-        A verifier MUST validate all claims described by the authentication credential data model.
+        A verifier MUST validate all claims described by the <a>authentication credential</a> data model.
       </p>
 
       <p>
-        The verifier MUST use the <code>kid</code> (key id) value from the signed JWT header to identify a verification method from the subject's controlled identifier document.
+        The verifier MUST use the <code>kid</code> (key ID) value from the signed JWT header to identify a verification method from the subject's controlled identifier document.
         This process is described in [[!CID-1.0]] Section 3.3.
         Using the selected verification method from the controlled identifier document, the signature of the JWT MUST be validated as described in [[!RFC7515]], Section 5.2.
       </p>
@@ -188,7 +219,7 @@ signature
       <h2>Token Type Identifier</h2>
 
       <p>
-        A self-issued JSON Web Token used as an authentication credential MUST use the <code>urn:ietf:params:oauth:token-type:jwt</code> URI when interacting with an authorization server.
+        A self-issued JSON Web Token used as an <a>authentication credential</a> MUST use the <code>urn:ietf:params:oauth:token-type:jwt</code> URI when interacting with an authorization server.
       </p>
 
     </section>
@@ -197,7 +228,42 @@ signature
       <h2>Security Considerations</h2>
 
       <p>
-        All security considerations described in "Best Current Practice for OAuth 2.0 Security" [[RFC9700]] and "OpenID Connect Core 1.0" Section 16 [[OPENID-CONNECT-CORE]] apply to this specification.
+        As authorization in the Linked Web Storage Protocol [[LWS10-CORE]] is based on the OAuth framework, this authentication suite is applied within the OAuth framework.
+        Therefore, all security considerations described in "Best Current Practice for OAuth 2.0 Security" [[RFC9700]] and "OpenID Connect Core 1.0" Section 16 [[OPENID-CONNECT-CORE]] apply to this specification.
+      </p>
+    </section>
+    <section id="privacy-considerations" class="informative">
+      <h2>Privacy Considerations</h2>
+
+      <p>
+        A self-issued <a>authentication credential</a> uses a subject identifier that
+        is both persistent and globally unique. Because the <code>sub</code>,
+        <code>iss</code>, and <code>client_id</code> claims all share the same URI value,
+        verifiers and storage servers can correlate all activity from a given <a>agent</a>
+        across sessions and resources.
+      </p>
+
+      <p>
+        The validation process requires dereferencing the subject identifier to retrieve a
+        controlled identifier document. This dereference operation can reveal to the hosting
+        server of that document which verifiers are validating credentials for a given
+        <a>agent</a>, including timing and frequency of access. Verifiers are encouraged to
+        cache controlled identifier documents to reduce unnecessary network requests and the
+        associated metadata leakage.
+      </p>
+
+      <p>
+        Because the controlled identifier document contains the public key material used
+        for validation, the hosting server of that document is in a position to observe
+        which keys are being actively used. <a>Agents</a> that require stronger privacy
+        guarantees are encouraged to host their controlled identifier documents on
+        infrastructure they control.
+      </p>
+
+      <p>
+        Self-issued tokens presented to a storage server or authorization server can be
+        read by those parties. The use of TLS is essential for protecting authentication
+        credentials during transmission.
       </p>
     </section>
   </body>
