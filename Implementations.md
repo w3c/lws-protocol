@@ -98,7 +98,7 @@
 
 ### Access Requests and Grants
 
-* https://w3c.github.io/lws-protocol/lws10-core/#access-requests-and-grants
+* https://w3c.github.io/lws-protocol/lws10-access/
 
 | Name | Client | Server | Notes |
 |------|--------|--------|-------|
@@ -110,7 +110,7 @@
 
 #### ODRL Access Profile
 
-* https://w3c.github.io/lws-protocol/lws10-core/#access-profile
+* https://w3c.github.io/lws-protocol/lws10-access-profile/
 
 | Name | Client | Server | Notes |
 |------|--------|--------|-------|
