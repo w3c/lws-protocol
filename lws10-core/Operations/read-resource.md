@@ -6,7 +6,7 @@ Retrieves the representation of an existing resource or the listing of a <a>cont
     * For <a>containers</a>, the server returns a listing of member resources which MAY be filtered based on <a href="#container-membership-and-authorization">authorization</a>. Listings must include core metadata for each member.
 * **Outcome**: The requested representation or a notification of failure.
 
-The read resource operation requests a resource representation with HTTP GET requests (and HEAD for header-only requests). The behavior differs depending on whether the target URL is a <a>container</a> or a non-container resource (<a>data resource</a>). Servers MUST distinguish resource types via metadata. All responses MUST integrate with metadata as defined in Section 8.1, including `Link` headers for key relations such as `rel="linkset"`, `rel="up"`, and `rel="type"`. Servers MUST ensure atomicity between the resource state and its metadata during reads.
+The read resource operation requests a resource representation with HTTP GET requests (and HEAD for header-only requests). The behavior differs depending on whether the target URL is a <a>container</a> or a non-container resource (<a>data resource</a>). Servers MUST distinguish resource types via metadata. All responses MUST integrate with metadata as defined in Section [](#metadata), including `Link` headers for key relations such as `rel="linkset"`, `rel="up"`, and `rel="type"`. Servers MUST ensure atomicity between the resource state and its metadata during reads.
 
 **GET (non-container resource)** – *Retrieve a resource's content:*
 Send GET to the resource URI for full content (if authorized). Respond with 200 OK, body containing the data, and Content-Type matching the stored media type. Servers MUST support range requests per [[!RFC7233]] for partial retrieval. Responses MUST include an `ETag` header as defined in [[RFC9110]].
@@ -150,6 +150,3 @@ In all cases, the server MUST include the following metadata in the response hea
 The LWS server MUST support HEAD [[RFC9110]] for both <a>containers</a> and non-containers, returning the same headers as GET (including `Content-Type`, `Link` for metadata) but without a body. This enables metadata retrieval without transferring content.
 
 **Caching and Conditional Requests:** LWS leverages HTTP caching semantics. Servers SHOULD support conditional requests as defined in [[RFC9110]], including mechanisms such as entity tags (`ETags`) and date-based validators (like `If-Modified-Since` headers). If the resource or <a>container</a> listing has not changed, respond with `304 Not Modified` to avoid redundant transfers.
-
-
-**Discoverability and Authorization:** For enhanced discoverability, `401 Unauthorized` responses include a `WWW-Authenticate` header with a `resource_metadata` parameter, as described in [Authorization Server Discovery](#authorization-server-discovery), so that clients can locate an authorization server without hardcoded URIs.
