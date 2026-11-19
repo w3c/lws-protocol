@@ -173,8 +173,8 @@ WWW-Authenticate: Bearer resource_metadata="https://storage.example/.well-known/
         OPTIONAL. JSON array containing a list of subject identifier types that the authorization server supports.
         Each value is a string: either a URI scheme name, such as <code>"https"</code>, or, for Decentralized Identifiers,
         <code>"did:"</code> followed by the DID method name (e.g., <code>"did:web"</code>, <code>"did:key"</code>).
-        An authorization server MUST support subject identifiers that use the <code>https</code> URI scheme
-        [[!RFC9110]] and MAY support additional subject identifier types.
+        An authorization server MUST support the <code>https</code> subject identifier type [[!RFC9110]]
+        and MAY support additional subject identifier types.
         If this entry is present, its value MUST include <code>"https"</code>.
         An authorization server SHOULD advertise the subject identifier types
         that it supports by including this entry in the server metadata document.
