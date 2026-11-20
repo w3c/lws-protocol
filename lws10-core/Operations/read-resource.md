@@ -39,26 +39,26 @@ eggs
 The server returned the text content (34 bytes in total, as indicated by `Content-Length`). The content is exactly the stored data in the file. The `ETag: "abc123456"` is a validator for caching and conditional request purposes. The response includes `Link` headers for metadata discoverability, with mandatory fields such as `up` and `type`.
 
 **GET (<a>container</a> resource)** – *List a <a>container</a>'s contents:*
-When the target URI corresponds to a <a>container</a> (determined via metadata type), a GET request returns a listing of the <a>container</a>'s members. A response with `Content-Type: application/lws+json` is a <a>container representation</a> as defined in the [Container Representation](#container-representation) section; for this representation, the listing includes metadata for each member: resource identifiers (MUST), types (MUST), media types (MUST for DataResources), sizes (SHOULD), and modification timestamps (SHOULD).
+When the target URI corresponds to a <a>container</a> (determined via metadata type), a GET request returns a listing of the <a>container</a>'s members. A response with `Content-Type: application/ld+json; profile="https://www.w3.org/ns/lws/v1"` is a <a>container representation</a> as defined in the [Container Representation](#container-representation) section; for this representation, the listing includes metadata for each member: resource identifiers (MUST), types (MUST), media types (MUST for DataResources), sizes (SHOULD), and modification timestamps (SHOULD).
 
 **Example (GET a container):** assuming the <a>container</a> exists and the client has access. The tabs show the same request in different media types; see [](#content-negotiation).
 
 <div class="example-tabs">
-<div data-tab="application/lws+json">
+<div data-tab="application/ld+json (LWS profile)">
 
 Request:
 
 ```http
 GET /alice/notes/ HTTP/1.1
 Authorization: Bearer <token>
-Accept: application/lws+json
+Accept: application/ld+json; profile="https://www.w3.org/ns/lws/v1"
 ```
 
 Response headers:
 
 ```http
 HTTP/1.1 200 OK
-Content-Type: application/lws+json
+Content-Type: application/ld+json; profile="https://www.w3.org/ns/lws/v1"
 ETag: "container-etag-789"
 Link: </alice/notes/.meta>; rel="linkset"; type="application/linkset+json"
 Link: </alice/>; rel="up"

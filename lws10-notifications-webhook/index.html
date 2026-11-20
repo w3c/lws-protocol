@@ -144,7 +144,7 @@
 POST /subscriptions HTTP/2
 Host: notification.example
 Authorization: Bearer &lt;access-token&gt;
-Content-Type: application/lws+json
+Content-Type: application/ld+json; profile="https://www.w3.org/ns/lws/v1"
 
 {
   "@context": ["https://www.w3.org/ns/lws/v1"],
@@ -179,7 +179,7 @@ Content-Type: application/lws+json
 
       <pre class="example" title="Webhook subscription response">
 HTTP/2 200 OK
-Content-Type: application/lws+json
+Content-Type: application/ld+json; profile="https://www.w3.org/ns/lws/v1"
 Location: https://notification.example/subscriptions/9e8d7c6b5a4f
 
 {
@@ -336,7 +336,7 @@ Location: https://notification.example/subscriptions/9e8d7c6b5a4f
       <p>
         The server sends an HTTP <code>POST</code> request to the registered
         <a>inbox</a> with the notification envelope as the request body. The
-        request body MUST conform to the <code>application/lws+json</code> media type.
+        request body MUST use the <code>application/ld+json; profile="https://www.w3.org/ns/lws/v1"</code> media type and conform to the LWS profile defined by [[!LWS10-CORE]].
       </p>
 
       <ul>

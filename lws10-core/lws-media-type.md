@@ -3,19 +3,23 @@
 An LWS <a>storage description</a> MUST be serializable with the media type `application/lws+cid`.
 The `application/lws+cid` media type identifies a document that is a specialization of a W3C Controlled Identifier document [[!CID-1.0]], extended with the LWS vocabulary.
 
-An LWS <a>container representation</a> MUST support the media type `application/lws+json`.
-
-While LWS container representations use JSON-LD conventions, the constraints and requirements for LWS justify the use of a specific media type.
+An LWS <a>container representation</a> MUST support the media type `application/ld+json` [[!JSON-LD11]] with the <a>LWS profile</a>, that is, `application/ld+json; profile="https://www.w3.org/ns/lws/v1"`.
 
 #### LWS Profile
 
-The URI `https://www.w3.org/ns/lws/v1` identifies the <dfn>LWS profile</dfn> [[RFC6906]]. A representation of a <a>container</a> conforms to the <a>LWS profile</a> if it is RDF isomorphic to the `application/lws+json` representation of the same <a>container</a> state and page; that is, if the RDF it encodes is isomorphic, as defined in [RDF Dataset Comparison](https://www.w3.org/TR/rdf12-concepts/#section-dataset-isomorphism) [[!RDF12-CONCEPTS]], to the RDF that the `application/lws+json` representation encodes when interpreted as JSON-LD [[!JSON-LD11]]. An `application/lws+json` representation always conforms to the <a>LWS profile</a>.
+The URI `https://www.w3.org/ns/lws/v1` identifies the <dfn>LWS profile</dfn> [[RFC6906]]. A JSON-LD document [[!JSON-LD11]] conforms to the <a>LWS profile</a> if it is in compacted document form using the LWS JSON-LD context (`https://www.w3.org/ns/lws/v1`) and it satisfies all applicable requirements of this specification, such as those defined for a <a>container representation</a> in [](#container-representation).
+
+A representation of a <a>container</a> in any other RDF media type conforms to the <a>LWS profile</a> if it is RDF isomorphic to the JSON-LD representation in the <a>LWS profile</a> of the same <a>container</a> state and page; that is, if the RDF it encodes is isomorphic, as defined in [RDF Dataset Comparison](https://www.w3.org/TR/rdf12-concepts/#section-dataset-isomorphism) [[!RDF12-CONCEPTS]], to the RDF that the JSON-LD representation encodes.
 
 #### Content Negotiation
 
-Servers MUST honor requests for `application/lws+json` on <a>containers</a>, and MUST set the `Content-Type` response header to the media type of the selected representation.
+Servers MUST honor requests for `application/ld+json; profile="https://www.w3.org/ns/lws/v1"` on <a>containers</a>, and MUST set the `Content-Type` response header to the media type of the selected representation, including any `profile` parameter.
 
-A client requests a representation in the <a>LWS profile</a> by including the <a>LWS profile</a> URI in the `profile` parameter of an RDF media type. RDF media types that define this parameter include `application/ld+json` [[JSON-LD11]], `text/turtle` [[RDF12-TURTLE]], `application/trig` [[RDF12-TRIG]], `application/n-triples` [[RDF12-N-TRIPLES]], and `application/n-quads` [[RDF12-N-QUADS]]. If the server selects such a media type, the response MUST conform to the <a>LWS profile</a>, that is, it MUST be RDF isomorphic to the `application/lws+json` representation, and its `Content-Type` MUST include the same `profile` parameter. A server MUST NOT select such a media type if it cannot produce a representation in the <a>LWS profile</a> in it.
+A client requests a representation in the <a>LWS profile</a> by including the <a>LWS profile</a> URI in the `profile` parameter of an RDF media type. RDF media types that define this parameter include `application/ld+json` [[JSON-LD11]], `text/turtle` [[RDF12-TURTLE]], `application/trig` [[RDF12-TRIG]], `application/n-triples` [[RDF12-N-TRIPLES]], and `application/n-quads` [[RDF12-N-QUADS]]. If the server selects such a media type, the response MUST conform to the <a>LWS profile</a>, and its `Content-Type` MUST include the same `profile` parameter. A server MUST NOT select such a media type if it cannot produce a representation in the <a>LWS profile</a> in it.
+
+<div class="note">
+Because a `profile` parameter makes the `Accept` and `Content-Type` header values non-CORS-safelisted, browsers send a CORS preflight request before a cross-origin request that uses the <a>LWS profile</a> media type [[FETCH]]. Servers that support browser-based clients need to respond correctly to such preflight requests.
+</div>
 
 When the selected representation depends on the request's `Accept` header, responses SHOULD include a `Vary: Accept` header [[!RFC9110]].
 
@@ -63,13 +67,13 @@ Request:
 ```
 GET /alice/photos/ HTTP/1.1
 Authorization: Bearer <token>
-Accept: application/lws+json
+Accept: application/ld+json; profile="https://www.w3.org/ns/lws/v1"
 ```
 
 Response (first page):
 ```
 HTTP/1.1 200 OK
-Content-Type: application/lws+json
+Content-Type: application/ld+json; profile="https://www.w3.org/ns/lws/v1"
 ETag: "photos-page1-etag"
 Link: </alice/photos/.meta>; rel="linkset"; type="application/linkset+json"
 Link: </alice/>; rel="up"
@@ -106,13 +110,13 @@ Request (next page):
 ```
 GET /alice/photos/?page=2 HTTP/1.1
 Authorization: Bearer <token>
-Accept: application/lws+json
+Accept: application/ld+json; profile="https://www.w3.org/ns/lws/v1"
 ```
 
 Response (middle page):
 ```
 HTTP/1.1 200 OK
-Content-Type: application/lws+json
+Content-Type: application/ld+json; profile="https://www.w3.org/ns/lws/v1"
 ETag: "photos-page2-etag"
 Link: </alice/photos/.meta>; rel="linkset"; type="application/linkset+json"
 Link: </alice/>; rel="up"
