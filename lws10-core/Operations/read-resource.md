@@ -39,7 +39,7 @@ eggs
 The server returned the text content (34 bytes in total, as indicated by `Content-Length`). The content is exactly the stored data in the file. The `ETag: "abc123456"` is a validator for caching and conditional request purposes. The response includes `Link` headers for metadata discoverability, with mandatory fields such as `up` and `type`.
 
 **GET (<a>container</a> resource)** – *List a <a>container</a>'s contents:*
-When the target URI corresponds to a <a>container</a> (determined via metadata type), a GET request returns a listing of the <a>container</a>'s members. A response with `Content-Type: application/lws+json` is a <a>container representation</a> as defined in the [Container Representation](#container-representation) section; for this representation, the listing includes metadata for each member: resource identifiers (MUST), types (MUST), media types (MUST for DataResources), sizes (SHOULD), and modification timestamps (SHOULD).
+When the target URI corresponds to a <a>container</a> (determined via metadata type), a GET request returns a listing of the <a>container</a>'s members. A response with `Content-Type: application/lws+json` is a <a>container representation</a> as defined in the [Container Representation](#container-representation) section; for this representation, the listing includes metadata for each member: resource identifiers (MUST), types (MUST), representations (MUST for DataResources), each with a media type (MUST) and a size (SHOULD), and modification timestamps (SHOULD).
 
 **Example (GET a container):** assuming the <a>container</a> exists and the client has access. The tabs show the same request in different media types; see [](#content-negotiation).
 
@@ -77,15 +77,19 @@ Response body:
     {
       "type": "DataResource",
       "id": "/alice/notes/shoppinglist.txt",
-      "format": "text/plain",
-      "size": 47,
+      "representations": [{
+        "format": "text/plain",
+        "size": 47
+      }],
       "modified": "2025-11-24T12:00:00Z"
     },
     {
       "type": ["DataResource", "http://example.org/customType"],
       "id": "/alice/notes/todo.json",
-      "format": "application/json",
-      "size": 2048,
+      "representations": [{
+        "format": "application/json",
+        "size": 2048
+      }],
       "modified": "2025-11-24T13:00:00Z"
     }
   ]
@@ -128,13 +132,17 @@ Response body:
   lws:items <shoppinglist.txt>, <todo.json> .
 
 <shoppinglist.txt> a lws:DataResource ;
-  dcterms:format "text/plain" ;
-  schema:size "47"^^xsd:long ;
+  lws:representations [
+    dcterms:format "text/plain" ;
+    schema:size "47"^^xsd:long
+  ] ;
   dcterms:modified "2025-11-24T12:00:00Z"^^xsd:dateTime .
 
 <todo.json> a lws:DataResource, <http://example.org/customType> ;
-  dcterms:format "application/json" ;
-  schema:size "2048"^^xsd:long ;
+  lws:representations [
+    dcterms:format "application/json" ;
+    schema:size "2048"^^xsd:long
+  ] ;
   dcterms:modified "2025-11-24T13:00:00Z"^^xsd:dateTime .
 ```
 
@@ -142,7 +150,7 @@ Response body:
 
 </div>
 
-In this example, `/alice/notes/` is a <a>container</a>. The response uses JSON-LD with the LWS context, listing members with required metadata. Each item includes its `type`, `id`, `format`, `size`, and `modified` timestamp as flat properties.
+In this example, `/alice/notes/` is a <a>container</a>. The response uses JSON-LD with the LWS context, listing members with required metadata. Each item includes its `type`, `id`, and `modified` timestamp, along with a `representations` array that gives the `format` and `size` of each described representation.
 
 In all cases, the server MUST include the following metadata in the response headers: an `ETag` header as defined in [[RFC9110]], and `Link` headers with `rel="linkset"`, `rel="up"`, and `rel="type"` indicating it is a <a>container</a>.
 
