@@ -43,6 +43,11 @@ class:
     comment: A data-bearing resource such as a document, image, or structured data file.
     upper_value: StorageResource
 
+  - id: Representation
+    label: Representation
+    comment: A representation of a data resource, such as the one most recently stored by a client or one produced through content negotiation.
+    context: none
+
   - id: Storage
     label: Storage
     comment: A Linked Web Storage instance.
@@ -128,10 +133,17 @@ property:
     domain: lws:Container
     comment: The total number of items in a container.
 
+  - id: representations
+    label: representations
+    domain: lws:DataResource
+    range: lws:Representation
+    property_scope: lws:Representation
+    comment: The representations of a data resource, each described by its media type and size.
+
   - id: dct:format
     label: format
-    domain: lws:DataResource
-    comment: The media type of a data resource.
+    domain: lws:Representation
+    comment: The media type of a representation.
 
   - id: dcterms:modified
     label: modified
@@ -141,9 +153,9 @@ property:
 
   - id: schema:size
     label: size
-    domain: lws:DataResource
+    domain: lws:Representation
     range: xsd:long
-    comment: The size of the resource in bytes.
+    comment: The size of a representation in bytes.
 
   - id: capability
     label: capability

@@ -72,7 +72,7 @@
 
     <p>
       Requests for the <a>storage</a> URI MUST return a document that conforms to the
-      <a>storage description resource</a> data model with a media type of <code>application/lws+cid</code>,
+      <a>storage description resource</a> data model with a media type of <code>application/cid</code>,
       unless content negotiation requires a different format.
     </p>
   </section>
@@ -145,7 +145,7 @@
     <h4>Storage Description Representation</h4>
 
     <p>
-      A <a>storage description</a> MUST be serializable with the media type <code>application/lws+cid</code>.
+      A <a>storage description</a> MUST be serializable with the media type <code>application/cid</code> [[!CID-1.0]].
       The <code>@context</code> property MUST be an array starting with the URIs <code>https://www.w3.org/ns/cid/v1</code>
       and <code>https://www.w3.org/ns/lws/v1</code>.
       Other representations MAY be available via content negotiation.
