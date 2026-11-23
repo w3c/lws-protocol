@@ -248,8 +248,8 @@
   <p>
     To receive notifications, a <a>subscriber</a> creates a <a>subscription</a> by sending
     an authenticated <code>POST</code> request to the <code>serviceEndpoint</code> of the
-    <code>NotificationService</code>. The request body MUST conform to the
-    <code>application/lws+json</code> media type.
+    <code>NotificationService</code>. The request body MUST use the
+    <code>application/ld+json; profile="https://www.w3.org/ns/lws/v1"</code> media type [[!JSON-LD11]] and conform to the <a>LWS profile</a>.
   </p>
 
   <section id="subscription-request">
@@ -280,7 +280,7 @@
 POST /subscriptions HTTP/2
 Host: notification.example
 Authorization: Bearer &lt;access-token&gt;
-Content-Type: application/lws+json
+Content-Type: application/ld+json; profile="https://www.w3.org/ns/lws/v1"
 
 {
   "@context": ["https://www.w3.org/ns/lws/v1"],
@@ -343,8 +343,8 @@ Content-Type: application/lws+json
     <h4>Subscription Response</h4>
 
     <p>
-      The response to a successful subscription creation request MUST conform to the
-      <code>application/lws+json</code> media type and MUST contain the following fields:
+      The response to a successful subscription creation request MUST use the
+      <code>application/ld+json; profile="https://www.w3.org/ns/lws/v1"</code> media type, conform to the <a>LWS profile</a>, and MUST contain the following fields:
     </p>
 
     <ul>
