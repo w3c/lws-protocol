@@ -29,11 +29,25 @@ Each entry in the `items` array describes a resource contained in the <a>contain
 - **`id`**: The URI of the contained resource.
 - **`type`**: The type of the resource. MUST be `"DataResource"` or `"Container"`, or an array containing at least one of these two strings. Servers MAY include additional user-defined types as URIs (e.g., `["DataResource", "http://example.org/customType"]`).
 
+The description of a <a>data resource</a> MUST also include:
+
+- **`representations`**: An array of one or more representation descriptions (see below).
+
 A contained resource description SHOULD include:
 
-- **`format`**: The media type of the resource (e.g., `"text/plain"`, `"image/jpeg"`). MUST be present for DataResources.
-- **`size`**: The size of the resource in bytes, expressed as an integer.
 - **`modified`**: The date and time the resource was last modified, expressed as an ISO 8601 date-time string.
+
+#### Representation Description
+
+A media type and a size belong to a representation of a resource rather than to the resource itself: a server can make a <a>data resource</a> available in more than one media type through [content negotiation](#content-negotiation), and each such representation has its own size. Each entry in the `representations` array describes one representation of the contained resource. The array MUST describe the representation in the media type with which a client most recently created or replaced the resource, and MAY describe other representations that the server can produce through content negotiation.
+
+A representation description MUST include:
+
+- **`format`**: The media type of the representation (e.g., `"text/plain"`, `"image/jpeg"`).
+
+A representation description SHOULD include:
+
+- **`size`**: The size of the representation in bytes, expressed as an integer.
 
 #### Example Container Representation
 
@@ -52,15 +66,19 @@ The following example shows a <a>container</a> at `https://storage.example/alice
     {
       "type": "DataResource",
       "id": "/alice/notes/shoppinglist.txt",
-      "format": "text/plain",
-      "size": 47,
+      "representations": [{
+        "format": "text/plain",
+        "size": 47
+      }],
       "modified": "2025-11-24T12:00:00Z"
     },
     {
       "type": ["DataResource", "http://example.org/customType"],
       "id": "/alice/notes/todo.json",
-      "format": "application/json",
-      "size": 2048,
+      "representations": [{
+        "format": "application/json",
+        "size": 2048
+      }],
       "modified": "2025-11-24T13:00:00Z"
     }
   ]
@@ -82,13 +100,17 @@ The following example shows a <a>container</a> at `https://storage.example/alice
   lws:items <shoppinglist.txt>, <todo.json> .
 
 <shoppinglist.txt> a lws:DataResource ;
-  dcterms:format "text/plain" ;
-  schema:size "47"^^xsd:long ;
+  lws:representations [
+    dcterms:format "text/plain" ;
+    schema:size "47"^^xsd:long
+  ] ;
   dcterms:modified "2025-11-24T12:00:00Z"^^xsd:dateTime .
 
 <todo.json> a lws:DataResource, <http://example.org/customType> ;
-  dcterms:format "application/json" ;
-  schema:size "2048"^^xsd:long ;
+  lws:representations [
+    dcterms:format "application/json" ;
+    schema:size "2048"^^xsd:long
+  ] ;
   dcterms:modified "2025-11-24T13:00:00Z"^^xsd:dateTime .
 ```
 
@@ -102,14 +124,16 @@ The following example shows a <a>container</a> at `https://storage.example/alice
 <https://storage.example/alice/notes/> <https://www.w3.org/ns/lws#items> <https://storage.example/alice/notes/shoppinglist.txt> .
 <https://storage.example/alice/notes/> <https://www.w3.org/ns/lws#items> <https://storage.example/alice/notes/todo.json> .
 <https://storage.example/alice/notes/shoppinglist.txt> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <https://www.w3.org/ns/lws#DataResource> .
-<https://storage.example/alice/notes/shoppinglist.txt> <http://purl.org/dc/terms/format> "text/plain" .
-<https://storage.example/alice/notes/shoppinglist.txt> <http://schema.org/size> "47"^^<http://www.w3.org/2001/XMLSchema#long> .
+<https://storage.example/alice/notes/shoppinglist.txt> <https://www.w3.org/ns/lws#representations> _:shoppinglist .
 <https://storage.example/alice/notes/shoppinglist.txt> <http://purl.org/dc/terms/modified> "2025-11-24T12:00:00Z"^^<http://www.w3.org/2001/XMLSchema#dateTime> .
+_:shoppinglist <http://purl.org/dc/terms/format> "text/plain" .
+_:shoppinglist <http://schema.org/size> "47"^^<http://www.w3.org/2001/XMLSchema#long> .
 <https://storage.example/alice/notes/todo.json> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <https://www.w3.org/ns/lws#DataResource> .
 <https://storage.example/alice/notes/todo.json> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://example.org/customType> .
-<https://storage.example/alice/notes/todo.json> <http://purl.org/dc/terms/format> "application/json" .
-<https://storage.example/alice/notes/todo.json> <http://schema.org/size> "2048"^^<http://www.w3.org/2001/XMLSchema#long> .
+<https://storage.example/alice/notes/todo.json> <https://www.w3.org/ns/lws#representations> _:todo .
 <https://storage.example/alice/notes/todo.json> <http://purl.org/dc/terms/modified> "2025-11-24T13:00:00Z"^^<http://www.w3.org/2001/XMLSchema#dateTime> .
+_:todo <http://purl.org/dc/terms/format> "application/json" .
+_:todo <http://schema.org/size> "2048"^^<http://www.w3.org/2001/XMLSchema#long> .
 ```
 
 </div>
