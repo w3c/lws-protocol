@@ -16,6 +16,9 @@ A representation of a <a>container</a> in any other RDF media type conforms to t
 Servers MUST honor requests for `application/ld+json; profile="https://www.w3.org/ns/lws/v1"` on <a>containers</a>, and MUST set the `Content-Type` response header to the media type of the selected representation, including any `profile` parameter.
 
 A client requests a representation in the <a>LWS profile</a> by including the <a>LWS profile</a> URI in the `profile` parameter of an RDF media type. RDF media types that define this parameter include `application/ld+json` [[JSON-LD11]], `text/turtle` [[RDF12-TURTLE]], `application/trig` [[RDF12-TRIG]], `application/n-triples` [[RDF12-N-TRIPLES]], and `application/n-quads` [[RDF12-N-QUADS]]. If the server selects such a media type, the response MUST conform to the <a>LWS profile</a>, and its `Content-Type` MUST include the same `profile` parameter. A server MUST NOT select such a media type if it cannot produce a representation in the <a>LWS profile</a> in it.
+<div class="note">
+A request for an RDF media type without the <a>LWS profile</> is not required to return isomorphic content. Clients depending on isomorphic content need to include <a>LWS profile</a> in the request.
+</div>
 
 <div class="note">
 Because a `profile` parameter makes the `Accept` and `Content-Type` header values non-CORS-safelisted, browsers send a CORS preflight request before a cross-origin request that uses the <a>LWS profile</a> media type [[FETCH]]. Servers that support browser-based clients need to respond correctly to such preflight requests.
