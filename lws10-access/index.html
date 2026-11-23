@@ -1,0 +1,543 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <title>Linked Web Storage Access Requests and Grants 1.0</title>
+    <script src="https://www.w3.org/Tools/respec/respec-w3c" class="remove"></script>
+    <link rel="stylesheet" href="local.css"/>
+    <script class='remove'>
+      // See https://respec.org/docs/ for how to configure ReSpec
+      var respecConfig = {
+        specStatus: "ED",
+        shortName: "lws10-access",
+        edDraftURI: "https://w3c.github.io/lws-protocol/lws10-access/",
+        editors: [{
+          name: "Jesse Wright",
+          w3cid: "132252",
+          company: "University of Oxford",
+          companyURL: "https://www.ox.ac.uk/",
+        }, {
+          name: "Erich Bremer",
+          w3cid: "45759",
+          company: "Stony Brook University",
+          companyURL: "https://www.stonybrook.edu/",
+        }],
+        github: "w3c/lws-protocol",
+        xref: ["web-platform"],
+        group: "lws",
+        localBiblio: {
+          "LWS10-CORE": {
+            title: "Linked Web Storage Protocol 1.0",
+            href: "https://www.w3.org/TR/lws10-core/",
+            publisher: "W3C",
+            status: "WD",
+          },
+          "LWS10-ACCESS-PROFILE": {
+            title: "Linked Web Storage ODRL Access Profile 1.0",
+            href: "https://w3c.github.io/lws-protocol/lws10-access-profile/",
+            publisher: "W3C",
+            status: "ED",
+          },
+        },
+      };
+    </script>
+  </head>
+  <body>
+    <section id="abstract">
+      <p>
+        This document defines a mechanism for the Linked Web Storage (LWS) protocol by which an <a>agent</a>
+        can request access to resources in a <a>storage</a> and a <a>storage controller</a> can grant access
+        with defined constraints.
+      </p>
+    </section>
+    <section id="sotd">
+      <p>
+        This is an unofficial proposal.
+      </p>
+    </section>
+
+    <section id="introduction">
+      <h2>Introduction</h2>
+      <p>
+        Access Requests and Grants provide a mechanism for an <a>agent</a> to request access to
+        resources and for a <a>storage controller</a> to grant access with defined constraints.
+        The endpoints for requesting and granting access act as a type of specialized inbox.
+      </p>
+
+      <p>
+        An <a>agent</a> does not present an <a>access grant</a> to a server as an authorization token.
+        Rather, the <a>access grant</a> serves as a record of what was authorized, to whom,
+        and under what constraints. When an <a>access grant</a> is created or revoked (deleted), it
+        is the responsibility of the server to adjust any underlying access policy to account for the
+        change. The interaction between an <a>access grant</a> endpoint and a particular policy
+        enforcement layer is out of scope for this specification.
+      </p>
+
+      <p>
+        The <a>access profile</a> defined in [[LWS10-ACCESS-PROFILE]] is based on concepts from the
+        <a href="https://www.w3.org/TR/odrl-model/">Open Digital Rights Language</a> (ODRL), including
+        actions, constraints, and assignees. Other profiles could use a different conceptual framework.
+      </p>
+    </section>
+
+    <section id="conformance">
+      <p>
+        This specification defines conformance criteria for two classes of product: a client and a server.
+        A product conforms to this specification if it complies with all of the "MUST" statements that apply
+        to its class.
+      </p>
+    </section>
+
+    <section id="terminology">
+      <h2>Terminology</h2>
+
+      <p>
+        The terms "<dfn data-cite="LWS10-CORE#dfn-agents" data-lt="agents">agent</dfn>",
+        "<dfn data-cite="LWS10-CORE#dfn-storage">storage</dfn>",
+        "<dfn data-cite="LWS10-CORE#dfn-storage-controller" data-lt="storage controllers">storage controller</dfn>",
+        "<dfn data-cite="LWS10-CORE#dfn-storage-description-resource" data-lt="storage description resource">storage description</dfn>",
+        and "<dfn data-cite="LWS10-CORE#dfn-storage-resources" data-lt="Storage Resources">Storage Resource</dfn>"
+        are defined by the Linked Web Storage Protocol [[!LWS10-CORE]].
+      </p>
+
+      <p>
+        This specification defines the following terms:
+      </p>
+      <ul>
+        <li><dfn>access grant</dfn> &mdash; a data object created by a <a>storage controller</a>, expressing
+        an ability for an <a>agent</a> to perform specific actions on <a>Storage Resources</a> within certain
+        defined constraints.</li>
+        <li><dfn data-lt="access profiles">access profile</dfn> &mdash; an access profile describes the
+        requirements for expressing a valid access policy. Every access profile is identified
+        with a URI, and a server indicates support for one or more access profiles by
+        referencing them in the <code>conformsTo</code> property of a service object in its
+        <a>storage description</a> resource.</li>
+        <li><dfn>access request</dfn> &mdash; a data object submitted by an <a>agent</a>, expressing a
+        request to perform specific actions on <a>Storage Resources</a>, including the desired scope
+        and constraints.</li>
+      </ul>
+    </section>
+
+    <section id="access-discovery">
+      <h2>Discovery</h2>
+
+      <p>
+        A storage MAY advertise support for <a>access requests</a> and <a>access grants</a>
+        in its <a>storage description resource</a>. When such support is advertised, a service
+        object describing an endpoint for <a>access requests</a> MUST have a
+        <code>type</code> equal to the string <code>AccessRequestService</code>, and a
+        service object describing an endpoint for <a>access grants</a> MUST have a
+        <code>type</code> equal to the string <code>AccessGrantService</code>. A service
+        object SHOULD include a <code>conformsTo</code> property whose value is a collection
+        of one or more URIs identifying the <a>access profiles</a> supported at that
+        endpoint. Additional properties MAY be included:
+      </p>
+
+      <pre class="example" title="Storage Description with access request and grant services">
+{
+  "@context": [
+    "https://www.w3.org/ns/cid/v1",
+    "https://www.w3.org/ns/lws/v1"
+  ],
+  "id": "https://storage.example/",
+  "type": "Storage",
+  "service": [
+    {
+      "type": "StorageRoot",
+      "serviceEndpoint": "https://storage.example/root/"
+    },
+    {
+      "type": "AccessRequestService",
+      "serviceEndpoint": "https://access.example/request/",
+      "conformsTo": ["https://www.w3.org/ns/lws#AccessProfile"]
+    },
+    {
+      "type": "AccessGrantService",
+      "serviceEndpoint": "https://access.example/grant/",
+      "conformsTo": ["https://www.w3.org/ns/lws#AccessProfile"]
+    }
+  ]
+}
+  </pre>
+    </section>
+
+    <section id="access-data-model">
+      <h2>Data Model</h2>
+
+      <p>
+        An <a>access request</a> or <a>access grant</a> is a data object that expresses properties
+        for identity and routing, as well as an <code>access</code> object that describes the
+        requested or permitted operations. A profile that describes <a>access requests</a> using
+        ODRL concepts is described in [[LWS10-ACCESS-PROFILE]].
+      </p>
+
+      <p>
+        The following example illustrates an <a>access request</a>. The example is shown
+        using the JSON-LD serialization defined in <a href="#json-ld-serialization"></a>.
+      </p>
+
+      <pre class="example" title="Access Request">
+{
+  "@context": [
+    "https://www.w3.org/ns/lws/v1"
+  ],
+  "type": ["AccessRequest"],
+  "inbox": "https://id.example/agent/inbox/",
+  "storage": "https://storage.example/",
+  "access": [{
+    "type": ["AccessPolicy"],
+    "action": ["read", "create"],
+    "assignee": "https://id.example/agent",
+    "target": {
+      "type": "StorageResource",
+      "value": ["https://storage.example/root/projects/"]
+    },
+    "constraint": [
+      {
+        "leftOperand": "purpose",
+        "operator": "eq",
+        "rightOperand": "https://purpose.example/collaboration"
+      },
+      {
+        "leftOperand": "dateTime",
+        "operator": "lteq",
+        "rightOperand": "2026-06-09T10:00:00Z"
+      }
+    ]
+  }]
+}
+  </pre>
+
+      <p>
+        The following example illustrates an <a>access grant</a>. The example is shown
+        using the JSON-LD serialization defined in <a href="#json-ld-serialization"></a>.
+      </p>
+
+      <pre class="example" title="Access Grant">
+{
+  "@context": [
+    "https://www.w3.org/ns/lws/v1"
+  ],
+  "type": ["AccessGrant"],
+  "storage": "https://storage.example/",
+  "access": [{
+    "type": ["AccessPolicy"],
+    "action": ["read"],
+    "assignee": "https://id.example/agent",
+    "target": {
+      "type": "StorageResource",
+      "value": ["https://storage.example/root/projects/"]
+    },
+    "constraint": [
+      {
+        "leftOperand": "purpose",
+        "operator": "eq",
+        "rightOperand": "https://purpose.example/collaboration"
+      },
+      {
+        "leftOperand": "dateTime",
+        "operator": "lteq",
+        "rightOperand": "2026-06-09T10:00:00Z"
+      }
+    ]
+  }]
+}
+  </pre>
+
+      <p>
+        Other properties MAY be present on <a>access requests</a> and <a>access grants</a>.
+      </p>
+
+      <section id="access-type-property">
+        <h3>Types</h3>
+
+        <p>
+          The <code>type</code> property expresses the type of the document.
+        </p>
+
+        <p>
+          The value of the <code>type</code> property MUST be one or more
+          <a data-cite="!JSON-LD11#dfn-term">terms</a> and
+          <a data-cite="!URL#absolute-url-string">absolute URL strings</a>. For an
+          <a>access request</a>, the value MUST include the term <code>AccessRequest</code>.
+          For an <a>access grant</a>, the value MUST include the term
+          <code>AccessGrant</code>. Additional type values MAY be included.
+        </p>
+
+        <p>
+          This property is REQUIRED.
+        </p>
+
+        <p>
+          This document defines the following type values for <a>access requests</a> and
+          <a>access grants</a>:
+        </p>
+
+        <ul>
+          <li>
+            <code>AccessRequest</code> &mdash; a request by an <a>agent</a> for access to resources.
+          </li>
+          <li>
+            <code>AccessGrant</code> &mdash; an authorization by a <a>storage controller</a> granting
+            access to resources.
+          </li>
+        </ul>
+
+        <pre class="example" title="type property">
+{
+  "type": ["AccessGrant"]
+}
+    </pre>
+      </section>
+
+      <section id="access-storage-property">
+        <h3>Storage</h3>
+
+        <p>
+          The <code>storage</code> property identifies the LWS storage to which the
+          <a>access request</a> or <a>access grant</a> is scoped.
+        </p>
+
+        <p>
+          The value of the <code>storage</code> property MUST be a URI.
+        </p>
+
+        <p>
+          This property is REQUIRED.
+        </p>
+
+        <pre class="example" title="storage property">
+{
+  "storage": "https://storage.example/"
+}
+    </pre>
+      </section>
+
+      <section id="access-inbox-property">
+        <h3>Inbox</h3>
+
+        <p>
+          The <code>inbox</code> property specifies a URI for receiving notifications related to
+          the <a>access request</a> or <a>access grant</a>
+          (see <a href="#access-notifications"></a>).
+        </p>
+
+        <p>
+          The value of the <code>inbox</code> property MUST be a URI.
+        </p>
+
+        <p>
+          This property is OPTIONAL.
+        </p>
+
+        <pre class="example" title="inbox property">
+{
+  "inbox": "https://id.example/agent/inbox/"
+}
+    </pre>
+      </section>
+
+      <section id="access-property">
+        <h3>Access</h3>
+
+        <p>
+          The <code>access</code> property describes the characteristics of one or more
+          <a>access profiles</a>, based on the profiles supported by a server. A
+          profile based on the
+          <a href="https://www.w3.org/TR/odrl-model/">ODRL Information Model</a> is described
+          in [[LWS10-ACCESS-PROFILE]].
+        </p>
+
+        <p>
+          The value of the <code>access</code> property MUST be a collection of one or more
+          objects.
+        </p>
+
+        <p>
+          This property is REQUIRED.
+        </p>
+      </section>
+    </section>
+
+    <section id="access-serialization">
+      <h2>Serialization</h2>
+
+      <p>
+        The data model defined in this section is independent of any particular
+        serialization.
+      </p>
+
+      <section id="json-ld-serialization">
+        <h3>JSON-LD Serialization</h3>
+
+        <p>
+          This specification defines a JSON-LD serialization for <a>access requests</a> and
+          <a>access grants</a>. Documents using this serialization MUST include an
+          <code>@context</code> property whose value is an ordered set that includes
+          <code>https://www.w3.org/ns/lws/v1</code>. Additional context entries MAY be
+          included to define extension terms.
+        </p>
+
+        <p>
+          The media type associated with this serialization is
+          <code>application/ld+json; profile="https://www.w3.org/ns/lws/v1"</code>; documents using
+          this serialization conform to the
+          <a data-cite="LWS10-CORE#dfn-lws-profile">LWS profile</a>.
+        </p>
+
+        <pre class="example" title="JSON-LD @context">
+{
+  "@context": [
+    "https://www.w3.org/ns/lws/v1"
+  ]
+}
+    </pre>
+      </section>
+    </section>
+
+    <section id="access-protocol">
+      <h2>Protocol</h2>
+
+      <p>
+        The <a>access request</a> and <a>access grant</a> endpoints are LWS containers and MUST
+        conform to the rules defined in [[!LWS10-CORE]].
+      </p>
+
+      <p>
+        These endpoints minimally require support for GET and POST operations. The DELETE operation
+        is RECOMMENDED. Other operations MAY be supported.
+      </p>
+
+      <p>
+        These endpoints MUST support the JSON-LD serialization defined in
+        <a href="#json-ld-serialization"></a> for both request and response payloads. Servers
+        MAY support additional serializations.
+      </p>
+
+      <p>
+        An <a>agent</a> creates an <a>access request</a> by submitting a <code>POST</code> request to the
+        <a>access request</a> endpoint. A <a>storage controller</a> creates an <a>access grant</a> by
+        submitting a <code>POST</code> request to the <a>access grant</a> endpoint.
+      </p>
+
+      <p>
+        A successful POST operation MUST respond with a <code>Location</code> header set to
+        the URL of the new resource.
+      </p>
+
+      <section id="access-request-endpoint">
+        <h3>Access Request Endpoint</h3>
+
+        <ul>
+          <li><code>POST /</code> &mdash; Create an access request.</li>
+          <li><code>GET /</code> &mdash; Retrieve a list of access requests.</li>
+          <li><code>GET /:id</code> &mdash; Retrieve a specific access request.</li>
+          <li><code>DELETE /:id</code> &mdash; Cancel an access request.</li>
+        </ul>
+      </section>
+
+      <section id="access-grant-endpoint">
+        <h3>Access Grant Endpoint</h3>
+
+        <ul>
+          <li><code>POST /</code> &mdash; Create an access grant.</li>
+          <li><code>GET /</code> &mdash; Retrieve a list of access grants.</li>
+          <li><code>GET /:id</code> &mdash; Retrieve a specific access grant.</li>
+          <li><code>DELETE /:id</code> &mdash; Revoke an access grant.</li>
+        </ul>
+      </section>
+    </section>
+
+    <section id="access-notifications">
+      <h2>Notifications</h2>
+
+      <p class="issue" data-number="103">
+        This section needs to align with the yet-to-be-defined notification section of LWS.
+      </p>
+
+      <p>
+        Notifications provide a mechanism for informing <a>agents</a> and <a>storage controllers</a> about changes to
+        <a>access requests</a> and <a>access grants</a>. When an <code>inbox</code> property is
+        present on an <a>access request</a> or <a>access grant</a>, the server SHOULD deliver
+        notifications to that endpoint, informing an
+        assignee of the event.
+      </p>
+
+      <p>
+        The serialization of notifications MUST conform to the requirements of the LWS
+        notification data model.
+      </p>
+
+      <p>
+        Notifications delivered to an <code>inbox</code> endpoint MUST conform to the
+        requirements defined in the LWS protocol for notification delivery.
+      </p>
+
+      <p class="note">
+        The notification mechanism described in this section is comparable to the
+        [[LDN|Linked Data Notifications]] pattern, in which notifications are discovered
+        via an <code>inbox</code> property and delivered by sending a <code>POST</code>
+        request to that inbox.
+      </p>
+
+      <section id="access-notification-events">
+        <h3>Notification Events</h3>
+
+        <p>
+          A server SHOULD send notifications in response to the following events:
+        </p>
+
+        <ul>
+          <li>
+            <strong>Access Request creation</strong>: When a new <a>access request</a> is
+            submitted, the <a>storage controller</a> SHOULD be notified.
+          </li>
+          <li>
+            <strong>Access Grant creation</strong>: When a new <a>access grant</a> is created,
+            the requesting <a>agent</a> SHOULD be notified at the <code>inbox</code> specified in
+            the associated <a>access request</a>.
+          </li>
+        </ul>
+
+        <p>
+          A server MAY send notifications in response to other events.
+        </p>
+      </section>
+    </section>
+
+    <section id="security-considerations" class="informative">
+      <h2>Security Considerations</h2>
+
+      <ul>
+        <li>
+          Servers are strongly encouraged to apply authorization rules to both the
+          <a>access request</a> and <a>access grant</a> endpoints. Write access to the
+          <a>access grant</a> endpoint, in particular, should be restricted to authorized
+          storage controllers and specific clients.
+        </li>
+        <li>
+          Because the <a>access request</a> endpoint accepts content from external agents,
+          servers are encouraged to implement measures to prevent abuse, such as rate limiting,
+          payload size restrictions, or requiring authentication before accepting submissions.
+          Without such protections, the endpoint may be vulnerable to spam, resource exhaustion,
+          or other forms of unwanted content.
+        </li>
+      </ul>
+    </section>
+
+    <section id="privacy-considerations" class="informative">
+      <h2>Privacy Considerations</h2>
+
+      <ul>
+        <li>
+          An <a>access request</a> or <a>access grant</a> can reveal sensitive information
+          about the resources, agents, and purposes involved. Servers are encouraged to limit
+          the visibility of these resources to authorized parties, such as the storage controller
+          and the assignee identified in the document. For example, a storage controller might
+          have the ability to read and delete all resources, while other agents would only have
+          access to the resources for which they are the assignee.
+        </li>
+      </ul>
+    </section>
+  </body>
+</html>
