@@ -237,9 +237,14 @@ Location: https://notification.example/subscriptions/9e8d7c6b5a4f
   }],
   "authentication": ["https://storage.example/#key-20260320"],
   "service": [{
+    "type": "StorageRoot",
+    "serviceEndpoint": "https://storage.example/root/",
+    "conformsTo": ["https://www.w3.org/TR/lws10-core/"]
+  }, {
     "type": "NotificationService",
     "serviceEndpoint": "https://notification.example/subscriptions",
-    "subscriptionType": ["WebhookSubscription"]
+    "subscriptionType": ["WebhookSubscription"],
+    "conformsTo": ["https://www.w3.org/TR/lws10-notifications-webhook/"]
   }]
 }
       </pre>
@@ -359,6 +364,19 @@ Location: https://notification.example/subscriptions/9e8d7c6b5a4f
       <p>
         A Webhook <a>subscription</a> MUST use the <code>WebhookSubscription</code> string
         as its subscription type when interacting with the <code>NotificationService</code>.
+      </p>
+    </section>
+
+    <section id="specification-identifier">
+      <h2>Specification Identifier</h2>
+
+      <p>
+        This specification is identified by the URI
+        <code>https://www.w3.org/TR/lws10-notifications-webhook/</code>. A
+        <code>NotificationService</code> that supports <code>WebhookSubscription</code> SHOULD
+        include this URI in its <code>conformsTo</code> property, as described in
+        <a data-cite="LWS10-CORE#storage-description-versioning">Specification Versions</a>
+        [[!LWS10-CORE]].
       </p>
     </section>
 

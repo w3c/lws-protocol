@@ -272,8 +272,9 @@ property:
 
   - id: dcterms:conformsTo
     label: conforms to
+    range: IRI
     external: true
-    comment: An established standard to which the described resource conforms.
+    comment: An established standard to which the described resource conforms. On a service or capability in a storage description, each value identifies one version of a specification it implements.
 
   - id: odrl:action
     label: action

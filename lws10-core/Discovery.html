@@ -31,6 +31,9 @@
         <ul>
           <li><strong>`id`</strong> - the <code>id</code> property is OPTIONAL. If present, its value MUST be a URI.</li>
           <li><strong>`type`</strong> - the <code>type</code> property is REQUIRED. Its value MUST be a string or a set of strings.</li>
+          <li><strong>`conformsTo`</strong> - the <code>conformsTo</code> property is OPTIONAL. If present, its value MUST be a
+          set of URIs, each identifying a specification the capability implements, as described in
+          <a href="#storage-description-versioning"></a>.</li>
         </ul>
       </li>
       <li>
@@ -41,6 +44,9 @@
           <li><strong>`id`</strong> - the <code>id</code> property is OPTIONAL. If present, its value MUST be a URI.</li>
           <li><strong>`type`</strong> - the <code>type</code> property is REQUIRED. Its value MUST be a string or a set of strings.</li>
           <li><strong>`serviceEndpoint`</strong> - the <code>serviceEndpoint</code> property is REQUIRED. Its value MUST be a URI.</li>
+          <li><strong>`conformsTo`</strong> - the <code>conformsTo</code> property is REQUIRED for the <code>StorageRoot</code>
+          service and RECOMMENDED for other services. If present, its value MUST be a set of URIs, each identifying a
+          specification the service implements, as described in <a href="#storage-description-versioning"></a>.</li>
         </ul>
       </li>
     </ul>
@@ -55,7 +61,8 @@
   "type": "Storage",
   "service": [{
     "type": "StorageRoot",
-    "serviceEndpoint": "https://storage.example/root/"
+    "serviceEndpoint": "https://storage.example/root/",
+    "conformsTo": ["https://www.w3.org/TR/lws10-core/"]
   }]
 }
     </pre>
@@ -124,7 +131,8 @@
   }],
   "service": [{
     "type": "StorageRoot",
-    "serviceEndpoint": "https://storage.example/root/"
+    "serviceEndpoint": "https://storage.example/root/",
+    "conformsTo": ["https://www.w3.org/TR/lws10-core/"]
   }]
 }
     </pre>
@@ -136,8 +144,53 @@
     <p>
       A <a>storage description resource</a> MUST contain a <code>StorageRoot</code> service whose
       <code>serviceEndpoint</code> is the URI of the <a>storage root</a> container.
+      The <code>conformsTo</code> property of the <code>StorageRoot</code> service MUST contain the URI
+      <code>https://www.w3.org/TR/lws10-core/</code>, identifying this version of this specification.
+    </p>
+
+    <p>
       Additional services connected to a <a>storage</a> MAY also be present.
       The API definition of these additional services are outside the scope of this specification.
+      Each additional service SHOULD include a <code>conformsTo</code> property identifying the
+      specifications that define it.
+    </p>
+  </section>
+
+  <section id="storage-description-versioning">
+    <h4>Specification Versions</h4>
+
+    <p>
+      A client learns which specifications, and which versions of them, a <a>storage</a> implements
+      from the <code>conformsTo</code> property of its services and capabilities. Each URI in a
+      <code>conformsTo</code> value identifies one version of one specification. A specification
+      published by the W3C is identified by the URI of its latest version, such as
+      <code>https://www.w3.org/TR/lws10-core/</code> for this specification. A later version of a
+      specification is identified by a different URI.
+    </p>
+
+    <p>
+      A <a>storage</a> MAY implement more than one version of a specification. A service or capability
+      that does so MUST list the URI of each version it implements; a URI for a later version is added
+      alongside the URI for an earlier version rather than replacing it.
+    </p>
+
+    <p>
+      Clients MUST compare <code>conformsTo</code> URIs as whole strings, and MUST NOT derive a version
+      by parsing the URI. Clients MUST ignore URIs they do not recognize, as well as services and
+      capabilities whose types they do not recognize.
+    </p>
+
+    <p>
+      A capability without a <code>conformsTo</code> property is interpreted according to the specification
+      that defines its type. For capabilities defined by this specification, such as <code>MoveResource</code>,
+      that is the version of this specification listed on the <code>StorageRoot</code> service.
+    </p>
+
+    <p class="note">
+      Authorization servers and the authentication suites they accept are discovered through the
+      <code>WWW-Authenticate</code> response header and the protected resource metadata defined in
+      [[!LWS10-OAUTH]], rather than through the <a>storage description resource</a>, and are not
+      covered by this mechanism.
     </p>
   </section>
 
@@ -179,11 +232,13 @@
   }],
   "service": [{
     "type": "StorageRoot",
-    "serviceEndpoint": "https://storage.example/root/"
+    "serviceEndpoint": "https://storage.example/root/",
+    "conformsTo": ["https://www.w3.org/TR/lws10-core/"]
   }, {
     "type": "NotificationService",
     "serviceEndpoint": "https://storage.example/notification/api",
-    "subscriptionType": ["WebhookSubscription"]
+    "subscriptionType": ["WebhookSubscription"],
+    "conformsTo": ["https://www.w3.org/TR/lws10-notifications-webhook/"]
   }, {
     "type": "TypeIndexService",
     "serviceEndpoint": "https://storage.example/types/index"
